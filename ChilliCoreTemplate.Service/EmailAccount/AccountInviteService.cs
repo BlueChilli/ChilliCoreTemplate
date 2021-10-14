@@ -66,7 +66,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (!result.Success) return ServiceResult<UserData>.AsError("Your invitation has expired. Please request another invitation.");
 
             var account = Context.Users.First(a => a.Email == model.Email);
-            return ServiceResult<UserData>.AsSuccess(Mapper.Map<UserData>(account));
+            return ServiceResult<UserData>.AsSuccess(MapUserData(account, null));
         }
 
         private void Invite_Confirm(User user)

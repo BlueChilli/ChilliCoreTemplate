@@ -252,9 +252,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         private UserData MapUserData(User user, int? userDeviceId)
         {
-            var userData = Mapper.Map<UserData>(user);
-            userData.UserDeviceId = userDeviceId;
-            return userData;
+            return _session.MapUserData(user, userDeviceId);
         }
 
         public UserData CreateUserData(User user, int? userDeviceId)
@@ -297,7 +295,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         internal UserDataPrincipal CreateImpersonationTicket(User account, Action<UserDataPrincipal> loginAction)
         {
             var currentUser = User.UserData();
-            var impersonatedUser = Mapper.Map<UserData>(account);
+            var impersonatedUser = MapUserData(account, null);
             impersonatedUser.ImpersonatedBy(currentUser);
 
             var principal = new UserDataPrincipal(impersonatedUser);
@@ -458,7 +456,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     Mixpanel.SendAccountToMixpanel(account, "Account created", tempUserId: model.MixpanelTempId);   //Use temp id as mixplanel can take too long to register the alias in previous call.
                 }
 
-                return ServiceResult<UserData>.AsSuccess(Mapper.Map<UserData>(account));
+                return ServiceResult<UserData>.AsSuccess(MapUserData(account, null));
             }
             else
             {

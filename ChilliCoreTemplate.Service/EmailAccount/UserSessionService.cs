@@ -54,13 +54,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return sessionId;
         }
 
-        private UserData MapUserData(User user, int? userDeviceId)
+        internal UserData MapUserData(User user, int? userDeviceId)
         {
             var userData = Mapper.Map<UserData>(user);
             userData.UserDeviceId = userDeviceId;
             return userData;
         }
-
 
         public async Task<SessionInfo> GetAsync(string sessionId, CancellationToken cancellationToken)
         {
