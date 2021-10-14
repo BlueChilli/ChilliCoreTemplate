@@ -1,0 +1,27 @@
+@model AccountDetailsEditModel
+@{
+    Layout = "~/Views/Shared/Layout/_Layout.cshtml";
+}
+
+@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { })
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+{
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    using (Html.BeginFormCustom(Mvc.Root.EmailAccount_ChangeDetails, htmlAttributes: new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary()
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Account details</h5>
+            </div>
+            <div class="ibox-content">
+                @await Html.FieldTemplateForAsync(m => m.FirstName)
+                @await Html.FieldTemplateForAsync(m => m.LastName)
+                @await Html.FieldTemplateForAsync(m => m.Email)
+
+                @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.ProfilePhotoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 200, Height = 200, Quality = 70, Mode = ResizeMode.Pad }) { AlternativeImage = "~/Images/generic/default-profile-image.jpg" })
+            </div>
+        </div>
+        @await Html.TemplateAsync(TemplateTypes.PageButtons, new Template_PageButtons());
+    }
+}

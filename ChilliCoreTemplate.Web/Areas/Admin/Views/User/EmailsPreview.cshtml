@@ -1,0 +1,43 @@
+@model EmailPreviewModel
+@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+{
+    using (Html.BeginFormCustom(Mvc.Admin.User_EmailsPreview, htmlAttributes: new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary()
+        @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+        <div class="float-right m-t-n m-b-sm">
+            <a class="btn btn-primary btn-sm m-t-n-xs" onclick="@Html.ModalOpen(Mvc.Admin.User_EmailsPreviewShow, data: "{ id: $('#Id').val(), data: $('#Data').val() }")">Preview</a>
+            <a class="btn btn-default btn-sm m-t-n-xs" href="@Mvc.Admin.User_Emails.Url(this.Url)">Cancel</a>
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Email preview</h5>
+            </div>
+            <div class="ibox-content">
+
+                @await Html.FieldTemplateForAsync(m => m.Id, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.EmailList })
+                @await Html.FieldTemplateForAsync(m => m.Data)
+
+            </div>
+        </div>
+    }
+}
+@section Scripts
+{
+    <script>
+        var data = @Html.Raw(Model.Emails.Select(x => x.Data).ToJson(Newtonsoft.Json.Formatting.Indented));
+
+        $(function () {
+                $('#Id').change(function () {
+                $('#Data').val(JSON.stringify(data[$(this).val()], null, 4));
+            });
+
+        });
+    </script>
+}
+@section modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_EmailsPreviewShow, Title = "Email", Size = ModalSize.Large })
+}

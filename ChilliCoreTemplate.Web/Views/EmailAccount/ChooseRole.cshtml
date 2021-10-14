@@ -1,0 +1,23 @@
+@*@model List<LoginViewModel>
+@{
+    var returnUrl = this.Request.QueryString["returnUrl"];
+}
+<div class="container">
+    <div class="row clearfix">
+        <div class="choose-role col-xs-6 col-sm-offset-3 clearfix">
+
+            <h3>Hi @User.UserData().Name</h3>
+
+            <p>Which account would you like to log in to?</p>
+
+            <div class="section-white clearfix">
+                <ul>
+                    @foreach (var item in Model)
+                    {
+                        <li>@Mvc.Root.EmailAccount_SelectRole.LinkPost(item.RoleDesc, routeValues: new { returnUrl = returnUrl, jsonRole = HttpUtility.HtmlEncode(item.GetJsonValue()) }) </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>*@

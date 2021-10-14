@@ -1,0 +1,25 @@
+@model string
+@{
+    var userData = User.UserData();
+}
+@if (userData != null)
+{
+    <li class="dropdown @Model">
+        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown">@userData.Name <span class="caret"></span></a>
+        <ul role="menu" class="dropdown-menu">
+            @Html.MenuItem(Mvc.Root.EmailAccount_ChangeDetails)
+            @Html.MenuItem(Mvc.Root.EmailAccount_ChangePassword)
+            @Html.MenuItem(Mvc.Root.EmailAccount_Logout)
+        </ul>
+    </li>
+    if (Model == "")
+    {
+        <li>
+            <img alt="image" class="img-circle d-none d-sm-flex" src="@Html.Resizer().ImageUrl(userData.ProfilePhotoPath, new ImageSharpCommand { Width = 25, Height = 25 }, alternativeImage: "~/Images/generic/default-profile-image.jpg")" />
+        </li>
+    }
+}
+else
+{
+    @Html.MenuItem(Mvc.Root.EmailAccount_Login, linkClasses: Model)
+}

@@ -1,0 +1,22 @@
+@using Newtonsoft.Json;
+@model PushNotificationDetailModel
+@{
+    Layout = null;
+    dynamic parsedJson = JsonConvert.DeserializeObject(Model.Message);
+    var formattedJson = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+}
+<div class="modal-body">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <b>@Model.MessageId</b>
+        </div>
+        <div class="panel-body">
+            <pre>
+                @formattedJson
+            </pre>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal">Close</button>
+</div>

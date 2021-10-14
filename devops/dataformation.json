@@ -1,0 +1,229 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Data Resources",
+  "Mappings": {
+    "EnvMappings": {
+      "Develop": {
+        "Suffix": "dev",
+        "DBAllocatedStorage": "20",
+        "DBInstanceClass": "db.t2.small",
+        "BackupRetentionPeriod": 0,
+        "SGInstanceToSql": "SGInstanceToSqldev"
+      },
+      "Staging": {
+        "Suffix": "stg",
+        "DBAllocatedStorage": "20",
+        "DBInstanceClass": "db.t2.small",
+        "BackupRetentionPeriod": 0,
+        "SGInstanceToSql": "SGInstanceToSqlstg"
+      },
+      "Production": {
+        "Suffix": "prod",
+        "DBAllocatedStorage": "20",
+        "DBInstanceClass": "db.t2.medium",
+        "BackupRetentionPeriod": 7,
+        "SGInstanceToSql": "SGInstanceToSqlprod"
+      }
+    }
+  },
+  "Parameters": {
+    "ProjectName": {
+      "Description": "Project name",
+      "Type": "String",
+      "AllowedPattern": "[a-z]+"
+    },
+    "Env": {
+      "Description": "Environment",
+      "Type": "String",
+      "AllowedValues": ["Develop", "Staging", "Production"]
+    },
+    "DBPasswordKey": {
+      "Description": "DB password (secure parameter key:version)",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "Private",
+        "BucketName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "-",
+              { "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "Suffix"] }
+            ]
+          ]
+        }
+      },
+      "DeletionPolicy": "Retain"
+    },
+    "S3User": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": {
+          "Fn::Join": [
+            "",
+            [
+              "S3User-",
+              { "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "Suffix"] }
+            ]
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "S3AccessPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "0",
+                  "Effect": "Allow",
+                  "Action": ["s3:ListAllMyBuckets", "s3:HeadBucket"],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "1",
+                  "Effect": "Allow",
+                  "Action": "s3:*",
+                  "Resource": [
+                    { "Fn::GetAtt": ["S3Bucket", "Arn"] },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [{ "Fn::GetAtt": ["S3Bucket", "Arn"] }, "/*"]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "SecurityGroupDBInstance": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "DB security group",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "1433",
+            "ToPort": "1433",
+            "SourceSecurityGroupId": {
+              "Fn::ImportValue": {
+                "Fn::FindInMap": [
+                  "EnvMappings",
+                  { "Ref": "Env" },
+                  "SGInstanceToSql"
+                ]
+              }
+            }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "1433",
+            "ToPort": "1433",
+            "CidrIp": "203.219.180.19/32"
+          }
+        ]
+      }
+    },
+    "DBInstance": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+		 "DBInstanceIdentifier": {
+			  "Fn::Join": [
+				"",
+				[
+				  {
+					"Ref": "ProjectName"
+				  },
+				  "-",
+				  { "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "Suffix"] }
+				]
+			  ]
+			},	  
+        "PubliclyAccessible": true,
+        "StorageType": "gp2",
+        "AllocatedStorage": {
+          "Fn::FindInMap": [
+            "EnvMappings",
+            { "Ref": "Env" },
+            "DBAllocatedStorage"
+          ]
+        },
+        "DBInstanceClass": {
+          "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "DBInstanceClass"]
+        },
+        "Engine": "sqlserver-ex",
+        "EngineVersion": "14.00.3356.20.v1",
+        "MasterUsername": "sql",
+        "MasterUserPassword": {
+          "Fn::Join": [
+            "",
+            ["{{resolve:ssm-secure:", { "Ref": "DBPasswordKey" }, "}}"]
+          ]
+        },
+        "VPCSecurityGroups": [
+          { "Fn::GetAtt": ["SecurityGroupDBInstance", "GroupId"] }
+        ],
+        "BackupRetentionPeriod": {
+          "Fn::FindInMap": [
+            "EnvMappings",
+            { "Ref": "Env" },
+            "BackupRetentionPeriod"
+          ]
+        },
+        "PreferredBackupWindow": "16:00-16:30",
+        "PreferredMaintenanceWindow": "mon:09:00-mon:09:30",
+        "StorageEncrypted": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": { "Fn::Join": ["", [{ "Ref": "Env" }, " DB"]] }
+          }
+        ]
+      },
+      "DeletionPolicy": "Retain"
+    }
+  },
+  "Outputs": {
+    "S3BucketUrl": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Fn::GetAtt": ["S3Bucket", "DomainName"]
+            }
+          ]
+        ]
+      },
+      "Description": "Name of S3 bucket"
+    },
+    "RDSInstance": {
+      "Description": "RDS Endpoint",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            {
+              "Fn::GetAtt": ["DBInstance", "Endpoint.Address"]
+            },
+            ",",
+            {
+              "Fn::GetAtt": ["DBInstance", "Endpoint.Port"]
+            }
+          ]
+        ]
+      }
+    }
+  }
+}

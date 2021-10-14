@@ -1,0 +1,22 @@
+@model AccountDetailsEditModel
+@using (Html.BeginFormCustom(Mvc.Admin.User_ChangeDetails, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+<div class="modal-body">
+    @Html.ValidationSummary()
+    @Html.Hidden("Id", this.Context.Request.Query["Id"].FirstOrDefault())
+    @await Html.FieldTemplateForAsync(m => m.Email, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.FirstName, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.LastName, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.Phone, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, new TemplateOptions { Template = FieldTemplateLayouts.ModalField, FieldSize = FieldTemplateSize.Large, IsMandatory = true },
+        fieldOptions: new FieldImageUploadWithPreviewOptions(Model.ProfilePhotoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 100, Height = 100, Quality = 70, Mode = ResizeMode.Pad }) { AlternativeImage = "~/Images/generic/default-profile-image.jpg" })
+</div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync("Submit")
+        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+    </div>
+}
+@Html.RenderCustomSection("scripts")
+<script>
+    $('#@Mvc.Admin.User_ChangeDetails.GetFormId()').ajaxForm({ target: '#@Mvc.Admin.User_ChangeDetails.GetModalId()_content' });
+</script>

@@ -1,0 +1,169 @@
+@model UsersViewModel
+@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_InviteUser" })
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+{
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    <div class="row">
+        @foreach (var statistic in Model.Statistics)
+        {
+            <div class="col-md-4">
+                @await Html.PartialAsync("_Statistic", statistic)
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>List of Users</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover js-users-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Surname</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Company</th>
+                                    <th class="filtersearch" data-all="All roles">Role</th>
+                                    <th class="filtersearch" data-all="Any status">Status</th>
+                                    <th>Last login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<form id="impersonate" target="_self" method="post" action="@Mvc.Admin.User_Impersonate.Url(this.Url)">
+    <input type="hidden" name="id" id="impersonate-id" value="" />
+</form>
+@section Scripts {
+    <script>
+        $(function () {
+
+            $('.js-users-table').dataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "@Mvc.Admin.User_Users_Query.Url(this.Url)",
+                    "type": "POST"
+                },
+                "columns": [
+                    { "data": "firstName", "orderable": true },
+                    { "data": "lastName", "orderable": true },
+                    {
+                        "data": "email",
+                        "orderable": true,
+                        render: function (data, type, row) {
+                            return '<a href="@Mvc.Admin.User_Users_Details.Url(this.Url)/{0}">{1}</a>'.format(row.id, row.email);
+                        }
+                    },
+                    { "data": "phone", "orderable": true },
+                    {
+                        "data": "company", "orderable": true,
+                        render: function (data, type, row) {
+                            return row.company == null ? '' : '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}">{1}</a>'.format(row.company.id, row.company.name);
+                        }
+                    },
+                    { "data": "role", "orderable": false },
+                    {
+                        "data": "status",
+                        "orderable": false,
+                        render: function (data, type, row) {
+                            return '<span class="label label-{0}">{1}</span>'.format(row.status == '@UserStatus.Activated' ? "success" : "warning", row.status);
+                        }
+                    },
+                    { "data": "lastLoginOn", "orderable": true },
+                    {
+                        "orderable": false,
+                        "data": null,
+                        render: function ( data, type, row ) {
+                            return '<a href="@Mvc.Admin.User_Users_Details.Url(this.Url)/{0}">View</a>'.format(data.id);
+                        }
+                    },
+                ],
+                dom: 'Tfgtip',
+                "iDisplayLength": 50,
+                initComplete: function () {
+                    var api = this.api();
+                    this.api().columns('.filtersearch').indexes().flatten().each(function (i) {
+                        var column = api.column(i);
+                        var select = $('<select class="form-control"><option selected disabled>' + $(column.header()).text() + '</option></select>')
+                            .appendTo($(column.header()).empty())
+                            .on('change', function () {
+                                column
+                                    .search($(this).val(), false, false)
+                                    .draw();
+                            });
+
+                        select.append('<option value="">' + $(column.header()).data('all') + '</option>');
+                        column.data().map(function (d, j) {
+                            return d == null ? null : $.parseHTML(d)[0].textContent;
+                        }).unique().sort().each(function (d, j) {
+                            if (d != null) select.append('<option value="' + d.replace(/ /g, '') + '">' + d + '</option>')
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+
+            $('a i.fa-area-chart').click(function (e) {
+                e.preventDefault();
+                var parent = $(this).parents('.ibox');
+
+                parent.find('.js-totals, .js-chart').toggle();
+                var chart = parent.find('.js-chart');
+
+                if (chart.is(':visible')) {
+                    lineData.labels = eval(chart.data('labels'));
+                    lineData.datasets[0].data = eval(chart.data('data'));
+                    var ctx = chart.find('canvas')[0].getContext("2d");
+                    var myNewChart = new Chart(ctx).Line(lineData, lineOptions);
+                }
+            });
+
+            var lineData = {
+                labels: [],
+                datasets: [
+                    {
+                        fillColor: "rgba(26,179,148,0.5)",
+                        strokeColor: "rgba(26,179,148,0.7)",
+                        pointColor: "rgba(26,179,148,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(26,179,148,1)",
+                        data: []
+                    }
+                ]
+            };
+
+            var lineOptions = {
+                scaleShowGridLines: true,
+                scaleGridLineColor: "rgba(0,0,0,.05)",
+                scaleGridLineWidth: 1,
+                bezierCurve: true,
+                bezierCurveTension: 0.4,
+                pointDot: true,
+                pointDotRadius: 4,
+                pointDotStrokeWidth: 1,
+                pointHitDetectionRadius: 20,
+                datasetStroke: true,
+                datasetStrokeWidth: 2,
+                datasetFill: true,
+                responsive: true,
+            };
+
+
+        });
+    </script>
+}

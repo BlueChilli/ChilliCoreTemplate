@@ -1,0 +1,44 @@
+@using System.Linq;
+@{
+    var userData = this.User.UserData();    
+    var rootMenus = MenuConfigByRole.GetRootMenus(this.Context).Where(a => !a.MenuHidden);
+}
+
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                @if (User.IsAuthenticated())
+                {
+                    <div class="dropdown profile-element">                                                
+                        <span>
+                            <img alt="profile" class="img-circle circle-border-sm" src="@Html.Resizer().ImageUrl(userData.ProfilePhotoPath, new ImageSharpCommand { Height = 40, Width = 40, Mode = ResizeMode.Crop }, alternativeImage: "~/Images/generic/default-profile-image.jpg")" />
+                        </span>
+
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false">
+                            <span class="clear">
+                                <span class="block m-t-xs">
+                                    <strong class="font-bold">@userData.Name</strong>
+                                </span>
+                                <span class="text-muted text-xs block">
+                                    @String.Join(", ", userData.CurrentRoles.Select(r => r.Role.GetDescription()))
+                                    <b class="caret"></b>
+                                </span>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            @Html.MenuItem(Mvc.Root.EmailAccount_ChangeDetails)
+                            @Html.MenuItem(Mvc.Root.EmailAccount_ChangePassword)
+                            @Html.MenuItem(Mvc.Root.EmailAccount_Logout)
+                        </ul>
+                    </div>
+                }
+            </li>
+
+            @foreach (var menu in rootMenus)
+            {
+                @await Html.PartialAsync("Menus/_LeftMenu.cshtml", menu);
+            }
+        </ul>
+    </div>
+</nav>

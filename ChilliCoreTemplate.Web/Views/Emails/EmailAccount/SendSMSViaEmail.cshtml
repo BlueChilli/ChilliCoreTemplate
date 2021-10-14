@@ -1,0 +1,15 @@
+@model RazorTemplateDataModel<string>
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Model.Subject = Model.Data.TruncateHard(50);
+    Model.EmailPreview = "Thankyou";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+}
+@section Header
+{
+    @using (builder.BeginHeader())
+    {
+        @builder.H1(String.Format("{0} has sent you a message", Model.CompanyName))
+        @builder.H2(Model.Data)
+    }
+}

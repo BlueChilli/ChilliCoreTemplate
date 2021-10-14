@@ -1,0 +1,65 @@
+// Basic Colors
+$navy: #05AECC;       // Primary color (and menu top colour)
+$dark-gray: #c2c2c2;  // Default color
+$blue: #1ab394;       // Success color - changed to green
+$lazur: #23c6c8;      // Info color
+$yellow: #f8ac59;     // Warrning color
+$red: #ED5565;        // Danger color
+
+// Various colors
+$text-color: #676a6c;   // Body text
+$gray: #f3f3f4;         // Background wrapper color
+$light-gray: #D1DADE;   // Default label, badget
+$label-badge-color: #5E5E5E;
+$light-blue:#f3f6fb;
+
+// Spiner color and margin
+$spin-color: $navy;
+$spin-margin: 0 auto;
+
+//Basics
+$basic-link-color: #337ab7;
+
+// IBOX colors ( default panel colors)
+$border-color: #e7eaec;     // IBox border
+$ibox-title-bg:#ffffff;     // IBox Background header
+$ibox-content-bg:#ffffff;   // IBox Background content
+
+//Sidebar width
+$sidebar-width: 220px;
+
+// Boxed layout width
+$boxed-width: 1200px;
+$boxed-background: url('./inspinia/patterns/shattered.png');
+
+//Border radius for buttons
+$btn-border-radius: 5px;
+
+//Navigation
+$nav-bg: #2F4050;
+$nav-profile-pattern: url("../images/nav-user-bg-image.png");
+$nav-text-color: #a7b1c2;
+$nav-active-border: #f7931e;
+
+// (BC) App Specific
+
+// Buttons
+$primary-btn-bg: #FF7043;
+$primary-btn-bg-hover: #E64A19;
+
+// Links
+$link-color: #05AECC !default;
+$link-hover-color: darken($link-color, 15%) !default;
+$table-link-color: $link-color; 
+// Tables
+
+// Forms
+$field-focus-color: #05AECC;
+
+// Headings
+$heading-ibox: #393D3F;
+
+// Labels
+$label-font-size: 12px;
+
+

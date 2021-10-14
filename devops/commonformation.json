@@ -1,0 +1,99 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Common Resources",
+  "Mappings": {
+    "EnvMappings": {
+      "Develop": {
+        "Suffix": "dev"
+      },
+      "Staging": {
+        "Suffix": "stg"
+      },
+      "Production": {
+        "Suffix": "prod"
+      }
+    }
+  },
+  "Parameters": {
+    "VpcId": {
+      "Description": "VPC Id",
+      "Type": "AWS::EC2::VPC::Id"
+    }
+  },
+  "Resources": {
+    "SESUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": "SESUser",
+        "Policies": [
+          {
+            "PolicyName": "AmazonSesSendingAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "ses:SendRawEmail",
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "InstanceToSqldev": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allows client instance to SQL connection (Marker SG)",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "127.0.0.1/32",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": { "Ref": "VpcId" }
+      }
+    },
+    "InstanceToSqlstg": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allows client instance to SQL connection (Marker SG)",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "127.0.0.1/32",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": { "Ref": "VpcId" }
+      }
+    },
+    "InstanceToSqlprod": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allows client instance to SQL connection (Marker SG)",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "127.0.0.1/32",
+            "IpProtocol": "-1"
+          }
+        ],
+        "VpcId": { "Ref": "VpcId" }
+      }
+    }
+  },
+  "Outputs": {
+    "SGInstanceToSqldev": {
+      "Value": { "Fn::GetAtt": ["InstanceToSqldev", "GroupId"] },
+      "Export": { "Name": "SGInstanceToSqldev" }
+    },
+    "SGInstanceToSqlstg": {
+      "Value": { "Fn::GetAtt": ["InstanceToSqlstg", "GroupId"] },
+      "Export": { "Name": "SGInstanceToSqlstg" }
+    },
+    "SGInstanceToSqlprod": {
+      "Value": { "Fn::GetAtt": ["InstanceToSqlprod", "GroupId"] },
+      "Export": { "Name": "SGInstanceToSqlprod" }
+    }
+  }
+}

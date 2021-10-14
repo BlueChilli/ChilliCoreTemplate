@@ -1,0 +1,59 @@
+@model CompanyEditModel
+@{
+    var breadcrumb = new BreadcrumbOptions
+    {
+        Heading = Model.Id == 0 ? "Create a new company" : Model.Name,
+        Title = Model.Id == 0 ? "Create" : Model.Name,
+    };
+    var pageButtons = new Template_PageButtons
+    {
+        CancelMenuUrl = Model.Id == 0 ? Mvc.Admin.Company_List.Url(this.Url) : Mvc.Admin.Company_Detail.Url(this.Url, Model.Id)
+    };
+}
+@await Html.PartialAsync("Layout/_Breadcrumb", breadcrumb)
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+{
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    using (Html.BeginFormCustom(Mvc.Admin.Company_Edit, htmlAttributes: new { @class = "form-horizontal", enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.ValidationSummary()
+        @await Html.TemplateAsync(TemplateTypes.PageButtons, pageButtons)
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.ApiKey)
+
+        <box>
+            <box-title>Company details</box-title>
+            <box-content>
+                @await Html.FieldTemplateForAsync(m => m.LogoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.LogoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 150, Height = 50, Quality = 80, Mode = ResizeMode.Max }) { ButtonText = "Upload", HasRemoveButton = false, BackgroundSize = "contain" })
+                @await Html.FieldTemplateForAsync(m => m.Name)
+                @using (await Html.FieldTemplateOuterForAsync(m => m.StripeId))
+                {
+                    if (String.IsNullOrEmpty(Model.StripeId))
+                    {
+                        @await Html.FieldTemplateInnerForAsync(m => m.CreateStripeAccount)
+                    }
+                    else
+                    {
+                        @await Html.FieldTemplateInnerForAsync(m => m.StripeId)
+                    }
+                }
+                @await Html.FieldTemplateForAsync(m => m.Website)
+                @await Html.FieldTemplateForAsync(m => m.Notes, new TemplateOptions { FieldSize = FieldTemplateSize.ExtraLarge })
+                @await Html.FieldTemplateForAsync(m => m.Timezone, fieldOptions: new SelectFieldTemplateOptions() { SelectList = TimezoneHelper.GetSelectTimezones(Model.Timezone) })
+            </box-content>
+        </box>
+
+    }
+}
+@section scripts
+{
+    <script>
+        $(function () {
+
+            $('#Timezone').chosen({
+                width: "100%"
+            });
+
+        });
+    </script>
+}

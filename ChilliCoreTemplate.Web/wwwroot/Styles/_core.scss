@@ -1,0 +1,91 @@
+﻿//windows and mac make fonts same
+body, html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+//email account layout styles
+.loginscreen.middle-box {
+    width: 350px;
+}
+
+.emailaccount-background {
+    background: $navy url("../Images/bg-image.png") no-repeat;
+    background-size: cover;
+}
+
+div.background-image h2, div.background-image label, div.background-image p:not(.alert) {
+    color: #fff;
+}
+
+//Removed in Bootstrap4 for d-none
+.hide {
+    display: none !important;
+}
+
+//Removed in Bootstrap4
+@media (min-width: 768px) { 
+    .modal-dialog .modal-md {
+        max-width: 600px;
+    }
+}
+
+//Removed in Bootstrap4
+@media (min-width: 1600px) { 
+    .container {
+        max-width: 1570px;
+    }
+}
+
+.chosen-container {
+    font-size: .85rem;
+}
+
+//dropdown for multiselect
+.chosen-container-multi {
+    position: relative;
+}
+
+.chosen-container-multi:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 5px solid #000;
+}
+
+//input placeholder greyed out
+::-webkit-input-placeholder {
+    color: #999999 !important;
+}
+
+:-ms-input-placeholder {
+    color: #999999 !important;
+}
+
+::placeholder {
+    color: #999999 !important;
+}
+
+//common helpers
+.clickable {
+    cursor: pointer;
+}
+
+//disabled nav tabs not navigable
+.nav-tabs li.disabled {
+    cursor: not-allowed;
+
+    a {
+        pointer-events: none;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        opacity: .65;
+    }
+}

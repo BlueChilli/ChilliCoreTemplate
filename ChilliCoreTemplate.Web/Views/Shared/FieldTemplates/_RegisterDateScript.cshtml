@@ -1,0 +1,13 @@
+@{
+    var key = new Guid("B06A815B-F1E0-461E-86DB-8092297394CB");
+}
+@Html.RegisterCustomSection("scripts", key,
+@<script>
+     $(function () {
+         $('div.js-date-control input').change(function () {
+             var inputs = $('input[name="' + $(this).attr('name') + '"]')
+             var value = $(inputs[2]).val() + '-' + $(inputs[1]).val() + '-' + $(inputs[0]).val();
+             $('input[name="' + $(this).attr('name').substring(0, $(this).attr('name').length - 5) + '"]').val(value);
+         });
+     });
+</script>)

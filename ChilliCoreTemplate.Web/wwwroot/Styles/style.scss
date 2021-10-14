@@ -1,0 +1,22 @@
+//Inspinia
+/*
+    How Inspinia Fits into the App
+    -------------------------------
+
+    ~/Styles/inspina/base is untouched from the original installation (keep it that way!)
+    However, the inspina stylesheet entry point is now ~ /Styles/inspinia/customised.scss. It's copied from ~/Styles/inspinia/style.scss and modified to:
+
+    1. Include the _patch and _app.scss files
+    2. _variables.scss is copied from the inspinia base dir and moved to ~ /Styles/inspinia/ - and will have more variables which are important to patch/app.scss
+    3. Remove uneeded styles: landing page
+
+*/
+@import "inspinia/customised";
+
+//todo split out of inspinia patch non-inspinia style fixes and put into core
+@import "core";
+
+//@import "pull";
+
+// App specific Styles
+//@import "app";

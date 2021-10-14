@@ -1,0 +1,35 @@
+@model Template_PageButtons
+<div class="float-right @Html.When(Model.Dropup, "m-b-lg")@Html.When(!Model.Dropup, "m-t-n m-b-sm")">
+    @if (Model.ShowButtons.GetValueOrDefault(true))
+    {
+        @await Html.ButtonSubmitAsync(Model.SaveMenuText)
+        foreach (var button in Model.Buttons)
+        {
+            <div class="btn-group">
+                @button
+            </div>
+        }
+        if (!String.IsNullOrEmpty(Model.CancelMenuUrl))
+        {
+            <div class="btn-group">
+                <button type="button" class="btn btn-default" onclick="window.location='@Model.CancelMenuUrl'">Cancel</button>
+            </div>
+        }
+    }
+    @if (Model.ShowActions)
+    {
+        <div class="btn-group">
+            <div class="dropdown @Html.When(Model.Dropup, "dropup")">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    @foreach (var action in Model.Actions)
+                    {
+                        @action
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

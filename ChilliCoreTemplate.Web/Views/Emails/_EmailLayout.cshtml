@@ -1,0 +1,324 @@
+﻿@model IEmailTemplateDataModel
+@inject ProjectSettings projectConfig
+@{
+    Layout = null;    
+    var emailSection = projectConfig.EmailTemplate;
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+
+    Model.FileStoragePath = emailSection.Bucket;
+    if (String.IsNullOrEmpty(Model.Logo))
+    {
+        Model.Logo = Model.FileStoragePath + "/logo-email.png";
+    }
+    //Model.TwitterUrl = "https://twitter.com/myproject";
+    //Model.FacebookUrl = "https://www.facebook.com/myproject/";
+    //Model.InstagramUrl = "https://www.instagram.com/myproject/";
+}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model.CompanyName - @Model.Subject</title>
+    <style type="text/css">
+        /* /\/\/\/\/\/\/\/\/ RESET STYLES /\/\/\/\/\/\/\/\/ */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            border: 0 none;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        a img {
+            border: 0 none;
+        }
+
+        .imageFix {
+            display: block;
+        }
+
+        table, td {
+            border-collapse: collapse;
+        }
+
+
+        /* /\/\/\/\/\/\/\/\/ CLIENT SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
+        .ExternalClass {
+            width: 100%;
+        }
+
+            .ExternalClass,
+            .ExternalClass p,
+            .ExternalClass span,
+            .ExternalClass font,
+            .ExternalClass td,
+            .ExternalClass div {
+                line-height: 100%;
+            }
+
+        #outlook a {
+            padding: 0;
+        }
+
+        table {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+
+        border-style: {
+            -ms-text-size-adjust: 100%;
+        }
+
+
+        /* /\/\/\/\/\/\/\/\/ GLOBAL STYLES /\/\/\/\/\/\/\/\/ */
+        img[id="full"] {
+            width: 100% !important;
+            max-width: 600px !important;
+        }
+
+        @@media only screen and (max-width: 480px) {
+            table[id="wrapper"] {
+                width: 100% !important;
+                max-width: 480px !important;
+                margin-left: 0px !important;
+                margin-right: 0px !important;
+            }
+
+            table[id="header"] {
+                border-top-left-radius: 0px !important;
+                border-top-right-radius: 0px !important;
+            }
+
+            table[id="content"] {
+                width: 100% !important;
+                max-width: 480px !important;
+                margin-left: 0px !important;
+                margin-right: 0px !important;
+                border-bottom-left-radius: 0px !important;
+                border-bottom-right-radius: 0px !important;
+            }
+            /*img[id="logo"] {
+                padding-left: 12% !important;
+                width: 150px !important;
+                height: 33px !important;
+            }*/
+            img[id="full"] {
+                max-width: 480px !important;
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            td[id="footer"] {
+                padding-left: 7% !important;
+                padding-right: 7% !important;
+            }
+
+            td[id="footer-social"] {
+                padding-left: 7% !important;
+                padding-right: 7% !important;
+            }
+
+            h1 {
+                font-size: 21px !important;
+            }
+
+            h2 {
+                font-size: 17px !important;
+            }
+
+            h3 {
+                font-size: 17px !important;
+            }
+
+            h4 {
+                font-size: 14px !important;
+            }
+
+            p {
+                font-size: 14px !important;
+            }
+
+            .contact-info p {
+                font-size: 12px !important;
+            }
+        }
+    </style>
+</head>
+<body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" style="background-color: #eeeeee;width:100% !important;-webkit-text-size-adjust:100%;margin:0;padding:0;">
+    @if (!String.IsNullOrEmpty(Model.EmailPreview))
+    {
+        <div id="email-preview" style="display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
+            @Model.EmailPreview
+        </div>
+        <div style="display: none; max-height: 0px; overflow: hidden;">
+            &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+        </div>
+    }
+    <center>
+        <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" style="background:rgba(255, 255, 255, 0.00);font-family:Helvetica,sans-serif;height:100% !important;margin:0;padding:0;width:100% !important;font-size:14px;color:#8d9aa5;">
+            <tr>
+                <td align="center" style="vertical-align:top;padding-top:15px;padding-bottom:15px;border-collapse:collapse;max-width:600px;">
+                    <!-- // BEGIN CONTAINER -->
+                    <table id="wrapper" border="0" cellpadding="0" cellspacing="0" style="width:90%;max-width:600px;margin-right:5%;margin-left:5%;display:block;">
+                        <tr>
+                            <td align="center" style="vertical-align:top;border-collapse:collapse;">
+                                <!-- // BEGIN PREHEADER -->
+                                <table border="0" cellpadding="0" cellspacing="0" style="background-color:#FFF;width:100%;">
+                                    <tr>
+                                        <td align="left" width="600" style="text-align:center;background-color:#26275f;width:600px;vertical-align:top;padding-top:21px;padding-bottom:21px;border-collapse:collapse;">
+                                            <a href="@Model.PublicUrl">
+                                                <img id="logo" style="border:0;line-height:100%;outline:none;text-decoration:none;" src="@Model.Logo" alt="logo" />
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <!-- END PREHEADER \\ -->
+                            </td>
+                        </tr>
+                        @if (this.IsSectionDefined("Header"))
+                        {
+                            <tr>
+                                <td align="center" style="vertical-align:top;border-collapse:collapse;">
+                                    <!-- // BEGIN HEADER -->
+                                    <table id="header" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFF;width: 100%">
+                                        <tr>
+                                            <td align="center" style="vertical-align:top;border-collapse:collapse;padding-right:7%;padding-left:7%;">
+                                                @RenderSection("Header")
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- END HEADER \\ -->
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td align="center" style="vertical-align:top;border-collapse:collapse;">
+                                <!-- // BEGIN BODY -->
+                                <table id="content" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;max-width:600px;background-color:#FFF;">
+                                    @RenderBody()
+
+                                    @using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+                                    {
+                                        using (builder.BeginP())
+                                        {
+                                            @if (String.IsNullOrEmpty(Model.TagLine))
+                                            {
+                                                @:Thanks for using @Model.Site!
+                                                @:<br />The @Model.Site team
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(Model.TagLine)
+                                            }
+                                        }
+                                    }
+                                </table>
+                                <!-- END HEADER/BODY \\ -->
+                            </td>
+                        </tr>
+                        <tr style="padding-bottom:50px">
+                            <td align="left" style="vertical-align:top;border-collapse:collapse;">
+                                <!-- // BEGIN FOOTER -->
+                                <table id="footer" border="0" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px">
+                                    <tr>
+                                        <td class="contact-info" style="text-align:center;vertical-align:top;padding-top:25px;border-collapse:collapse;">
+                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">You're receiving this because you are registered with @Model.Site (<a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="@Model.PublicUrl">@(new Uri(Model.PublicUrl).AsFriendlyName())</a>)</p>
+                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">Have a question? Email us at <a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="mailto:@Model.Email">@Model.Email</a></p>
+                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">&copy; @Model.Site @DateTime.UtcNow.ToTimezone().Year all rights reserved</p>
+                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;"><img src="@Model.FileStoragePath/logo-icon.png" width="20" alt="Icon" /></p>
+                                            @*@if (Model.CanUnsubscribe)
+                                                {
+                                                    <p style="font-family:Helvetica,sans-serif;line-height:160%;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">
+                                                        <a href="@Mvc.Root.EmailAccount_EmailUnsubscribe.Url(this.Url, routeValues: new { Id = Model.TrackingId }, protocol: "https")" style="font-weight:bold;text-decoration:none;color:#8d9aa5;">Unsubscribe</a>
+                                                    </p>
+                                                }*@
+                                        </td>
+                                    </tr>
+                                </table>
+                                @if (Model.HasSocialMedia)
+                                {
+                                    <table id="footer-social" border="0" cellpadding="0" cellspacing="0" style="width:100%;">
+                                        <tr>
+                                            <td style="vertical-align:top;text-align:center;padding-top:20px;padding-bottom:5px;border-collapse:collapse;">
+                                                @if (!string.IsNullOrWhiteSpace(Model.TwitterUrl))
+                                                {
+                                                    <a href="@Model.TwitterUrl"
+                                                       style="text-decoration:none;">
+                                                        <img width="39" height="42" style="width:39px;height:42px;border:0;height:auto;line-height:100%;outline:none;text-decoration:none;"
+                                                             src="@Model.FileStoragePath/twitter2x.png" />
+                                                    </a>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(Model.YoutubeUrl))
+                                                {
+                                                    <a href="@Model.YoutubeUrl"
+                                                       style="text-decoration:none;">
+                                                        <img width="39" height="42" style="width:39px;height:42px;border:0;height:auto;line-height:100%;outline:none;text-decoration:none;"
+                                                             src="@Model.FileStoragePath/youtube2x.png" />
+                                                    </a>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(Model.FacebookUrl))
+                                                {
+                                                    <a href="@Model.FacebookUrl"
+                                                       style="text-decoration:none;">
+                                                        <img width="39" height="42" style="width:39px;height:42px;border:0;height:auto;line-height:100%;outline:none;text-decoration:none;"
+                                                             src="@Model.FileStoragePath/facebook2x.png" />
+                                                    </a>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(Model.InstagramUrl))
+                                                {
+                                                    <a href="@Model.InstagramUrl"
+                                                       style="text-decoration:none;">
+                                                        <img width="39" height="42" style="width:39px;height:42px;border:0;height:auto;line-height:100%;outline:none;text-decoration:none;"
+                                                             src="@Model.FileStoragePath/instagram2x.png" />
+                                                    </a>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(Model.LinkedInUrl))
+                                                {
+                                                    <a href="@Model.LinkedInUrl"
+                                                       style="text-decoration:none;">
+                                                        <img width="39" height="42" style="width:39px;height:42px;border:0;height:auto;line-height:100%;outline:none;text-decoration:none;"
+                                                             src="@Model.FileStoragePath/linkedin2x.png" />
+                                                    </a>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(Model.GooglePlusUrl))
+                                                {
+                                                    <a href="@Model.GooglePlusUrl"
+                                                       style="text-decoration:none;">
+                                                        <img width="39" height="42" style="width:39px;height:42px;border:0;height:auto;line-height:100%;outline:none;text-decoration:none;"
+                                                             src="@Model.FileStoragePath/googleplus2x.png" />
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </table>
+                                }
+                                <table border="0" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;">
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                </table>
+                                <!-- END FOOTER \\ -->
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- END CONTAINER \\ -->
+                </td>
+            </tr>
+        </table>
+    </center>
+    @if (Model.TrackingId.Guid != Guid.Empty)
+    {
+        <img src="@projectConfig.BaseUrl/EmailAccount/EmailOpen?emailId=@Model.TrackingId.Value" style="border:0;width:1px;height:1px;" alt="opened" />
+    }
+</body>
+</html>

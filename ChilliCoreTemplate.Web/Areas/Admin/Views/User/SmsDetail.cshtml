@@ -1,0 +1,26 @@
+@model ChilliCoreTemplate.Models.Sms.SmsViewModel
+@{
+    Layout = null;
+}
+<div class="modal-body">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <b>@Model.Data.From  @Model.Data.To</b>
+        </div>
+        <div class="panel-body">
+            @Html.ValidationSummary()
+
+            @if (!String.IsNullOrEmpty(Model.Error))
+            {
+                <p>@Model.Error</p>
+            }
+            else
+            {
+                <p>@Model.Data.Message</p>
+            }
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal">Close</button>
+</div>

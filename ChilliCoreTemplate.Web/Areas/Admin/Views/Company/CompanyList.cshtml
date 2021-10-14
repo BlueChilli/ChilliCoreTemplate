@@ -1,0 +1,96 @@
+@using Humanizer;
+@model CompanyListModel
+
+@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_CreateCompany" })
+
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    <box>
+        <box-content>
+
+            <form role="form" class="form-inline m-b-md">
+                <div class="form-group">
+                    @await Html.FieldTemplateInnerForAsync(m => m.Status, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.StatusList })
+                </div>
+                <div class="ml-auto">
+                    <div class="form-group">
+                        @await Html.FieldTemplateInnerForAsync(m => m.Search)
+                    </div>
+                </div>
+            </form>
+
+            <table-default class="js-company-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Description</th>
+                        <th>Date created</th>
+                        <th>Status</th>
+                        <th style="width:150px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var company in Model.Companies)
+                    {
+                        <tr>
+                            <td>@company.Name</td>
+                            <td>@company.Description.Truncate(75)</td>
+                            <td>@company.CreatedAt.ToTimezone().ToIsoDate()</td>
+                            <td data-search="@(company.IsDeleted ? 0 : 1)"><label type="@company.IsDeleted ? LabelType.Warning : LabelType.Success">@(company.IsDeleted ? "Archived" : "Active")</label></td>
+                            <td>
+                                <a mvc-action="Mvc.Admin.Company_Detail.AddRouteId(company.Id)" class="m-r-sm">View</a>
+                                @if (company.HasAdmins)
+                                {
+                                    @Html.LinkPost(Mvc.Admin.Company_Impersonate, "Impersonate", new { Id = company.Id }, linkClasses: "m-r-sm")
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table-default>
+        </box-content>
+    </box>
+</page>
+
+@section Scripts
+{
+    <script>
+        var companyTable;
+
+        $(function () {
+
+            companyTable = $('.js-company-table').dataTable({
+                dom: 'Tgtip',
+                "iDisplayLength": 50,
+                "columnDefs": [
+                    { "orderable": false, "targets": [3, 4] }
+                ],
+            });
+
+            $('#Search').on('keyup', function () {
+                SearchTable();
+            });
+
+            $('#Status').on('change', function () {
+                SearchTable();
+            });
+
+        });
+
+        function SearchTable() {
+            var api = companyTable.api();
+
+            if ($('#Status').val() != '') {
+                api.column(3).search($('#Status').val(), false, false, false);
+            } else {
+                api.column(3).search('');
+            }
+
+            api.search($('#Search').val());
+
+            api.draw();
+
+        }
+
+    </script>
+}

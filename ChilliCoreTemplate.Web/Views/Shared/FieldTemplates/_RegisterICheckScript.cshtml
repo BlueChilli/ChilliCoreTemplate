@@ -1,0 +1,16 @@
+@{
+    var key = new Guid("FBA3120E-2160-4E3C-AFEE-2347BE25737B");
+}
+@Html.RegisterCustomSection("scripts", key,
+@<script>
+     $(function () {
+         $('.i-checks').iCheck({
+             checkboxClass: 'icheckbox_square-green',
+             radioClass: 'iradio_square-green',
+         });
+
+         $('.i-checks label').each(function (i, e) {
+             $(e).css({ 'opacity': 1 });
+         });
+     });
+</script>)

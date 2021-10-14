@@ -1,0 +1,40 @@
+@model IFieldInnerTemplateModel<InputFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    var jsId = Model.Id.ToLower().Replace("_", "-");
+    var isCharactersLeft = (bool?)Model.HtmlAttributes["charactersleft"];
+    var maxLength = (int?)Model.HtmlAttributes["maxlength"];
+}
+@if (Model.Options.PreAddOn != null || Model.Options.PostAddOn != null)
+{
+    @:<div class="input-group">
+}
+@if (Model.Options.PreAddOn != null)
+{
+    @Model.Options.PreAddOn
+}
+<input id="@Model.Id" name="@Model.Name" value="@Model.Value" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+@if (Model.Options.PostAddOn != null)
+{
+    @Model.Options.PostAddOn
+}
+@if (isCharactersLeft.GetValueOrDefault(false) && maxLength.GetValueOrDefault(0) > 0)
+{
+    <h6 class="float-right js-characters-left-@jsId"></h6>
+    if (Model.Options.AutoWireUpJavascript)
+    {
+        @Html.RegisterCustomScripts(
+    @<script>
+        $(function () {
+            $('#@Model.Id').keyup(function () {
+                $('.js-characters-left-@jsId').html(@maxLength -$(this).val().length + ' characters left');
+            }).trigger('keyup');
+        });
+    </script>
+        )
+    }
+}
+@if (Model.Options.PreAddOn != null || Model.Options.PostAddOn != null)
+{
+    @:</div>
+}

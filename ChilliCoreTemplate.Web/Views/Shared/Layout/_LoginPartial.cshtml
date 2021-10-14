@@ -1,0 +1,23 @@
+@if (User.IsAuthenticated())
+{
+    var userData = User.UserData();
+    <ul class="nav navbar-top-links navbar-right">
+        @if (userData.IsImpersonated())
+        {
+            <li>
+                <a mvc-action="@(Mvc.Admin.User_UndoImpersonate)"><span class="text-muted"> Impersonating as <b> @userData.Email</b></span> Undo</a>
+            </li>
+        }
+        <li>
+            <a mvc-action="@(Mvc.Root.EmailAccount_Logout)">
+                <i class="fa fa-sign-out-alt"></i> Log out
+            </a>
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="nav navbar-top-links navbar-right">
+        @Html.MenuItem(Mvc.Root.EmailAccount_Login)
+    </ul>
+}

@@ -1,0 +1,20 @@
+@model IFieldInnerTemplateModel<RadioListFieldTemplateOptions>
+@{
+    var options = Model.Options.RadioAttribute;
+    var removeValidations = Model.HtmlAttributes.Keys.Where(k => k.StartsWith("data-val")).ToList();
+    foreach (var key in removeValidations)
+    {
+        Model.HtmlAttributes.Remove(key);
+    }
+}
+@foreach (var option in Model.Options.SelectList)
+{
+    if (!String.IsNullOrEmpty(option.Text))
+    {
+        <div class="@Html.When(options.Inline, "checkbox-inline") i-checks m-b-xs"><label><input type="radio" value="@option.Value" name="@Model.Name" id="@(Model.Id)_@option.Value" @if (option.Selected) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @option.Text</label></div>
+    }
+}
+@if (Model.Options.AutoWireUpJavascript)
+{
+    <partial name="FieldTemplates/_RegisterICheckScript" />
+}

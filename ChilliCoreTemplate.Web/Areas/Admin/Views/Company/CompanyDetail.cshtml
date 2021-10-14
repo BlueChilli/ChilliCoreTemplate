@@ -1,0 +1,206 @@
+@model CompanyDetailViewModel
+@inject IWebHostEnvironment env;
+@{
+    var breadcrumb = new BreadcrumbOptions
+    {
+        Heading = Model.Name,
+        Title = "Details",
+    };
+    var archiveOrDelete = Model.IsDeleted ? "Unarchive" : Model.HasAdmins ? "Archive" : "Delete";
+}
+@await Html.PartialAsync("Layout/_Breadcrumb", breadcrumb)
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+    <tabs-container>
+        <tabs>
+            <tab id="1" is-active="true">Details</tab>
+            <tab id="2">Admins</tab>
+        </tabs>
+        <tab-content>
+            <tab-pane id="1" is-active="true">
+                <div class="row">
+                    <div class="col-12">
+                        <span class="float-right">
+                            <a class="btn btn-primary btn-sm m-t-n-xs" mvc-action="Mvc.Admin.Company_Edit.AddRouteValues(new { Id = Model.Id})">Edit</a>
+                            @if (Model.HasAdmins)
+                            {
+                                @Html.LinkPost(Mvc.Admin.Company_Impersonate, "Impersonate", new { Id = Model.Id }, linkClasses: "btn-default btn-sm m-t-n-xs")
+                            }
+                            <a class="btn btn-default btn-sm m-t-n-xs" href="javascript:void(0);" onclick="@Html.ModalOpen(Mvc.Admin.Company_Delete, Model.Id)">@archiveOrDelete</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <heading title="Name">@Model.Name</heading>
+                        <heading title="Guid">@Model.Guid</heading>
+                        <heading title="Description" Condition="!String.IsNullOrEmpty(Model.Description)">@Model.Description</heading>
+                        <heading title="Website" Condition="!String.IsNullOrEmpty(Model.Website)">@Model.Website</heading>
+                        <heading title="Notes" Condition="!String.IsNullOrEmpty(Model.Notes)">@Model.Notes</heading>
+                        <heading title="Logo" condition="!String.IsNullOrEmpty(Model.LogoPath)">
+                            @Html.Resizer().Image(Model.LogoPath, new ImageSharpCommand { Height = 50 })
+                        </heading>
+                        <heading title="Status"><label type="@Model.IsDeleted ? LabelType.Warning : LabelType.Success">@(Model.IsDeleted ? "Archived" : "Active")</label></heading>
+                    </div>
+                    <div class="col-lg-6">
+                        <heading title="Stripe Id"><a href="https://connect.stripe.com/@Html.When(!env.IsProduction(), "test/")customers/@Model.StripeId" target="_blank">@Model.StripeId</a></heading>
+                    </div>
+                </div>
+            </tab-pane>
+            <tab-pane id="2">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="float-right">
+                            <button class="btn btn-primary btn-sm js-user-add">Invite</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hide js-user-new">
+                    @await Html.PartialAsync("CompanyAdminAdd")
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-striped table-bordered table-hover js-user-table">
+                            <thead>
+                                <tr>
+                                    <th>IsNew</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th style="width: 150px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </tab-pane>
+        </tab-content>
+    </tabs-container>
+
+</page>
+@section scripts
+{
+    <script>
+        var userTable, userId, priceId;
+
+        $(function () {
+
+            $('.js-user-add').click(function () {
+                $('.js-user-add').hide();
+                $('.js-user-new').toggleClass('hide');
+                $('#@Html.IdFor(m => m.Admin.Email)').focus();
+            });
+
+            SetupUserForm();
+
+            $('.js-user-table').on('click', '.js-remove', function (e) {
+                e.preventDefault();
+                userId = $(this).data('id');
+                @Html.ModalOpen(Mvc.Admin.Company_Admin_Remove, new MenuUrlValues(Model.Id), "{ userId: userId }");
+            });
+
+            userTable = $('.js-user-table').dataTable({
+                dom: 'Tgtip',
+                "iDisplayLength": 100,
+                "order": [[1, "asc"]],
+                "serverSide": true,
+                "processing": true,
+                "serverMethod": "POST",
+                "autoWidth": false,
+                "ajax": {
+                    "url": "@Mvc.Admin.Company_Admin_List.Url(this.Url, Model.Id)",
+                },
+                "columns": [
+                    {
+                        "orderable": false,
+                        "visible": false,
+                        "data": 'isNew'
+                    },
+                    {
+                        "orderable": true,
+                        "data": "name",
+                    },
+                    {
+                        "orderable": false,
+                        "data": 'email'
+                    },
+                    {
+                        "orderable": false,
+                        "data": 'status',
+                        render: function (data, type, row) {
+                            return '<span class="label label-{0}">{1}</span>'.format(data == 'Invited' ? 'warning' : 'success', data);
+                        }
+
+                    },
+                    {
+                        "orderable": false,
+                        "data": null,
+                        render: function (data, type, row) {
+                            return '<a href="@Mvc.Admin.User_Users_Details.Url(this.Url)/' + data.userId + '" class="m-r-sm">View</a><a class="js-remove m-r-sm" href="#" data-id="' + data.userId + '">Remove</a>';
+                        }
+                    },
+                ],
+                createdRow: function (row, data, dataIndex, cells) {
+                    if (data.isNew) {
+                        $(row).css('background-color', '#fcf8e3');
+                    }
+                }
+            });
+
+        });
+
+        function SearchTable(table) {
+            var api = table.api();
+
+            //if ($('#TypeId').val() != '') {
+            //    api.column(2).search($('#TypeId').val(), false, false, false);
+            //} else {
+            //    api.column(2).search('');
+            //}
+
+            //if ($('#Payload').val() != '') {
+            //    api.column(3).search('\\b' + $('#ProductId').val() + '\\b', true, false, false);
+            //} else {
+            //    api.column(3).search('');
+            //}
+
+            //if ($('#Status').val() != '') {
+            //    api.column(5).search($('#Status').val(), false, false, false);
+            //} else {
+            //    api.column(5).search('');
+            //}
+
+            api.search($('#Search').val());
+
+            api.draw();
+        }
+
+        function SetupUserForm() {
+            $('#@Mvc.Admin.Company_Admin_Add.GetFormId()').ajaxForm({ target: '.js-user-new' });
+            $('.js-user-new #@Html.IdFor(m => m.Admin.Email)').change(function () {
+                $.getJSON('@Mvc.Admin.Company_Admin_Detail.Url(this.Url)', { id: @Model.Id, email: $(this).val() }, function (data) {
+                    if (data.id != 0) {
+                        $('.js-user-new #@Html.IdFor(m => m.Admin.Email)').val(data.email);
+                        $('.js-user-new #@Html.IdFor(m => m.Admin.FirstName)').val(data.firstName);
+                        $('.js-user-new #@Html.IdFor(m => m.Admin.LastName)').val(data.lastName);
+                    }
+                });
+            });
+            $('.js-user-cancel').click(function () {
+                $('.js-user-add').show();
+                $('.js-user-new').toggleClass('hide');
+            });
+        }
+
+
+    </script>
+}
+@section Modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.Company_Delete, Title = $"{archiveOrDelete} company", Size = ModalSize.Medium })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.Company_Admin_Remove, Title = "Remove admin", Size = ModalSize.Medium })
+}

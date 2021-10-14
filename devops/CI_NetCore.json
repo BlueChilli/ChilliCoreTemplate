@@ -1,0 +1,455 @@
+{
+  "options": [
+    {
+      "enabled": false,
+      "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+      "inputs": {
+        "branchFilters": "[\"+refs/heads/*\"]",
+        "additionalFields": "{}"
+      }
+    },
+    {
+      "enabled": false,
+      "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+      "inputs": {
+        "workItemType": "865577",
+        "assignToRequestor": "true",
+        "additionalFields": "{}"
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "branchFilters": [ "+staging" ],
+      "pathFilters": [],
+      "batchChanges": true,
+      "maxConcurrentBuildsPerBranch": 1,
+      "pollingInterval": 0,
+      "triggerType": 2
+    }
+  ],
+  "variables": {
+    "AppAddress": { "value": "https://staging.mychillicore.com" },
+    "AWS:Bucket": { "value": "chillicore-stg" },
+    "AWS:CloudFormationStack": { "value": "WebStg" },
+    "AWS:Environment": { "value": "Staging" },
+    "AWS:HealthCheckTarget": { "value": "api/server/tick" },
+    "AWS:KeyPairName": { "value": "KeyPair_chillicore_RHAa7C3x" },
+    "AWS:MaxAutoScalingSize": { "value": "1" },
+    "AWS:ReplaceAutoScalingGroup": { "value": "false" },
+    "AWS:SSLCertificateARN": { "value": "arn:aws:acm:ap-southeast-2:286745412506:certificate/bd6e99e5-f4b5-4385-aa26-5cb3f9d9f450" },
+    "BuildConfiguration": { "value": "Staging" },
+    "BuildEnvironmentFE": { "value": "staging" },
+    "BuildPlatform": { "value": "Any CPU" },
+    "system.debug": { "value": "false" },
+    "WebProjectName": { "value": "ChilliCore.Web" }
+  },
+  "retentionRules": [
+    {
+      "branches": [ "+refs/heads/*" ],
+      "artifacts": [],
+      "artifactTypesToDelete": [ "FilePath", "SymbolStore" ],
+      "daysToKeep": 10,
+      "minimumToKeep": 1,
+      "deleteBuildRecord": true,
+      "deleteTestResults": true
+    }
+  ],
+  "properties": {},
+  "tags": [],
+  "_links": {
+    "self": { "href": "https://dev.azure.com/bluechillibuild/b5bbedd9-4a57-41a7-869b-c0b5a71fe715/_apis/build/Definitions/3?revision=1" },
+    "web": { "href": "https://dev.azure.com/bluechillibuild/b5bbedd9-4a57-41a7-869b-c0b5a71fe715/_build/definition?definitionId=3" },
+    "editor": { "href": "https://dev.azure.com/bluechillibuild/b5bbedd9-4a57-41a7-869b-c0b5a71fe715/_build/designer?id=3&_a=edit-build-definition" },
+    "badge": { "href": "https://dev.azure.com/bluechillibuild/b5bbedd9-4a57-41a7-869b-c0b5a71fe715/_apis/build/status/3" }
+  },
+  "buildNumberFormat": "$(date:yyyyMMdd)$(rev:.r)",
+  "jobAuthorizationScope": 1,
+  "jobTimeoutInMinutes": 60,
+  "jobCancelTimeoutInMinutes": 5,
+  "process": {
+    "phases": [
+      {
+        "steps": [
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "App Settings (BuildConfiguration)",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "c5cac6da-5bcf-4591-a212-0377a8792c4a",
+              "versionSpec": "0.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "fileInput": "0c1d526e-8925-43a5-b6d7-b58c65ce672e",
+              "targetPath": "$(System.DefaultWorkingDirectory)\\$(WebProjectName)",
+              "targetName": ""
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Use Yarn",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "2ec1147b-5c33-41df-94b5-676758d87c1b",
+              "versionSpec": "2.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "versionSpec": "1.16.0",
+              "checkLatest": "false",
+              "includePrerelease": "false"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Yarn install",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "0888c9a9-d1b2-4567-aae2-beadcb2059b3",
+              "versionSpec": "2.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "ProjectDirectory": "front-end",
+              "Arguments": "install",
+              "ProductionMode": "false",
+              "customRegistry": "useNpmrc",
+              "customFeed": "",
+              "customEndpoint": ""
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Yarn build",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "0888c9a9-d1b2-4567-aae2-beadcb2059b3",
+              "versionSpec": "2.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "ProjectDirectory": "front-end",
+              "Arguments": "run build:$(BuildEnvironmentFE)",
+              "ProductionMode": "false",
+              "customRegistry": "useNpmrc",
+              "customFeed": "",
+              "customEndpoint": ""
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "MVC npm install",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "fe47e961-9fa8-4106-8639-368c022d43ad",
+              "versionSpec": "1.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "command": "install",
+              "workingDir": "$(WebProjectName)",
+              "verbose": "false",
+              "customCommand": "",
+              "customRegistry": "useNpmrc",
+              "customFeed": "",
+              "customEndpoint": "",
+              "publishRegistry": "useExternalRegistry",
+              "publishFeed": "",
+              "publishPackageMetadata": "true",
+              "publishEndpoint": ""
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "MVC FE Bundles",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "b82cfbe4-34f9-40f5-889e-c8842ca9dd9d",
+              "versionSpec": "0.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "gulpFile": "$(WebProjectName)\\gulpfile.js",
+              "targets": "",
+              "arguments": "",
+              "cwd": "$(System.DefaultWorkingDirectory)\\$(WebProjectName)",
+              "gulpjs": "node_modules/gulp/bin/gulp.js",
+              "publishJUnitResults": "false",
+              "testResultsFiles": "**/TEST-*.xml",
+              "testRunTitle": "",
+              "enableCodeCoverage": "false",
+              "testFramework": "Mocha",
+              "srcFiles": "",
+              "testFiles": "test/*.js"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "dotnet publish (package)",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "5541a522-603c-47ad-91fc-a4b1d163081b",
+              "versionSpec": "2.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "command": "publish",
+              "publishWebProjects": "false",
+              "projects": "$(WebProjectName)/*.csproj",
+              "custom": "",
+              "arguments": "-v normal /p:PublishProfile=Profile /p:Configuration=$(BuildConfiguration)",
+              "publishTestResults": "true",
+              "testRunTitle": "",
+              "zipAfterPublish": "false",
+              "modifyOutputPath": "false",
+              "selectOrConfig": "select",
+              "feedRestore": "",
+              "includeNuGetOrg": "true",
+              "nugetConfigPath": "",
+              "externalEndpoints": "",
+              "noCache": "false",
+              "packagesDirectory": "",
+              "verbosityRestore": "Detailed",
+              "searchPatternPush": "$(Build.ArtifactStagingDirectory)/*.nupkg",
+              "nuGetFeedType": "internal",
+              "feedPublish": "",
+              "publishPackageMetadata": "true",
+              "externalEndpoint": "",
+              "searchPatternPack": "**/*.csproj",
+              "configurationToPack": "$(BuildConfiguration)",
+              "outputDir": "$(Build.ArtifactStagingDirectory)",
+              "nobuild": "false",
+              "versioningScheme": "off",
+              "versionEnvVar": "",
+              "requestedMajorVersion": "1",
+              "requestedMinorVersion": "0",
+              "requestedPatchVersion": "0",
+              "buildProperties": "",
+              "verbosityPack": "Detailed",
+              "workingDirectory": "$(System.DefaultWorkingDirectory)\\$(WebProjectName)"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "S3 upload",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "081ccf10-2f14-48dd-9bd0-892b8975d24f",
+              "versionSpec": "1.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "awsCredentials": "3a09248e-406a-4865-8438-fb7ef4058ec9",
+              "regionName": "ap-southeast-2",
+              "awsCommand": "s3",
+              "awsSubCommand": "cp",
+              "awsArguments": "$(WebProjectName)\\obj\\$(BuildConfiguration)\\Package\\$(WebProjectName).zip s3://$(AWS:Bucket)/Deployments/$(Build.BuildNumber).zip",
+              "failOnStandardError": "false"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "CF Deploy",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "081ccf10-2f14-48dd-9bd0-892b8975d24f",
+              "versionSpec": "1.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "awsCredentials": "3a09248e-406a-4865-8438-fb7ef4058ec9",
+              "regionName": "ap-southeast-2",
+              "awsCommand": "cloudformation",
+              "awsSubCommand": "deploy",
+              "awsArguments": "--template-file ./devops/webformation.json --stack-name $(AWS:CloudFormationStack) --capabilities CAPABILITY_NAMED_IAM --parameter-overrides KeyPairName=$(AWS:KeyPairName) HealthCheckTarget=$(AWS:HealthCheckTarget) MaxAutoScalingSize=$(AWS:MaxAutoScalingSize) MinAutoScalingSize=1 SSLCertificateARN=$(AWS:SSLCertificateARN) S3Bucket=$(AWS:Bucket) Build=$(Build.BuildNumber) Env=$(AWS:Environment) ReplaceAutoScalingGroup=$(AWS:ReplaceAutoScalingGroup)",
+              "failOnStandardError": "false"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Version check",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+              "versionSpec": "2.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "targetType": "inline",
+              "filePath": "",
+              "arguments": "",
+              "script": "$versionUrl = \"$(AppAddress)\".TrimEnd(\"/\")\n$versionUrl = $versionUrl + \"/version_check_$(Build.BuildNumber).txt\"\nfunction TestUrl([string]$url) {\n    $HTTP_Response = $null\n    try {\n        $HTTP_Request = [System.Net.WebRequest]::Create($url)\n        $HTTP_Response = $HTTP_Request.GetResponse()\n        $HTTP_Status = [int]$HTTP_Response.StatusCode\n        If ($HTTP_Status -eq 200) {\n            return $true\n        }\n    }\n    catch {        \n    }\n    finally {\n        if ($HTTP_Response) {\n            $HTTP_Response.Close()\n        }        \n    }\n    return $false    \n}\nfunction TestUrlDelay([string]$url, [int]$times, [int]$delay) {\n    [int]$count = 0;\n    while ($count -lt $times) {\n        Write-Host $delay second delay\n        Start-Sleep $delay        \n        Write-Host Pinging $url\n        if (TestUrl $url) {\n            return $true;    \n        }\n        $count = $count + 1\n    }\n    return $false;\n}\n$online = TestUrlDelay $versionUrl 8 15\nif ($online) {\n    Write-Host $versionUrl found\n    Exit 0\n}\nelse {\n    Write-Host $versionUrl not found\n    Exit 404\n}",
+              "errorActionPreference": "stop",
+              "failOnStderr": "false",
+              "ignoreLASTEXITCODE": "false",
+              "pwsh": "false",
+              "workingDirectory": ""
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Git Cleanup",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "d9bafed4-0b18-4f58-968d-86655b4d2ce9",
+              "versionSpec": "2.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "script": "git reset --hard HEAD\n",
+              "workingDirectory": "$(System.DefaultWorkingDirectory)",
+              "failOnStderr": "false"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Clean Binaries",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "b7e8b412-0437-4065-9371-edc5881de25b",
+              "versionSpec": "1.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "SourceFolder": "$(System.DefaultWorkingDirectory)",
+              "Contents": "**\\bin"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Cleanup Output",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "b7e8b412-0437-4065-9371-edc5881de25b",
+              "versionSpec": "1.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "SourceFolder": "$(build.artifactstagingdirectory)",
+              "Contents": "*.*"
+            }
+          }
+        ],
+        "name": "Master",
+        "refName": "Job_1",
+        "condition": "succeeded()",
+        "target": {
+          "executionOptions": { "type": 0 },
+          "allowScriptsAuthAccessOption": false,
+          "type": 1
+        },
+        "jobAuthorizationScope": 1
+      }
+    ],
+    "type": 1
+  },
+  "repository": {
+    "properties": {
+      "apiUrl": "https://api.bitbucket.org/2.0/repositories/bluechilli/chillicore",
+      "cloneUrl": "https://bitbucket.org/bluechilli/chillicore.git",
+      "fullName": "bluechilli/chillicore",
+      "defaultBranch": "develop",
+      "connectedServiceId": "60e92fe8-84bf-4088-a20a-a9eb641c28b5",
+      "isPrivate": "True",
+      "checkoutNestedSubmodules": "false",
+      "cleanOptions": "3",
+      "fetchDepth": "0",
+      "gitLfsSupport": "false",
+      "reportBuildStatus": "true",
+      "skipSyncSource": "false",
+      "labelSourcesFormat": "$(build.buildNumber)",
+      "labelSources": "0"
+    },
+    "id": "bluechilli/chillicore",
+    "type": "Bitbucket",
+    "name": "bluechilli/chillicore",
+    "url": "https://bitbucket.org/bluechilli/chillicore.git",
+    "defaultBranch": "staging",
+    "clean": "true",
+    "checkoutSubmodules": false
+  },
+  "processParameters": {},
+  "quality": 1,
+  "authoredBy": {
+    "displayName": "will",
+    "url": "https://spsprodeau1.vssps.visualstudio.com/A6fa09aeb-dbb7-4a19-8165-5244182c270e/_apis/Identities/49b0ff05-1cc6-685e-aa08-1e69b60638aa",
+    "_links": { "avatar": { "href": "https://dev.azure.com/bluechillibuild/_apis/GraphProfile/MemberAvatars/aad.NDliMGZmMDUtMWNjNi03ODVlLWFhMDgtMWU2OWI2MDYzOGFh" } },
+    "id": "49b0ff05-1cc6-685e-aa08-1e69b60638aa",
+    "uniqueName": "will@bluechilli.com",
+    "imageUrl": "https://dev.azure.com/bluechillibuild/_apis/GraphProfile/MemberAvatars/aad.NDliMGZmMDUtMWNjNi03ODVlLWFhMDgtMWU2OWI2MDYzOGFh",
+    "descriptor": "aad.NDliMGZmMDUtMWNjNi03ODVlLWFhMDgtMWU2OWI2MDYzOGFh"
+  },
+  "drafts": [],
+  "queue": {
+    "_links": { "self": { "href": "https://dev.azure.com/bluechillibuild/_apis/build/Queues/9" } },
+    "id": 9,
+    "name": "ChilliCoreAgent",
+    "url": "https://dev.azure.com/bluechillibuild/_apis/build/Queues/9",
+    "pool": {
+      "id": 9,
+      "name": "ChilliCoreAgent"
+    }
+  },
+  "id": 3,
+  "name": "Staging",
+  "url": "https://dev.azure.com/bluechillibuild/b5bbedd9-4a57-41a7-869b-c0b5a71fe715/_apis/build/Definitions/3?revision=1",
+  "uri": "vstfs:///Build/Definition/3",
+  "path": "\\",
+  "type": 2,
+  "queueStatus": 0,
+  "revision": 1,
+  "createdDate": "2019-05-21T02:14:40.717Z" 
+}

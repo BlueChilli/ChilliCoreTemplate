@@ -1,0 +1,27 @@
+@model IFieldInnerTemplateModel<SelectFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    var optGroup = "";
+}
+<select id="@Model.Id" name="@Model.Name" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+    @foreach (var option in Model.Options.SelectList)
+    {
+        if (option.Group != null)
+        {
+            if (optGroup != option.Group.Name)
+            {
+                if (!String.IsNullOrEmpty(optGroup))
+                {
+                    @:</optGroup>
+                }
+                optGroup = option.Group.Name;
+                @:<optgroup label="@optGroup">
+                }
+            }
+            <!option value="@option.Value" @(Html.When(option.Selected, "selected" ))>@option.Text</!option>
+        }
+    @if (!String.IsNullOrEmpty(optGroup))
+    {
+    @:</optgroup>
+}
+</select>

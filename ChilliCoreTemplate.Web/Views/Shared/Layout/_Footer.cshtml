@@ -1,0 +1,20 @@
+@inject ProjectSettings config
+@inject IWebHostEnvironment env;
+
+<div class="footer">
+    <div class="float-right">
+        <div class="m-t-n-xs">
+            @if (!env.IsProduction())
+            {
+                @env.EnvironmentName
+            }
+            else
+            {
+                @DateTime.UtcNow.ToString("dddd dd MMM yyyy")
+            }
+        </div>
+    </div>
+    <div>
+        Copyright <strong>@config.ProjectDisplayName &copy; @DateTime.UtcNow.Year</strong>
+    </div>
+</div>

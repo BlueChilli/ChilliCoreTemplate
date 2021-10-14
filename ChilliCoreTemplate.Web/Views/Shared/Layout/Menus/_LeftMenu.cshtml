@@ -1,0 +1,25 @@
+@model MenuElement
+@{
+    var children = Model.GetChildren().Where(a => !a.MenuHidden).ToList();
+}
+
+@if (children.Count == 0)
+{
+    <li class="@Html.When(Model.IsActive, "active")">
+        <a href="@Model.Url">@await Html.PartialAsync("Layout/Menus/_MenuIcon", Model.Icon) <span class="nav-label">@Model.Title</span> </a>
+    </li>
+}
+else
+{
+    <li class="@Html.When(Model.IsActive, "active")">
+        <a href="#">@await Html.PartialAsync("Layout/Menus/_MenuIcon", Model.Icon) <span class="nav-label">@Model.Title</span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0px;">
+            @foreach (var child in children)
+            {
+                <li class="@Html.When(child.IsActive, "active")">
+                    <a href="@child.Url">@await Html.PartialAsync("Layout/Menus/_MenuIcon", child.Icon) @child.Title </a>
+                </li>
+            }
+        </ul>
+    </li>
+}

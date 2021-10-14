@@ -1,0 +1,28 @@
+@model RazorTemplateDataModel<string>
+@inject ProjectSettings config
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Model.Subject = @"Your email address is not registered";
+    Model.EmailPreview = "Are you sure you're using the correct email address?";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+    var loginUrl = Mvc.Root.EmailAccount_Login.Url(this.Url, protocol: "https");
+    var emailSection = config.EmailTemplate;
+}
+@section Header
+    {
+    @using (builder.BeginHeader(rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+    {
+        @builder.H1("Your email address is not registered")
+        @builder.H2("You may not be using the correct email address to sign in.")
+    }
+}
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.Bottom, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    using (builder.BeginP())
+    {
+        @:You're receiving this message because your email address @Model.Data was used to login to @Model.CompanyName, but no account exists for that email address.
+    }
+    @builder.P(String.Format("You might have typed your email address in wrong, in which case you can try signing in again by clicking the button below.", Model, Model.CompanyName))
+    @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, loginUrl, "Sign in")
+    @builder.P(String.Format("If you did not try signing in, then you can email us at {0} or simply disregard this email.", emailSection.Email))
+}

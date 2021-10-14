@@ -1,0 +1,170 @@
+using ChilliSource.Cloud.Web;
+using ChilliSource.Cloud.Web.MVC;
+using Humanizer;
+using Microsoft.AspNetCore.Mvc;
+using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Service;
+using ChilliCoreTemplate.Web;
+using ChilliCoreTemplate.Web.Controllers;
+using System.Linq;
+using DataTables.AspNet.Core;
+using System.Collections.Generic;
+using ChilliCoreTemplate.Models.EmailAccount;
+using DataTables.AspNet.AspNetCore;
+using ChilliCoreTemplate.Models.Api;
+
+namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
+{
+
+    [Area("Admin")]
+    [RequireHttpsWeb, CustomAuthorize(Roles = AccountCommon.Administrator)]
+    public class CompanyController : Controller
+    {
+        private Services _services;
+
+        public CompanyController(Services services)
+        {
+            _services = services;
+        }
+
+        public ActionResult Index()
+        {
+            return Mvc.Admin.Company_List.Redirect(this);
+        }
+
+        public ActionResult List()
+        {
+            return this.ServiceCall(() => _services.Company_List())
+                .Always(m => { return View("CompanyList", m); })
+                .Call();
+        }
+
+        public JsonResult Select2Query(string searchTerm, ApiPaging paging, int? id = null)
+        {
+            var companies = _services.Company_List(searchTerm, paging, id);
+
+            return Json(new Select2QueryModel<CompanyViewModel, object>(companies, x => new { id = x.Id, text = x.Name }));
+        }
+
+        public ActionResult Detail(int id)
+        {
+            return this.ServiceCall(() => _services.Company_Get(id))
+                .Always(m => { return View("CompanyDetail", m); })
+                .Call();
+        }
+
+        public ActionResult Edit(int? id = null)
+        {
+            return this.ServiceCall(() => _services.Company_GetForEdit(id))
+                .Always(m => { return View("CompanyEdit", m); })
+                .Call();
+        }
+
+        [HttpPost]
+        public ActionResult Edit([FromForm]CompanyEditModel model)
+        {
+            return this.ServiceCall(() => _services.Company_Edit(model))
+                .OnSuccess(m =>
+                {
+                    TempData[PageMessage.Key()] = PageMessage.Success("Company {0} has been successfully {1}.".FormatWith(m.Name, model.Id == 0 ? "created" : "saved"));
+                    return Mvc.Admin.Company_List.Redirect(this);
+                })
+                .OnFailure(() => Edit(model.Id))
+                .Call();
+        }
+
+        public ActionResult Delete(int id)
+        {
+            return this.ServiceCall(() => _services.Company_Get(id))
+                .Always(m =>
+                {
+                    return PartialView("CompanyDelete", m);
+                })
+                .Call();
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public ActionResult DeletePost(int id)
+        {
+            return this.ServiceCall(() => _services.Company_Delete(id))
+                .OnSuccess(m =>
+                {
+                    TempData[PageMessage.Key()] = PageMessage.Success($"The company {m.Name} was {(m.IsDeleted ? "deleted" : "unarchived")}");
+                    return Mvc.Admin.Company_List.Redirect(this);
+                })
+                .OnFailure(() => Delete(id))
+                .Call();
+        }
+
+        [HttpPost]
+        public IActionResult AdminList(IDataTablesRequest model, int id)
+        {
+            var data = _services.Company_Admin_List(model, id, Role.CompanyAdmin);
+            var count = _services.Company_Admin_Count(id, Role.CompanyAdmin);
+
+            return new DataTablesJsonResult(DataTablesResponse.Create(model, count, data.TotalCount, data.ToList()), true);
+        }
+
+        [HttpPost]
+        public ActionResult AdminAdd([FromForm] CompanyDetailViewModel model)
+        {
+            model.Admin.InviteRole = new InviteRoleViewModel { CompanyId = model.Id, Role = Role.CompanyAdmin };
+            return this.ServiceCall(() => _services.Company_Admin_Add(model.Id, model.Admin))
+                .OnSuccess(m =>
+                {
+                    ModelState.Clear();
+                    return PartialView("CompanyAdminAdd", m);
+                })
+                .OnFailure(() =>
+                {
+                    model = _services.Company_Get(model.Id).Result;
+                    return PartialView("CompanyAdminAdd", model);
+                })
+                .Call();
+        }
+
+        public ActionResult AdminRemove(int id, int userId)
+        {
+            return this.ServiceCall(() => _services.Company_Admin_Get(id, userId))
+                .Always(m =>
+                {
+                    return PartialView("CompanyAdminDelete", m);
+                })
+                .Call();
+        }
+
+        [HttpPost, ActionName("AdminRemove")]
+        public ActionResult AdminRemovePost(int id, int userId)
+        {
+            return this.ServiceCall(() => _services.Company_Admin_Delete(id, userId))
+                .OnSuccess(() => { return Ok(); })
+                .OnFailure(() => AdminRemove(id, userId))
+                .Call();
+        }
+
+        public JsonResult AdminDetail(int id, string email)
+        {
+            var workerDetails = _services.Company_Admin_Details(id, email, Role.CompanyAdmin);
+            return Json(workerDetails);
+        }
+
+
+        [HttpPost]
+        public ActionResult Impersonate(int id)
+        {
+            return this.ServiceCall(() => _services.Company_Impersonate(id, this.LoginWithPrincipal))
+                .OnSuccess(m =>
+                {
+                    return Mvc.Root.Entry_ImpersonateRedirect.Redirect(this);
+                })
+                .OnFailure(() =>
+                {
+                    TempData[PageMessage.Key()] = PageMessage.Warning(ModelState.Errors().First().Value.First());
+                    return Mvc.Admin.Company_List.Redirect(this);
+                })
+                .Call();
+
+        }
+
+    }
+}

@@ -1,0 +1,55 @@
+@model ChangeAccountRoleModel
+@using (Html.BeginFormCustom(Mvc.Admin.User_ChangeRole))
+{
+    <div class="modal-body">
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.Id)
+        <div class="form-group">
+            @await Html.FieldTemplateForAsync(model => model.Role, options: new TemplateOptions { Template = FieldTemplateLayouts.ModalField }, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.RoleList })
+
+            <div id="CompanyDetails" class="hide">
+                @await Html.FieldTemplateForAsync(m => m.CompanyId, new TemplateOptions { Template = FieldTemplateLayouts.ModalField, IsMandatory = true }, fieldOptions: new SelectFieldTemplateOptions())
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync("Submit")
+        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+    </div>
+}
+<script>
+    $('#@Mvc.Admin.User_ChangeRole.GetFormId()').ajaxForm({ target: '#@Mvc.Admin.User_ChangeRole.GetModalId()_content' });
+
+    $('#@Html.IdFor(m => m.CompanyId)').select2({
+        width: '100%',
+        placeholder: 'Select company',
+        dropdownParent: $("#@Mvc.Admin.User_ChangeRole.GetModalId()"),
+        ajax: {
+            url: '@Url.Action("Select2Query", "Company")',
+            cache: false,
+            dataType: 'json',
+            type: 'GET',
+            delay: 250,
+            params: { contentType: "application/json" },
+            data: function (params) {
+                params["searchTerm"] = params.term = params.term || '';
+                params["PageSize"] = 15;
+                params["PageNumber"] = params.page = params.page || 1;
+                return params;
+            }
+        },
+        templateSelection: function (item) { return item.text; },
+        templateResult: function (state) {
+            if(!state.id) {
+                return state.text;
+            }
+
+            var $state = $(
+                '<span>' + state.id + ' | ' + state.text + '</span>'
+            );
+            return $state;
+        }
+    });
+
+</script>

@@ -1,0 +1,19 @@
+@model ChangeUserStatusModel
+@using (Html.BeginFormCustom(Mvc.Admin.User_ChangeStatus))
+{
+    <div class="modal-body">
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.Id)
+        <div class="form-group">
+            @await Html.FieldTemplateForAsync(model => model.Status)
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync("Submit")
+        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+    </div>
+}
+<script>
+    $('#@Mvc.Admin.User_ChangeStatus.GetFormId()').ajaxForm({ target: '#@Mvc.Admin.User_ChangeStatus.GetModalId()_content' });        
+</script>

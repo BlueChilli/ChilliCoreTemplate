@@ -1,0 +1,48 @@
+@model IFieldInnerTemplateModel<HtmlFieldTemplateOptions>
+@{
+    var options = Model.Options;
+    var jsId = $"summernote-{Model.Id.ToLower().Replace("_", "-")}";
+    var isCharactersLeft = (bool?)Model.HtmlAttributes["charactersleft"];
+    var maxLength = (int?)Model.HtmlAttributes["maxlength"];
+}
+<input id="@Model.Id" name="@Model.Name" value="@Model.Value" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+<div class="@jsId">@Html.Raw(Model.Value)</div>
+@if (isCharactersLeft.GetValueOrDefault(false))
+{
+    <h6 class="float-right js-characters-left-@jsId"></h6>
+}
+@if (Model.Options.AutoWireUpJavascript)
+{
+    @Html.RegisterCustomScripts(
+    @<script>
+        $(function () {
+            $('.@jsId').summernote({
+                height: 200,
+                toolbar: @options.ToolbarJson(),
+                placeholder: $('#@Model.Id').attr('placeholder'),
+                dialogsInBody: @(options.IsInModal ? "true" : "false"),
+                callbacks: {
+                    onChange: function(contents, $editable) {
+                        $('#@Model.Id').val($('.@jsId').summernote('code'));
+                    },
+                    onPaste: function (e) {
+                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                        e.preventDefault();
+                        bufferText = bufferText.replace(/\r?\n/g, '<br>');
+                        document.execCommand('insertHtml', false, bufferText);
+                    },
+                    @if(maxLength.GetValueOrDefault(0) > 0)
+                    {
+                        @:onKeydown: function (e) { t = e.currentTarget.innerHTML; if (t.trim().length >= @maxLength.Value && e.keyCode != 8) e.preventDefault(); },
+                    }
+                    @if(isCharactersLeft.GetValueOrDefault(false))
+                    {
+                        @:onKeyup: function (e) { var t = e.currentTarget.innerHTML; $('.js-characters-left-@jsId').text(@maxLength.Value - t.trim().length + ' characters left'); },
+                        @:onInit: function () { var t = this.innerHTML; $('.js-characters-left-@jsId').text(@maxLength.Value - t.trim().length + ' characters left'); }
+                    }
+                }
+            });
+        });
+</script>
+    )
+}

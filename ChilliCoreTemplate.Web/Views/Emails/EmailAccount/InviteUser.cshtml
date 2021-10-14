@@ -1,0 +1,43 @@
+@model RazorTemplateDataModel<InviteEditModel>
+@inject ProjectSettings config
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Model.Subject = String.Format("You have been invited to join {0}", Model.CompanyName);
+    Model.EmailPreview = "Inside are instructions to access your account";
+
+    var data = new EmailTokenModel { Email = Model.Data.Email, Token = Model.Data.Token };
+    var url = Model.Data.InviteRole.Role.Value.HasFlag(Role.User)
+        ? config.ResolveUrl("~/users/acceptInvite", data)
+        : Mvc.Root.EmailAccount_ConfirmInvite.Url(this.Url, routeValues: data, protocol: "https");
+
+    var forgotPasswordUrl = Model.Data.InviteRole.Role.Value.HasFlag(Role.User)
+        ? config.ResolveUrl("~/users/forgot-password", new { Email = Model.Data.Email })
+        : Mvc.Root.EmailAccount_ForgotPassword.Url(this.Url, routeValues: new { Email = Model.Data.Email }, protocol: "https");
+
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+}
+
+@section Header
+{
+    @using (builder.BeginHeader())
+    {
+        @builder.H1(String.Format("You've been invited as a {0} for {1}", Model.Data.InviteRole.Role.Value.GetDescription(), Model.CompanyName))
+        using (builder.BeginH2())
+        {
+            if (String.IsNullOrEmpty(Model.Data.Inviter))
+            {
+                <text>You're receiving this email because you have been invited to @Model.CompanyName.</text>
+            }
+            else
+            {
+                <text>You're receiving this email because @Model.Data.Inviter has invited you to @Model.CompanyName.</text>
+            }
+            @:<br /><br />To set your password and start using @Model.CompanyName click on the button below.
+        }
+        @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, url, "Set password")
+    }
+}
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    @:For your security, this link expires in 7 days, so if you’ve taken longer than that, click <a target="_blank" href="@forgotPasswordUrl">here</a> to receive a reset password email.
+}

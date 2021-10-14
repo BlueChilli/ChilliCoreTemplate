@@ -1,0 +1,59 @@
+@model ErrorLogExpandedModel
+@{
+    Layout = null;
+    var heading = "Error details";
+    if (Model.Properties.ContainsKey("HttpRequestRawUrl")) { heading = Model.Properties["HttpRequestRawUrl"].ToString(); }
+    else if (Model.Properties.ContainsKey("ExceptionMessage")) { heading = Model.Properties["ExceptionMessage"].ToString(); }
+}
+<style>
+    tr td:first-child {
+        vertical-align: top;
+        padding-right: 5px;
+    }
+    tr {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+</style>
+<div class="modal-body">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <b>@heading</b>
+        </div>
+        <div class="panel-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model.GetFlattenProperties())
+                    {
+                        if (item.Property != "HttpRequestRawUrl")
+                        {
+                            <tr>
+                                <td>
+                                    @for (var i = 0; i < item.Level; i++)
+                                    {
+                                        <i class="fa fa-chevron-right"></i>
+                                    }
+                                    @item.Property
+                                </td>
+                                <td>@item.Value</td>
+                            </tr>
+                        }
+                    }
+                    <tr>
+                        <td>Stack trace</td>
+                        <td style="white-space: pre-line">@Model.Exception</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+</div>

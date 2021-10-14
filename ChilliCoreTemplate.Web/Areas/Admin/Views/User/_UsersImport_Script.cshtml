@@ -1,0 +1,24 @@
+<script>
+    $(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green'
+        });
+
+        $('#Roles_CompanyAdmin').on('ifChecked', function () {
+            $('#CompanyDetails').show();
+        });
+
+        $('#Roles_User').on('ifChecked', function () {
+            $('#CompanyDetails').hide();
+        });
+
+        $('#Roles_Admin').on('ifChecked', function () {
+            $('#CompanyDetails').hide();
+        });
+
+        $('#@Mvc.Admin.User_Import.GetFormId()').ajaxForm({ target: '#form-content', useFormData: true }).done(function () {
+            window.location = '@Mvc.Admin.User_ImportResult.Url(this.Url)';
+        });
+    });
+</script>

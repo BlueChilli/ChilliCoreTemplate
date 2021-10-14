@@ -1,0 +1,57 @@
+@*@model EmailUnsubscribeModel
+
+@if (Model == null)
+{
+    <h3 class="m-t-md m-b-xl">The email you tried to unsubscribe from was not found</h3>
+}
+else
+{
+    <h3 class="m-t-md m-b-xl">Unsubscribe to @Model.TemplateId.SplitByUppercase() email</h3>
+
+    if (TempData.ContainsKey(Template_PageMessage.Success))
+    {
+        @Html.Template(TemplateType.PageMessage)
+
+        <a class="btn btn-primary btn-lg full-width m-b" href="@Menu.Public.Url()">Continue</a>
+    }
+    else
+    {
+        using (Html.BeginForm(Menu.EmailAccount_EmailUnsubscribe))
+        {
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.TemplateId)
+            <div class="form-group">
+                @Html.FieldTemplateInnerFor(m => m.Recipient, htmlAttributes: new { @class = "input-lg", placeholder = "Email" })
+            </div>
+            <div class="form-group">
+                @Html.FieldTemplateInnerFor(m => m.Reason, htmlAttributes: new { @class = "input-lg" })
+            </div>
+            <div class="form-group js-reason-other" style="@Html.When(Html.GetModelStateValue(m => m.Reason) != EmailUnsubscribeReason.Other, "display:none")">
+                @Html.FieldTemplateInnerFor(m => m.ReasonOther, htmlAttributes: new { @class = "input-lg" })
+            </div>
+            <button type="submit" class="btn btn-danger btn-lg full-width m-b">Unsubscribe</button>
+
+            <a href="@Menu.Public.Url()">Don't want to unsubscribe? Click here</a>
+        }
+    }
+}
+
+
+@section scripts
+{
+    <script>
+        $(function () {
+
+            $('#@Html.IdFor(m => m.Reason)').change(function () {
+                var other = $('.js-reason-other')
+                if ($(this).val() == '@EmailUnsubscribeReason.Other') {
+                    other.show();
+                } else {
+                    other.hide();
+                }
+            });
+
+        });
+    </script>
+}*@

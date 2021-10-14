@@ -1,0 +1,26 @@
+@model RazorTemplateDataModel<EmailTokenModel>
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+
+    Model.Subject = String.Format("Forgot your {0} PIN?", Model.CompanyName);
+    Model.EmailPreview = "No worries inside is your new temporary PIN!";
+}
+@section Header
+{
+    @using (builder.BeginHeader())
+    {
+        @builder.H1("Forgot your PIN?")
+        @builder.H2(String.Format("You have indicated that you have forgotten your {0} PIN. We have reset it so that your temporary PIN is <strong>{1}</strong>, please use this to log in", Model.CompanyName, Model.Data.Token));
+    }
+}
+
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.Bottom, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    using (builder.BeginP())
+    {
+        <text>
+            For your security the temporary PIN can only be used once. You will be asked to change your PIN after you login.
+        </text>
+    }
+}

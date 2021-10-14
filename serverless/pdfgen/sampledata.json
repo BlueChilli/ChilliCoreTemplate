@@ -1,0 +1,117 @@
+{
+	"resource": "/pdfgen",
+	"path": "/pdfgen",
+	"httpMethod": "POST",
+	"headers": {
+		"Accept": "*/*",
+		"Accept-Encoding": "gzip, deflate",
+		"cache-control": "no-cache",
+		"CloudFront-Forwarded-Proto": "https",
+		"CloudFront-Is-Desktop-Viewer": "true",
+		"CloudFront-Is-Mobile-Viewer": "false",
+		"CloudFront-Is-SmartTV-Viewer": "false",
+		"CloudFront-Is-Tablet-Viewer": "false",
+		"CloudFront-Viewer-Country": "AU",
+		"Content-Type": "application/json",
+		"Host": "y9tqx2outj.execute-api.ap-southeast-2.amazonaws.com",
+		"User-Agent": "PostmanRuntime/7.1.1",
+		"Via": "1.1 2d39749f0342007f9798eeb0800f8a0f.cloudfront.net (CloudFront)",
+		"X-Amz-Cf-Id": "x3gjsvljhjFqGiklpuafrGVoVxHSfji7aJuJnbfUi3RTyXoOkmvNRA==",
+		"X-Amzn-Trace-Id": "Root=1-5d490568-49c760cb96a5ece1888efbc2",
+		"X-Forwarded-For": "59.167.225.189, 70.132.29.36",
+		"X-Forwarded-Port": "443",
+		"X-Forwarded-Proto": "https"
+	},
+	"multiValueHeaders": {
+		"Accept": [
+			"*/*"
+		],
+		"Accept-Encoding": [
+			"gzip, deflate"
+		],
+		"cache-control": [
+			"no-cache"
+		],
+		"CloudFront-Forwarded-Proto": [
+			"https"
+		],
+		"CloudFront-Is-Desktop-Viewer": [
+			"true"
+		],
+		"CloudFront-Is-Mobile-Viewer": [
+			"false"
+		],
+		"CloudFront-Is-SmartTV-Viewer": [
+			"false"
+		],
+		"CloudFront-Is-Tablet-Viewer": [
+			"false"
+		],
+		"CloudFront-Viewer-Country": [
+			"AU"
+		],
+		"Content-Type": [
+			"application/json"
+		],
+		"Host": [
+			"y9tqx2outj.execute-api.ap-southeast-2.amazonaws.com"
+		],
+		"User-Agent": [
+			"PostmanRuntime/7.1.1"
+		],
+		"Via": [
+			"1.1 2d39749f0342007f9798eeb0800f8a0f.cloudfront.net (CloudFront)"
+		],
+		"X-Amz-Cf-Id": [
+			"x3gjsvljhjFqGiklpuafrGVoVxHSfji7aJuJnbfUi3RTyXoOkmvNRA=="
+		],
+		"X-Amzn-Trace-Id": [
+			"Root=1-5d490568-49c760cb96a5ece1888efbc2"
+		],
+		"X-Forwarded-For": [
+			"59.167.225.189, 70.132.29.36"
+		],
+		"X-Forwarded-Port": [
+			"443"
+		],
+		"X-Forwarded-Proto": [
+			"https"
+		]
+	},
+	"queryStringParameters": null,
+	"multiValueQueryStringParameters": null,
+	"pathParameters": null,
+	"stageVariables": null,
+	"requestContext": {
+		"resourceId": "mfhzga",
+		"resourcePath": "/pdfgen",
+		"httpMethod": "POST",
+		"extendedRequestId": "d-3ISEA7SwMFdDA=",
+		"requestTime": "06/Aug/2019:04:43:20 +0000",
+		"path": "/dev/pdfgen",
+		"accountId": "151503054156",
+		"protocol": "HTTP/1.1",
+		"stage": "dev",
+		"domainPrefix": "y9tqx2outj",
+		"requestTimeEpoch": 1565066600224,
+		"requestId": "b7111286-b804-11e9-9fb2-e1fb2b2828d0",
+		"identity": {
+			"cognitoIdentityPoolId": null,
+			"accountId": null,
+			"cognitoIdentityId": null,
+			"caller": null,
+			"sourceIp": "59.167.225.189",
+			"principalOrgId": null,
+			"accessKey": null,
+			"cognitoAuthenticationType": null,
+			"cognitoAuthenticationProvider": null,
+			"userArn": null,
+			"userAgent": "PostmanRuntime/7.1.1",
+			"user": null
+		},
+		"domainName": "y9tqx2outj.execute-api.ap-southeast-2.amazonaws.com",
+		"apiId": "y9tqx2outj"
+	},
+	"body": "{\"htmlBase64\" : \"PGJvZHk+SGVsbG8gd29ybGQ8L2JvZHk+\"}",
+	"isBase64Encoded": false
+}

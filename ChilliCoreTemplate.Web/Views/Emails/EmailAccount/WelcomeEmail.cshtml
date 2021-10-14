@@ -1,0 +1,38 @@
+@model RazorTemplateDataModel<RegistrationCompleteViewModel>
+@inject ProjectSettings config
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Model.Subject = String.Format("Complete your {0} sign up", Model.CompanyName);
+    Model.EmailPreview = config.UserConfirmationMethod == UserConfirmationMethod.Link ? "please verify your email address" : "please read the onboarding instructions carefully";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+    var data = new EmailTokenModel { Email = Model.Data.Email, Token = Model.Data.Token };
+    var url = Mvc.Root.EmailAccount_RegistrationComplete.Url(this.Url, routeValues: data, protocol: "https"); //config.ResolveUrl("~/users/confirmemail", data)
+}
+@section Header
+    {
+    @using (builder.BeginHeader(rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+    {
+        @builder.H1(String.Format("Welcome to {0}", Model.CompanyName))
+    }
+}
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    using (builder.BeginP())
+    {
+        @:Hi @Model.Data.FirstName,
+    }
+    using (builder.BeginP())
+    {
+        @:Thank you for signing up to @Model.Site.
+    }
+
+    if (config.UserConfirmationMethod == UserConfirmationMethod.Link)
+    {
+        using (builder.BeginP())
+        {
+            @:To get started, verify your email below.
+        }
+        @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, url, "Verify email address")
+    }
+
+}

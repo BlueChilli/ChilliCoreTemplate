@@ -1,0 +1,36 @@
+@{
+    bool hasDynamic = false;
+}
+@foreach (var key in TempData.Keys)
+{
+    if (key.StartsWith("PageMessage_"))
+    {
+        var message = ((string)TempData[key]).FromJson<PageMessage>();
+        if (!message.IsStatic) { hasDynamic = true; }
+        <div class="alert alert-@message.MessageClass alert-dismissable m-t-xs" id="@Html.When(!message.IsStatic, "js-page-message")">
+            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">&#215;</button>
+            @if (message.IsHtml)
+            {
+                @Html.Raw(message.Message)
+            }
+            else
+            {
+                @message.Message
+            }
+        </div>
+    }
+}
+@if (hasDynamic)
+{
+    @Html.RegisterCustomSection(
+        "scripts",
+        new Guid("8256BBE9-6A9D-493F-A1F6-2EA662BB8A56"),
+            @<script>
+                    window.setTimeout(function () {
+                        $("#js-page-message").fadeTo(400, 0).slideUp(400, function () {
+                            $(this).remove();
+                        });
+                    }, 4000);
+            </script>
+);
+}

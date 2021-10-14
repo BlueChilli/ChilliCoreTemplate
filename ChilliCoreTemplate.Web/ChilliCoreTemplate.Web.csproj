@@ -1,0 +1,177 @@
+﻿<Project>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <LangVersion>latest</LangVersion>
+    <Configurations>Debug;Release;Staging;Develop</Configurations>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.Web" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.Web" />
+
+  <PropertyGroup>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>1591;</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(ProjectName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="localstorage\**" />
+    <Compile Remove="logs\**" />
+    <Compile Remove="node_modules\**" />
+    <Compile Remove="wwwroot\is-cache\**" />
+    <Compile Remove="wwwroot\lib\%40fortawesome\**" />
+    <Compile Remove="wwwroot\lib\**" />
+    <Compile Remove="wwwroot\lib\bootstrap-datepicker\**" />
+    <Compile Remove="wwwroot\lib\bootstrap\**" />
+    <Compile Remove="wwwroot\lib\chosen-js\**" />
+    <Compile Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <Compile Remove="wwwroot\lib\jquery-validation\**" />
+    <Compile Remove="wwwroot\lib\jquery\**" />
+    <Compile Remove="wwwroot\lib\popper.js\**" />
+    <Compile Remove="wwwroot\lib\summernote\**" />
+    <Compile Remove="wwwroot\Styles\Inspinia_old\**" />
+    <Content Remove="localstorage\**" />
+    <Content Remove="logs\**" />
+    <Content Remove="node_modules\**" />
+    <Content Remove="wwwroot\is-cache\**" />
+    <Content Remove="wwwroot\lib\%40fortawesome\**" />
+    <Content Remove="wwwroot\lib\**" />
+    <Content Remove="wwwroot\lib\bootstrap-datepicker\**" />
+    <Content Remove="wwwroot\lib\bootstrap\**" />
+    <Content Remove="wwwroot\lib\chosen-js\**" />
+    <Content Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <Content Remove="wwwroot\lib\jquery-validation\**" />
+    <Content Remove="wwwroot\lib\jquery\**" />
+    <Content Remove="wwwroot\lib\popper.js\**" />
+    <Content Remove="wwwroot\lib\summernote\**" />
+    <Content Remove="wwwroot\Styles\Inspinia_old\**" />
+    <EmbeddedResource Remove="localstorage\**" />
+    <EmbeddedResource Remove="logs\**" />
+    <EmbeddedResource Remove="wwwroot\is-cache\**" />
+    <EmbeddedResource Remove="wwwroot\lib\%40fortawesome\**" />
+    <EmbeddedResource Remove="wwwroot\lib\**" />
+    <EmbeddedResource Remove="wwwroot\lib\bootstrap-datepicker\**" />
+    <EmbeddedResource Remove="wwwroot\lib\bootstrap\**" />
+    <EmbeddedResource Remove="wwwroot\lib\chosen-js\**" />
+    <EmbeddedResource Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <EmbeddedResource Remove="wwwroot\lib\jquery-validation\**" />
+    <EmbeddedResource Remove="wwwroot\lib\jquery\**" />
+    <EmbeddedResource Remove="wwwroot\lib\popper.js\**" />
+    <EmbeddedResource Remove="wwwroot\lib\summernote\**" />
+    <EmbeddedResource Remove="wwwroot\Styles\Inspinia_old\**" />
+    <None Remove="localstorage\**" />
+    <None Remove="logs\**" />
+    <None Remove="node_modules\**" />
+    <None Remove="wwwroot\is-cache\**" />
+    <None Remove="wwwroot\lib\%40fortawesome\**" />
+    <None Remove="wwwroot\lib\**" />
+    <None Remove="wwwroot\lib\bootstrap-datepicker\**" />
+    <None Remove="wwwroot\lib\bootstrap\**" />
+    <None Remove="wwwroot\lib\chosen-js\**" />
+    <None Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
+    <None Remove="wwwroot\lib\jquery-validation\**" />
+    <None Remove="wwwroot\lib\jquery\**" />
+    <None Remove="wwwroot\lib\popper.js\**" />
+    <None Remove="wwwroot\lib\summernote\**" />
+    <None Remove="wwwroot\Styles\Inspinia_old\**" />
+    <Content Remove="wwwroot\yarn.lock" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="AppSettingsEnvironment.*.cs" />
+    <Compile Remove="Api\Controllers\Webhook\Webhook_OutboundController.cs" />
+    <Compile Include="AppSettingsEnvironment.$(Configuration).cs" />
+    <Content Update="Properties\web.config" Link="web.config">
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0110" />
+    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0004" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0091" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3-alpha0026" />
+    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
+    <PackageReference Include="HybridModelBinding" Version="0.18.0" />
+    <PackageReference Include="LazyCache" Version="2.1.3" />
+    <PackageReference Include="LazyCache.AspNetCore" Version="2.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
+    <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.2.22" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+    <PackageReference Include="Serilog.Exceptions" Version="7.0.0" />
+    <PackageReference Include="Serilog.Expressions" Version="3.2.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.6.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp.Web" Version="1.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChilliCoreTemplate.Models\ChilliCoreTemplate.Models.csproj" />
+    <ProjectReference Include="..\ChilliCoreTemplate.Service\ChilliCoreTemplate.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Error\NotFound.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Error\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\Layout\_Icons.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\Layout\_EmailAccountLayout.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="AdditionalCommentsToPublish" AfterTargets="CopyFilesToPublishDirectory">
+    <ItemGroup>
+      <DocFile Include="bin\$(Configuration)\$(TargetFramework)\*.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
+  </Target>
+  <Target Name="AdditionalResourcesToPublish" AfterTargets="CopyFilesToPublishDirectory">
+    <ItemGroup>
+      <Resources Include="Library\Resources\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Resources)" DestinationFolder="$(PublishDir)Library\Resources" />
+  </Target>
+  <Target Name="AdditionalFilesToPublish" AfterTargets="CopyFilesToPublishDirectory">
+    <ItemGroup>
+      <Files Include="..\front-end\build\**\*" />
+      <Files Include="..\front-end\package.j*" />
+      <Files Include="..\front-end\custom_modules\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Files)" DestinationFolder="$(PublishDir)wwwroot\%(RecursiveDir)" />
+  </Target>
+</Project>

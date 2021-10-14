@@ -1,0 +1,63 @@
+@using Microsoft.AspNetCore.Routing
+@model IFieldInnerTemplateModel<DateTimePickerFieldTemplateOptions>
+@{
+    //Decorate model property with DisplayFormat(DataFormatString = "dd/MM/yyyy HH:mm") to ensure correct model binding on UTC servers
+    Model.HtmlAttributes.Merge("class", "form-control");
+
+    var templateAttributesCopy = Model.HtmlAttributes.ToArray();
+    var dateAttributes = RouteValueDictionary.FromArray(templateAttributesCopy);
+    dateAttributes.Add("data-date-format", "dd/mm/yyyy");
+    var dateValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : DateTime.ParseExact((string)Model.Value, "dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("dd/MM/yyyy");
+
+    var timeAttributes = RouteValueDictionary.FromArray(templateAttributesCopy);
+    timeAttributes.Remove("data-val-date");
+    var timeValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("HH:mm") : DateTime.ParseExact((string)Model.Value, "dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("HH:mm");
+}
+<input type="hidden" id="@Model.Id" name="@Model.Name" value="@dateValue @timeValue" />
+<div class="row">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+            <input id="@(Model.Id)_Date" name="@(Model.Name)_DateTime" value="@dateValue" type="text" @dateAttributes.ToAttributeHtmlContent()>
+            @if (Model.Options.PostAddOn != null)
+            {
+                @Model.Options.PostAddOn
+            }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="input-group clockpicker" data-autoclose="true">
+            <input id="@(Model.Id)_Time" name="@(Model.Name)_DateTime" value="@timeValue" type="text" @timeAttributes.ToAttributeHtmlContent()>
+            <span class="input-group-addon"><i class="fa fa-clock"></i></span>
+        </div>
+    </div>
+</div>
+@if (Model.Options.AutoWireUpJavascript)
+{
+    @Html.RegisterCustomScripts(
+            @<script>
+        $(function () {
+            $('#@(Model.Id)_Date').datepicker({
+                format: 'dd/mm/yyyy',
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                calendarWeeks: true,
+                autoclose: true
+            });
+
+            $('#@(Model.Id)_Date, #@(Model.Id)_Time').change(function () {
+                $('#@Model.Id').val(($('#@(Model.Id)_Date').val() + ' ' + $('#@(Model.Id)_Time').val()).trim());
+            });
+        });
+</script>
+    )
+    var key = new Guid("A133060B-346F-4D39-86DF-23951F03A49D");
+    @Html.RegisterCustomSection("scripts", key,
+        @<script>
+             $(function () {
+                 $('.clockpicker').clockpicker();
+             });
+        </script>
+    )
+}

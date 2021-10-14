@@ -1,0 +1,42 @@
+@model IFieldInnerTemplateModel<DateFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    Model.HtmlAttributes.Merge("class", "input-sm");
+    Model.HtmlAttributes.Remove("data-val-date");
+    string day = null;
+    string month = null;
+    string year = null;
+    var val = "";
+    if (Model.Value != null)
+    {
+        var value = (DateTime)Model.Value;
+        day = value.Day.ToString().PadLeft(2, '0');
+        month = value.Month.ToString().PadLeft(2, '0');
+        year = value.Year.ToString();
+        val = $"{year}/{month}/{day}";
+    }
+    var options = Model.Options.DateFormatAttribute;
+    if (!options.ShowDay && String.IsNullOrEmpty(day)) { day = "1"; };
+}
+<div class="form-inline js-date-control">
+    <div class="form-group">
+        <div class="col-xs-3 @Html.When(!options.ShowDay, "hide")">
+            <input id="@(Model.Id)_Day" name="@(Model.Name)_Part" value="@day" style="width:60px" placeholder="DD" maxlength="2" data-val="false" @Html.Raw(Model.HtmlAttributes.ToAttributeHtmlContent())>
+        </div>
+        <div class="@(options.ShowDay ? "col-xs-3" : "col-xs-5")">
+            <input type="text" id="@(Model.Id)_Month" name="@(Model.Name)_Part" value="@month" style="width:60px" placeholder="MM" maxlength="2" data-val="false" @Html.Raw(Model.HtmlAttributes.ToAttributeHtmlContent())>
+        </div>
+        <div class="col-xs-3">
+            <input type="text" id="@(Model.Id)_Year" name="@(Model.Name)_Part" value="@year" style="width:60px" placeholder="YYYY" maxlength="4" data-val="true" data-val-datecontrol="The @Model.DisplayName field is not valid" @Html.Raw(Model.HtmlAttributes.ToAttributeHtmlContent())>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="@Model.Id" name="@Model.Name" value="@val" />
+@if (options.ShowHelpText)
+{
+    <span class="visible-md-inline visible-lg-inline js-date-control-success"></span>
+}
+@if (Model.Options.AutoWireUpJavascript)
+{
+    <partial name="FieldTemplates/_RegisterDateScript" />
+}

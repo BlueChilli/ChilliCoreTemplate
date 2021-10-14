@@ -1,0 +1,8 @@
+{
+   "name": "pdfgen",
+   "version": "0.1.0",
+   "dependencies": {
+      "wkhtmltopdf": "^0.3.4",
+      "memorystream": "^0.3.1"
+   }
+}

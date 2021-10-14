@@ -1,0 +1,17 @@
+@model ResetPasswordViewModel
+<h2 class="m-t-md m-b-xl">Set password for @Model.Email</h2>
+@using (Html.BeginFormCustom(Mvc.Root.EmailAccount_ConfirmInvite))
+{
+    @Html.ValidationSummary()
+    @Html.HiddenFor(model => model.Token)
+    @Html.HiddenFor(model => model.Email)
+
+    <div class="form-group">
+        @await Html.FieldTemplateInnerForAsync(model => model.NewPassword, htmlAttributes: new { autofocus = "autofocus", @class = "form-control-lg" })
+    </div>
+    <div class="form-group">
+        @await Html.FieldTemplateInnerForAsync(model => model.ConfirmPassword, htmlAttributes: new { @class = "form-control-lg" })
+    </div>
+    <button class="btn btn-primary btn-lg full-width m-b" type="submit">Set my Password</button>
+    <a mvc-action="@Mvc.Root.EmailAccount_Login">Cancel</a>
+}

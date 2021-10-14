@@ -1,0 +1,284 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CI/CD Server Formation",
+  "Mappings": {
+    "EnvMappings": {
+      "small": {
+        "EC2InstanceType": "t2.small",
+        "Arch": "64"
+      },
+      "medium": {
+        "EC2InstanceType": "t2.medium",
+        "Arch": "64"
+      },
+      "large": {
+        "EC2InstanceType": "m4.large",
+        "Arch": "64"
+      }
+    },
+    "AWSRegionArch2AMI": {
+      "ap-northeast-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "ap-southeast-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "ap-southeast-2": {
+        "64": "ami-0429f21de3a456e37"
+      },
+      "eu-west-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "sa-east-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "us-east-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "us-west-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "us-west-2": {
+        "64": "ami-notsupportedyet"
+      }
+    }
+  },
+  "Parameters": {
+    "KeyPairName": {
+      "Description": "Name of the keypair to launch the instances",
+      "Type": "String"
+    },
+    "AgentURL": {
+      "Default": "",
+      "Description": "Url of the azure devop server",
+      "Type": "String"
+    },
+    "Pat": {
+      "Default": "",
+      "Description": "personal access token",
+      "Type": "String"
+    },
+    "Pool": {
+      "Default": "Default",
+      "Description": "Pool name for the agent to join",
+      "Type": "String"
+    },
+    "Agent": {
+      "Default": "BuildSvr",
+      "Description": "Agent namer",
+      "Type": "String"
+    },
+    "Size": {
+      "Description": "Size",
+      "Type": "String",
+      "AllowedValues": ["small", "medium", "large"]
+    },
+    "VpcId": {
+      "Description": "VPC Id",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "SubnetId": {
+      "Description": "Subnet Id eg: subnet-xxxxxxxx",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "InstanceProfile": {
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::InstanceProfile"
+    },
+    "InstanceRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["sts:AssumeRole"],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["ec2.amazonaws.com"]
+              }
+            }
+          ]
+        },
+        "Path": "/"
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "SecurityGroupCIInstance": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "CI Instance security group",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "3389",
+            "ToPort": "3389",
+            "CidrIp": "59.167.225.189/32"
+          }
+        ],
+        "VpcId": { "Ref": "VpcId" }
+      }
+    },
+    "CIServerInstance": {
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "configSets": {
+            "configure": ["configureAgent"]
+          },
+          "configureAgent": {
+            "files": {
+              "c:\\vsts\\install_agent.ps1": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "$url = '",
+                      { "Ref": "AgentURL" },
+                      "'\n",
+                      "$token = '",
+                      { "Ref": "Pat" },
+                      "'\n",
+                      "$pool = '",
+                      { "Ref": "Pool" },
+                      "'\n",
+                      "$agent = '",
+                      { "Ref": "Agent" },
+                      "'\n",
+                      ".\\config.cmd --unattended --url $url --auth pat --token $token --pool $pool --agent $agent --runAsService \n",
+                      "\n"
+                    ]
+                  ]
+                }
+              },
+              "c:\\vsts\\remove_agent.ps1": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "$url = '",
+                      { "Ref": "AgentURL" },
+                      "'\n",
+                      "$token = '",
+                      { "Ref": "Pat" },
+                      "'\n",
+                      "$pool = '",
+                      { "Ref": "Pool" },
+                      "'\n",
+                      "$agent = '",
+                      { "Ref": "Agent" },
+                      "'\n",
+                      ".\\config.cmd remove --unattended --url $url --auth pat --token $token \n",
+                      "\n"
+                    ]
+                  ]
+                }
+              }
+            },
+            "commands": {
+              "configAgent": {
+                "command": "powershell.exe -ExecutionPolicy RemoteSigned -Command c:\\vsts\\install_agent.ps1 > c:\\vsts\\install.log",
+                "cwd": "c:\\vsts",
+                "ignoreErrors": "false"
+              },
+              "removeFiles": {
+                "command": "cmd /c \"del c:\\vsts\\*.ps1 /Q \"",
+                "cwd": "c:\\vsts",
+                "ignoreErrors": "true"
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "IamInstanceProfile": {
+          "Ref": "InstanceProfile"
+        },
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            { "Fn::FindInMap": ["EnvMappings", { "Ref": "Size" }, "Arch"] }
+          ]
+        },
+        "InstanceType": {
+          "Fn::FindInMap": ["EnvMappings", { "Ref": "Size" }, "EC2InstanceType"]
+        },
+        "KeyName": {
+          "Ref": "KeyPairName"
+        },
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [{ "Ref": "SecurityGroupCIInstance" }],
+            "SubnetId": {
+              "Ref": "SubnetId"
+            }
+          }
+        ],
+        "Tags": [{ "Key": "Name", "Value": "BuildServer" }],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "<script>\n",
+                "cfn-init.exe -v -c configure -s ",
+                {
+                  "Ref": "AWS::StackId"
+                },
+                " -r CIServerInstance",
+                " --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n",
+                "cfn-signal.exe -e %ERRORLEVEL% ",
+                {
+                  "Fn::Base64": {
+                    "Ref": "CIServerInstanceWaitHandle"
+                  }
+                },
+                "\n",
+                "</script>"
+              ]
+            ]
+          }
+        }
+      },
+      "Type": "AWS::EC2::Instance"
+    },
+    "CIServerInstanceWaitHandle": {
+      "Type": "AWS::CloudFormation::WaitConditionHandle"
+    }
+  },
+  "Outputs": {
+    "PublicIP": {
+      "Description": "Public IpAddress",
+      "Value": {
+        "Fn::GetAtt": ["CIServerInstance", "PublicIp"]
+      }
+    }
+  }
+}

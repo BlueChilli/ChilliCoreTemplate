@@ -1,0 +1,20 @@
+@model IFieldInnerTemplateModel<FileFieldTemplateOptions>
+@{
+    var buttonText = Model.Options.ButtonText;
+    Model.HtmlAttributes.Merge("class", "hide");
+    Model.HtmlAttributes.Merge("class", "validate");
+    var jsId = Model.Id.ToLower().Replace("_", "-");
+}
+<label title="@buttonText" for="@Model.Id" class="btn btn-default">
+    <input id="@Model.Id" name="@Model.Name" type="file" @Model.HtmlAttributes.ToAttributeHtmlContent() value="">
+    <span>@buttonText</span>
+</label>
+<span class="m-l-sm js-file-@jsId"></span>
+@if (Model.Options.AutoWireUpJavascript)
+{
+    @Html.RegisterCustomScripts(
+    @<script>
+    $('#@Model.Id').filePreview('.js-file-@jsId');
+    </script>
+    )
+}

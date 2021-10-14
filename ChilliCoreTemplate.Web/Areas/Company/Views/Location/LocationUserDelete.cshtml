@@ -1,0 +1,22 @@
+@model LocationUserViewModel
+@using (Html.BeginFormCustom(Mvc.Company.Location_User_Delete, htmlAttributes: new { @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.UserId)
+    <div class="modal-body">
+        @Html.ValidationSummary()
+        <p>Are you sure you want remove the user <b>@Model.Name</b> from this location?</p>
+    </div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync(new Template_Button { Style = ButtonStyle.Danger, Text = "Yes, remove this user" })
+        <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+    </div>
+}
+<script>
+    $('#@Mvc.Company.Location_User_Delete.GetFormId()')
+        .ajaxForm({ target: '#@Mvc.Company.Location_User_Delete.GetModalId()_content' })
+        .done(function () {
+            SearchTable(userTable);
+            $('#@Mvc.Company.Location_User_Delete.GetModalId()').modal('hide');
+        });
+</script>

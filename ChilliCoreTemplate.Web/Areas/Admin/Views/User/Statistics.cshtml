@@ -1,0 +1,79 @@
+@model StatisticsModel
+
+@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        @foreach (var statistic in Model.StatisticsRow1)
+        {
+            <div class="col-md-3">
+                @await Html.PartialAsync("_Statistic", statistic)
+            </div>
+        }
+    </div>
+    <div class="row">
+        @foreach (var statistic in Model.StatisticsRow2)
+        {
+            <div class="col-md-3">
+                @await Html.PartialAsync("_Statistic", statistic)
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+
+            $('a i.fa-area-chart').click(function (e) {
+                e.preventDefault();
+                var parent = $(this).parents('.ibox');
+
+                parent.find('.js-totals, .js-chart').toggle();
+                var chart = parent.find('.js-chart');
+
+                if (chart.is(':visible')) {
+                    lineData.labels = eval(chart.data('labels'));
+                    lineData.datasets[0].data = eval(chart.data('data'));
+                    var ctx = chart.find('canvas')[0].getContext("2d");
+                    var myNewChart = new Chart(ctx).Line(lineData, lineOptions);
+                }
+            });
+
+            var lineData = {
+                labels: [],
+                datasets: [
+                    {
+                        fillColor: "rgba(26,179,148,0.5)",
+                        strokeColor: "rgba(26,179,148,0.7)",
+                        pointColor: "rgba(26,179,148,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(26,179,148,1)",
+                        data: []
+                    }
+                ]
+            };
+
+            var lineOptions = {
+                scaleShowGridLines: true,
+                scaleGridLineColor: "rgba(0,0,0,.05)",
+                scaleGridLineWidth: 1,
+                bezierCurve: true,
+                bezierCurveTension: 0.4,
+                pointDot: true,
+                pointDotRadius: 4,
+                pointDotStrokeWidth: 1,
+                pointHitDetectionRadius: 20,
+                datasetStroke: true,
+                datasetStrokeWidth: 2,
+                datasetFill: true,
+                responsive: true,
+            };
+
+
+        });
+    </script>
+}

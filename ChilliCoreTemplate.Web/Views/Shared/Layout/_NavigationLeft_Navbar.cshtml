@@ -1,0 +1,18 @@
+@{
+    var userData = User.UserData();    
+    var area = (userData == null || String.IsNullOrEmpty(userData.CompanyName)) ? User.IsInRole(AccountCommon.Administrator) ? "Super Admin" : "Admin" : userData.CompanyName;
+}
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary d-block d-md-none" href="#">
+                <i class="fa fa-bars"></i>
+            </a>
+            <div class="navbar-brand">
+                <img class="m-l-md m-t-sm" src="@Url.Content("~/Images/Generic/GenericLogo.png?height=30")" />
+            </div>
+            <h2 class="text-center">@area</h2>
+        </div>
+        @await Html.PartialAsync("Layout/_LoginPartial")
+    </nav>
+</div>

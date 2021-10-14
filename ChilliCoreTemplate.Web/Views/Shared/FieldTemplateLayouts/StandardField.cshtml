@@ -1,0 +1,10 @@
+@model FieldTemplateModel
+<div class="form-group row">
+    <label class="col-md-@(12 - Model.FieldColumnSize.GetValueOrDefault(10)) col-form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName @if(!String.IsNullOrEmpty(Model.HelpText)) { <br/><span class="help-text">@Html.Raw(Model.HelpText)</span>   }</label>
+    <div class="col-md-@Model.FieldColumnSize.GetValueOrDefault(10)">
+        <div class="@Model.GetFieldSize()">
+            @FieldTemplateModel.InnerTemplateMarker
+            @if (!String.IsNullOrEmpty(Model.ModelName)) { <div>@Html.ValidationMessage(Model.ModelName)</div> }
+        </div>
+    </div>
+</div>

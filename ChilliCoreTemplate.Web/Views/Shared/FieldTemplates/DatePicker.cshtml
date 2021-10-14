@@ -1,0 +1,31 @@
+@model IFieldInnerTemplateModel<DatePickerFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    Model.HtmlAttributes.Add("data-date-format", "dd/mm/yyyy");
+    var value = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : (string)Model.Value;
+}
+<div class="input-group">
+    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+    <input id="@Model.Id" name="@Model.Name" value="@value" type="text" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+    @if (Model.Options.PostAddOn != null)
+    {
+        @Model.Options.PostAddOn
+    }
+</div>
+@if (Model.Options.AutoWireUpJavascript)
+{
+    @Html.RegisterCustomScripts(
+    @<script>
+        $(function () {
+            $('#@Model.Id').datepicker({
+                format: 'dd/mm/yyyy',
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                calendarWeeks: true,
+                autoclose: true
+            });
+        });
+    </script>
+    )
+}

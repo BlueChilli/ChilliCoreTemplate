@@ -1,0 +1,202 @@
+@model LocationDetailModel
+@{
+    var breadcrumb = new BreadcrumbOptions
+    {
+        Title = Model.Name
+    };
+
+}
+@await Html.PartialAsync("Layout/_Breadcrumb", breadcrumb)
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+{
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">Details</a></li>
+            <li><a data-toggle="tab" href="#tab-2" aria-expanded="false">Users</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="tab-1" class="tab-pane active">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="float-right">
+                                <a class="btn btn-primary btn-sm m-r-lg" href="@Mvc.Company.Location_Edit.Url(this.Url, Model.Id)">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            @if (!Model.IsActive)
+                            {
+                                <p>
+                                    <b>Active</b><br /><span style="white-space: pre-wrap">@(Model.IsActive ? "Active" : "Inactive")</span>
+                                </p>
+                            }
+                            <p>
+                                <b>Location</b><br /><span style="white-space: pre-wrap">@Model.Name</span>
+                            </p>
+                            <p>
+                                <b>IP Address</b><br /><span style="white-space: pre-wrap">@Model.IpAddress</span>
+                            </p>
+                        </div>
+                        <div class="col-lg-6">
+                            <p>
+                                <b>Description</b><br /><span style="white-space: pre-wrap">@Model.Description</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-2" class="tab-pane">
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="float-right">
+                                <button type="button" class="btn btn-primary btn-sm js-user-add">Invite</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hide js-user-new">
+                        @await Html.PartialAsync("LocationUserAdd")
+                    </div>
+                    <table class="table table-striped table-bordered table-hover js-user-table">
+                        <thead>
+                            <tr>
+                                <th>IsNew</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section scripts
+{
+    <script>
+        var userTable, userId;
+
+        $(function () {
+
+            $('.js-user-add').click(function () {
+                $('.js-user-add').hide();
+                $('.js-user-new').toggleClass('hide');
+                $('#@Html.IdFor(m => m.User.Email)').focus();
+            });
+
+            SetupUserForm();
+
+            $('.js-user-table').on('click', '.js-remove', function () {
+                userId = $(this).data('id');
+                @Html.ModalOpen(Mvc.Company.Location_User_Delete, new MenuUrlValues(Model.Id), "{ userId: userId }");
+            });
+
+            userTable = $('.js-user-table').dataTable({
+                dom: 'Tgtip',
+                "iDisplayLength": 100,
+                "order": [[1, "asc"]],
+                "serverSide": true,
+                "processing": true,
+                "serverMethod": "POST",
+                "autoWidth": false,
+                "ajax": {
+                    "url": "@Mvc.Company.Location_User_List.Url(this.Url, Model.Id)",
+                },
+                "columns": [
+                    {
+                        "orderable": false,
+                        "visible": false,
+                        "data": 'isNew'
+                    },
+                    {
+                        "orderable": true,
+                        "data": "name",
+                    },
+                    {
+                        "orderable": false,
+                        "data": 'email'
+                    },
+                    {
+                        "orderable": false,
+                        "data": 'status',
+                        render: function (data, type, row) {
+                            return '<span class="label label-{0}">{1}</span>'.format(data == 'Invited' ? 'warning' : 'success', data);
+                        }
+
+                    },
+                    {
+                        "orderable": false,
+                        "data": null,
+                        render: function (data, type, row) {
+                            return '<a href="@Mvc.Company.User_Detail.Url(this.Url)/{0}" class="m-r-sm">View</a><a class="js-remove m-r-sm" href="#" data-id="{0}">Remove</a>'.format(data.userId);
+                        }
+                    },
+                ],
+                createdRow: function (row, data, dataIndex, cells) {
+                    if (data.isNew) {
+                        $(row).css('background-color', '#fcf8e3');
+                    }
+                }
+            });
+
+        });
+
+        function SearchTable(table) {
+            var api = table.api();
+
+            //if ($('#TypeId').val() != '') {
+            //    api.column(2).search($('#TypeId').val(), false, false, false);
+            //} else {
+            //    api.column(2).search('');
+            //}
+
+            //if ($('#Payload').val() != '') {
+            //    api.column(3).search('\\b' + $('#ProductId').val() + '\\b', true, false, false);
+            //} else {
+            //    api.column(3).search('');
+            //}
+
+            //if ($('#Status').val() != '') {
+            //    api.column(5).search($('#Status').val(), false, false, false);
+            //} else {
+            //    api.column(5).search('');
+            //}
+
+            api.search($('#Search').val());
+
+            api.draw();
+        }
+
+        function SetupUserForm() {
+            $('#@Mvc.Company.Location_User_Add.GetFormId()').ajaxForm({ target: '.js-user-new' });
+            $('.js-user-new #@Html.IdFor(m => m.User.Email)').change(function () {
+                $.getJSON('@Mvc.Company.Location_User_Detail.Url(this.Url)', { email: $(this).val() }, function (data) {
+                    if (data.id != 0) {
+                        $('.js-user-new #@Html.IdFor(m => m.User.Email)').val(data.email);
+                        $('.js-user-new #@Html.IdFor(m => m.User.FirstName)').val(data.firstName);
+                        $('.js-user-new #@Html.IdFor(m => m.User.LastName)').val(data.lastName);
+                    }
+                });
+            });
+            $('.js-user-cancel').click(function () {
+                $('.js-user-add').show();
+                $('.js-user-new').toggleClass('hide');
+            });
+        }
+
+
+    </script>
+}
+@section Modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.Location_User_Delete, Title = "Remove user", Size = ModalSize.Medium })
+}

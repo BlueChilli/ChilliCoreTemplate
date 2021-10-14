@@ -1,0 +1,47 @@
+@model Template_Button
+@{
+    var attributes = RouteValueDictionaryHelper.CreateFromHtmlAttributes(Model.HtmlAttributes);
+
+    var laddaClass = $"js-ladda-{ShortGuid.NewGuid().ToString()}";
+    if (Model.IsButton)
+    {
+        attributes.Merge("class", "btn");
+        attributes.Merge("class", laddaClass);
+        attributes.Merge("class", String.Format("btn-{0}", Model.Style.GetDescription().ToLower()));
+        attributes.AddOrSkipIfExists("type", Model.Type.GetDescription().ToLower());
+        if (Model.IsLaddaButton)
+        {
+            attributes.AddOrSkipIfExists("data-style", "expand-right");
+            attributes.Merge("class", "ladda-button");
+            if (Model.Style == ButtonStyle.Default)
+            {
+                attributes.AddOrSkipIfExists("data-spinner-color", "#000000");
+            }
+            else if (Model.Style == ButtonStyle.Secondary)
+            {
+                attributes.AddOrSkipIfExists("data-spinner-color", "#ffffff");
+            }
+        }
+    }
+}
+@if (Model.Type == ButtonType.Link)
+{
+    <a href="@Model.Url" @attributes.ToAttributeHtmlContent()>@Model.Text</a>
+}
+else
+{
+    if (Model.Type == ButtonType.Button && !String.IsNullOrEmpty(Model.Url))
+    {
+        attributes.AddOrSkipIfExists("onclick", "window.location='" + Model.Url + "';");
+    }
+
+    <button @attributes.ToAttributeHtmlContent()>@Model.Text</button>
+    if (Model.IsLaddaButton)
+    {
+        @Html.RegisterCustomSection("scripts",
+            @<script>
+                Ladda.bind('.@(laddaClass)');
+            </script>
+        );
+    }
+}

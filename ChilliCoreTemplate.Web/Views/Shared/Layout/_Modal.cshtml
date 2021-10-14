@@ -1,0 +1,19 @@
+@*
+@await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.Account_Unlink, Title = "Unlink account" })
+@await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.Transactions_Category }) //No default modal header generated 
+*@
+@model ModalViewModel
+<div class="modal inmodal fade" id="@Model.Menu.GetModalId()" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-@(Model.Size.GetData<string>("Css"))">
+        <div class="modal-content">
+            @if (!String.IsNullOrEmpty(Model.Title))
+            {
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h2>@Model.Title</h2>
+                </div>
+            }
+            <div id="@Model.Menu.GetModalId()_content"></div>
+        </div>
+    </div>
+</div>

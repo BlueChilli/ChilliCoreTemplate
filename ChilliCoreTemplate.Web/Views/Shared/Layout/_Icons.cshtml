@@ -1,0 +1,11 @@
+@*https://iconifier.net/*@
+<link rel="shortcut icon" href="@this.Url.Content("~/images/icons/favicon.ico")">
+<link rel="apple-touch-icon" href="@this.Url.Content("~/images/icons/apple-touch-icon.png")" />
+@{
+    var sizes = new int[] { 57, 72, 76, 114, 120, 144, 152, 180 };
+    foreach (var size in sizes)
+    {
+        var mysize = $"{size}x{size}";
+        @:<link rel="apple-touch-icon" sizes="@mysize" href="@this.Url.Content($"~/images/icons/apple-touch-icon-{mysize}.png")" />
+    }
+}

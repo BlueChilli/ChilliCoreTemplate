@@ -1,0 +1,679 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Web Server Formation",
+  "Mappings": {
+    "EnvMappings": {
+      "Develop": {
+        "Suffix": "dev",
+        "EC2InstanceType": "t2.small",
+        "Arch": "64",
+        "SGInstanceToSql": "SGInstanceToSqldev"
+      },
+      "Staging": {
+        "Suffix": "stg",
+        "EC2InstanceType": "t2.small",
+        "Arch": "64",
+        "SGInstanceToSql": "SGInstanceToSqlstg"
+      },
+      "Production": {
+        "Suffix": "prod",
+        "EC2InstanceType": "t2.medium",
+        "Arch": "64",
+        "SGInstanceToSql": "SGInstanceToSqlprod"
+      }
+    },
+    "AWSRegionArch2AMI": {
+      "ap-northeast-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "ap-southeast-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "ap-southeast-2": {
+        "64": "ami-0e38346cc11dfa12d"
+      },
+      "eu-west-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "sa-east-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "us-east-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "us-west-1": {
+        "64": "ami-notsupportedyet"
+      },
+      "us-west-2": {
+        "64": "ami-notsupportedyet"
+      }
+    }
+  },
+  "Parameters": {
+    "Env": {
+      "Description": "Environment",
+      "Type": "String",
+      "AllowedValues": ["Develop", "Staging", "Production"]
+    },
+    "Build": {
+      "Description": "Build number that is going to be deployed",
+      "Type": "String"
+    },
+    "HealthCheckTarget": {
+      "Default": "",
+      "Description": "Target used by the ELB to perform the Health Checks",
+      "Type": "String"
+    },
+    "KeyPairName": {
+      "Description": "Name of the keypair to launch the instances",
+      "Type": "String"
+    },
+    "MaxAutoScalingSize": {
+      "Default": 4,
+      "Description": "Maximum size of the Auto Scaling Group",
+      "MinValue": 1,
+      "Type": "Number"
+    },
+    "MinAutoScalingSize": {
+      "Default": 1,
+      "Description": "Minimum size of the Auto Scaling Group",
+      "MinValue": 1,
+      "Type": "Number"
+    },
+    "S3Bucket": {
+      "Description": "Bucket to download deployment from",
+      "Type": "String"
+    },
+    "SSLCertificateARN": {
+      "Default": "",
+      "Description": "The ARN of the SSL certificate to use",
+      "Type": "String"
+    },
+    "ReplaceAutoScalingGroup": {
+      "AllowedValues": ["true", "false"],
+      "Default": "false",
+      "Description": "Wether instances will be replaced during an update",
+      "Type": "String"
+    }
+  },
+  "Conditions": {
+    "SetupSSLCondition": {
+      "Fn::Not": [{ "Fn::Equals": [{ "Ref": "SSLCertificateARN" }, ""] }]
+    }
+  },
+  "Resources": {
+    "CPUAlarmHigh": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "ScaleUpPolicy"
+          }
+        ],
+        "AlarmDescription": "Alarm if CPU too high or metric disappears indicating instance is down",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerASG"
+            }
+          }
+        ],
+        "EvaluationPeriods": "1",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "Statistic": "Average",
+        "Threshold": "60"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "CPUAlarmLow": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "ScaleDownPolicy"
+          }
+        ],
+        "AlarmDescription": "Alarm if CPU too low",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerASG"
+            }
+          }
+        ],
+        "EvaluationPeriods": "1",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Period": "60",
+        "Statistic": "Average",
+        "Threshold": "30"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "InstanceProfile": {
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::InstanceProfile"
+    },
+    "InstanceRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["sts:AssumeRole"],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["ec2.amazonaws.com"]
+              }
+            }
+          ]
+        },
+        "Path": "/"
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "RolePolicies": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["s3:GetObject"],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "S3Bucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "PolicyName": "S3Download",
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Policy"
+    },
+    "ScaleDownPolicy": {
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "WebServerASG"
+        },
+        "Cooldown": "300",
+        "ScalingAdjustment": "-1"
+      },
+      "Type": "AWS::AutoScaling::ScalingPolicy"
+    },
+    "ScaleUpPolicy": {
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "WebServerASG"
+        },
+        "Cooldown": "300",
+        "ScalingAdjustment": "2"
+      },
+      "Type": "AWS::AutoScaling::ScalingPolicy"
+    },
+    "SecurityGroupELBPublic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "ELB Public security group",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "SecurityGroupELBInstance": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "ELB Instance security group",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "SourceSecurityGroupId": {
+              "Fn::GetAtt": ["SecurityGroupELBPublic", "GroupId"]
+            }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "3389",
+            "ToPort": "3389",
+            "CidrIp": "203.219.180.19/32"
+          }
+        ]
+      }
+    },
+    "WebServerASG": {
+      "Properties": {
+        "AvailabilityZones": {
+          "Fn::GetAZs": ""
+        },
+        "LaunchConfigurationName": {
+          "Ref": "WebServerLC"
+        },
+        "LoadBalancerNames": [
+          {
+            "Ref": "WebServerELB"
+          }
+        ],
+        "MaxSize": {
+          "Ref": "MaxAutoScalingSize"
+        },
+        "MinSize": {
+          "Ref": "MinAutoScalingSize"
+        }
+      },
+      "UpdatePolicy": {
+        "AutoScalingReplacingUpdate": {
+          "WillReplace": { "Ref": "ReplaceAutoScalingGroup" }
+        }
+      },
+      "CreationPolicy": {
+        "ResourceSignal": {
+          "Count": 1,
+          "Timeout": "PT12M"
+        },
+        "AutoScalingCreationPolicy": {
+          "MinSuccessfulInstancesPercent": 1
+        }
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup"
+    },
+    "WebServerELB": {
+      "Properties": {
+        "SecurityGroups": [
+          { "Fn::GetAtt": ["SecurityGroupELBPublic", "GroupId"] }
+        ],
+        "AvailabilityZones": {
+          "Fn::GetAZs": ""
+        },
+        "HealthCheck": {
+          "HealthyThreshold": "2",
+          "Interval": "30",
+          "Target": {
+            "Fn::Join": [
+              "",
+              [
+                "HTTP:80/",
+                {
+                  "Ref": "HealthCheckTarget"
+                }
+              ]
+            ]
+          },
+          "Timeout": "5",
+          "UnhealthyThreshold": "4"
+        },
+        "Listeners": [
+          {
+            "InstancePort": "80",
+            "InstanceProtocol": "HTTP",
+            "LoadBalancerPort": "80",
+            "Protocol": "HTTP"
+          },
+          {
+            "Fn::If": [
+              "SetupSSLCondition",
+              {
+                "InstancePort": "80",
+                "InstanceProtocol": "HTTP",
+                "LoadBalancerPort": "443",
+                "Protocol": "HTTPS",
+                "SSLCertificateId": { "Ref": "SSLCertificateARN" }
+              },
+              { "Ref": "AWS::NoValue" }
+            ]
+          }
+        ]
+      },
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+    },
+    "WebServerLC": {
+      "Metadata": {
+        "AWS::CloudFormation::Authentication": {
+          "default": {
+            "buckets": [
+              {
+                "Ref": "S3Bucket"
+              }
+            ],
+            "roleName": {
+              "Ref": "InstanceRole"
+            },
+            "type": "s3"
+          }
+        },
+        "AWS::CloudFormation::Init": {
+          "configSets": {
+            "deploy": [
+              "stopSite",
+              "cleanupTemp",
+              "deploySite",
+              "startSite",
+              "sendSignal"
+            ],
+            "setup": ["setupCfn", { "ConfigSet": "deploy" }]
+          },
+          "setupCfn": {
+            "files": {
+              "c:\\cfn\\cfn-hup.conf": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "[main]\n",
+                      "stack=",
+                      {
+                        "Ref": "AWS::StackId"
+                      },
+                      "\n",
+                      "region=",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "\n",
+                      "interval=1"
+                    ]
+                  ]
+                }
+              },
+              "c:\\cfn\\hooks.d\\cfn-auto-reloader.conf": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "[cfn-auto-reloader-hook]\n",
+                      "triggers=post.update\n",
+                      "path=Resources.WebServerLC.Metadata.AWS::CloudFormation::Init\n",
+                      "action=cfn-init.exe -v -c deploy -s ",
+                      {
+                        "Ref": "AWS::StackId"
+                      },
+                      " -r WebServerLC",
+                      " --region ",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "\n"
+                    ]
+                  ]
+                }
+              }
+            },
+            "services": {
+              "windows": {
+                "cfn-hup": {
+                  "enabled": "true",
+                  "ensureRunning": "true",
+                  "files": [
+                    "c:\\cfn\\cfn-hup.conf",
+                    "c:\\cfn\\hooks.d\\cfn-auto-reloader.conf"
+                  ]
+                }
+              }
+            }
+          },
+          "stopSite": {
+            "commands": {
+              "1_stop_site": {
+                "command": "iisreset /stop",
+                "waitAfterCompletion": "1"
+              }
+            }
+          },
+          "startSite": {
+            "commands": {
+              "1_start_site": {
+                "command": "iisreset /start",
+                "waitAfterCompletion": "1"
+              }
+            }
+          },
+          "cleanupTemp": {
+            "commands": {
+              "1_cleanup": {
+                "command": "cmd /c \"rd /s /q c:\\temp\\sitefiles\"",
+                "waitAfterCompletion": "1",
+                "ignoreErrors": "true"
+              }
+            }
+          },
+          "deploySite": {
+            "sources": {
+              "c:\\temp\\sitefiles\\package": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    { "Ref": "S3Bucket" },
+                    ".s3.amazonaws.com/Deployments/",
+                    { "Ref": "Build" },
+                    ".zip"
+                  ]
+                ]
+              }
+            },
+            "files": {
+              "c:\\temp\\sitefiles\\unpack-webdeploy.ps1": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "$sourcefolder = \"c:\\temp\\sitefiles\\package\"\n",
+                      "$target = \"c:\\inetpub\\wwwroot\"\n",
+                      "function RecreateDir($dir) {\n",
+                      "    if ( Test-Path $dir ) {\n",
+                      "        Get-ChildItem -Path  $dir -Force -Recurse | Remove-Item -Force -Recurse\n",
+                      "        Remove-Item -Force -Recurse $dir\n",
+                      "    }\n",
+                      "    New-Item -ItemType Directory -Force -Path $dir\n",
+                      "}\n",
+                      "function GetWebArtifactFolderPath($path) {\n",
+                      "    foreach ($item in Get-ChildItem $path) {\n",
+                      "        if (Test-Path $item.FullName -PathType Container) {\n",
+                      "            # return the full path for the folder which contains Web.config\n",
+                      "            if (Test-Path ($item.fullname + \"\\Web.config\")) {\n",
+                      "                return $item.FullName;\n",
+                      "            }\n",
+                      "            $found = GetWebArtifactFolderPath $item.FullName\n",
+                      "            if ($found) {\n",
+                      "                return $found\n",
+                      "            }\n",
+                      "        }\n",
+                      "    }\n",
+                      "    return $null\n",
+                      "}\n",
+                      "$sourcepath = GetWebArtifactFolderPath($sourcefolder)\n",
+                      "if ($sourcepath) {\n",
+                      "    $sourcefiles = $sourcepath + \"\\*\"\n",
+                      "    Write-Host \"Deploying from \" $sourcefiles\n",
+                      "    # Clean up target directory\n",
+                      "    RecreateDir($target)\n",
+                      "    $targetFolder = $target + \"\\\"\n",
+                      "    Copy-Item $sourcefiles -Destination $targetFolder -Recurse -Force\n",
+                      "}\n"
+                    ]
+                  ]
+                }
+              }
+            },
+            "commands": {
+              "1_unpack_command": {
+                "command": "powershell.exe -ExecutionPolicy RemoteSigned -Command c:\\temp\\sitefiles\\unpack-webdeploy.ps1 > c:\\temp\\sitefiles\\unpack.log",
+                "cwd": "c:\\temp",
+                "waitAfterCompletion": "1"
+              },
+              "2_ensure_directory_exists": {
+                "command": {
+                  "Fn::Join": ["", ["mkdir c:\\inetpub\\wwwroot\\wwwroot"]]
+                },
+                "waitAfterCompletion": "1",
+                "ignoreErrors": "true"
+              },
+              "3_versionFile": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "powershell.exe -ExecutionPolicy RemoteSigned -Command Set-Content c:\\inetpub\\wwwroot\\",
+                      "version_check_",
+                      { "Ref": "Build" },
+                      ".txt",
+                      " -Value $nul"
+                    ]
+                  ]
+                },
+                "waitAfterCompletion": "1"
+              },
+              "4_versionFileCore": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "powershell.exe -ExecutionPolicy RemoteSigned -Command Set-Content c:\\inetpub\\wwwroot\\wwwroot\\",
+                      "version_check_",
+                      { "Ref": "Build" },
+                      ".txt",
+                      " -Value $nul"
+                    ]
+                  ]
+                },
+                "waitAfterCompletion": "1"
+              },
+              "5_setACL": {
+                "command": "cmd /c \"icacls.exe c:\\inetpub\\wwwroot /grant:r IIS_IUSRS:(OI)(CI)(F)\"",
+                "waitAfterCompletion": "1"
+              }
+            }
+          },
+          "sendSignal": {
+            "commands": {
+              "1_signalASG": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "cfn-signal.exe --success=true --resource=WebServerASG --stack=",
+                      {
+                        "Ref": "AWS::StackId"
+                      },
+                      " --region=",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                "waitAfterCompletion": "1",
+                "ignoreErrors": "true"
+              }
+            }
+          }
+        },
+        "Build": {
+          "Ref": "Build"
+        }
+      },
+      "Properties": {
+        "IamInstanceProfile": {
+          "Ref": "InstanceProfile"
+        },
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            { "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "Arch"] }
+          ]
+        },
+        "InstanceType": {
+          "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "EC2InstanceType"]
+        },
+        "KeyName": {
+          "Ref": "KeyPairName"
+        },
+        "SecurityGroups": [
+          { "Fn::GetAtt": ["SecurityGroupELBInstance", "GroupId"] },
+          {
+            "Fn::ImportValue": {
+              "Fn::FindInMap": [
+                "EnvMappings",
+                { "Ref": "Env" },
+                "SGInstanceToSql"
+              ]
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "<script>\n",
+                "cfn-init.exe -v -c setup -s ",
+                {
+                  "Ref": "AWS::StackId"
+                },
+                " -r WebServerLC",
+                " --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n",
+                "rem force ec2 Build ",
+                { "Ref": "Build" },
+                "\n</script>\n"
+              ]
+            ]
+          }
+        }
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration"
+    }
+  },
+  "Outputs": {
+    "BackupLoadBalancerDNSName": {
+      "Description": "The DNSName of the load balancer",
+      "Value": {
+        "Fn::GetAtt": ["WebServerELB", "DNSName"]
+      }
+    }
+  }
+}

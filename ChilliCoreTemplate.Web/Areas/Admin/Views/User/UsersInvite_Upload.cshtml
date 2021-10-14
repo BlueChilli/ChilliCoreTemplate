@@ -1,0 +1,21 @@
+@model InviteUploadModel
+@{
+    Layout = null;
+}
+@using (Html.BeginFormCustom(Mvc.Admin.User_InviteUpload, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+    <div class="modal-body">
+        @Html.ValidationSummary()
+
+        @await Html.FieldTemplateForAsync(m => m.InviteFile, FieldTemplateLayouts.ModalField)
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Upload</button>
+        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+    </div>
+}
+@Html.RenderCustomSection("scripts")
+<script>
+    $('#@Mvc.Admin.User_InviteUpload.GetFormId()').ajaxForm({ target: '#@Mvc.Admin.User_InviteUpload.GetModalId()_content' });
+</script>

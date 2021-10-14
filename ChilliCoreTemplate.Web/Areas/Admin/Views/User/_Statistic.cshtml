@@ -1,0 +1,19 @@
+@model StatisticModel
+
+<div class="ibox float-e-margins">
+    <div class="ibox-title" style="padding-right:15px;">
+        <span class="label label-@Model.LabelType float-right">@Model.PeriodLabel</span>
+        <h5>@Model.Title</h5>
+        <a href="#" style="margin-left:5px;"><i class="fa fa-area-chart"></i></a>
+    </div>
+    <div class="ibox-content">
+        <div class="js-totals m-t-md m-b-md">
+            <h1 class="no-margins">@Model.Total.ToString("N0")</h1>
+            <div class="stat-percent font-bold @(Model.PercentageChange >= 0 ? "text-success" : "text-warning")">@Model.PercentageChange% <i class="fa fa-level-@(Model.PercentageChange >= 0 ? "up" : "down")"></i></div>
+            <small>Total @Model.Title.ToLower()</small>
+        </div>
+        <div class="js-chart" style="display:none;" data-data="[@Model.Data.ToDelimitedString(",")]" data-labels="[@Model.Labels.ToDelimitedString(",")]">
+            <canvas height="150"></canvas>
+        </div>
+    </div>
+</div>

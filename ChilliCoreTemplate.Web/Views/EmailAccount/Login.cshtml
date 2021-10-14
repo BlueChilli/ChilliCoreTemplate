@@ -1,0 +1,23 @@
+@model SessionEditModel
+
+@inject ProjectSettings config
+
+<h2 class="m-t-md m-b-xl">Welcome to @config.ProjectDisplayName</h2>
+
+@using (Html.BeginFormCustom(Mvc.Root.EmailAccount_Login))
+{
+    @Html.ValidationSummary()
+    @Html.HiddenFor(m => m.ReturnUrl)
+
+    <div class="form-group">
+        @await Html.FieldTemplateInnerForAsync(m => m.Email, htmlAttributes: new { autofocus = "autofocus", @class = "form-control-lg" })
+    </div>
+    <div class="form-group form-group-lg">
+        @await Html.FieldTemplateInnerForAsync(m => m.Password, htmlAttributes: new { @class = "form-control-lg" })
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg full-width m-b">Login</button>
+
+    <a mvc-action="@Mvc.Root.EmailAccount_ForgotPassword">Forgot password?</a>
+    <br>
+    @Html.ActionLink("Don't have an account? Register here", Mvc.Root.EmailAccount_Registration)
+}

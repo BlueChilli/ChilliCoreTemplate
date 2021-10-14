@@ -1,0 +1,57 @@
+@model UserImportModel
+@inject ProjectSettings config
+
+@{
+    if (this.Context.Request.IsAjaxRequest())
+    {
+        Layout = null;
+    }
+}
+@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+{
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>Import details</h5>
+        </div>
+        <div class="ibox-content" id="form-content">
+            @using (Html.BeginFormCustom(Mvc.Admin.User_Import, htmlAttributes: new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummaryHtml("")
+
+                using (await Html.FieldTemplateOuterForAsync(m => m.Roles))
+                {
+                    <div class="radio i-checks"><label> <input class="Roles" id="Roles_Admin" name="Roles" type="radio" value="@Role.Administrator"> @config.ProjectDisplayName admin </label></div>
+                    <div class="radio i-checks"><label> <input class="Roles" id="Roles_CompanyAdmin" name="Roles" type="radio" value="@Role.CompanyAdmin" style="position: absolute; opacity: 0;"> @Role.CompanyAdmin.GetDescription() </label></div>
+                    <div class="radio i-checks"><label> <input class="Roles" id="Roles_User" name="Roles" type="radio" value="@Role.User" style="position: absolute; opacity: 0;"> @Role.User.GetDescription() </label></div>
+                }
+                <div id="CompanyDetails" style="display:none;">
+                    @await Html.FieldTemplateForAsync(m => m.CompanyId, new TemplateOptions { IsMandatory = true, FieldSize = FieldTemplateSize.Small }, new SelectFieldTemplateOptions { SelectList = Model.CompanyList })
+                </div>
+                @await Html.FieldTemplateForAsync(m => m.Status, options: new TemplateOptions { FieldSize = FieldTemplateSize.Small })
+                @await Html.FieldTemplateForAsync(m => m.CsvFile)
+
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-6 col-sm-offset-2">
+                        <button type="submit" class="btn btn-primary ladda-button js-ladda-button" data-style="expand-right">Import</button>
+                        <span class="m-l-sm">
+                            <a mvc-action="@Mvc.Admin.User_Users">or cancel changes</a>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    if (this.Context.Request.IsAjaxRequest())
+    {
+        @await Html.PartialAsync("_UsersImport_Script")
+    }
+}
+
+@section scripts
+    {
+    @await Html.PartialAsync("_UsersImport_Script")
+}

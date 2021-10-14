@@ -1,0 +1,65 @@
+﻿@using ChilliSource.Cloud.Web.MVC.Misc;
+@inject ProjectSettings config
+
+@{
+    var leftLayout = User.Identity.IsAuthenticated && User.UserData().IsInRole(Role.Administrator);
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    @Html.BlueChilliAsciiMotif()
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@Html.GetCurrentMenu().Title | @config.ProjectDisplayName</title>
+    @if (config.GoogleAnalytics.Enabled == true)
+    {
+        @using (await Html.ContainerTemplateAsync(TemplateTypes.GoogleAnalytics))
+        {
+            @:ga('send', 'pageview');
+        }
+    }
+    <link rel="stylesheet" href="~/bundles/bootstrap.min.css" asp-append-version="true" />
+    @Html.RenderBundle("~/bundles/stylebundle.min.css")
+    <link rel="stylesheet" href="~/bundles/stylebundle2.min.css" asp-append-version="true" />
+    @RenderSection("styles", required: false)
+    @await Html.PartialAsync("~/Views/Shared/Layout/_Icons.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/ConfirmationModalHandlebars.cshtml")
+</head>
+<body class="@Html.When(!leftLayout, "top-navigation")">
+    <div id="wrapper">
+        @if (leftLayout)
+        {
+            @await Html.PartialAsync("Layout/_NavigationLeft")
+            <div id="page-wrapper" class="gray-bg">
+                @await Html.PartialAsync("Layout/_NavigationLeft_NavBar")
+                @RenderBody()
+                @await Html.PartialAsync("Layout/_Footer")
+            </div>
+        }
+        else
+        {
+            <div id="page-wrapper" class="gray-bg">
+                <div class="row border-bottom white-bg">
+                    @await Html.PartialAsync("Layout/_NavigationTop")
+                </div>
+                <div class="wrapper wrapper-content">
+                    <div class="container">
+                        @RenderBody()
+                    </div>
+                </div>
+                @await Html.PartialAsync("Layout/_Footer")
+            </div>
+        }
+    </div>
+    @Html.RenderBundle("~/bundles/scriptbundle.min.js")
+
+    @RenderSection("scripts", required: false)
+    @Html.RenderCustomSection("scripts")
+    @RenderSection("modal", required: false)
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.Public_ConfirmationModal })
+    @await Html.PartialAsync("Layout/_MiniProfiler")
+</body>
+</html>

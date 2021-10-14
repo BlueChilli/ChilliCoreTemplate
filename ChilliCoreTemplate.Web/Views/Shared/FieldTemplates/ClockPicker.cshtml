@@ -1,0 +1,21 @@
+@model IFieldInnerTemplateModel<ClockPickerFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    var value = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("HH:mm") : (string)Model.Value;
+    Model.HtmlAttributes.Remove("data-val-date");
+}
+<div class="input-group clockpicker" data-autoclose="true">
+    <input id="@Model.Id" name="@Model.Name" value="@value" type="text" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+    <span class="input-group-addon"><i class="fa fa-clock"></i></span>
+</div>
+@if (Model.Options.AutoWireUpJavascript)
+{
+    var key = new Guid("A133060B-346F-4D39-86DF-23951F03A49D");
+    @Html.RegisterCustomSection("scripts", key,
+    @<script>
+        $(function () {
+            $('.clockpicker').clockpicker();
+        });
+    </script>
+    )
+}

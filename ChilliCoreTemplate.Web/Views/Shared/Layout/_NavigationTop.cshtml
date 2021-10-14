@@ -1,0 +1,38 @@
+@using System.Linq;
+@{
+    var userData = this.User.UserData();
+    var rootMenus = MenuConfigByRole.GetRootMenus(this.Context).Where(a => !a.MenuHidden);
+}
+
+<nav class="navbar navbar-expand-lg navbar-static-top" role="navigation">
+    <div class="navbar-header">
+        <img class="m-l-lg" width="150" src="@Url.Content("~/Images/Generic/GenericLogo.png?w=150")" style="margin-top: 5px" />
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fa fa-bars"></i>
+        </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+
+        <ul class="nav navbar-nav mr-auto d-none d-sm-flex">
+            @if (userData != null)
+            {
+                <li><h3 style="margin-left:40px;margin-top:15px;">@userData.CompanyName</h3></li>
+                if (userData.Impersonator != null)
+                {
+                    <li>
+                        <a href="@Url.Action("UndoImpersonate", "User")"><span class="text-muted"> Impersonating as <b> @userData.Email</b></span> Undo</a>
+                    </li>
+                }
+            }
+        </ul>
+
+        <ul class="nav navbar-top-links navbar-right">
+            @foreach (var menu in rootMenus)
+            {
+                @await Html.PartialAsync("Menus/_TopMenu.cshtml", menu);                
+            }
+
+            @await Html.PartialAsync("Layout/_NavigationTop_UserPartial", "")
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,25 @@
+@model IFieldInnerTemplateModel<RadioFieldTemplateOptions>
+@{
+    var options = Model.Options.RadioAttribute;
+    var isTrue = Convert.ToBoolean(Model.Value);
+    var isFalse = !isTrue && Model.Value != null;
+    var removeValidations = Model.HtmlAttributes.Keys.Where(k => k.StartsWith("data-val")).ToList();
+    foreach (var key in removeValidations)
+    {
+        Model.HtmlAttributes.Remove(key);
+    }
+}
+@if (options.Inline)
+{
+    <label class="checkbox-inline i-checks"><input type="radio" value="True" name="@Model.Name" id="@(Model.Id)_True" @if (isTrue) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.TrueText</label>
+    <label class="checkbox-inline i-checks"><input type="radio" value="False" name="@Model.Name" id="@(Model.Id)_False" @if (isFalse) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.FalseText</label>
+}
+else
+{
+    <div class="i-checks"><label><input type="radio" value="True" name="@Model.Name" id="@(Model.Id)_True" @if (isTrue) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.TrueText</label></div>
+    <div class="i-checks"><label><input type="radio" value="False" name="@Model.Name" id="@(Model.Id)_False" @if (isFalse) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.FalseText</label></div>
+}
+@if (Model.Options.AutoWireUpJavascript)
+{
+    <partial name="FieldTemplates/_RegisterICheckScript" />
+} 

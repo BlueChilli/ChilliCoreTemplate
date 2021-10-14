@@ -1,0 +1,32 @@
+@model EmailViewModel
+@{
+    Layout = null;
+}
+<div class="modal-body">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            @if (!String.IsNullOrEmpty(Model.Data.Subject))
+            {
+                <b>@Model.Data.Subject</b>
+            }
+            @if (!string.IsNullOrEmpty(Model.Preview()))
+            {
+                @: - <i>@Html.Raw(Model.Preview())</i>
+            }
+        </div>
+        <div class="panel-body">
+            @Html.ValidationSummary()
+            @if (!String.IsNullOrEmpty(Model.Data.MessageHtml))
+            {
+                @Html.Raw(Model.Data.MessageHtml.Replace("EmailOpen", "EmailDummyOpen"))
+            }
+            else
+            {
+                <p>@Model.Error</p>
+            }
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal">Close</button>
+</div>

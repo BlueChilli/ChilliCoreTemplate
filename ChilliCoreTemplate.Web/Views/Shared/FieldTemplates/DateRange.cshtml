@@ -1,0 +1,20 @@
+@model FieldInnerTemplateModel
+@{
+    var valueFormat = ViewData["ValueFormat"] as Func<DateTime?, string>;
+    if (ViewData["ValueFormat"] is Func<DateTime, string>)
+    {
+        valueFormat = x => x.HasValue ? ((Func<DateTime, string>)ViewData["ValueFormat"])(x.Value) : "";
+    }
+    if (valueFormat == null)
+    {
+        valueFormat = x => x.HasValue ? x.Value.ToString("dd/MM/yyyy") : "";
+    }
+    var date1 = (DateTime?)Model.Value;
+    var Model2 = ViewData["Model2"] as FieldInnerTemplateModel;
+    var date2 = (DateTime?)Model2.Value;
+}
+<div class="input-daterange input-group" id="datepicker-@Model.Id">
+    <input type="text" class="form-control" id="@Model.Id" name="@Model.Name" value="@valueFormat(date1)" />
+    <span class="input-group-addon">to</span>
+    <input type="text" class="form-control" id="@Model2.Id" name="@Model2.Name" value="@valueFormat(date2)" />
+</div>

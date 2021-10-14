@@ -1,0 +1,31 @@
+@model IFieldInnerTemplateModel<CheckboxFieldTemplateOptions>
+@{
+    var options = Model.Options;
+    var isAlternative = options.CheckBoxAttribute != null && options.CheckBoxAttribute.IsAlternative;
+}
+@if (isAlternative)
+{
+    <input id="@Model.Id" name="@Model.Name" value="true" @Model.HtmlAttributes.ToAttributeHtmlContent()><input name="@Model.Name" type="hidden" value="false" />
+    if (Model.Options.AutoWireUpJavascript)
+    {
+        @Html.RegisterCustomSection("scripts",
+                            @<script>
+            $(function () {
+                new Switchery($('#@Model.Id')[0], { color: '#1AB394' });
+            });
+                            </script>)
+    }
+}
+else
+{
+    <div class="checkbox i-checks">
+        <label style="padding-left:0px;opacity:0">
+            <input id="@Model.Id" name="@Model.Name" value="true" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+            <input name="@Model.Name" type="hidden" value="false" /> @Html.Raw(options.CheckBoxAttribute?.Label)
+        </label>
+    </div>
+    if (Model.Options.AutoWireUpJavascript)
+    {
+        <partial name="FieldTemplates/_RegisterICheckScript" />
+    }
+}

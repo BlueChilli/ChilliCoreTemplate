@@ -1,0 +1,25 @@
+@model IFieldInnerTemplateModel<TextAreaFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    Model.HtmlAttributes.AddOrSkipIfExists("rows", 4);
+    var jsId = Model.Id.ToLower().Replace("_", "-");
+    var isCharactersLeft = (bool?)Model.HtmlAttributes["charactersleft"];
+    var maxLength = (int?)Model.HtmlAttributes["maxlength"];
+}
+<textarea id="@Model.Id" name="@Model.Name" @Model.HtmlAttributes.ToAttributeHtmlContent()>@Model.Value</textarea>
+@if (isCharactersLeft.GetValueOrDefault(false) && maxLength.GetValueOrDefault(0) > 0)
+{
+    <h6 class="float-right js-characters-left-@jsId"></h6>
+    if (Model.Options.AutoWireUpJavascript)
+    {
+        @Html.RegisterCustomScripts(
+    @<script>
+        $(function () {
+            $('#@Model.Id').keyup(function () {
+                $('.js-characters-left-@jsId').html(@maxLength - $(this).val().length + ' characters left');
+            }).trigger('keyup');
+        });
+    </script>
+        )
+    }
+}

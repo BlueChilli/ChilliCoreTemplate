@@ -1,0 +1,79 @@
+https://bluechilli.atlassian.net/wiki/spaces/IN/pages/567443459/Setup+AWS+environment+steps
+Scripts to scaffold a AWS environment.
+At the end of this process you will have created three environments => develop, staging and production and CI for them
+This process takes around 1 hour, most of which is waiting for scripts to complete (assuming you have no issues with Prereqs)
+
+PREREQS
+
+Task 1: Open a command window and cd to the directory this file is in eg: C:\Projects\MyProject\MyProject.Tools\Devops\CloudFormation
+Task 2: Run aws help to check it is installed. If not you can find it here https://aws.amazon.com/cli/
+Task 3: login to aws console https://console.aws.amazon.com
+Task 4: The following scripts will use an IAM account devops to run under. 
+	 A: In Services => IAM => Groups => "Create New Group" enter admin as the name. Under permissions add the policy AdministratorAccess
+	 B: In Services => IAM => Users => "Add user" enter devops as User name and Access type as Programmatic access
+	 C: Add the user Devops to the Admin group. You'll need the access key id and secret access key for each script
+	 D: Make note of your VPC number for your region (sydney) eg vpc-ec9ccb8b which is used in each script
+Task 5: Have access to DNS for domains if not using route53
+
+INFRASTRUCTURE
+
+Note A: You can follow the scripts progress at Services => Cloudformation. Each stack should be CREATE_COMPLETE when finished.
+     B: Run scripts in order
+	 C: Run next script only when first is finished and all Stacks are CREATE_COMPLETE.
+
+Task 5: Run aws common script to create users, policies, security groups shared by environments/tiers. Stack name is Common.
+
+awscreatecommon "ENTER ACCESS KEY HERE" "ENTER SECRET KEY HERE" "Enter REGION HERE" "ENTER VPC HERE"
+ 
+eg. awscreatecommon XXXXXXXXXXX YYYYYYYYYYYYYYYYYYYYYYY ap-southeast-2 vpc-xxxxxx
+
+Task 6: Run aws env script. This will create develop, staging and production infrastructure (takes some time, go and get a coffee). 
+Note A: This script will open a bunch of cmd windows to run tasks in parallel. 
+     B: The stack names in cloudformation are WebXXX and DataXXX for Dev, Stag and Prod.
+	 C: The main window, will not close until all subtasks are finished
+	 D: If you get any failures you have probably done something wrong in the above steps. Look for your error and wait for all others to complete then delete ALL the failed stacks.
+	 E: If you get any further errors look at cloudformation for additional information (and check your script inputs). Check for example you don't already have resources manually created eg S3 bucket with named projectname-dev.
+
+AWSCreateEnvs "ENTER ACCESS KEY HERE" "ENTER SECRET KEY HERE" "Enter REGION HERE" "ENTER VPC HERE" "Name of project (enter in lowercase [a-z] only)"
+ 
+eg: AWSCreateEnvs XXXXXXXXXXXXX YYYYYYYYYYYYYYYYYYYYYYYY ap-southeast-2 vpc-xxxxxx projectnamelowercasenonumbers
+
+Task 7: Run aws create key script. This script will create keys for S3 for dev, stg, and prod and for SES.
+
+AWSCreateKeys "ENTER ACCESS KEY HERE" "ENTER SECRET KEY HERE" "Enter REGION HERE"
+ 
+eg. AWSCreateKeys XXXXXXXXXXXXXXX YYYYYYYYYYYYYYYYYYYYYYYY ap-southeast-2
+
+Task 8: Record securely the keys in the output directory (C:\Projects\MyProject\MyProject.Tools\Devops\CloudFormation\output)
+
+	A: Keypair_projectname_XXXXX.pem (used to discover remote desktop password to EC2 instances) MUST be stored securely
+	B: DatabaseKeys_XXXXX.txt (will be used in CI config and should also be stored securely)
+	C: S3User-xxx_accesskey.json (all 3 keys will be used in CI and should also be stored securely)
+	D: SESUser_AccessKey.json and SESUserSMTPPassword.txt (will be used in CI config and should also be stored securely)
+
+Task 9: Turn on SES (us-east-1) (email-smtp.us-east-1.amazonaws.com)
+    
+	A: In AWS console go to SES => Sending Statistics
+	B: Click button "Request a Sendling limit increase"
+	C: Select Mail type as System Notifications
+	D: Select Yes for complies
+	E: Select Yes for I only send to recipients who have specifically requested my mail
+	F: Select Yes for I have a process for bounces and complaints
+	G: Region US East
+	H: Limit type = Desired Daily Sending Quota
+	I: New limit value = 1000
+	J: Case description = Sending system emails to registered users. For example forgot password.
+	K: Submit (may take several business days to process)
+
+Task 10: Create wildcard certificate, setup DNS
+
+	A: In AWS console open certificate manager in the same region you ran the creation scripts (sydney)
+	B: Request a public certificate
+	C: Enter domain as *.example.com
+	D: Choose DNS validation
+	E: Request
+	F: In DNS create a CNAME for develop, staging and app using value of load balancer dns name (from Web(ENV)_output.json file)
+
+Task 11: CI
+
+	Follow instructions in instructions_CI.txt

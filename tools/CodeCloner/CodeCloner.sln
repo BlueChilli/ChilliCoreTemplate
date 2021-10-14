@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCloner", "CodeCloner.csproj", "{AEE3268A-EFC6-4AD1-B877-8AAAE8749E71}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AEE3268A-EFC6-4AD1-B877-8AAAE8749E71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEE3268A-EFC6-4AD1-B877-8AAAE8749E71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEE3268A-EFC6-4AD1-B877-8AAAE8749E71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEE3268A-EFC6-4AD1-B877-8AAAE8749E71}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B479ED3-F78D-4DA7-855B-82E486E268DD}
+	EndGlobalSection
+EndGlobal

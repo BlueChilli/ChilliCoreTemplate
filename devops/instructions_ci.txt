@@ -1,0 +1,73 @@
+https://bluechilli.atlassian.net/wiki/spaces/IN/pages/592445452/Setup+CI+Server+Environment+in+AWS
+Instructions and scripts to scaffold a Azure Devops CI self hosted in AWS.
+At the end of this process you will have created a AWS server hosting an Azure Devops agent
+This process takes around 1 hour (assuming you have no issues with Prereqs)
+
+PREREQS
+
+Task 1: You have completed all steps in "instructions.txt"
+Task 2: Signin to Azure Devops https://azure.microsoft.com/en-au/services/devops/
+Task 3: You understand Azure Devops Self Hosted Agents (https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops)
+Task 4: For local development and build environments secure keys (SES, S3, Database) should NOT be stored in source control files. For local development store SES and S3 keys in Web.Debug.config which is not stored in source control.
+Task 5: Ensure in web.config you are using ELB settings for https, eg forms auth to not use https, and using elb https rewrite rule
+
+CREATE PAT
+
+Note A. PAT Name = ProjectName CI
+     B. For scope select Agent Pools => Read and Manage (all others blank) (you may need to select show more scopes)
+	 C. Expiration use calendar to set for one year from now
+	 D. Securely store the token for the following steps
+
+Task 4: Follow the steps in this link https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-windows?view=azure-devops#permissions to create a PAT
+
+CREATE AWS CI SERVER
+
+Note A. Access key and Secret key are for the devops user
+     B. VPC = AWS console => Region => VPC (region is usually sydney which is ap-southeast-2)
+	 C. Medium size is fine for a typical startup
+	 D. Azure devop Server Url = https://dev.azure.com/{organisationame}. You can find this at Azure Devops => Home => Oranisational Settings => Overview
+	 E. Subnet can be found in AWS => VPC => Subnets for your region. Choose the first one or at random
+	 F. This script will open a bunch of cmd windows to run tasks in parallel, the main window, will not close until all subtasks are finished
+	 G. Stackname in Cloudformation is BuildServer
+	 H. Store securely the contents of the keypair pem file created in the output folder
+
+Task 5: Run AWSCreateCI script to create CI server with azure agent installed.
+
+awscreateci "ENTER ACCESS KEY HERE" "ENTER SECRET KEY HERE" "Enter REGION HERE" "Enter Size here (small, medium, large)" "Azure devop Server Url" "Pat token" "Agent Pool name (or use 'default')" "Agent name" "ENTER VPC HERE" "SubnetId (Grab subnetId from NetworkInterfaces)"
+ 
+eg. awscreateci XXXXXXXXXXX YYYYYYYYYYYYYYYYYYYYYYY ap-southeast-2 medium https://dev.azure.com/projectname zzzzzzz default projectname vpc-xxxxxx subnet-xxxxxx
+
+Task 6: Complete CI setup
+
+	 A. [NOT NEEDED, JUST WAIT] Initialise agent by logging into build server using RDP. You will need to use the PEM file for the keypair output. (https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/connecting_to_windows_instance.html).
+	 B. In Azure Devops you should now see the create agent in the default agent pool. Azure Devops Home => Organization Settings => Agent pools => default
+	 C. Go to https://marketplace.visualstudio.com/ and from Azure Devops tab search for and install the following extensions
+
+		AWS Tools for Microsoft Visual Studio Team Services
+		Download Secure File		
+		Post Build Cleanup
+		Yarn
+
+		Go to Azure Devops Home => Organization Settings => Extensions to check all extensions are installed.
+	 D. Add Project Collection Administrators to default agent with Administrator role. Azure Devops Home => Organization Settings => Agent pools => default => Security => Add
+	 E. 
+	 F. Add to Azure Devops Library a secure file for keys for each build environment. eg config_develop.json for Web.Develop.config [https://bitbucket.org/bluechilli/azurepipelinetemplate/src/master/config_example.json]. Not all keys will be used in develop an staging.
+	 G. In Builds and a new pipeline via import [https://bitbucket.org/bluechilli/azurepipelinetemplate/src/master/NetCore_cloud_formation.json] for develop. Staging and prod is just the next steps repeated (can be done later). (You can't import unless a dummy pipeline is created first)
+	 H. For source set config source for your project/branch. If you haven;t already add a OAUTH connection to your repo.
+	 I. App Settings (BuildConfiguration)
+	 J. For Download config.json set Provisoning profile to config_develop.json
+	 K. For Convert config to variable set Json File to $(System.DefaultWorkingDirectory)\config_develop.json
+	 L. For Transform Web.config set path to Web.Develop.config and for develop remove raygun setting. For prod add machinekey settings. Per project add other keys as needed so no server based keys are in source control.
+	 {
+		"configuration/system.net/mailsettings/smtp/network/@userName": "$(emailServerUserName)",
+		"configuration/system.net/mailsettings/smtp/network/@password": "$(emailServerPassword)",
+		"configuration/connectionStrings/add/@connectionString": "$(connectionString)",
+		"configuration/BlueChilliProjectConfiguration/filestorage/s3/@accessKeyId": "$(s3key)",
+		"configuration/BlueChilliProjectConfiguration/filestorage/s3/@secretAccessKey": "$(s3secretkey)",
+		"configuration/resizer/plugins/add/@accessKeyId": "$(s3key)",
+		"configuration/resizer/plugins/add/@secretAccessKey": "$(s3secretkey)"
+	 }
+	 M. If no front end build disable npm steps
+	 N. Add a AWS service connection if not already created. Name = AWS devops. Use credentials for the devops IAM account.
+	 O. For S3 Upload and Deploy set AWS credentials to the account above
+	 P. Update variables for your project/branch

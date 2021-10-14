@@ -1,0 +1,22 @@
+@model RazorTemplateDataModel<string>
+@inject ProjectSettings config
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Model.Subject = String.Format("You are already registered with {0}", Model.CompanyName);
+    Model.EmailPreview = "Try signing in or resetting your password";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+    var data = new { email = Model.Data };
+    var loginUrl = Mvc.Root.EmailAccount_Login.Url(this.Url, routeValues: data, protocol: "https"); //config.ResolveUrl("~/login", data); //
+    var resetPasswordUrl = Mvc.Root.EmailAccount_ForgotPassword.Url(this.Url, routeValues: data, protocol: "https"); //config.ResolveUrl("~/users/forgot-password", data);
+}
+@section Header
+{
+    @using (builder.BeginHeader())
+    {
+        @builder.H1("Oops, you're already registered with us")
+        @builder.H2(String.Format("Try signing in with the email you used, or if you cannot remember your login details <a target=\"_blank\" href=\"{0}\">request a new password</a>.", resetPasswordUrl))
+
+        @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, loginUrl, "Login to your account")
+
+    }
+}

@@ -1,0 +1,94 @@
+@model InviteManageModel
+
+@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+{
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>Invite user</h5>
+            @*TODO: modal*@
+            @*<div class="float-right-not-xs">
+                    <a class="btn btn-default btn-sm m-t-n-xs" href="javascript:@Html.ModalOpen(Mvc.Admin.User_InviteUpload)">Upload</a>
+                </div>*@
+        </div>
+        <div class="ibox-content">
+            @using (Html.BeginFormCustom(Mvc.Company.User_Invite, htmlAttributes: new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary()
+
+                @await Html.FieldTemplateForAsync(m => m.FirstName)
+                @await Html.FieldTemplateForAsync(m => m.LastName)
+                @await Html.FieldTemplateForAsync(m => m.Email)
+
+                @await Html.FieldTemplateForAsync(m => m.InviteRole.Role, fieldOptions: new SelectFieldTemplateOptions() { SelectList = Model.RoleSelectionOptions })
+                @Html.HiddenFor(m => m.InviteRole.CompanyId)
+                @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.ProfilePhotoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Height = 200, Width = 200, Quality = 70, Mode = ResizeMode.Crop }) { AlternativeImage = "~/Images/generic/default-profile-image.jpg", ButtonText = "Upload Id" })
+
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-6 offset-sm-2">
+                        <button type="submit" class="btn btn-primary ladda-button js-ladda-button" data-style="expand-right">Invite</button>
+                        <span class="m-l-sm">
+                            <a mvc-action="@Mvc.Company.User_List">or cancel changes</a>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>Pending invitations</h5>
+        </div>
+        <div class="ibox-content">
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Date Invited</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var invite in Model.Pending)
+                    {
+                        <tr>
+                            <td>@invite.ShortName</td>
+                            <td>@invite.Email</td>
+                            <td>@invite.UserRoles.Select(r => r.Role.GetDescription()).FirstOrDefault()</td>
+                            <td>
+                                @if (invite.InvitedDate.HasValue)
+                                {
+                                    @invite.InvitedDate.Value.ToTimezone().ToCustomDate()
+                                }
+                            </td>
+                            <td>
+                                @Html.LinkPost(Mvc.Company.User_InviteResend, "Resend", new { id = invite.Id }, linkClasses: "m-r-sm")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+@section modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_InviteUpload, Title = "Upload invitations" })
+}
+
+@section scripts
+    {
+    <script>
+        $(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+        });
+    </script>
+}

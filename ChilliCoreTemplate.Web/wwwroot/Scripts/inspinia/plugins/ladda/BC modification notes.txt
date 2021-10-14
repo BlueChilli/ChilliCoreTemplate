@@ -1,0 +1,18 @@
+﻿Original
+
+			if( typeof form !== 'undefined' && !form.hasAttribute('novalidate') ) {
+				// Modern form validation
+				if( typeof form.checkValidity === 'function' ) {
+					valid = form.checkValidity();
+				}
+
+Changed
+
+			if( typeof form !== 'undefined' /*&& !form.hasAttribute('novalidate')*/ ) {
+				// Modern form validation
+				if($) {
+                    valid = $(form).valid();
+				}
+
+1. jquery validate adds attribute novalidate to the form
+2. form.checkValidity() returns true for invalid forms replace with $('form').valid()

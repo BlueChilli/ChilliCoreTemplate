@@ -1,0 +1,35 @@
+@model RazorTemplateDataModel<List<string>>
+@inject IWebHostEnvironment env;
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+
+    Model.Subject = String.Format("Error daily summary for {0} {1}", Model.Site, env.EnvironmentName);
+    Model.EmailPreview = String.Format("There was {0} errors since the last summary", Model.Data.Count);
+}
+@section Header
+{
+    @using (builder.BeginHeader(rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+    {
+        @builder.H1(String.Format("{0} {1} Daily Error Summary", Model.Site, env.EnvironmentName))
+        @builder.H2(String.Format("There was {0} errors since the last summary", Model.Data.Count))
+
+        <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0" style="border:1px solid #ccc;">
+            <thead>
+                <tr style="border:1px solid #ccc;">
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var error in Model.Data)
+                {
+                    <tr style="border:1px solid #ccc; font-size: 10px">
+                        <td style="padding: 2px;">@error</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, Mvc.Admin.User_Error_List.Url(this.Url, protocol: "https"), "More")
+    }
+}
