@@ -1,63 +1,63 @@
-﻿.pull-right-not-xs, .pull-right-not-sm, .pull-right-not-md, .pull-right-not-lg{
+﻿.float-right-not-xs, .float-right-not-sm, .float-right-not-md, .float-right-not-lg{
     float: right;
 }
 
-.pull-left-not-xs, .pull-left-not-sm, .pull-left-not-md, .pull-left-not-lg{
+.float-left-not-xs, .float-left-not-sm, .float-left-not-md, .float-left-not-lg{
     float: left;
 }
 @media (max-width: 767px) {    
-    .pull-right-not-xs, .pull-left-not-xs{
+    .float-right-not-xs, .float-left-not-xs{
         float: none;
     }
-    .pull-right-xs {
+    .float-right-xs {
         float: right;
     }
-    .pull-left-xs {
+    .float-left-xs {
         float: left;
     }
 }
 @media (min-width: 768px) and (max-width: 991px) {
-    .pull-right-not-sm, .pull-left-not-sm{
+    .float-right-not-sm, .float-left-not-sm{
         float: none;
     }
-    .pull-right-sm {
+    .float-right-sm {
         float: right;
     }
-    .pull-left-sm {
+    .float-left-sm {
         float: left;
     }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
-    .pull-right-not-md, .pull-left-not-md{
+    .float-right-not-md, .float-left-not-md{
         float: none;
     }
-    .pull-right-md {
+    .float-right-md {
         float: right;
     }
-    .pull-left-md {
+    .float-left-md {
         float: left;
     }
 }
 @media (min-width: 1200px) {
-    .pull-right-not-lg, .pull-left-not-lg{
+    .float-right-not-lg, .float-left-not-lg{
         float: none;
     }
-    .pull-right-lg {
+    .float-right-lg {
         float: right;
     }
-    .pull-left-lg {
+    .float-left-lg {
         float: left;
     }
 }
 
 @media (min-width: 1600px) {
-    .pull-right-not-xl, .pull-left-not-xl{
+    .float-right-not-xl, .float-left-not-xl{
         float: none;
     }
-    .pull-right-xl {
+    .float-right-xl {
         float: right;
     }
-    .pull-left-xl {
+    .float-left-xl {
         float: left;
     }
 }

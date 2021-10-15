@@ -47,8 +47,7 @@ namespace ChilliCoreTemplate.Web
                     var selectedValue = data.Value?.ToString();
                     foreach (var item in this.SelectList)
                     {
-                        if (item.Value == selectedValue)
-                            item.Selected = true;
+                        item.Selected = item.Value == selectedValue;
                     }
                 }
             }
