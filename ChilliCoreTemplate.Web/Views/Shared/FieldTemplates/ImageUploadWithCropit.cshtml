@@ -1,0 +1,38 @@
+@model IFieldInnerTemplateModel<FieldImageUploadWithCropitOptions>
+@{
+    var buttonText = Model.Options.ButtonText;
+    var removeButtonText = Model.Options.RemoveButtonText;
+    var imagePath = Model.Options.ImagePath;
+    var alternativeImage = Model.Options.AlternativeImage;
+    var form = Model.Options.Form;
+    var widthInPixels = Model.Options.WidthInPixels;
+    var heightInPixels = Model.Options.HeightInPixels;
+
+    if (!String.IsNullOrEmpty(imagePath)) { imagePath = Url.Content(imagePath) + $"?w={widthInPixels}&h={heightInPixels}"; }
+    if (!String.IsNullOrEmpty(alternativeImage)) { alternativeImage = Url.Content(alternativeImage); }
+    var jsId = Model.Id.ToLower().Replace("_", "-");
+    Model.HtmlAttributes.Merge("class", "cropit-image-input");
+    Model.HtmlAttributes.Merge("class", "hide");
+    Model.HtmlAttributes.Merge("class", "validate");
+}
+<div id="js-image-cropper-@jsId">
+    <div class="m-b-sm">
+        <button type="button" class="btn btn-default js-image-select-@jsId">@buttonText</button>
+        <button type="button" class="btn btn-default js-image-remove-@jsId">@removeButtonText</button>
+    </div>
+    <div class="cropit-preview" style="width:@(widthInPixels)px;height:@(heightInPixels)px;"></div>
+    <input type="file" id="@(Model.Id)" name="@Model.Name" @Model.HtmlAttributes.ToAttributeHtmlContent() />
+    <input id="@(Model.Id)Remove" name="@(Model.Name)Remove" type="hidden" value="@bool.FalseString" />
+    <input id="@(Model.Id)Base64" name="@(Model.Name)Base64" type="hidden" />
+</div>
+
+@if (Model.Options.AutoWireUpJavascript)
+{
+    @Html.RegisterCustomScripts(
+    @<script>
+    $(function () {
+       window.croppersubmit@(Model.Id) = $('js-image-cropper-@jsId').imageCropit('@form', '#@Model.Id', '@jsId', '@imagePath', '@alternativeImage');
+    });
+</script>
+)
+}

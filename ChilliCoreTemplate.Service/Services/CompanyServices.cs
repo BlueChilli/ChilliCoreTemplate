@@ -204,14 +204,11 @@ namespace ChilliCoreTemplate.Service
             if (company.UserRoles.Any()) return ServiceResult<CompanyDetailViewModel>.AsError($"Company already has the user {model.Email}");
 
             var user = _accountService.GetAccountByEmail(model.Email);
-            var userId = user?.Id;
+            if (user != null) return ServiceResult<CompanyDetailViewModel>.AsError($"User {model.Email} already has an account");
 
-            if (user == null)
-            {   //Invite code will add user to company
-                var newUserRequest = _accountService.Invite(model, true);
-                if (!newUserRequest.Success) return ServiceResult<CompanyDetailViewModel>.CopyFrom(newUserRequest);
-                userId = newUserRequest.Result.Id;
-            }
+            var newUserRequest = _accountService.Invite(model, true);
+            if (!newUserRequest.Success) return ServiceResult<CompanyDetailViewModel>.CopyFrom(newUserRequest);
+
             Context.SaveChanges();
 
             return ServiceResult<CompanyDetailViewModel>.AsSuccess(Company_Get(id).Result);

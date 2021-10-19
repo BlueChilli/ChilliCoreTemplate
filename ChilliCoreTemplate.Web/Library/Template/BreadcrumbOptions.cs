@@ -68,6 +68,30 @@ namespace ChilliCoreTemplate.Web
 
             this._pathItems.Add(item);
         }
+
+        public void AddPath(IUrlHelper urlHelper, IMvcActionDefinition action, string text, string url = null, BreadCrumbPath path = BreadCrumbPath.Before)
+        {
+            var item = new BreadcrumbPathItem()
+            {
+                Text = text,
+                Url = url
+            };
+            var index = PathItems.IndexOf(x => x.Url == action.Url(urlHelper));
+            if (index < 0) AddPath(item);
+            else _pathItems.Insert(index, item);
+        }
+
+        public void AlterPath(IUrlHelper urlHelper, IMvcActionDefinition action, string text, string url = null)
+        {
+            var item = new BreadcrumbPathItem()
+            {
+                Text = text,
+                Url = url
+            };
+            var index = PathItems.IndexOf(x => x.Url == action.Url(urlHelper));
+            if (index < 0) AddPath(item);
+            else _pathItems[index] = item;
+        }
     }
 
     public class BreadcrumbPathItem
@@ -108,5 +132,11 @@ namespace ChilliCoreTemplate.Web
                 options.AddPath(new BreadcrumbPathItem() { Text = options.Title });
             }
         }
+    }
+
+    public enum BreadCrumbPath
+    {
+        Before,
+        After
     }
 }

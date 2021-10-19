@@ -81,6 +81,7 @@
       "wwwroot/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
       "wwwroot/Scripts/inspinia/plugins/clockpicker/clockpicker.js",
       "wwwroot/lib/icheck/icheck.min.js",
+      "wwwroot/lib/cropit.jquery3/dist/jquery.cropit.js",
       "wwwroot/Scripts/inspinia/plugins/dataTables/datatables.min.js"
     ]
   }
