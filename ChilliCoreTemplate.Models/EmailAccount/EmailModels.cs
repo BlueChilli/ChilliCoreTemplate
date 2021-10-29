@@ -233,6 +233,11 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             FooterTextColor = "#000";
         }
 
+        public RazorTemplateDataModel(T data) : base()
+        {
+            Data = data;
+        }
+
         public T Data { get; set; }
 
         public ShortGuid TrackingId { get; set; }

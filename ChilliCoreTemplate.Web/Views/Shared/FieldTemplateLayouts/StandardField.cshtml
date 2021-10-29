@@ -1,6 +1,9 @@
 @model FieldTemplateModel
-<div class="form-group row">
-    <label class="col-md-@(12 - Model.FieldColumnSize.GetValueOrDefault(10)) col-form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName @if(!String.IsNullOrEmpty(Model.HelpText)) { <br/><span class="help-text">@Html.Raw(Model.HelpText)</span>   }</label>
+@{ 
+    Model.HtmlAttributes.Merge("class", "form-group row");
+}
+<div @Model.HtmlAttributes.ToAttributeHtmlContent()>
+    <label class="col-md-@(12 - Model.FieldColumnSize.GetValueOrDefault(10)) col-form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName @if(!String.IsNullOrEmpty(Model.HelpText)) {<br/><span class="help-text">@Html.Raw(Model.HelpText)</span>}</label>
     <div class="col-md-@Model.FieldColumnSize.GetValueOrDefault(10)">
         <div class="@Model.GetFieldSize()">
             @FieldTemplateModel.InnerTemplateMarker

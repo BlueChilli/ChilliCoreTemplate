@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v5.0": {
       "ChilliSource.Cloud.Core": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0110, )",
-        "resolved": "2.0.0-alpha0110",
-        "contentHash": "Wnb9xq3mH2+N/s5D9vtNgoyH5CGxpLvDweSumJ1x9VxvVbfBTd8CNZGsB9Q8PjhxPMUJ2ZzNlQjX0Xxm6SzzZg==",
+        "requested": "[2.0.0-alpha0112, )",
+        "resolved": "2.0.0-alpha0112",
+        "contentHash": "2DPYQf42T2a3gqu9OlPSlqHaxyiGLOA+pVy1YvNeLOLF8tOb2PYpG+LsYHD98P5NQvqhK20REGIB1ThiXAl/dg==",
         "dependencies": {
           "AutoMapper": "8.0.0",
           "ChilliSource.Core.Extensions": "2.0.3-alpha0013",
@@ -14,7 +14,7 @@
           "EnterpriseLibrary.TransientFaultHandling.Data.NetCore": "6.0.1312",
           "EnterpriseLibrary.TransientFaultHandling.NetCore": "6.0.1312",
           "Humanizer.Core": "2.11.10",
-          "LinqKit.Core": "1.1.17",
+          "LinqKit.Core": "1.1.26",
           "Microsoft.EntityFrameworkCore": "3.1.8",
           "Microsoft.EntityFrameworkCore.Relational": "3.1.8",
           "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "3.1.8",
@@ -41,20 +41,20 @@
       },
       "ChilliSource.Cloud.Web.MVC": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0091, )",
-        "resolved": "2.0.0-alpha0091",
-        "contentHash": "SQXliPjkApICnJjcrcASFJThkYIjq6Oz7JbaSJv63X8JREHV+lHnoyvloSBpPa8goWSV/+JOFshg1VGAFxHnmg==",
+        "requested": "[2.0.0-alpha0097, )",
+        "resolved": "2.0.0-alpha0097",
+        "contentHash": "aGHa8gKvzXgOWvzxkwBce04oYzIzpvUzSoZHKfBkKAgwG95Q1GqNufm3TpgR900en+YH4KMBBwiTb1RRUfCAjg==",
         "dependencies": {
-          "ChilliSource.Cloud.Web": "2.0.0-alpha0027",
-          "ChilliSource.Core.Extensions": "2.0.2",
+          "ChilliSource.Cloud.Web": "2.0.0-alpha0036",
+          "ChilliSource.Core.Extensions": "2.0.3-alpha0027",
           "SixLabors.ImageSharp.Web": "1.0.0"
         }
       },
       "ChilliSource.Core.Extensions": {
         "type": "Direct",
-        "requested": "[2.0.3-alpha0026, )",
-        "resolved": "2.0.3-alpha0026",
-        "contentHash": "XADWmGwImc+dEcJU8lq3FwvgUw1m/+wBv777/paw3+8qUop3wi06S8DScz25i4AeSlykSbqC/sIaIfCMxHNdhA==",
+        "requested": "[2.0.3-alpha0027, )",
+        "resolved": "2.0.3-alpha0027",
+        "contentHash": "hUSWbUrlryDPp2tr73BTuRSBz8/NXwlcBoePNO7RXldK8SoCJLZC8T9utaocGNLHzfgbh3j4kvXz3YU0mB8bwA==",
         "dependencies": {
           "Newtonsoft.Json": "12.0.3",
           "System.Threading.Tasks.Extensions": "4.5.4"
@@ -514,8 +514,8 @@
       },
       "LinqKit.Core": {
         "type": "Transitive",
-        "resolved": "1.1.17",
-        "contentHash": "fFtJEE8DG27urpjRhWt4p75hJpSnoCQNf/J8DLv8wlyVsCYLY6P9+6KOUnnFzU1KECYKP+tSoNf4vYX2YqIZpQ=="
+        "resolved": "1.1.26",
+        "contentHash": "svSbON3rh4QVIeTK7sDO8OyC2lrhDGctnRPUMNPKVChMPY2v/x0DDtfBq7CWsWyuaYD00q5TxVKoZkW5+pqcXw=="
       },
       "Microsoft.AspNetCore.Antiforgery": {
         "type": "Transitive",
@@ -3011,8 +3011,8 @@
         "type": "Project",
         "dependencies": {
           "ChilliCoreTemplate.Models": "1.0.0",
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0110",
-          "ChilliSource.Core.Extensions": "2.0.3-alpha0026",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0112",
+          "ChilliSource.Core.Extensions": "2.0.3-alpha0027",
           "Microsoft.EntityFrameworkCore": "5.0.9",
           "Microsoft.EntityFrameworkCore.SqlServer": "5.0.9",
           "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "5.0.9"
@@ -3021,9 +3021,9 @@
       "chillicoretemplate.models": {
         "type": "Project",
         "dependencies": {
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0110",
-          "ChilliSource.Cloud.Web.MVC": "2.0.0-alpha0091",
-          "ChilliSource.Core.Extensions": "2.0.3-alpha0026",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0112",
+          "ChilliSource.Cloud.Web.MVC": "2.0.0-alpha0097",
+          "ChilliSource.Core.Extensions": "2.0.3-alpha0027",
           "FoolProof.Core": "1.1.9",
           "HtmlAgilityPack": "1.11.36",
           "HybridModelBinding": "0.18.0",
@@ -3040,10 +3040,10 @@
           "ChilliCoreTemplate.Models": "1.0.0",
           "ChilliSource.Cloud.AWS": "2.0.0-alpha0012",
           "ChilliSource.Cloud.Azure": "2.0.0-alpha0008",
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0110",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0112",
           "ChilliSource.Cloud.ImageSharp": "2.0.0-alpha0004",
           "ChilliSource.Cloud.Web": "2.0.0-alpha0036",
-          "ChilliSource.Core.Extensions": "2.0.3-alpha0026",
+          "ChilliSource.Core.Extensions": "2.0.3-alpha0027",
           "DataTables.AspNet.AspNetCore": "2.0.2",
           "FirebaseAdmin": "2.2.0",
           "LazyCache": "2.1.3",

@@ -1,19 +1,13 @@
+using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Collections;
-using System.Reflection;
-using System.ComponentModel.DataAnnotations;
-using ChilliSource.Cloud.Core;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using ChilliSource.Cloud.Web.MVC;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using System.ComponentModel;
 
 namespace ChilliCoreTemplate.Web
 {
@@ -21,9 +15,9 @@ namespace ChilliCoreTemplate.Web
     {
         public FieldTemplateOptions() { }
 
-        public static IHtmlContent AddOn(string text)
+        public static IHtmlContent AddOn(string text, string classes = "")
         {
-            return MvcHtmlStringCompatibility.Create($"<span class=\"input-group-addon\">{text}</span>");
+            return new HtmlString($"<span class=\"input-group-addon {classes}\">{text}</span>");
         }
 
         public static IHtmlContent ButtonAddOn(string text, string classes = "")

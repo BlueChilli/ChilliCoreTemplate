@@ -7,11 +7,12 @@
     var templateAttributesCopy = Model.HtmlAttributes.ToArray();
     var dateAttributes = RouteValueDictionary.FromArray(templateAttributesCopy);
     dateAttributes.Add("data-date-format", "dd/mm/yyyy");
-    var dateValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : DateTime.ParseExact((string)Model.Value, "dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("dd/MM/yyyy");
+    var formats = new string[] { "dd/MM/yyyy HH:mm", "dd/MM/yyyy" };
+    var dateValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : DateTime.ParseExact((string)Model.Value, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("dd/MM/yyyy");
 
     var timeAttributes = RouteValueDictionary.FromArray(templateAttributesCopy);
     timeAttributes.Remove("data-val-date");
-    var timeValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("HH:mm") : DateTime.ParseExact((string)Model.Value, "dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("HH:mm");
+    var timeValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("HH:mm") : DateTime.ParseExact((string)Model.Value, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("HH:mm");
 }
 <input type="hidden" id="@Model.Id" name="@Model.Name" value="@dateValue @timeValue" />
 <div class="row">
