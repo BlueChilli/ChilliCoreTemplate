@@ -152,7 +152,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return result;
             }
 
-            if (!account.ConfirmPassword(viewModel.Password))
+            if (!account.ConfirmPassword(viewModel.Password, _config.ProjectId.Value))
             {
                 account.NumOfRetries = Math.Max(1, account.NumOfRetries + 1);
                 account.LastRetryDate = DateTime.UtcNow;

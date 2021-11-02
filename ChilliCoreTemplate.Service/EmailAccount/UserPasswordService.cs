@@ -14,10 +14,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         internal void Password_Set(User user, string password)
         {
-            if (user.PasswordSalt == Guid.Empty) user.PasswordSalt = Guid.NewGuid();
-            user.PasswordHash = password.SaltedHash(user.PasswordSalt.ToString());
-            user.NumOfRetries = 0;
-            user.LastPasswordChangedDate = DateTime.UtcNow;
+            user.SetPassword(password, _config.ProjectId.Value);
         }
 
         public ServiceResult<int> Password_Reset(ResetPasswordViewModel model, bool isAdmin = false)
@@ -45,14 +42,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             var user = GetAccount(model.UserId);
 
-            if (!user.ConfirmPassword(model.CurrentPassword))
+            if (!user.ConfirmPassword(model.CurrentPassword, _config.ProjectId.Value))
             {
                 return ServiceResult.AsError("Current password is not correct");
             }
 
-            var newPasswordHash = model.NewPassword.SaltedHash(user.PasswordSalt.ToString());
-
-            if (user.PasswordHash == newPasswordHash)
+            if (!user.SetPassword(model.NewPassword, _config.ProjectId.Value))
             {
                 return ServiceResult.AsError("New password cannot be same as current password");
             }

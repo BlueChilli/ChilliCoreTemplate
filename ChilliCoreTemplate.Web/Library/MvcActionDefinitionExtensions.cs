@@ -1,5 +1,6 @@
 ﻿using ChilliCoreTemplate.Models;
 using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

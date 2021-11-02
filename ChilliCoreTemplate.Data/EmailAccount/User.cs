@@ -111,7 +111,19 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public string GetToken(UserTokenType type) => Tokens.FirstOrNew(t => t.Type == type).Token.ToShortGuid().ToString();
 
-        public bool ConfirmPassword(string password) => PasswordHash == password.SaltedHash(PasswordSalt.ToString());        
+        public bool ConfirmPassword(string password, Guid projectId) => PasswordHash == password.SaltedHash($"{PasswordSalt}{projectId}");
+        public bool SetPassword(string password, Guid projectId)
+        {
+            if (PasswordSalt == Guid.Empty) PasswordSalt = Guid.NewGuid();
+            var hash = password.SaltedHash($"{PasswordSalt}{projectId}");
+            if (hash == PasswordHash) return false;
+            PasswordHash = hash;
+
+            NumOfRetries = 0;
+            LastPasswordChangedDate = DateTime.UtcNow;
+
+            return true;
+        }
 
         public bool HasCompany()
         {
