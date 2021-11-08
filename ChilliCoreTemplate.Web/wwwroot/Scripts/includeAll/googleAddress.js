@@ -75,17 +75,23 @@
         fillInAddress: function () {
             // Get the place details from the autocomplete object.
             var $textbox = this.$textbox;
-            var place = this.autocomplete.getPlace(),
-                settings = this.settings,
-                $isSelected = $('#' + settings.isSelectedId),
-                $addressComponent = $('#' + settings.componentsId);
+            var place = this.autocomplete.getPlace();
+            var settings = this.settings;
 
-            $isSelected.val(true);
-
-            $textbox.val(place.formatted_address);
+            if (settings.isSelectedId) {
+                var $isSelected = $('#' + settings.isSelectedId);
+                $isSelected.val(true);
+            }
 
             var result = createAddress(place);
-            $addressComponent.val(JSON.stringify(result));
+
+            if (settings.componentsId) {
+                var $addressComponent = $('#' + settings.componentsId);
+
+                $addressComponent.val(JSON.stringify(result));
+            }
+
+            $textbox.val(place.formatted_address);
 
             if (typeof settings.onselect === 'function') settings.onselect(result);
         },

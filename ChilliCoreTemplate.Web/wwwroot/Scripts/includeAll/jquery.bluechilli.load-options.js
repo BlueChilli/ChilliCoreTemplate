@@ -8,12 +8,17 @@
 
         function doit() {
             $t = $(this);
-            var items = [$t.find('option:eq(0)')[0].outerHTML];
+            var items = [];
+
+            const options = $t.find('option:eq(0)');
+            if (options && options.length > 0) {
+                var items = [options[0].outerHTML];
+            }
             items.push();
             $t.find('option').remove();
             $t.append('<option>(loading)</option>');
             $.getJSON(settings.url, function (data) {
-                $.each(data, function (i, option) {
+                $.each(data.data, function (i, option) {
                     items.push('<option value="' + option.value + '">' + option.text + '</option>');
                 });
             }).done(function (result, status, xhr) {
