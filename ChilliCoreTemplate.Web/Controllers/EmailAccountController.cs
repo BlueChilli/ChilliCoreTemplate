@@ -91,6 +91,9 @@ namespace ChilliCoreTemplate.Web.Controllers
         {
             if (!String.IsNullOrEmpty(returnUrl))
             {
+                if (returnUrl.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase) && !ticket.UserData.IsInRole(Role.Administrator)) return this.RedirectToRoot(_settings, ticket);
+                if (returnUrl.StartsWith("/Company", StringComparison.OrdinalIgnoreCase) && ticket.UserData.IsInRole(Role.Administrator)) return this.RedirectToRoot(_settings, ticket);
+
                 var url = $"{_settings.BaseUrl}{returnUrl}";
                 url = String.Join('/', url.Split('/').Distinct());
                 return this.Redirect(url);

@@ -25,7 +25,7 @@
     "outputFileName": "wwwroot/bundles/bootstrap.min.css",
     "inputFiles": [
       "wwwroot/Styles/inspinia/plugins/summernote/summernote-bs3.css",
-      "wwwroot/lib/bootstrap/scss/bootstrap.scss",
+      "wwwroot/Styles/bootstrap.scss",
       "wwwroot/Styles/fontawesome-patch.scss",
       "wwwroot/Styles/inspinia/plugins/ladda/ladda.scss"
     ]

@@ -56,7 +56,7 @@ $.validator.setDefaults({
                 options.contentType = false;
             }
             $.ajax(options)
-                .success(function (result, status, xhr) {
+                .then(function (result, status, xhr) {
                     if (xhr.getResponseHeader('X-Ajax-Redirect') != null)
                         location.href = xhr.getResponseHeader('X-Ajax-Redirect');
                     else {
@@ -67,7 +67,7 @@ $.validator.setDefaults({
                         if (success != undefined) success(result, status, xhr);
                     }
                 })
-                .error(function (xhr, status) {
+                .fail(function (xhr, status) {
                     $('#' + containerId).html(xhr.responseText);
                 })
         }

@@ -1,10 +1,4 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ChilliCoreTemplate.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -16,6 +10,10 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
@@ -60,6 +58,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public Uri BaseUri { get; set; }
     }
 
+    //Based from https://github.com/scottsauber/RazorHtmlEmails/blob/master/src/RazorHtmlEmails.RazorClassLib/Services/RazorViewToStringRenderer.cs
     public class TemplateViewRenderer : ITemplateViewRenderer
     {
         private readonly IRazorViewEngine _viewEngine;
@@ -75,7 +74,59 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             _options = options.Value;
         }
 
-        public async Task<string> RenderAsync<TViewModel>(string view, TViewModel viewModel)
+        public async Task<string> RenderAsync<TViewModel>(string viewName, TViewModel viewModel)
+        {
+            var actionContext = GetActionContext();
+            var view = FindView(actionContext, viewName);
+
+            var viewDictionary = new ViewDataDictionary<TViewModel>(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+            {
+                Model = viewModel
+            };
+
+            var tempDataDictionary = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
+
+            try
+            {
+                using (var outputWriter = new StringWriter())
+                {
+                    var viewContext = new ViewContext(actionContext, view, viewDictionary,
+                        tempDataDictionary, outputWriter, new HtmlHelperOptions());
+
+                    await view.RenderAsync(viewContext);
+
+                    return outputWriter.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new TemplateViewRenderException($"Failed to render template ({viewName}) due to a razor engine failure", ex);
+            }
+        }
+
+        private IView FindView(ActionContext actionContext, string viewName)
+        {
+            var getViewResult = _viewEngine.GetView(executingFilePath: null, viewPath: viewName, isMainPage: true);
+            if (getViewResult.Success)
+            {
+                return getViewResult.View;
+            }
+
+            var findViewResult = _viewEngine.FindView(actionContext, viewName, isMainPage: true);
+            if (findViewResult.Success)
+            {
+                return findViewResult.View;
+            }
+
+            var searchedLocations = getViewResult.SearchedLocations.Concat(findViewResult.SearchedLocations);
+            var errorMessage = string.Join(
+                Environment.NewLine,
+                new[] { $"Failed to render template {viewName} because it was not found in paths:" }.Concat(searchedLocations)); ;
+
+            throw new TemplateViewRenderException(errorMessage);
+        }
+
+        private ActionContext GetActionContext()
         {
             var httpContext = new DefaultHttpContext { RequestServices = _serviceProvider };
             if (_options?.BaseUri != null)
@@ -87,39 +138,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var router = _serviceProvider.GetService<IMvcRouterAccessor>()?.Router;
             var routeData = router == null ? new RouteData() : new RouteData() { Routers = { router } };
-            var actionContext = new ActionContext(httpContext, routeData, new ActionDescriptor());
-
-            var viewResult = _viewEngine.FindView(actionContext, view, false);
-            var viewDictionary = new ViewDataDictionary<TViewModel>(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-            {
-                Model = viewModel
-            };
-
-            var tempDataDictionary = new TempDataDictionary(httpContext, _tempDataProvider);
-
-            if (!viewResult.Success)
-            {
-                var builder = new StringBuilder();
-                viewResult.SearchedLocations.ToList().ForEach(m => builder.Append($"{m},"));
-                throw new TemplateViewRenderException($"Failed to render template {view} because it was not found in paths: {builder}.");
-            }
-
-            try
-            {
-                using (var outputWriter = new StringWriter())
-                {
-                    var viewContext = new ViewContext(actionContext, viewResult.View, viewDictionary,
-                        tempDataDictionary, outputWriter, new HtmlHelperOptions());
-
-                    await viewResult.View.RenderAsync(viewContext);
-
-                    return outputWriter.ToString();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new TemplateViewRenderException("Failed to render template due to a razor engine failure", ex);
-            }
+            return new ActionContext(httpContext, routeData, new ActionDescriptor());
         }
     }
 }

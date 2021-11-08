@@ -24,13 +24,6 @@ div.background-image h2, div.background-image label, div.background-image p:not(
 }
 
 //Removed in Bootstrap4
-@media (min-width: 768px) { 
-    .modal-dialog .modal-md {
-        max-width: 600px;
-    }
-}
-
-//Removed in Bootstrap4
 @media (min-width: 1600px) { 
     .container {
         max-width: 1570px;
