@@ -1,4 +1,6 @@
 using ChilliCoreTemplate.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,6 +28,14 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         {
             if (this.Role.IsCompanyRole() && this.CompanyId == null && this.Company == null)
                 yield return new ValidationResult($"Company role - Invalid role '{this.Role.ToString()}'. Company is missing.", new string[] { "Role" });
+        }
+
+        public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
+        {
+            public void Configure(EntityTypeBuilder<UserRole> builder)
+            {
+                builder.HasCheckConstraint("CK_UserRoles_Role", "[Role] > 0");
+            }
         }
     }
 }
