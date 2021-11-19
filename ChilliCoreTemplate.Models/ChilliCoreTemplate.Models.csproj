@@ -16,9 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0113" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0115" />
     <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0099" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3-alpha0027" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3-alpha0028" />
     <PackageReference Include="FoolProof.Core" Version="1.1.9" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.36" />
     <PackageReference Include="HybridModelBinding" Version="0.18.0" />

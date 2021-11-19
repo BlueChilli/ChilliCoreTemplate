@@ -5,7 +5,7 @@
     Model.Subject = String.Format("Please confirm your {0} email", Model.CompanyName);
     Model.EmailPreview = null;
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
-    var data = new EmailTokenModel { Email = Model.Data.Email, Token = Model.Data.Token };
+    var data = new UserTokenModel { Email = Model.Data.Email, Token = Model.Data.Token };
     var url = Mvc.Root.EmailAccount_RegistrationComplete.Url(this.Url, routeValues: data, protocol: "https"); //config.ResolveUrl("~/users/confirmemail", data)  
 }
 @section Header

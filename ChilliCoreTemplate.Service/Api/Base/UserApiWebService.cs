@@ -172,13 +172,13 @@ namespace ChilliCoreTemplate.Service.Api
             }
         }
 
-        public ServiceResult<UserAccountApiModel> GetByToken(EmailTokenModel model)
+        public ServiceResult<UserAccountApiModel> GetByToken(UserTokenModel model)
         {
             var accountRequest = _accountService.User_GetAccountByEmailToken(model);
             return GetByX(accountRequest);
         }
 
-        public ServiceResult<UserAccountApiModel> GetByCode(EmailTokenModel model)
+        public ServiceResult<UserAccountApiModel> GetByCode(UserTokenModel model)
         {
             var accountRequest = _accountService.User_GetAccountByOneTimePassword(model);
             return GetByX(accountRequest);
@@ -242,6 +242,12 @@ namespace ChilliCoreTemplate.Service.Api
                 if (model.PhoneSpecified) account.Phone = String.IsNullOrEmpty(model.Phone) ? null : model.Phone;
                 Context.SaveChanges();
                 _accountService.Session_Clear(User.Session()?.Id);
+            }
+
+            if (model.Status != null)
+            {
+                var updateRequest = _accountService.Update_Status(model.Id, model.Status.Value, isApi: true);
+                if (!updateRequest.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(updateRequest);
             }
 
             return this.GetAccount(model.Id);

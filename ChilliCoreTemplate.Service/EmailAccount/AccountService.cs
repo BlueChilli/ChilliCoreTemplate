@@ -198,7 +198,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             Activity_Add(Context, new UserActivity { UserId = user.Id, ActivityType = ActivityType.Create, EntityId = user.Id, EntityType = EntityType.Session });
         }
 
-        public ServiceResult<UserDataPrincipal> LoginWithToken(EmailTokenModel model, Action<UserDataPrincipal> loginAction)
+        public ServiceResult<UserDataPrincipal> LoginWithToken(UserTokenModel model, Action<UserDataPrincipal> loginAction)
         {
             var userRequest = User_GetAccountByEmailToken(model);
             if (!userRequest.Success) return ServiceResult<UserDataPrincipal>.CopyFrom(userRequest);
@@ -211,7 +211,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<UserDataPrincipal>.AsSuccess(session);
         }
 
-        public ServiceResult<UserDataPrincipal> LoginWithCode(EmailTokenModel model, Action<UserDataPrincipal> loginAction)
+        public ServiceResult<UserDataPrincipal> LoginWithCode(UserTokenModel model, Action<UserDataPrincipal> loginAction)
         {
             var userRequest = User_GetAccountByOneTimePassword(model);
             if (!userRequest.Success) return ServiceResult<UserDataPrincipal>.CopyFrom(userRequest);
@@ -592,7 +592,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             });
         }
 
-        public ServiceResult Activate(EmailTokenModel model)
+        public ServiceResult Activate(UserTokenModel model)
         {
             var userRequest = User_GetAccountByEmailToken(model);
             if (!userRequest.Success) return ServiceResult.CopyFrom(userRequest);
@@ -663,6 +663,23 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var mapped = Mapper.Map<User, AccountDetailsEditModel>(account);
             return ServiceResult<AccountDetailsEditModel>.AsSuccess(mapped);
+        }
+
+        public ServiceResult Update_Status(int userId, UserStatus status, bool isApi = false)
+        {
+            var user = GetAccount(userId);
+
+            if (user == null) return ServiceResult.AsError("Not found");
+
+            if (user.Status == UserStatus.Anonymous && status == UserStatus.Registered)
+            {
+                Token_Add(user, UserTokenType.Activate, new TimeSpan(14, 0, 0, 0));
+                SendWelcomeEmail(user, isApi);
+            }
+            user.Status = status;
+            Context.SaveChanges();
+
+            return ServiceResult.AsSuccess();
         }
 
         public ServiceResult Update(AccountDetailsEditModel model, int userId, bool onBehalfOfUser = false, bool visibleOnly = true)

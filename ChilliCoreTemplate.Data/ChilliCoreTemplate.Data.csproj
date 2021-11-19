@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0113" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3-alpha0027" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0115" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3-alpha0028" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.11">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

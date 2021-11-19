@@ -49,7 +49,7 @@ namespace ChilliCoreTemplate.Web.Api
         /// </summary>
         [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
         [HttpPost("bytoken/{token}")]
-        public virtual IActionResult AddByToken(EmailTokenModel model)
+        public virtual IActionResult AddByToken(UserTokenModel model)
         {
             return this.ApiServiceCall(() => _accountService.LoginWithToken(model, this.LoginWithPrincipal))
                 .OnSuccess(x =>
@@ -59,15 +59,21 @@ namespace ChilliCoreTemplate.Web.Api
                 .Call();
         }
 
-        ///// <summary>
-        ///// Create a new session (login)
-        ///// </summary>
-        //[ProducesResponseType(typeof(LoginCodeResponseApiModel), StatusCodes.Status200OK)]
-        //[HttpPost("byphone/coderequest")]
-        //public IActionResult CodeRequest([FromBody]LoginCodeRequestApiModel model)
-        //{
-        //    return this.ApiServiceCall(() => _mobileService.RequestLoginCode(model)).Call();
-        //}
+        /// <summary>
+        /// Create a new session from an OTP code
+        /// </summary>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
+        [HttpPost("bycode/{token}")]
+        public virtual IActionResult AddByCode(UserTokenModel model)
+        {
+            return this.ApiServiceCall(() => _accountService.LoginWithCode(model, this.LoginWithPrincipal))
+                 .OnSuccess(x =>
+                 {
+                     return Ok(_webService.GetSessionSummary(x.Result, includeUserKey: true));
+                 })
+                .Call();
+        }
 
         //[ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
         //[HttpPost("byphone")]

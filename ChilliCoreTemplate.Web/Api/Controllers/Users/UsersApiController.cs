@@ -70,7 +70,7 @@ namespace ChilliCoreTemplate.Web.Api
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserAccountApiModel), StatusCodes.Status200OK)]
         [HttpGet("bytoken/{token}")]
-        public virtual IActionResult GetByToken(EmailTokenModel model)
+        public virtual IActionResult GetByToken(UserTokenModel model)
         {
             return this.ApiServiceCall(() => _webApiService.GetByToken(model)).Call();
         }
@@ -81,7 +81,7 @@ namespace ChilliCoreTemplate.Web.Api
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserAccountApiModel), StatusCodes.Status200OK)]
         [HttpGet("bycode/{token}")]
-        public virtual IActionResult GetByCode(EmailTokenModel model)
+        public virtual IActionResult GetByCode(UserTokenModel model)
         {
             return this.ApiServiceCall(() => _webApiService.GetByCode(model)).Call();
         }
@@ -120,7 +120,7 @@ namespace ChilliCoreTemplate.Web.Api
         }
 
         /// <summary>
-        /// Patch user (password and/or email and/or name and if anonymous change status to registered)
+        /// Patch user (password and/or email and/or name and status (eg change anonymous to registered or change status to deleted)
         /// </summary>
         [CustomAuthorize]
         [ProducesResponseType(typeof(UserAccountApiModel), StatusCodes.Status200OK)]

@@ -182,7 +182,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                             Email = account.Email,
                             FirstName = account.FirstName,
                             LastName = account.LastName,
-                            InviteUrl = model.Status.Value == UserStatus.Invited ? _config.ResolveUrl("~/EmailAccount/ConfirmInvite", new EmailTokenModel
+                            InviteUrl = model.Status.Value == UserStatus.Invited ? _config.ResolveUrl("~/EmailAccount/ConfirmInvite", new UserTokenModel
                             {
                                 Token = account.GetToken(UserTokenType.Invite),
                                 Email = account.Email
