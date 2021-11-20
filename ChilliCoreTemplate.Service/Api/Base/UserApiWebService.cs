@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChilliSource.Cloud.Core.LinqMapper;
 using System.Security.Principal;
+using ChilliCoreTemplate.Models.Api.OAuth;
 
 namespace ChilliCoreTemplate.Service.Api
 {
@@ -125,6 +126,14 @@ namespace ChilliCoreTemplate.Service.Api
             if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);
 
             return this.GetAccount(response.Result.UserId, onlyVisible: false);
+        }
+
+        public async Task<ServiceResult<UserAccountApiModel>> Create(OAuthRegisterApiModel model)
+        {
+            var request = await _accountService.OAuth_Authenticate(model.Provider.Value, OAuthMode.Register, model.Token);
+            if (!request.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(request);
+
+            return await this.GetAccountAsync(request.Result.Id, onlyVisible: false);
         }
 
         public ServiceResult<UserAccountApiModel> Invite(InviteEditApiModel model)

@@ -1,6 +1,7 @@
 ﻿using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Web.Api;
+using ChilliCoreTemplate.Web.Library;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Cloud.Web.MVC.ModelBinding;
@@ -247,6 +248,11 @@ namespace ChilliCoreTemplate.Web
                 options.ForwardedHeaders = ForwardedHeaders.All;
                 options.KnownNetworks.Clear();
                 options.KnownProxies.Clear();
+            });
+
+            services.Configure<RouteOptions>(options =>
+            {
+                options.ConstraintMap.Add("oAuthProvider", typeof(OAuthProviderRouteConstraint));
             });
         }
 
