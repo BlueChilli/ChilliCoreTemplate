@@ -58,7 +58,7 @@ namespace ChilliCoreTemplate.Data
                         FirstName = "Admin",
                         LastName = _config.ProjectName,
                         PasswordSalt = salt,
-                        PasswordHash = password.SaltedHash(salt.ToString()),
+                        PasswordHash = password.SaltedHash($"{salt}{_config.ProjectId}"),
                         Status = UserStatus.Activated,
                         ActivatedDate = DateTime.UtcNow,
                         CreatedDate = DateTime.UtcNow,

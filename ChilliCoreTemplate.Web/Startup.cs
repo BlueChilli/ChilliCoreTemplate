@@ -355,6 +355,7 @@ namespace ChilliCoreTemplate.Web
                 {
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     await context.Response.Body.FlushAsync();
+                    await next();
                 });
             });
 
