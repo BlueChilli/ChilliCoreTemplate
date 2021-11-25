@@ -18,6 +18,8 @@
         $(function () {
             $('.@jsId').summernote({
                 height: 200,
+                codeviewFilter: true,
+                codeviewIframeFilter: true,
                 toolbar: @options.ToolbarJson(),
                 placeholder: $('#@Model.Id').attr('placeholder'),
                 dialogsInBody: @(options.IsInModal ? "true" : "false"),
