@@ -32,7 +32,6 @@ namespace ChilliCoreTemplate.Web
 
             services.AddImageSharp()
                 .SetRequestParser<QueryCollectionRequestParser>()
-                .SetMemoryAllocator<ArrayPoolMemoryAllocator>()
                 .SetCache<PhysicalFileSystemCache>()
                 .SetCacheHash<CacheHash>()
                 //image providers

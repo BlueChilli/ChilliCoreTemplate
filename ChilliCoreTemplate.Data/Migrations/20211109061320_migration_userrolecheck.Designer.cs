@@ -4,14 +4,16 @@ using ChilliCoreTemplate.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChilliCoreTemplate.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20211109061320_migration_userrolecheck")]
+    partial class migration_userrolecheck
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -555,40 +557,6 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.ToTable("UserDevices");
                 });
 
-            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserOAuth", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("OAuthId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("OAuthIdHash")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Provider")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Token")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OAuthIdHash");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserOAuths");
-                });
-
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserRole", b =>
                 {
                     b.Property<int>("Id")
@@ -1032,17 +1000,6 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
                         .WithMany("Devices")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserOAuth", b =>
-                {
-                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

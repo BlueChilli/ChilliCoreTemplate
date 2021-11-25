@@ -179,7 +179,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public bool Success { get; set; }
     }
 
-    public class EmailTokenModel
+    public class UserTokenModel
     {
         [Required]
         public string Email { get; set; }

@@ -5,6 +5,7 @@ using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service.Api;
+using ChilliCoreTemplate.Service.EmailAccount;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,6 +115,7 @@ namespace ChilliCoreTemplate.Service
                 cfg.CreateMap<Email, EmailUnsubscribeModel>();
 
                 UserApiMobileService.AutoMapperConfigure(cfg);
+                AccountService.OAuth_AutoMapperConfigure(cfg);
                 ProjectConfigure(cfg);
             });
 

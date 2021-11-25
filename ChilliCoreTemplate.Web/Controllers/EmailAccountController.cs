@@ -91,6 +91,9 @@ namespace ChilliCoreTemplate.Web.Controllers
         {
             if (!String.IsNullOrEmpty(returnUrl))
             {
+                if (returnUrl.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase) && !ticket.UserData.IsInRole(Role.Administrator)) return this.RedirectToRoot(_settings, ticket);
+                if (returnUrl.StartsWith("/Company", StringComparison.OrdinalIgnoreCase) && ticket.UserData.IsInRole(Role.Administrator)) return this.RedirectToRoot(_settings, ticket);
+
                 var url = $"{_settings.BaseUrl}{returnUrl}";
                 url = String.Join('/', url.Split('/').Distinct());
                 return this.Redirect(url);
@@ -100,7 +103,7 @@ namespace ChilliCoreTemplate.Web.Controllers
         }
 
         [HttpPost]
-        public virtual ActionResult LoginWithToken([FromBody] EmailTokenModel model)
+        public virtual ActionResult LoginWithToken([FromBody] UserTokenModel model)
         {
             return this.ServiceCall(() => _accountService.LoginWithToken(model, this.LoginWithPrincipal))
                 .OnSuccess(m =>
@@ -198,7 +201,7 @@ namespace ChilliCoreTemplate.Web.Controllers
             return Json(new { result = "ok" });
         }
 
-        public virtual ActionResult RegistrationComplete(EmailTokenModel model)
+        public virtual ActionResult RegistrationComplete(UserTokenModel model)
         {
             if (ModelState.IsValid)
             {
@@ -223,7 +226,7 @@ namespace ChilliCoreTemplate.Web.Controllers
             return View(model);
         }
 
-        public virtual ActionResult ConfirmInvite(EmailTokenModel model)
+        public virtual ActionResult ConfirmInvite(UserTokenModel model)
         {
             var viewModel = new ResetPasswordViewModel { Token = model.Token, Email = model.Email };
             return View(viewModel);

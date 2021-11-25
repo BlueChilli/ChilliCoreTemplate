@@ -21,16 +21,17 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 {
     public class UserSessionService : IService
     {
-        IAppCache _cache;
+        private readonly IAppCache _cache;
+        private readonly UserKeyHelper _userKeyHelper;
+        private readonly DataContext Context;
+        private readonly ProjectSettings _config;
 
-        private DataContext Context { get; set; }
-        private ProjectSettings _config { get; set; }
-
-        public UserSessionService(DataContext context, IAppCache cache, ProjectSettings config)
+        public UserSessionService(DataContext context, IAppCache cache, ProjectSettings config, UserKeyHelper userKeyHelper)
         {
-            this.Context = context;
+            Context = context;
             _cache = cache;
             _config = config;
+            _userKeyHelper = userKeyHelper;
         }
 
         private void SetUserSession(UserSession session, UserData userData, DateTime expiresOn)
@@ -69,6 +70,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public SessionInfo Get(string sessionId)
         {
             return SyncTaskHelper.ValidateSyncTask(GetInternalAsync(sessionId, CancellationToken.None, isAsync: false));
+        }
+
+        internal SessionInfo GetByUserKey(string userKey)
+        {
+            var sessionId = _userKeyHelper.UnprotectGuid(userKey);
+            if (sessionId.HasValue) return Get(sessionId.ToString());
+            return null;
         }
 
         private MemoryCacheEntryOptions CreatePolicy()

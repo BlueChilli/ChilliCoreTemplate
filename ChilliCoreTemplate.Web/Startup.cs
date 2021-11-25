@@ -1,8 +1,10 @@
 ﻿using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Web.Api;
+using ChilliCoreTemplate.Web.Library;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Cloud.Web.MVC.ModelBinding;
 using DataTables.AspNet.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -206,7 +208,11 @@ namespace ChilliCoreTemplate.Web
                     options.EnableEndpointRouting = false;
                 });
 
-            services.AddMvc(options => options.EnableEndpointRouting = false)
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+                options.AddFlagsEnumModelBinderProvider();
+            })
             .AddControllersAsServices()
             .AddNewtonsoftJson()
             .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
@@ -242,6 +248,11 @@ namespace ChilliCoreTemplate.Web
                 options.ForwardedHeaders = ForwardedHeaders.All;
                 options.KnownNetworks.Clear();
                 options.KnownProxies.Clear();
+            });
+
+            services.Configure<RouteOptions>(options =>
+            {
+                options.ConstraintMap.Add("oAuthProvider", typeof(OAuthProviderRouteConstraint));
             });
         }
 
@@ -344,6 +355,7 @@ namespace ChilliCoreTemplate.Web
                 {
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     await context.Response.Body.FlushAsync();
+                    await next();
                 });
             });
 
@@ -393,8 +405,11 @@ namespace ChilliCoreTemplate.Web
             var routerAccessor = app.ApplicationServices.GetRequiredService<MvcRouterAccessor>();
             routerAccessor.Router = capturedRoutes.Build(); //this requires MvcOptions.EnableEndpointRouting = false;
 
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            if (!env.IsProduction())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             if (settings.UseIndexHtml)
             {

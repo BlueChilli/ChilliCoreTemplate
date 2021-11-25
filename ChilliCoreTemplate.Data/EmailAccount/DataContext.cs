@@ -16,6 +16,7 @@ namespace ChilliCoreTemplate.Data
         public DbSet<UserSession> UserSessions { get; set; }
         public DbSet<UserToken> UserTokens { get; set; }
         public DbSet<UserDevice> UserDevices { get; set; }
+        public DbSet<UserOAuth> UserOAuths { get; set; }
 
         public DbSet<UserActivity> UserActivities { get; set; }
         public DbSet<Email> Emails { get; set; }

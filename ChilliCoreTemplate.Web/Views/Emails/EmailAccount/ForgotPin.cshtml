@@ -1,4 +1,4 @@
-@model RazorTemplateDataModel<EmailTokenModel>
+@model RazorTemplateDataModel<UserTokenModel>
 @{
     Layout = "~/Views/Emails/_EmailLayout.cshtml";
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);

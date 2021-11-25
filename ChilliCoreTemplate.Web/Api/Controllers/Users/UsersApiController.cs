@@ -1,5 +1,6 @@
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
+using ChilliCoreTemplate.Models.Api.OAuth;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service.Api;
 using ChilliCoreTemplate.Service.EmailAccount;
@@ -52,6 +53,34 @@ namespace ChilliCoreTemplate.Web.Api
         }
 
         /// <summary>
+        /// Create a user (registration) using oauthtoken
+        /// </summary>
+        [HttpPost("byoauth/{provider:oAuthProvider}")]
+        [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
+        public async virtual Task<IActionResult> AddByOAuth(OAuthRegisterApiModel model)
+        {
+            return await this.ApiServiceCall(() => _webApiService.Create(model))
+                .Call();
+        }
+
+        /// <summary>
+        /// Request OAuth access for registration. RedirectUrl is the url the login token or errors will be sent to.
+        /// </summary>
+        [ApiKeyIgnore]
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        [HttpGet("byoauth/{provider:oAuthProvider}")]
+        public virtual IActionResult AddByOAuthUrl(OAuthUrlApiModel model)
+        {
+            model.Email = User?.UserData()?.Email;
+            return this.ApiServiceCall(() => _accountService.OAuth_Url(model, OAuthMode.Register))
+                .OnSuccess(x =>
+                {
+                    return Redirect(x.Result);
+                })
+                .Call();
+        }
+
+        /// <summary>
         /// Create a token 
         /// 1. password - delivered by email with link to ~/users/resetpassword)
         /// 2. activate - delivered by email with link to ~/users/confirmemail
@@ -70,7 +99,7 @@ namespace ChilliCoreTemplate.Web.Api
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserAccountApiModel), StatusCodes.Status200OK)]
         [HttpGet("bytoken/{token}")]
-        public virtual IActionResult GetByToken(EmailTokenModel model)
+        public virtual IActionResult GetByToken(UserTokenModel model)
         {
             return this.ApiServiceCall(() => _webApiService.GetByToken(model)).Call();
         }
@@ -81,7 +110,7 @@ namespace ChilliCoreTemplate.Web.Api
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserAccountApiModel), StatusCodes.Status200OK)]
         [HttpGet("bycode/{token}")]
-        public virtual IActionResult GetByCode(EmailTokenModel model)
+        public virtual IActionResult GetByCode(UserTokenModel model)
         {
             return this.ApiServiceCall(() => _webApiService.GetByCode(model)).Call();
         }
@@ -120,7 +149,7 @@ namespace ChilliCoreTemplate.Web.Api
         }
 
         /// <summary>
-        /// Patch user (password and/or email and/or name and if anonymous change status to registered)
+        /// Patch user (password and/or email and/or name and status (eg change anonymous to registered or change status to deleted)
         /// </summary>
         [CustomAuthorize]
         [ProducesResponseType(typeof(UserAccountApiModel), StatusCodes.Status200OK)]

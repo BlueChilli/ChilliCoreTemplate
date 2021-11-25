@@ -19,7 +19,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<int> Password_Reset(ResetPasswordViewModel model, bool isAdmin = false)
         {
-            var userRequest = User_GetAccountByEmailToken(new EmailTokenModel { Email = model.Email, Token = model.Token });
+            var userRequest = User_GetAccountByEmailToken(new UserTokenModel { Email = model.Email, Token = model.Token });
 
             if (!userRequest.Success) return ServiceResult<int>.AsError(userRequest.Error);
 

@@ -249,7 +249,7 @@ namespace ChilliCoreTemplate.Models.Api
     }
 
     [HybridBindClass(defaultBindingOrder: new[] { Source.Route, Source.Body, Source.Form })]
-    public class PatchAccountTokenApiModel : EmailTokenModel
+    public class PatchAccountTokenApiModel : UserTokenModel
     {
         [MaxLength(25)]
         public virtual string FirstName { get; set; }
@@ -303,6 +303,8 @@ namespace ChilliCoreTemplate.Models.Api
         public string Phone { get; set; }
         public bool PhoneSpecified { get; set; }
 
+        public UserStatus? Status { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             this.Email = this.Email?.Trim();
@@ -325,6 +327,11 @@ namespace ChilliCoreTemplate.Models.Api
                 {
                     yield return new ValidationResult("The new password field is required", new string[] { "Password" });
                 }
+            }
+
+            if (Status.HasValue && (Status == UserStatus.Activated || Status == UserStatus.Invited))
+            {
+                yield return new ValidationResult("The status field is invalid", new string[] { "Status" });
             }
         }
     }

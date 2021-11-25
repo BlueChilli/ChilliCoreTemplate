@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChilliSource.Cloud.Core.LinqMapper;
 using System.Security.Principal;
+using ChilliCoreTemplate.Models.Api.OAuth;
 
 namespace ChilliCoreTemplate.Service.Api
 {
@@ -127,6 +128,14 @@ namespace ChilliCoreTemplate.Service.Api
             return this.GetAccount(response.Result.UserId, onlyVisible: false);
         }
 
+        public async Task<ServiceResult<UserAccountApiModel>> Create(OAuthRegisterApiModel model)
+        {
+            var request = await _accountService.OAuth_Authenticate(model.Provider.Value, OAuthMode.Register, model.Token);
+            if (!request.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(request);
+
+            return await this.GetAccountAsync(request.Result.Id, onlyVisible: false);
+        }
+
         public ServiceResult<UserAccountApiModel> Invite(InviteEditApiModel model)
         {
             var inviteModel = Mapper.Map<InviteEditModel>(model);
@@ -172,13 +181,13 @@ namespace ChilliCoreTemplate.Service.Api
             }
         }
 
-        public ServiceResult<UserAccountApiModel> GetByToken(EmailTokenModel model)
+        public ServiceResult<UserAccountApiModel> GetByToken(UserTokenModel model)
         {
             var accountRequest = _accountService.User_GetAccountByEmailToken(model);
             return GetByX(accountRequest);
         }
 
-        public ServiceResult<UserAccountApiModel> GetByCode(EmailTokenModel model)
+        public ServiceResult<UserAccountApiModel> GetByCode(UserTokenModel model)
         {
             var accountRequest = _accountService.User_GetAccountByOneTimePassword(model);
             return GetByX(accountRequest);
@@ -242,6 +251,12 @@ namespace ChilliCoreTemplate.Service.Api
                 if (model.PhoneSpecified) account.Phone = String.IsNullOrEmpty(model.Phone) ? null : model.Phone;
                 Context.SaveChanges();
                 _accountService.Session_Clear(User.Session()?.Id);
+            }
+
+            if (model.Status != null)
+            {
+                var updateRequest = _accountService.Update_Status(model.Id, model.Status.Value, isApi: true);
+                if (!updateRequest.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(updateRequest);
             }
 
             return this.GetAccount(model.Id);

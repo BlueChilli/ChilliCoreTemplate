@@ -11,6 +11,7 @@ using ChilliCoreTemplate.Models.EmailAccount;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using ChilliCoreTemplate.Models.Stripe;
+using ChilliCoreTemplate.Models.Api.OAuth;
 
 namespace ChilliCoreTemplate.Models
 {
@@ -70,6 +71,7 @@ namespace ChilliCoreTemplate.Models
             SmsSettings = new SmsConfigurationSection(configuration.GetSection("SmsSettings"));
             _apiConfigurationSection = new ApiConfigurationSection(configuration.GetSection("ProjectSettings:Api"));
             _hostingSection = new HostingSection(configuration.GetSection("ProjectSettings:Hosting"));
+            OAuthsSettings = new OAuthsConfigurationSection(configuration.GetSection("ProjectSettings:OAuth"));
             _googleApisSection = new GoogleApisSection(configuration.GetSection("ProjectSettings:GoogleApis"));
             GoogleAnalytics = new GoogleAnalyticsSection(configuration.GetSection("ProjectSettings:GoogleAnalytics"));
             StripeSettings = new StripeConfigurationSection(configuration.GetSection("ProjectSettings:Stripe"));
@@ -189,6 +191,8 @@ namespace ChilliCoreTemplate.Models
         public EmailTemplateSection EmailTemplate => _emailTemplateSection;
 
         public HostingSection Hosting => _hostingSection;
+
+        public OAuthsConfigurationSection OAuthsSettings { get; }
 
         public GoogleApisSection GoogleApis => _googleApisSection;
 
@@ -506,6 +510,41 @@ namespace ChilliCoreTemplate.Models
         public bool Hsts => _section.GetValue<bool>("Hsts");
     }
 
+    public class OAuthsConfigurationSection
+    {
+        private readonly IConfigurationSection _section;
+
+        public OAuthsConfigurationSection(IConfigurationSection section)
+        {
+            _section = section;
+        }
+
+        public string DefaultUrl => _section.GetString("DefaultUrl");
+
+        public List<OAuthsConfigurationElement> OAuths => _section.GetSection("OAuths").GetChildren().Select(x => new OAuthsConfigurationElement(x)).ToList();
+
+    }
+
+    public class OAuthsConfigurationElement
+    {
+        private readonly IConfigurationSection _section;
+
+        public OAuthsConfigurationElement(IConfigurationSection section)
+        {
+            _section = section;
+        }
+
+        public OAuthProvider Provider => EnumHelper.Parse<OAuthProvider>(_section.GetString("Provider") ?? "Unknown");
+
+        public string ClientId => _section.GetString("ClientId");
+
+        public string ClientSecret => _section.GetString("ClientSecret");
+
+        public OAuthJWT ClientJWT => _section.GetSection("ClientJWT").Get<OAuthJWT>();
+
+        public string Scopes => _section.GetString("Scopes");
+
+    }
     public class GoogleApisSection
     {
         private readonly IConfigurationSection _section;
