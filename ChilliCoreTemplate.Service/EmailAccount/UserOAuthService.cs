@@ -77,7 +77,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public async Task<ServiceResult<UserDataPrincipal>> OAuth_Login(OAuthLoginApiModel model, Action<UserDataPrincipal> loginAction)
         {
-            var request = await OAuth_Authenticate(model.Provider.Value, OAuthMode.Login, model.Token);
+            var request = await OAuth_Authenticate(model.Provider.Value, OAuthMode.Login, model.Token, sessionEmail: User.UserData()?.Email);
             if (!request.Success) return ServiceResult<UserDataPrincipal>.CopyFrom(request);
 
             var user = request.Result;

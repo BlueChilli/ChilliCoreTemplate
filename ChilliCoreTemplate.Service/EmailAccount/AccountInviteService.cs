@@ -143,7 +143,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                         for (int i = 0; i < columns; i++)
                         {
                             var data = reader.GetField(i);
-                            var header = (ColumnNameEnum)Enum.Parse(typeof(ColumnNameEnum), headerRow[i].RemoveSpaces(), ignoreCase: true);
+                            if (!Enum.TryParse<ColumnNameEnum>(headerRow[i].RemoveSpaces(), true, out var header))
+                            {
+                                return ServiceResult<UserImportResultModel>.AsError(error: $"Error parsing header row found {headerRow[i].RemoveSpaces()} expecting Email, FirstName, LastName, or Role.");
+                            }
                             switch (header)
                             {
                                 case ColumnNameEnum.LastName:
