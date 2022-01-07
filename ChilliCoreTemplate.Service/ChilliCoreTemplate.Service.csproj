@@ -24,15 +24,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
     <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
     <PackageReference Include="RestSharp" Version="106.13.0" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="106.13.0" />
-    <PackageReference Include="Stripe.net" Version="39.80.0" />
-    <PackageReference Include="Twilio" Version="5.68.1" />
+    <PackageReference Include="Stripe.net" Version="39.84.0" />
+    <PackageReference Include="Twilio" Version="5.69.0" />
   </ItemGroup>
 
 
