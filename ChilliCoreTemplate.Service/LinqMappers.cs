@@ -56,8 +56,11 @@ namespace ChilliCoreTemplate.Service
             LinqMapper.CreateMap<UserRole, UserRoleApiModel>();
             LinqMapper.CreateMap<UserRole, LoginRoleModel>();
 
-            LinqMapper.CreateMap<User, UserAccountApiModel>()
-                .IgnoreMembers(a => a.Roles);
+            LinqMapper.CreateMap<User, UserAccountApiModel>(x => new UserAccountApiModel
+            {
+                UserRoles = x.UserRoles.Where(r => r.CompanyId == null || !r.Company.IsDeleted).Select(r => r.InvokeMap<UserRole, UserRoleApiModel>()).ToList()
+            })
+            .IgnoreMembers(a => a.Roles);
 
             Materializer.RegisterAfterMap<UserAccountApiModel>((a) =>
             {

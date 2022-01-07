@@ -646,6 +646,32 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
         }
 
+        public ServiceResult Purge(int userId)
+        {
+            var user = Context.Users
+                .Include(x => x.UserRoles)
+                .Include(x => x.Sessions)
+                .Include(x => x.Tokens)
+                .Include(x => x.Activities)
+                .Include(x => x.Devices)
+                .Include(x => x.OAuths)
+                .Where(x => x.Id == userId)
+                .FirstOrDefault();
+            if (user != null)
+            {
+                if (user.UserRoles.Any()) Context.UserRoles.RemoveRange(user.UserRoles);
+                if (user.Sessions.Any()) Context.UserSessions.RemoveRange(user.Sessions);
+                if (user.Tokens.Any()) Context.UserTokens.RemoveRange(user.Tokens);
+                if (user.Activities.Any()) Context.UserActivities.RemoveRange(user.Activities);
+                if (user.Devices.Any()) Context.UserDevices.RemoveRange(user.Devices);
+                if (user.OAuths.Any()) Context.UserOAuths.RemoveRange(user.OAuths);
+
+                Context.Users.Remove(user);
+                Context.SaveChanges();
+            }
+            return ServiceResult.AsSuccess();
+        }
+
         public AccountViewModel Get(int id, bool visibleOnly)
         {
             var query = visibleOnly ? this.VisibleUsers() : Context.Users;

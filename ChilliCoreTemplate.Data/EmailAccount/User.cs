@@ -25,6 +25,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public virtual List<UserActivity> Activities { get; set; }
 
+        public virtual List<UserOAuth> OAuths { get; set; }
+
         [StringLength(100)]
         public string Email { get { return _Email; } set { _Email = value; EmailHash = CommonLibrary.CalculateHash(value); } }
         private string _Email;
@@ -133,7 +135,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public Company GetFirstCompany()
         {
             if (this.UserRoles == null) return null;
-            return this.UserRoles.Where(r => r.CompanyId != null).Select(r => r.Company).FirstOrDefault();
+            return this.UserRoles.Where(r => r.CompanyId != null && !r.Company.IsDeleted).Select(r => r.Company).FirstOrDefault();
         }
 
         public int? GetFirstCompanyId()

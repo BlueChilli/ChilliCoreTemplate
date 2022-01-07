@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.80" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0115" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0122" />
     <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0012" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0008" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0004" />

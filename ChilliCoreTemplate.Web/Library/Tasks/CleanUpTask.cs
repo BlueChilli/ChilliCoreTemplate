@@ -21,12 +21,15 @@ namespace ChilliCoreTemplate.Web.Tasks
                 svc.Clean(executionInfo);
             }
 
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
+            TaskHelper.WaitSafeSync(async () =>
             {
-                var svc = scope.ServiceProvider.GetRequiredService<ApiServices>();
+                using (var scope = ScopeContextFactory.Instance.CreateScope())
+                {
+                    var svc = scope.ServiceProvider.GetRequiredService<ApiServices>();
 
-                svc.Api_Log_Clean(executionInfo);
-            }
+                    await svc.Api_Log_Clean(executionInfo);
+                }
+            });
 
             TaskHelper.WaitSafeSync(async () =>
             {

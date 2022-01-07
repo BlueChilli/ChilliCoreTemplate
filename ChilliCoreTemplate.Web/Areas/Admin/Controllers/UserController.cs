@@ -200,6 +200,23 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         }
 
+        public virtual ActionResult Purge(int id)
+        {
+            var user = _accountService.Get(id, visibleOnly: true);
+            return PartialView(user);
+        }
+
+        [HttpPost, ActionName("Purge")]
+        public virtual ActionResult PurgePost(int id)
+        {
+            return this.ServiceCall(() => _accountService.Purge(id))
+                .OnSuccess(m =>
+                {
+                    return Mvc.Admin.User_Users.Redirect(this);
+                })
+                .OnFailure(m => { return Purge(id); })
+                .Call();
+        }
 
         #region Activity
 

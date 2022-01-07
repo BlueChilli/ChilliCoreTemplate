@@ -146,7 +146,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public async Task Error_CleanAsync(ITaskExecutionInfo executionInfo)
         {
-            await Context.Database.ExecuteSqlInterpolatedAsync($"DELETE TOP (100) FROM [dbo].[ErrorLogs] WHERE [TimeStamp] < DATEADD(day, -30, SYSUTCDATETIME());");
+            executionInfo.SendAliveSignal();
+            if (executionInfo.IsCancellationRequested)
+                return;
+
+            await Context.Database.ExecuteSqlRawAsync($"DELETE FROM[dbo].[ErrorLogs] WHERE ID IN(SELECT TOP(50) Id FROM [dbo].[ErrorLogs]) AND [Timestamp] < DATEADD(day, -30, SYSUTCDATETIME())");
         }
 
         public ServiceResult Error_Test(string test)

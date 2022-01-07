@@ -42,14 +42,13 @@ namespace ChilliCoreTemplate.Service.Api
             return Context.SaveChangesAsync();
         }
 
-        public void Api_Log_Clean(ITaskExecutionInfo executionInfo)
+        public async Task Api_Log_Clean(ITaskExecutionInfo executionInfo)
         {
             executionInfo.SendAliveSignal();
             if (executionInfo.IsCancellationRequested)
                 return;
 
-            var twoWeeksAgo = DateTime.UtcNow.AddDays(-14);
-            Context.Database.ExecuteSqlInterpolated($"DELETE TOP(200) from ApiLogEntries where RequestTimestamp < {twoWeeksAgo}");
+            await Context.Database.ExecuteSqlRawAsync($"DELETE FROM[dbo].[ApiLogEntries] WHERE ID IN(SELECT TOP(50) Id FROM [dbo].[ApiLogEntries]) AND [RequestTimestamp] < DATEADD(day, -14, SYSUTCDATETIME())");
         }
     }
 }

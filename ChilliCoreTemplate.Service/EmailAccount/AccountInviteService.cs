@@ -40,7 +40,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 model.Token = account.GetToken(UserTokenType.Invite);
                 model.Inviter = User.Identity.Name;
 
-                if (sendEmail) QueueMail(RazorTemplates.InviteUser, model.Email, new RazorTemplateDataModel<InviteEditModel> { Data = model });
+                if (sendEmail)
+                {
+                    if (String.IsNullOrEmpty(account.Email)) return ServiceResult<AccountViewModel>.AsError("Account is missing email address to send invite");
+                    QueueMail(RazorTemplates.InviteUser, account.Email, new RazorTemplateDataModel<InviteEditModel> { Data = model });
+                }
 
                 var company = Context.Companies.FirstOrDefault(c => c.Id == model.InviteRole.CompanyId);
                 Mixpanel.SendAccountToMixpanel(account, "Invite", data: new Dictionary<string, object> { { "Company", company?.Name } });
