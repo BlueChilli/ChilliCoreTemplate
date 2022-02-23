@@ -71,6 +71,11 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public UserStatus Status { get; set; }
 
+        [StringLength(50)]
+        public string StripeId { get { return _StripeId; } set { _StripeId = value; StripeIdHash = CommonLibrary.CalculateHash(value); } }
+        private string _StripeId;
+        public int? StripeIdHash { get; set; }
+
         [StringLength(256)]
         public string PasswordHash { get; set; }
 

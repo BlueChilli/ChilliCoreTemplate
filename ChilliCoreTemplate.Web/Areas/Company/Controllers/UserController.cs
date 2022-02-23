@@ -1,25 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-using ChilliSource.Cloud.Web.MVC;
-using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Models;
-using ChilliCoreTemplate.Service.Admin;
-using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Models.Admin;
-using Microsoft.AspNetCore.Authorization;
-using DataTables.AspNet.Core;
 using ChilliCoreTemplate.Models.EmailAccount;
-using DataTables.AspNet.AspNetCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using ChilliSource.Core.Extensions;
-using Newtonsoft.Json;
+using ChilliCoreTemplate.Service;
+using ChilliCoreTemplate.Service.Admin;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 {

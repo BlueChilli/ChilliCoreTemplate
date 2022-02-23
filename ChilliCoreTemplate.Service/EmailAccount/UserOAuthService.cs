@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 //using AppleAuth;
 using System.Threading.Tasks;
 using ChilliCoreTemplate.Models.Api;
+using RestSharp.Serializers.NewtonsoftJson;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
@@ -77,7 +78,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public async Task<ServiceResult<UserDataPrincipal>> OAuth_Login(OAuthLoginApiModel model, Action<UserDataPrincipal> loginAction)
         {
-            var request = await OAuth_Authenticate(model.Provider.Value, OAuthMode.Login, model.Token, sessionEmail: User.UserData()?.Email);
+            var request = await OAuth_Authenticate(model.Provider.Value, OAuthMode.Login, model.Token, model.Code, sessionEmail: User.UserData()?.Email);
             if (!request.Success) return ServiceResult<UserDataPrincipal>.CopyFrom(request);
 
             var user = request.Result;
@@ -186,6 +187,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         private async Task<ServiceResult<OAuthUserModel>> OAuth_Code_Google(string token, string code, OAuthsConfigurationElement oAuthConfig)
         {
             var client = new RestClient();
+            client.UseNewtonsoftJson();
             if (token == null)
             {
                 var request = new RestRequest("https://oauth2.googleapis.com/token", Method.POST);

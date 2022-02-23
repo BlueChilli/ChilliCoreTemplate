@@ -117,6 +117,7 @@ namespace ChilliCoreTemplate.Service
                 UserApiMobileService.AutoMapperConfigure(cfg);
                 AccountService.OAuth_AutoMapperConfigure(cfg);
                 ProjectConfigure(cfg);
+                StripeService.MappingConfigure(cfg);
             });
 
         }

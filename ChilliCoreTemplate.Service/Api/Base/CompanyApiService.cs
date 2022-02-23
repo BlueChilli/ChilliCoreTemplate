@@ -67,6 +67,22 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.AsSuccess();
         }
 
+        public ServiceResult Company_Update(CompanyEditApiModel model)
+        {
+            var company = Context.Companies.Where(x => x.Id == CompanyId).FirstOrDefault();
+            if (company == null) return ServiceResult.AsError("Compnay not found");
+
+            if (!String.IsNullOrWhiteSpace(model.LogoFileBase64))
+            {
+                company.LogoPath = _fileStorage.Save(new StorageCommand { Folder = "Company", Extension = Path.GetExtension(model.LogoFileName) }.SetByteArraySource(Convert.FromBase64String(model.LogoFileBase64)));
+            }
+            company.Name = model.Name;
+
+            Context.SaveChanges();
+
+            return ServiceResult.AsSuccess();
+        }
+
         public ServiceResult<CompanyApiModel> Company_Get()
         {
             var company = Company_Authorised().Materialize<Company, CompanyApiModel>().FirstOrDefault();

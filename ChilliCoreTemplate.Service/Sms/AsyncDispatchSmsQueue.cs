@@ -85,7 +85,7 @@ namespace ChilliCoreTemplate.Service.Sms
 
                 var smsToSend = await context.SmsQueue
                     .Where(x => x.QueuedOn > sendingWindow && x.IsReady && x.SentOn == null)
-                    .Where(x => x.RetryCount == null || x.QueuedOn > DateTime.UtcNow.AddSeconds(-120 * (x.RetryCount ?? 0) * (x.RetryCount ?? 0)))
+                    .Where(x => x.RetryCount == null || x.QueuedOn < DateTime.UtcNow.AddSeconds(-120 * (x.RetryCount ?? 0) * (x.RetryCount ?? 0)))
                     .OrderBy(x => x.Error == null ? x.QueuedOn : DateTime.MaxValue)
                     .FirstOrDefaultAsync();
 

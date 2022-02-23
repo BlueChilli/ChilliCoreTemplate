@@ -46,6 +46,7 @@ namespace ChilliCoreTemplate.Web.Api
                 else
                 {
                     request.EnableBuffering();
+                    apiLogEntry.RequestContentBody = await ReadAsStringAsync(request.Body, Encoding.UTF8, 4 * 1024, 30 * 1024);
                     if (String.IsNullOrEmpty(apiLogEntry.RequestContentBody)) apiLogEntry.RequestContentBody = null;
                     else if (apiLogEntry.RequestContentType.Contains("application/json") && apiLogEntry.RequestContentBody.Length < 30 * 1024)
                     {

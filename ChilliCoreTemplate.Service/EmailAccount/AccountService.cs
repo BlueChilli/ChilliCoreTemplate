@@ -516,7 +516,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 role.CompanyId = null;
             }
 
-            account.UpdatedDate = DateTime.Now;
+            account.UpdatedDate = DateTime.UtcNow;
             Context.SaveChanges();
 
             return ServiceResult.AsSuccess();
@@ -665,6 +665,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (user.Activities.Any()) Context.UserActivities.RemoveRange(user.Activities);
                 if (user.Devices.Any()) Context.UserDevices.RemoveRange(user.Devices);
                 if (user.OAuths.Any()) Context.UserOAuths.RemoveRange(user.OAuths);
+
+                var logs = Context.ErrorLogs.Where(x => x.UserId == userId).ToList();
+                if (logs.Any()) Context.ErrorLogs.RemoveRange(logs);
+                Context.SaveChanges();
 
                 Context.Users.Remove(user);
                 Context.SaveChanges();

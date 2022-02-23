@@ -90,7 +90,7 @@ namespace ChilliCoreTemplate.Service
             });
             Materializer.RegisterAfterMap<UserSummaryViewModel>((x) =>
             {
-                var role = x.UserRoles.FirstOrDefault();
+                var role = x.UserRoles.OrderByDescending(x => x.CompanyId).FirstOrDefault();
                 if (role != null)
                 {
                     x.Role = role.Role.GetDescription();

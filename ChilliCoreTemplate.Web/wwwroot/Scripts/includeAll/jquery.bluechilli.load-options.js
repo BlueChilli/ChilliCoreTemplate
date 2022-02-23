@@ -9,7 +9,6 @@
         function doit() {
             $t = $(this);
             var items = [];
-
             const options = $t.find('option:eq(0)');
             if (options && options.length > 0) {
                 var items = [options[0].outerHTML];

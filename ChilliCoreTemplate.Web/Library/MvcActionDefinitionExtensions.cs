@@ -97,7 +97,6 @@ namespace ChilliCoreTemplate.Web
 
         public static IHtmlContent ButtonPost<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id, string text, object routeValues = null, object htmlAttributes = null, string buttonClasses = "")
         {
-            //TODO CORE test
             var routeData = actionResult.GetRouteValueDictionary();
 
             return htmlHelper.ButtonPost(routeData["action"].ToString(), routeData["controller"].ToString(), routeData["area"].ToString(), id: id.ToString(), routeValues: routeValues, displayText: text, buttonClasses: buttonClasses, buttonAttributes: htmlAttributes);
@@ -105,7 +104,6 @@ namespace ChilliCoreTemplate.Web
 
         public static IHtmlContent ButtonPost<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, string text, object routeValues = null, object htmlAttributes = null, string buttonClasses = "")
         {
-            //TODO CORE test
             var routeData = actionResult.GetRouteValueDictionary();
 
             return htmlHelper.ButtonPost(routeData["action"].ToString(), routeData["controller"].ToString(), routeData["area"].ToString(), routeValues: routeValues, displayText: text, buttonClasses: buttonClasses, buttonAttributes: htmlAttributes);

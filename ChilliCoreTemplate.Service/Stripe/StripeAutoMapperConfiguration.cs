@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using ChilliCoreTemplate.Data.EmailAccount;
 
 namespace ChilliCoreTemplate.Service
 {
@@ -17,6 +18,10 @@ namespace ChilliCoreTemplate.Service
     {
         internal static void MappingConfigure(IMapperConfigurationExpression cfg)
         {
+            cfg.CreateMap<User, StripeCustomerEditModel>()
+                .ForMember(x => x.Id, opt => opt.MapFrom(src => src.StripeId))
+                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.FullName));
+
             cfg.CreateMap<ManagedAccountApiEditModel, RegistrationViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company.TradingName))

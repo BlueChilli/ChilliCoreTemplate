@@ -303,6 +303,13 @@ namespace ChilliCoreTemplate.Models.Api
         public string Phone { get; set; }
         public bool PhoneSpecified { get; set; }
 
+        [MaxLength(25)]
+        public string FirstName { get; set; }
+
+        [MaxLength(25)]
+        public string LastName { get; set; }
+        public bool NameSpecified { get; set; }
+
         public UserStatus? Status { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -326,6 +333,19 @@ namespace ChilliCoreTemplate.Models.Api
                 if (string.IsNullOrEmpty(this.Password))
                 {
                     yield return new ValidationResult("The new password field is required", new string[] { "Password" });
+                }
+            }
+
+            if (this.NameSpecified)
+            {
+                if (string.IsNullOrEmpty(this.FirstName))
+                {
+                    yield return new ValidationResult("The first name field is required.", new string[] { "FirstName" });
+                }
+
+                if (string.IsNullOrEmpty(this.LastName))
+                {
+                    yield return new ValidationResult("The last name field is required", new string[] { "LastName" });
                 }
             }
 

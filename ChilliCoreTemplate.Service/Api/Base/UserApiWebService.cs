@@ -130,7 +130,7 @@ namespace ChilliCoreTemplate.Service.Api
 
         public async Task<ServiceResult<UserAccountApiModel>> Create(OAuthRegisterApiModel model)
         {
-            var request = await _accountService.OAuth_Authenticate(model.Provider.Value, OAuthMode.Register, model.Token);
+            var request = await _accountService.OAuth_Authenticate(model.Provider.Value, OAuthMode.Register, model.Token, model.Code);
             if (!request.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(request);
 
             return await this.GetAccountAsync(request.Result.Id, onlyVisible: false);
@@ -179,6 +179,16 @@ namespace ChilliCoreTemplate.Service.Api
                 default:
                     return ServiceResult.AsError($"Token type {model.Type} is not supported");
             }
+        }
+
+        public ServiceResult<string> Token_Get(UserTokenModel model)
+        {
+            var data = _accountService.User_GetToken(model);
+
+            var token = data?.Item2;
+            if (token != null) return ServiceResult<string>.AsSuccess(token.Token.ToShortGuid());
+
+            return ServiceResult<string>.AsError(error: data == null ? "Account not found or access denied" : "Code is invalid or has expired");
         }
 
         public ServiceResult<UserAccountApiModel> GetByToken(UserTokenModel model)
@@ -240,7 +250,7 @@ namespace ChilliCoreTemplate.Service.Api
                     return ServiceResult<UserAccountApiModel>.CopyFrom(passwordRequest);
             }
 
-            if (model.EmailSpecified || model.PhoneSpecified)
+            if (model.EmailSpecified || model.PhoneSpecified || model.NameSpecified)
             {
                 var account = _accountService.GetAccount(model.Id);
                 if (model.EmailSpecified)
@@ -249,6 +259,11 @@ namespace ChilliCoreTemplate.Service.Api
                     account.Email = model.Email;
                 }
                 if (model.PhoneSpecified) account.Phone = String.IsNullOrEmpty(model.Phone) ? null : model.Phone;
+                if (model.NameSpecified)
+                {
+                    account.FirstName = model.FirstName;
+                    account.LastName = model.LastName;
+                }
                 Context.SaveChanges();
                 _accountService.Session_Clear(User.Session()?.Id);
             }

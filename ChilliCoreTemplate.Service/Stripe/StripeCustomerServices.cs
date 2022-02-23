@@ -31,7 +31,6 @@ namespace ChilliCoreTemplate.Service
 
             if (customer == null)
             {
-                if (String.IsNullOrEmpty(model.Token)) return ServiceResult<Customer>.AsError("Token is required");
                 return Customer_Create(new CustomerCreateOptions
                 {
                     Email = model.Email,

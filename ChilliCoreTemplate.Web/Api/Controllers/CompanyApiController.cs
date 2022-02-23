@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service;
@@ -40,12 +41,23 @@ namespace ChilliCoreTemplate.Web.Api
         /// <summary>
         /// Get company account
         /// </summary>
-        [CustomAuthorize]
+        [CustomAuthorize(Roles = AccountCommon.CompanyAdmin)]
         [HttpGet("current")]
         [ProducesResponseType(typeof(CompanyApiModel), StatusCodes.Status200OK)]
         public virtual IActionResult Current()
         {
             return this.ApiServiceCall(() => _service.Company_Get()).Call();
+        }
+
+        /// <summary>
+        /// Update company account
+        /// </summary>
+        [CustomAuthorize(Roles = AccountCommon.CompanyAdmin)]
+        [HttpPut("current")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public virtual IActionResult Update(CompanyEditApiModel model)
+        {
+            return this.ApiServiceCall(() => _service.Company_Update(model)).Call();
         }
 
         [HttpPost]

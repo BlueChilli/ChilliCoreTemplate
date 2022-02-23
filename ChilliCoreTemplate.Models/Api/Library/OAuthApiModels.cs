@@ -1,4 +1,5 @@
 ﻿using ChilliSource.Cloud.Core;
+using FoolProof.Core;
 using HybridModelBinding;
 using Newtonsoft.Json;
 using System;
@@ -22,8 +23,11 @@ namespace ChilliCoreTemplate.Models.Api.OAuth
         [Required]
         public OAuthProvider? Provider { get; set; }
 
-        [Required]
+        [RequiredIfEmpty("Code")]
         public string Token { get; set; }
+
+        [RequiredIfEmpty("Token")]
+        public string Code { get; set; }
 
     }
 

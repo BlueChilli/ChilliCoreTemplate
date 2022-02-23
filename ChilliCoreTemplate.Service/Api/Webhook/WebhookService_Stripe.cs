@@ -11,6 +11,7 @@ using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.Api
 {
@@ -95,6 +96,9 @@ namespace ChilliCoreTemplate.Service.Api
                         break;
                     case Stripe.Events.AccountUpdated:
                         result = Stripe_ProcessAccountUpdated(stripeEvent);
+                        break;
+                    case Stripe.Events.PaymentIntentSucceeded:
+                        result = Stripe_ProcessPaymentIntentSucceeded(stripeEvent);
                         break;
                     default:
                         result = ServiceResult.AsError($"Stripe event {stripeEvent.Type} not handled");
@@ -290,14 +294,30 @@ namespace ChilliCoreTemplate.Service.Api
             {
                 if (!requirements.EventuallyDue.Any() && !requirements.PendingVerification.Any() && account.PayoutsEnabled)
                 {
-                    //return _services.ManagedAccount_Complete(account.Id);
+                    //return _services.ManagedAccount_Completed(account.Id);
+                }
+                else if (!requirements.EventuallyDue.Any())
+                {
+                    //return _services.ManagedAccount_DetailsProvided(account.Id);
                 }
             }
 
             return ServiceResult.AsSuccess();
         }
 
+        private ServiceResult Stripe_ProcessPaymentIntentSucceeded(Stripe.Event stripeEvent)
+        {
+            var intent = stripeEvent.Data.Object as Stripe.PaymentIntent;
 
+            if (intent.Metadata.TryGetValue(StripeService.TRANSACTIONID, out var transactionId))
+            {
+                var guid = new Guid(transactionId);
+                //var result = _apiServices.Something_Paid(guid, intent.Charges.First(), intent.CustomerId);
+                //return ServiceResult.CopyFrom(result);
+            }
+
+            return ServiceResult.AsSuccess();
+        }
 
     }
 }

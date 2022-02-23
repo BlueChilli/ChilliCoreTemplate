@@ -94,6 +94,16 @@ namespace ChilliCoreTemplate.Web.Api
         }
 
         /// <summary>
+        /// Exchange code for a token
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("tokens/bycode/{token}")]
+        public virtual IActionResult GetToken(UserTokenModel model)
+        {
+            return this.ApiServiceCall(() => _webApiService.Token_Get(model)).Call();
+        }
+
+        /// <summary>
         /// Get user by token. (Will also activate account)
         /// </summary>
         [AllowAnonymous]

@@ -28,7 +28,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 };
             }
 
-            if (token.Expiry == null || token.Expiry < DateTime.Now) token.Token = Guid.NewGuid();
+            if (token.Expiry == null || token.Expiry < DateTime.UtcNow) token.Token = Guid.NewGuid();
             token.Expiry = DateTime.UtcNow.AddTicks(expiry.GetValueOrDefault(new TimeSpan()).Ticks == 0 ? new TimeSpan(1, 0, 0).Ticks : expiry.Value.Ticks);
 
             if (token.Id == 0) user.Tokens.Add(token);
@@ -36,6 +36,23 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return token.Token;
         }
 
+        internal ServiceResult<User> Token_Check(User user, string tokenString)
+        {
+            var tokenKey = ShortGuid.Decode(tokenString);
+
+            if (user != null)
+            {
+                var token = user.Tokens.FirstOrDefault(t => t.Token == tokenKey && t.Expiry > DateTime.UtcNow);
+                if (token != null)
+                {
+                    token.Expiry = DateTime.UtcNow.AddMinutes(5);   //Expire the token (if saved) in a few minutes to not cause errors when users double click activation links
+                    Context.SaveChanges();
+                    return ServiceResult<User>.AsSuccess(user);
+                }
+            }
+
+            return ServiceResult<User>.AsError(user == null ? "Account not found or access denied" : "Token is invalid or has expired");
+        }
 
         public ServiceResult<AccountViewModel> User_GetByEmailToken(UserTokenModel model)
         {
@@ -49,38 +66,33 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         internal ServiceResult<User> User_GetAccountByEmailToken(UserTokenModel model)
         {
             var account = GetAccountByEmail(model.Email);
-            var tokenKey = ShortGuid.Decode(model.Token);
-
-            if (account != null)
-            {
-                var token = account.Tokens.FirstOrDefault(t => t.Token == tokenKey && t.Expiry > DateTime.UtcNow);
-                if (token != null)
-                {
-                    token.Expiry = DateTime.UtcNow.AddMinutes(5);   //Expire the token (if saved) in a few minutes to not cause errors when users double click activation links
-                    Context.SaveChanges();
-                    return ServiceResult<User>.AsSuccess(account);
-                }
-            }
-
-            return ServiceResult<User>.AsError(account == null ? "Account not found or access denied" : "Token is invalid or has expired");
+            return Token_Check(account, model.Token);
         }
 
         internal ServiceResult<User> User_GetAccountByOneTimePassword(UserTokenModel model)
+        {
+            var data = User_GetToken(model);
+            if (data != null && data.Item2 != null)
+            {
+                data.Item2.Expiry = DateTime.UtcNow;
+                Context.SaveChanges();
+                return ServiceResult<User>.AsSuccess(data.Item1);
+            }
+
+            return ServiceResult<User>.AsError(data == null ? "Account not found or access denied" : "Code is invalid or has expired");
+        }
+
+        internal Tuple<User, UserToken> User_GetToken(UserTokenModel model)
         {
             var account = GetAccountByEmail(model.Email);
 
             if (account != null)
             {
                 var token = account.Tokens.FirstOrDefault(t => new OneTimePasswordModel(t.Token).Code == model.Token && t.Expiry > DateTime.UtcNow);
-                if (token != null)
-                {
-                    token.Expiry = DateTime.UtcNow;
-                    Context.SaveChanges();
-                    return ServiceResult<User>.AsSuccess(account);
-                }
+                return Tuple.Create(account, token);
             }
 
-            return ServiceResult<User>.AsError(account == null ? "Account not found or access denied" : "Code is invalid or has expired");
+            return null;
         }
 
     }
