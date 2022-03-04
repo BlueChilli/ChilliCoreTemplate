@@ -20,9 +20,9 @@
     <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0100" />
     <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3" />
     <PackageReference Include="FoolProof.Core" Version="1.1.10" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.39" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
     <PackageReference Include="HybridModelBinding" Version="0.18.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Stripe.net" Version="39.84.0" />
+    <PackageReference Include="Stripe.net" Version="39.95.0" />
   </ItemGroup>
 </Project>

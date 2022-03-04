@@ -190,7 +190,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             client.UseNewtonsoftJson();
             if (token == null)
             {
-                var request = new RestRequest("https://oauth2.googleapis.com/token", Method.POST);
+                var request = new RestRequest("https://oauth2.googleapis.com/token", Method.Post);
                 request.AddJsonBody(new
                 {
                     code = code,
@@ -204,7 +204,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 token = result.Data.AccessToken;
             }
 
-            var userRequest = new RestRequest("https://www.googleapis.com/oauth2/v2/userinfo", Method.GET);
+            var userRequest = new RestRequest("https://www.googleapis.com/oauth2/v2/userinfo", Method.Get);
             userRequest.AddQueryParameter("access_token", token);
             var userResult = await client.ExecuteAsync<OAuthGoogleUserModel>(userRequest);
             if (!userResult.IsSuccessful) return ServiceResult<OAuthUserModel>.AsError(userResult.GetError());
@@ -219,7 +219,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var client = new RestClient("https://graph.facebook.com/v9.0/");
             if (token == null)
             {
-                var request = new RestRequest("oauth/access_token", Method.POST);
+                var request = new RestRequest("oauth/access_token", Method.Post);
                 request.AddJsonBody(new
                 {
                     code = code,
@@ -232,7 +232,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 token = result.Data.AccessToken;
             }
 
-            var userRequest = new RestRequest("me", Method.GET);
+            var userRequest = new RestRequest("me", Method.Get);
             userRequest.AddQueryParameter("access_token", token);
             userRequest.AddQueryParameter("fields", "id,first_name,last_name,email,picture.type(large)");
             var userResult = await client.ExecuteAsync<OAuthFacebookUserModel>(userRequest);
@@ -240,7 +240,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (String.IsNullOrEmpty(userResult.Data?.Email))
             {
-                var deleteRequest = new RestRequest("me/permissions", Method.DELETE);
+                var deleteRequest = new RestRequest("me/permissions", Method.Delete);
                 deleteRequest.AddQueryParameter("access_token", token);
                 _ = client.ExecuteAsync(deleteRequest);
             }

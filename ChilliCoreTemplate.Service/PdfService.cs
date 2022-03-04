@@ -27,11 +27,11 @@ namespace ChilliCoreTemplate.Service
             _logger = loggerFactory.CreateLogger<PdfService>();
         }
 
-        private Task<IRestResponse> PostRequest(string html, object options)
+        private Task<RestResponse> PostRequest(string html, object options)
         {
             var client = new RestClient(_uri).AddDefaultHeader("x-api-key", _apiKey);
 
-            var request = new RestRequest(Method.POST);
+            var request = new RestRequest("", Method.Post);
             var jsonBody = new
             {
                 htmlBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(html)),

@@ -11,7 +11,7 @@ namespace ChilliCoreTemplate.Service
     public static class ServicesLibrary
     {
 
-        public static string GetError(this IRestResponse response)
+        public static string GetError(this RestResponse response)
         {
             if (!String.IsNullOrEmpty(response.ErrorMessage)) return response.ErrorMessage;
             return response.StatusDescription;

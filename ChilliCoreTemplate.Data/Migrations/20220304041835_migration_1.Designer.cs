@@ -7,26 +7,30 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace ChilliCoreTemplate.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210218051428_initial")]
-    partial class initial
+    [Migration("20220304041835_migration_1")]
+    partial class migration_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.Company", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<Guid?>("ApiKey")
                         .IsRequired()
@@ -51,33 +55,33 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LogoPath")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("StripeId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Timezone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Website")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -85,7 +89,11 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasName("IX_Company_Guid");
+                        .HasDatabaseName("IX_Company_Guid");
+
+                    b.HasIndex("StripeId")
+                        .IsUnique()
+                        .HasFilter("[StripeId] IS NOT NULL");
 
                     b.ToTable("Companies");
                 });
@@ -94,12 +102,13 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Attachments")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("ClickCount")
                         .HasColumnType("int");
@@ -144,15 +153,15 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Recipient")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("RetryCount")
                         .HasColumnType("int");
 
                     b.Property<string>("TemplateId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("TemplateIdHash")
                         .HasColumnType("int");
@@ -181,8 +190,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("IsUnsubscribed")
                         .HasColumnType("bit");
@@ -191,8 +201,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ReasonOther")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("TemplateId")
                         .HasColumnType("nvarchar(max)");
@@ -217,8 +227,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Exception")
                         .HasColumnType("nvarchar(max)");
@@ -227,8 +238,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Level")
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("LogEvent")
                         .HasColumnType("nvarchar(max)");
@@ -247,6 +258,8 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TimeStamp");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("ErrorLogs");
@@ -256,8 +269,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -269,8 +283,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageId")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("OpenedOn")
                         .HasColumnType("datetime2");
@@ -299,12 +313,76 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.ToTable("PushNotifications");
                 });
 
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.SmsQueueItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime?>("ClickedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Data")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("DeliveredOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsReady")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MessageId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("MessageIdHash")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("QueuedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RetryCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SentOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TemplateId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("TemplateIdHash")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageIdHash");
+
+                    b.HasIndex("QueuedOn");
+
+                    b.HasIndex("TemplateIdHash");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SmsQueue");
+                });
+
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("ActivatedDate")
                         .HasColumnType("datetime2");
@@ -316,19 +394,19 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("EmailHash")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(25)")
-                        .HasMaxLength(25);
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(55)")
-                        .HasMaxLength(55);
+                        .HasMaxLength(55)
+                        .HasColumnType("nvarchar(55)");
 
                     b.Property<DateTime?>("InvitedDate")
                         .HasColumnType("datetime2");
@@ -337,8 +415,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(25)")
-                        .HasMaxLength(25);
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<DateTime?>("LastPasswordChangedDate")
                         .HasColumnType("datetime2");
@@ -356,22 +434,22 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<Guid>("PasswordSalt")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("PhoneHash")
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneVerificationCode")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("PhoneVerificationExpiry")
                         .HasColumnType("datetime2");
@@ -383,10 +461,17 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProfilePhotoPath")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StripeId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("StripeIdHash")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedDate")
@@ -407,8 +492,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("ActivityOn")
                         .HasColumnType("datetime2");
@@ -442,21 +528,18 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("MobileToken")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PinHash")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("PinLastRetryDate")
                         .HasColumnType("datetime2");
@@ -474,12 +557,12 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PushToken")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("PushTokenId")
-                        .HasColumnType("nvarchar(500)")
-                        .HasMaxLength(500);
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -493,12 +576,48 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.ToTable("UserDevices");
                 });
 
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserOAuth", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("OAuthId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("OAuthIdHash")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Provider")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OAuthIdHash");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserOAuths");
+                });
+
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
@@ -519,14 +638,17 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasCheckConstraint("CK_UserRoles_Role", "[Role] > 0");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("Expiry")
                         .HasColumnType("datetime2");
@@ -553,8 +675,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
@@ -563,19 +686,19 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Timezone")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");
@@ -591,8 +714,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -617,8 +741,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("ImpersonationChain")
                         .HasColumnType("nvarchar(max)");
@@ -655,8 +780,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Error")
                         .HasColumnType("nvarchar(max)");
@@ -668,8 +794,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Subtype")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("Success")
                         .HasColumnType("bit");
@@ -681,13 +807,15 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("WebhookId")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("WebhookIdHash")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("WebhookIdHash");
 
                     b.ToTable("Webhooks_Inbound");
                 });
@@ -696,30 +824,31 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Machine")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("RequestContentBody")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequestContentType")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("RequestHeaders")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequestIpAddress")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("RequestMethod")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("RequestTimestamp")
                         .HasColumnType("datetime2");
@@ -731,8 +860,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseContentType")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ResponseHeaders")
                         .HasColumnType("nvarchar(max)");
@@ -744,12 +873,14 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("User")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RequestTimestamp");
+
+                    b.HasIndex("ResponseStatusCode");
 
                     b.ToTable("ApiLogEntries");
                 });
@@ -758,8 +889,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("LockReference")
                         .HasColumnType("int");
@@ -768,8 +900,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LockedByMachine")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("LockedByPID")
                         .HasColumnType("int");
@@ -795,8 +927,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
@@ -818,8 +951,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<Guid>("Identifier")
                         .HasColumnType("uniqueidentifier");
@@ -850,7 +984,7 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasIndex("Identifier");
 
                     b.HasIndex("ScheduledAt")
-                        .HasName("IX_CreateSingleTask");
+                        .HasDatabaseName("IX_CreateSingleTask");
 
                     b.HasIndex("RecurrentTaskId", "Status");
 
@@ -864,6 +998,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "DeletedBy")
                         .WithMany()
                         .HasForeignKey("DeletedById");
+
+                    b.Navigation("DeletedBy");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.Email", b =>
@@ -871,6 +1007,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.EmailUser", b =>
@@ -880,6 +1018,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.ErrorLog", b =>
@@ -887,6 +1027,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.PushNotification", b =>
@@ -894,6 +1036,17 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.SmsQueueItem", b =>
+                {
+                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserActivity", b =>
@@ -903,6 +1056,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserDevice", b =>
@@ -912,6 +1067,19 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserOAuth", b =>
+                {
+                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
+                        .WithMany("OAuths")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserRole", b =>
@@ -925,6 +1093,10 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserToken", b =>
@@ -934,6 +1106,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.Location", b =>
@@ -943,6 +1117,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.LocationUser", b =>
@@ -958,6 +1134,10 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Location");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.UserSession", b =>
@@ -971,6 +1151,10 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("UserDevice");
                 });
 
             modelBuilder.Entity("ChilliSource.Cloud.Core.Distributed.SingleTaskDefinition", b =>
@@ -978,6 +1162,43 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasOne("ChilliSource.Cloud.Core.Distributed.RecurrentTaskDefinition", "RecurrentTask")
                         .WithMany("SingleTasks")
                         .HasForeignKey("RecurrentTaskId");
+
+                    b.Navigation("RecurrentTask");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.Company", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.User", b =>
+                {
+                    b.Navigation("Activities");
+
+                    b.Navigation("Devices");
+
+                    b.Navigation("OAuths");
+
+                    b.Navigation("Sessions");
+
+                    b.Navigation("Tokens");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserDevice", b =>
+                {
+                    b.Navigation("UserSessions");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.Location", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("ChilliSource.Cloud.Core.Distributed.RecurrentTaskDefinition", b =>
+                {
+                    b.Navigation("SingleTasks");
                 });
 #pragma warning restore 612, 618
         }
