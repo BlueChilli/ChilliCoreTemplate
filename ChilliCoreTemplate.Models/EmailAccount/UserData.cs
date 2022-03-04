@@ -94,7 +94,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public bool CanImpersonate(AccountViewModel target)
         {
-            return this.CurrentRoles.Any(currentRole => target.UserRoles.Any(targetRole => currentRole.CanImpersonate(targetRole)));
+            return target.Status != UserStatus.Deleted && this.CurrentRoles.Any(currentRole => target.UserRoles.Any(targetRole => currentRole.CanImpersonate(targetRole)));
         }
 
         private IEnumerable<UserRoleApiModel> GetCurrentRolesApiModel()
