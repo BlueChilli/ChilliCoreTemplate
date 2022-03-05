@@ -1,8 +1,11 @@
 @using Humanizer;
+@inject ProjectSettings config;
 @model CompanyListModel
 
 @await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_CreateCompany" })
-
+@{
+    var hasMasterCompany = config.HasMasterCompany;
+}
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
     <box>
@@ -23,6 +26,10 @@
                 <thead>
                     <tr>
                         <th>Company</th>
+                        @if (hasMasterCompany)
+                        {
+                        <th>Master company</th>
+                        }
                         <th>Description</th>
                         <th>Date created</th>
                         <th>Status</th>
@@ -34,6 +41,10 @@
                     {
                         <tr>
                             <td>@company.Name</td>
+                            @if(hasMasterCompany)
+                            {
+                            <td>@company.MasterCompany</td>                                
+                            }
                             <td>@company.Description.Truncate(75)</td>
                             <td>@company.CreatedAt.ToTimezone().ToIsoDate()</td>
                             <td data-search="@(company.IsDeleted ? 0 : 1)"><label type="@company.IsDeleted ? LabelType.Warning : LabelType.Success">@(company.IsDeleted ? "Archived" : "Active")</label></td>
@@ -63,7 +74,7 @@
                 dom: 'Tgtip',
                 "iDisplayLength": 50,
                 "columnDefs": [
-                    { "orderable": false, "targets": [3, 4] }
+                    { "orderable": false, "targets": [@(hasMasterCompany ? 4 : 3), @(hasMasterCompany ? 5 : 4)] }
                 ],
             });
 
@@ -81,9 +92,9 @@
             var api = companyTable.api();
 
             if ($('#Status').val() != '') {
-                api.column(3).search($('#Status').val(), false, false, false);
+                api.column(@(hasMasterCompany ? 4 : 3)).search($('#Status').val(), false, false, false);
             } else {
-                api.column(3).search('');
+                api.column(@(hasMasterCompany ? 4 : 3)).search('');
             }
 
             api.search($('#Search').val());

@@ -14,7 +14,10 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public virtual List<UserRole> UserRoles { get; set; }
 
         public int Id { get; set; }
-        
+
+        public int? MasterCompanyId { get; set; }
+        public Company MasterCompany { get; set; }
+
         public Guid Guid { get; set; }
 
         [Required]

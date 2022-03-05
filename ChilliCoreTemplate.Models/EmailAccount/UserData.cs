@@ -148,6 +148,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public int? CompanyId { get; set; }
 
+        public int? MasterCompanyId { get; set; }
+
         public string CompanyName { get; set; }
 
         public bool CanImpersonate(UserRoleModel other)

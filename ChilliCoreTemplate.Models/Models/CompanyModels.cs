@@ -16,6 +16,10 @@ namespace ChilliCoreTemplate.Models
         [Required, MaxLength(100)]
         public string Name { get; set; }
 
+        [DisplayName("Master company"), EmptyItem]
+        public int? MasterCompanyId { get; set; }
+        public SelectList CompanyList { get; set; }
+
         [Required]
         public Guid ApiKey { get; set; }
 

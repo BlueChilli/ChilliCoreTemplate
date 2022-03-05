@@ -103,6 +103,8 @@ namespace ChilliCoreTemplate.Models
     {
         public int Id { get; set; }
 
+        public string MasterCompany { get; set; }
+
         public string Name { get; set; }
 
         public Guid Guid { get; set; }

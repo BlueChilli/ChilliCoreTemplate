@@ -81,7 +81,11 @@ namespace ChilliCoreTemplate.Service
                 Message = x.ExceptionMessage == null ? x.Message.Substring(0, 200) : x.ExceptionMessage.Substring(0, 200)
             });
 
-            LinqMapper.CreateMap<UserRole, UserRoleModel>();
+            LinqMapper.CreateMap<UserRole, UserRoleModel>(x => new UserRoleModel
+            {
+                MasterCompanyId = x.Company.MasterCompanyId
+            });
+
             LinqMapper.CreateMap<User, AccountViewModel>();
             LinqMapper.CreateMap<User, UserSummaryViewModel>(x => new UserSummaryViewModel
             {
@@ -106,6 +110,7 @@ namespace ChilliCoreTemplate.Service
             LinqMapper.CreateMap<Company, EditCompanyViewModel>();
             LinqMapper.CreateMap<Company, CompanyViewModel>(c => new CompanyViewModel
             {
+                MasterCompany = c.MasterCompanyId == null ? null : c.MasterCompany.Name,
                 HasAdmins = c.UserRoles.Any(r => r.Role == Role.CompanyAdmin && r.User.Status != UserStatus.Deleted)
             });
             LinqMapper.CreateMap<Company, CompanyDetailViewModel>(c => new CompanyDetailViewModel()

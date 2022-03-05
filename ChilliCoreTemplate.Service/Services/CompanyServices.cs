@@ -121,6 +121,7 @@ namespace ChilliCoreTemplate.Service
             if (company == null && id.GetValueOrDefault(0) != 0) return ServiceResult<CompanyEditModel>.AsError("Company not found");
 
             var model = Mapper.Map<CompanyEditModel>(company) ?? new CompanyEditModel { ApiKey = Guid.NewGuid(), Timezone = "Australia/Sydney" };
+            model.CompanyList = Context.Companies.Where(x => x.Id != id && x.MasterCompanyId == null && !x.IsDeleted).Select(x => new { x.Id, x.Name }).OrderBy(x => x.Name).ToSelectList(v => v.Id, t => t.Name);
             model.TimezoneList = CommonLibrary.TimeZones().ToSelectList(v => v.ZoneId, t => $"{t.CountryName} {(String.IsNullOrEmpty(t.Comment) ? "" : " - " + t.Comment)}");
 
             return ServiceResult<CompanyEditModel>.AsSuccess(model);

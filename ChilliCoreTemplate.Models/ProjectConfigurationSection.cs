@@ -158,6 +158,8 @@ namespace ChilliCoreTemplate.Models
 
         public bool PurgeOldAnonymousAccounts => _baseSection.GetValue<bool?>("PurgeOldAnonymousAccounts") ?? false;
 
+        public bool HasMasterCompany => _baseSection.GetValue<bool?>("HasMasterCompany") ?? false;
+
         /// <summary>
         /// Do users use a link (default) or a one time password to confirm their email address?
         /// </summary>
