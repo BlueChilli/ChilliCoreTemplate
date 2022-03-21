@@ -17,9 +17,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 {
     public static  class EmailServiceHelpers
     {
-        public static void SetConfigProperties(IEmailTemplateDataModel model, ProjectSettings config)
+        public static void SetConfigProperties(IEmailTemplateDataModel model, ProjectSettings config, string userEmail)
         {
             model.Site = config.ProjectDisplayName;
+            model.UserEmail = userEmail;
 
             if (String.IsNullOrEmpty(model.Email)) model.Email = config.EmailTemplate.Email;
             if (String.IsNullOrEmpty(model.CompanyName)) model.CompanyName = config.ProjectDisplayName;
@@ -31,7 +32,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     {
         public void QueueMail(RazorTemplate template, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, EmailData_Address replyTo = null, EmailData_Address from = null, List<EmailData_Address> bcc = null)
         {
-            EmailServiceHelpers.SetConfigProperties(model, _config);
+            EmailServiceHelpers.SetConfigProperties(model, _config, email);
 
             List<IEmailAttachment> memoryAttachments = new List<IEmailAttachment>();
 
@@ -331,7 +332,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
             templateModel.TemplateId = email.Id;
             templateModel.TrackingId = FakeTrackingId.ToShortGuid();
-            EmailServiceHelpers.SetConfigProperties(templateModel, _config);
+            EmailServiceHelpers.SetConfigProperties(templateModel, _config, _config.AdminEmail);
 
             var html = TaskHelper.GetResultSafeSync(() => _templateViewRenderer.RenderAsync(email.Template.TemplateName, templateModel));
 

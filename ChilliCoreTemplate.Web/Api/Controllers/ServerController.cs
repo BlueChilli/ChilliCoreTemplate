@@ -93,7 +93,7 @@ namespace ChilliCoreTemplate.Web.Api
                 TemplateId = template.TemplateName.Substring(template.TemplateName.LastIndexOf("/") + 1),
                 TrackingId = Guid.NewGuid().ToShortGuid()
             };
-            EmailServiceHelpers.SetConfigProperties(model, _config);
+            EmailServiceHelpers.SetConfigProperties(model, _config, "developers@bluechilli.com");
 
             var html = TaskHelper.GetResultSafeSync(() => _templateViewRenderer.RenderAsync(template.TemplateName, model));
             return this.Content(html, "text/html", Encoding.UTF8);
@@ -120,7 +120,7 @@ namespace ChilliCoreTemplate.Web.Api
                 TemplateId = template.TemplateName.Substring(template.TemplateName.LastIndexOf("/") + 1),
                 TrackingId = Guid.NewGuid().ToShortGuid()
             };
-            EmailServiceHelpers.SetConfigProperties(model, _config);
+            EmailServiceHelpers.SetConfigProperties(model, _config, "developers@bluechilli.com");
 
             var html = await _templateViewRenderer.RenderAsync(template.TemplateName, model);
 

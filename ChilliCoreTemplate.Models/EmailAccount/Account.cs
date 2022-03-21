@@ -181,7 +181,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class UserTokenModel
     {
-        [Required]
+        [Required, EmailAddressWeb]
         public string Email { get; set; }
 
         [Required]

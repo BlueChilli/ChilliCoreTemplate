@@ -217,6 +217,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         string Subject { get; set; }
         ShortGuid TrackingId { get; set; }
         int? UserId { get; set; }
+        string UserEmail { get; set; }
 
         string Site { get; set; }
         string CompanyName { get; set; }
@@ -250,6 +251,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string Site { get; set; }
         public bool CanUnsubscribe { get; set; }
         public int? UserId { get; set; }
+        public string UserEmail { get; set; }
 
         #region Template config data
         /// <summary>
