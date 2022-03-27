@@ -4,13 +4,14 @@
     "net6.0": {
       "ChilliSource.Cloud.Core": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0122, )",
-        "resolved": "2.0.0-alpha0122",
-        "contentHash": "WKdDViJq0AuM9NmE4bSUIVsjKyElWV/yQkuNzIN8mVWRA3ptFut8rMSKKc8b4+taslAvPaFBYprzTjUMHtC0pA==",
+        "requested": "[2.0.0-alpha0123, )",
+        "resolved": "2.0.0-alpha0123",
+        "contentHash": "dcrzg1yJ9bgfEDsNcVbKtjLFt5J4Ke6YgnSodi+RX9y6a97P3y5sOiYwpGLqoIolHl8IRppIRvjsvOCovHqTAQ==",
         "dependencies": {
           "AutoMapper": "8.0.0",
           "ChilliSource.Core.Extensions": "2.0.3-alpha0013",
           "CsvHelper": "27.1.1",
+          "DataTables.AspNet.Core": "2.0.2",
           "EnterpriseLibrary.TransientFaultHandling.Data.NetCore": "6.0.1312",
           "EnterpriseLibrary.TransientFaultHandling.NetCore": "6.0.1312",
           "Humanizer.Core": "2.11.10",
@@ -104,11 +105,11 @@
       },
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
         "type": "Direct",
-        "requested": "[6.0.2, )",
-        "resolved": "6.0.2",
-        "contentHash": "cWszEEOB++BvJlyJ2Nkk9gkqx9pAa43t/L+jUam3mFdOKzn/K//2c3f2ov0FW+4q/HoZ3lJTc/PLWh6Cz7BTTg==",
+        "requested": "[6.0.3, )",
+        "resolved": "6.0.3",
+        "contentHash": "sba0OFsscmCi7CepYxKf5J3ENrUSY+UGmc4SZH3jX3EmSx9aqMypBnzNEvzgQaQFnfuedfpaAhu2S2ygSoo9Mg==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Relational": "6.0.2"
+          "Microsoft.EntityFrameworkCore.Relational": "6.0.3"
         }
       },
       "Microsoft.AspNetCore.Mvc.Core": {
@@ -146,32 +147,32 @@
       },
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
         "type": "Direct",
-        "requested": "[6.0.2, )",
-        "resolved": "6.0.2",
-        "contentHash": "AQ8dnOXPJajeWgM0FW6uMs71+SFnVLe+skEHj/chF3fvkeXFCGqhzaWALlin+LoLKi17+frdRJ340cfT5afs4Q==",
+        "requested": "[6.0.3, )",
+        "resolved": "6.0.3",
+        "contentHash": "h0ZMz0yR6HiqjKo2wrZP4WWBaioelPDljvCewdl6Qo7n2iTZpIRjukB0O5idyzATUJRDKltBDex0pGLH3Q0utQ==",
         "dependencies": {
-          "Microsoft.AspNetCore.JsonPatch": "6.0.2",
+          "Microsoft.AspNetCore.JsonPatch": "6.0.3",
           "Newtonsoft.Json": "13.0.1",
           "Newtonsoft.Json.Bson": "1.0.2"
         }
       },
       "Microsoft.AspNetCore.SpaServices.Extensions": {
         "type": "Direct",
-        "requested": "[6.0.2, )",
-        "resolved": "6.0.2",
-        "contentHash": "lZVHbIXE+7fRkrPgInzP8gsU7B2F0GRy6mj6VSpDdD/KLXBbQq09PpPRsSdrJ+41dRBwEK7Fjw3XjFbDMtmEYg==",
+        "requested": "[6.0.3, )",
+        "resolved": "6.0.3",
+        "contentHash": "CJSN7LTL5w9ptrBfRF3F0IJTNRjjNBk+Iy1AZoWrvim3iLW/+EHF8SAjMP4fXvJI4iIXz5jFAqrHSB1P49qXNg==",
         "dependencies": {
           "Microsoft.Extensions.FileProviders.Physical": "6.0.0"
         }
       },
       "Microsoft.EntityFrameworkCore.Design": {
         "type": "Direct",
-        "requested": "[6.0.2, )",
-        "resolved": "6.0.2",
-        "contentHash": "U5nqbIKJ8LQF/T1BzMjL35mwhTPsEUsjLhX+GjPQcrKaavv6oczCdznhr7VbEmCmGSjQjSarNqXkSCneUX2mXA==",
+        "requested": "[6.0.3, )",
+        "resolved": "6.0.3",
+        "contentHash": "Gc3XhQ4vLK4rlGpZi8zaa4bl0t894QxqMXHSbDSsx8d7ghRaLbGIH1tQawpo2hriU/q918eepbCyoISD89Xx1w==",
         "dependencies": {
           "Humanizer.Core": "2.8.26",
-          "Microsoft.EntityFrameworkCore.Relational": "6.0.2"
+          "Microsoft.EntityFrameworkCore.Relational": "6.0.3"
         }
       },
       "MiniProfiler.AspNetCore.Mvc": {
@@ -300,24 +301,24 @@
       },
       "Swashbuckle.AspNetCore": {
         "type": "Direct",
-        "requested": "[6.2.3, )",
-        "resolved": "6.2.3",
-        "contentHash": "cnzQDn0Le+hInsw2SYwlOhOCPXpYi/szcvnyqZJ12v+QyrLBwAmWXBg6RIyHB18s/mLeywC+Rg2O9ndz0IUNYQ==",
+        "requested": "[6.3.0, )",
+        "resolved": "6.3.0",
+        "contentHash": "3TAV6JqsJF2F5e5d/tiQuW/TlzKXB/n2IcL5QR1FP8ArmLhmPkpeHiLZ3+1YnJ5840/X5ApvpRRJpM9809IjTg==",
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "3.0.0",
-          "Swashbuckle.AspNetCore.Swagger": "6.2.3",
-          "Swashbuckle.AspNetCore.SwaggerGen": "6.2.3",
-          "Swashbuckle.AspNetCore.SwaggerUI": "6.2.3"
+          "Swashbuckle.AspNetCore.Swagger": "6.3.0",
+          "Swashbuckle.AspNetCore.SwaggerGen": "6.3.0",
+          "Swashbuckle.AspNetCore.SwaggerUI": "6.3.0"
         }
       },
       "Swashbuckle.AspNetCore.Newtonsoft": {
         "type": "Direct",
-        "requested": "[6.2.3, )",
-        "resolved": "6.2.3",
-        "contentHash": "O1i7j5obeREGs2XInJ33zqh+lmsgaR2SCuKCjwkNiAEm7GcUqgSXdSVLt2GW07h4kSKSCyca/gJFEAdKYYn1UQ==",
+        "requested": "[6.3.0, )",
+        "resolved": "6.3.0",
+        "contentHash": "VfW/oiBfF1ClJDX2skIKDgvuIck9NFNebLI2fVuzvWVL6dlQh40Ls++0PNqSgYKLNrWFQAXS9Y/D+tA9Epnr5g==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "6.0.0-rc.1.21452.15",
-          "Swashbuckle.AspNetCore.SwaggerGen": "6.2.3"
+          "Swashbuckle.AspNetCore.SwaggerGen": "6.3.0"
         }
       },
       "AsyncEnumerator": {
@@ -434,8 +435,8 @@
       },
       "FirebaseAdmin": {
         "type": "Transitive",
-        "resolved": "2.2.0",
-        "contentHash": "nF+7Z7kJ2ikjh75vjKkSmuqgI9b0O8Azygu3GMvx3/z3v5dnk5b6O9nL5/WkuCenYDzyz35r85pkN3C9K93+2g==",
+        "resolved": "2.3.0",
+        "contentHash": "ror9V68bFWdr3VXoCPQrAAJ1ZA8dyLzIHJvy53BmoD83Ze9VuWC9hPBicPqqOANP3VTMWnylC7xci59UEMuU4A==",
         "dependencies": {
           "Google.Api.Gax.Rest": "3.2.0",
           "Google.Apis.Auth": "1.49.0",
@@ -705,8 +706,8 @@
       },
       "Microsoft.AspNetCore.JsonPatch": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "SifO3B9FwrRMXIdBHgVoMU17j6E43nYGUIC/3WRpNldCyZKOeBGJ8eT1KfQK80FaxkkJU+4MPm0uCbeYnXvkFQ==",
+        "resolved": "6.0.3",
+        "contentHash": "eObF1OgvkQHJXmDMcMYM/oRZ1Vk939UZr2QShBsXoY01AkS+7nczgzzWdNd2TutlNx6AWZKBizg/sBCOXQDPbg==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Newtonsoft.Json": "13.0.1"
@@ -1056,11 +1057,11 @@
       },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "hoZtatDA6zL/+gMXXkG3UNsF6iWguC9OkJeYUepqyPEF2mjFajga+DxS4H/UODs7HWo9oNCnhi2Q/BE9T0lg2g==",
+        "resolved": "6.0.3",
+        "contentHash": "f7ZlNOI1wPg/r0zRgvmcLAM3kwuCVGe5cZc8rYoKPDGZs5dgRFe5a43H9FnCXsyFAF6FILB08Nr9RkuNMwd3TQ==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "6.0.2",
-          "Microsoft.EntityFrameworkCore.Analyzers": "6.0.2",
+          "Microsoft.EntityFrameworkCore.Abstractions": "6.0.3",
+          "Microsoft.EntityFrameworkCore.Analyzers": "6.0.3",
           "Microsoft.Extensions.Caching.Memory": "6.0.1",
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.Logging": "6.0.0",
@@ -1070,38 +1071,38 @@
       },
       "Microsoft.EntityFrameworkCore.Abstractions": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "71hgKvRpMebTp9bKZB86w3uRXQAJzTeksZ4EyO1/OKj/AoL8/8IU31kHHcIFAfX/D0uefl4rO6jWgh3OaR41pQ=="
+        "resolved": "6.0.3",
+        "contentHash": "7c6wJtTFj7FDe20IVPDKeCzxWIMu+XDpYi7aYuUo6knu4vDeB3N3F0pjAZgXJ96GwTZYBrjOEwnbpYmfapEz/w=="
       },
       "Microsoft.EntityFrameworkCore.Analyzers": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "pHUMjXPeWqyZS2OfkQsDC1Qdk30JVcPNDUxEVhOTDAJvyUN4EuBFYbnniQ9RLHbWAw8IkEwVAAo6v/ICmT4/dw=="
+        "resolved": "6.0.3",
+        "contentHash": "Ld9HyVABYor3Tq43/sG2JERL94UnDHJPg5PwpkCW4CWsf/CbxHetdecv+bCXA/Hg4q+44sov0GVl4Ywjk4PnyA=="
       },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "yZARjY5P+jtCpoAogk5mOfdplATHow5gQugMje6F3cZFPKtF1UtJLGRyxVsNX4hCEWbSq/W+1AbXLCMQ1jOiSw==",
+        "resolved": "6.0.3",
+        "contentHash": "Dga4OH8QxmPT9APr7ZL5R0TvNADOcjDNNvJa8pU3QbPJ6OvRPTlzqAehfEBow0/NXBTKbIO48b4aIJI4VCO7fg==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "6.0.2",
+          "Microsoft.EntityFrameworkCore": "6.0.3",
           "Microsoft.Extensions.Configuration.Abstractions": "6.0.0"
         }
       },
       "Microsoft.EntityFrameworkCore.SqlServer": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "ghYelO6ipPSnW06rmj4HDhvOZX1of3tNZoDuc4RUC/yT9vdg24Fq0iamJiQSFYHskePkHvhABdrTVuyxPVGN7w==",
+        "resolved": "6.0.3",
+        "contentHash": "rd1lGh5au10tB6J0Jt3ZLLA78Bs/eQSWgkMSBE9n+cRAs/Db99OfdnxgkK3JqCCyFfp12LAsboWDUCnRhPOskw==",
         "dependencies": {
           "Microsoft.Data.SqlClient": "2.1.4",
-          "Microsoft.EntityFrameworkCore.Relational": "6.0.2"
+          "Microsoft.EntityFrameworkCore.Relational": "6.0.3"
         }
       },
       "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "fjqI/vU7+3KUNH/O4Ixo/5TSsRg0HNLk8/sy3kUgDuxkS9+ntFZLL9Qbtey2++SfuAb3YXT0QMhX60a3n7zVDg==",
+        "resolved": "6.0.3",
+        "contentHash": "TF/oZPexgKZe+8LL7tVAGsUUxgjefoe9n2BQnOU5QuOoiS1FCM/aa5rOh7TkYuFhMWpkemvHSBr12Yd5A+nhGw==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.2",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.3",
           "NetTopologySuite": "2.3.0",
           "NetTopologySuite.IO.SqlServerBytes": "2.0.0"
         }
@@ -1774,8 +1775,8 @@
       },
       "Stripe.net": {
         "type": "Transitive",
-        "resolved": "39.95.0",
-        "contentHash": "K0VxC57/XAKGkZC8FfUJTLKoFcuwMqR5ovcCRkk47sKH/HDz9m9uKSmL0YD8ELCMCuaAErXKhQA1JuHiYO8zxg==",
+        "resolved": "39.100.0",
+        "contentHash": "+Ax4pUQ/jvyKdgH+/N3TZnut7SKJ6TbX8YJjVNUGJEmNaDUE7JO1DDCoJBUBnFgRSw+ESMZf12yZcGzaRgPiRw==",
         "dependencies": {
           "Newtonsoft.Json": "12.0.3",
           "System.Configuration.ConfigurationManager": "6.0.0"
@@ -1783,24 +1784,24 @@
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
-        "resolved": "6.2.3",
-        "contentHash": "qOF7j1sL0bWm8g/qqHVPCvkO3JlVvUIB8WfC98kSh6BT5y5DAnBNctfac7XR5EZf+eD7/WasvANncTqwZYfmWQ==",
+        "resolved": "6.3.0",
+        "contentHash": "+taHh7kowNF+tQo9a82avwDtfqhAC82jTZTqZwypDpauPvwavyVtJ7+ERxE+yDb6U/nOcMicMmDAGbqbJ2Pc+Q==",
         "dependencies": {
           "Microsoft.OpenApi": "1.2.3"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerGen": {
         "type": "Transitive",
-        "resolved": "6.2.3",
-        "contentHash": "+Xq7WdMCCfcXlnbLJVFNgY8ITdP2TRYIlpbt6IKzDw5FwFxdi9lBfNDtcT+/wkKwX70iBBFmXldnnd02/VO72A==",
+        "resolved": "6.3.0",
+        "contentHash": "8PRLtqCXTIfc+W/pcyab8GqHzHuFRZ3L+9/fix/ssVknwy/pbgkOqgzq9DGWfKz+MZReIp5ajZLR7bXioDdacQ==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.Swagger": "6.2.3"
+          "Swashbuckle.AspNetCore.Swagger": "6.3.0"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerUI": {
         "type": "Transitive",
-        "resolved": "6.2.3",
-        "contentHash": "bCRI87uKJVb4G+KURWm8LQrL64St04dEFZcF6gIM67Zc0Sr/N47EO83ybLMYOvfNdO1DCv8xwPcrz9J/VEhQ5g=="
+        "resolved": "6.3.0",
+        "contentHash": "OmVLGzyeNBFUAx6E/bqrZW4uxfv9q2MtegYzeHv5Dj8N34ry8104d6OcyRIV4BhwHBSFD1rMvDlPciguFMtQ5w=="
       },
       "System.AppContext": {
         "type": "Transitive",
@@ -2987,8 +2988,8 @@
       },
       "Twilio": {
         "type": "Transitive",
-        "resolved": "5.72.0",
-        "contentHash": "LkFy05H8Ir+s8Ky0eFZj1dCBLwHskjENjNG6DiRaGNuFGcoU6VdkNfzty6XC594ELoDdPi/PaZH9qgF5jKbq8w==",
+        "resolved": "5.73.0",
+        "contentHash": "Jh9DSjSY18WqnCtWhPk3GWrGdwsdLtHgPt7n1Q6ueOkhhJ0nz7ns92huvp9gVTFHClJjMKHcSm77OHu93JFbQg==",
         "dependencies": {
           "Microsoft.IdentityModel.Tokens": "5.3.0",
           "Newtonsoft.Json": "11.0.2",
@@ -3000,24 +3001,24 @@
         "type": "Project",
         "dependencies": {
           "ChilliCoreTemplate.Models": "1.0.0",
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0122",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0123",
           "ChilliSource.Core.Extensions": "2.0.3",
-          "Microsoft.EntityFrameworkCore": "6.0.2",
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.2",
-          "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "6.0.2"
+          "Microsoft.EntityFrameworkCore": "6.0.3",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.3",
+          "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "6.0.3"
         }
       },
       "chillicoretemplate.models": {
         "type": "Project",
         "dependencies": {
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0122",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0123",
           "ChilliSource.Cloud.Web.MVC": "2.0.0-alpha0100",
           "ChilliSource.Core.Extensions": "2.0.3",
           "FoolProof.Core": "1.1.10",
           "HtmlAgilityPack": "1.11.42",
           "HybridModelBinding": "0.18.0",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Stripe.net": "39.95.0"
+          "Stripe.net": "39.100.0"
         }
       },
       "chillicoretemplate.service": {
@@ -3029,25 +3030,25 @@
           "ChilliCoreTemplate.Models": "1.0.0",
           "ChilliSource.Cloud.AWS": "2.0.0-alpha0012",
           "ChilliSource.Cloud.Azure": "2.0.0-alpha0008",
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0122",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0123",
           "ChilliSource.Cloud.ImageSharp": "2.0.0-alpha0004",
           "ChilliSource.Cloud.Web": "2.0.0-alpha0036",
           "ChilliSource.Core.Extensions": "2.0.3",
           "DataTables.AspNet.AspNetCore": "2.0.2",
-          "FirebaseAdmin": "2.2.0",
+          "FirebaseAdmin": "2.3.0",
           "LazyCache": "2.4.0",
           "LazyCache.AspNetCore": "2.4.0",
           "Microsoft.AspNetCore.Authentication.Cookies": "2.2.0",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.Azure.NotificationHubs": "4.1.0",
-          "Microsoft.EntityFrameworkCore": "6.0.2",
-          "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "6.0.2",
+          "Microsoft.EntityFrameworkCore": "6.0.3",
+          "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "6.0.3",
           "Microsoft.Extensions.Configuration.Abstractions": "6.0.0",
           "MiniProfiler.AspNetCore.Mvc": "4.2.22",
           "RestSharp": "107.3.0",
           "RestSharp.Serializers.NewtonsoftJson": "107.3.0",
-          "Stripe.net": "39.95.0",
-          "Twilio": "5.72.0"
+          "Stripe.net": "39.100.0",
+          "Twilio": "5.73.0"
         }
       }
     }
