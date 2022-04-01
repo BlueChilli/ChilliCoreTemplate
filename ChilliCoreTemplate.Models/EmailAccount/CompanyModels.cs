@@ -12,6 +12,8 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.Http; using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ChilliCoreTemplate.Models.EmailAccount;
+using Newtonsoft.Json;
+using ChilliSource.Core.Extensions;
 
 namespace ChilliCoreTemplate.Models
 {
@@ -154,18 +156,30 @@ namespace ChilliCoreTemplate.Models
 
     public class CompanyListModel
     {
-        public CompanyListModel()
-        {
-            Status = 1;
-        }
 
         [EmptyItem("Any status")]
-        public int? Status { get; set; }
-        public SelectList StatusList => new KeyValuePair<int, string>[] { new KeyValuePair<int, string>(1, "Active"), new KeyValuePair<int, string>(0, "Inactive") }.ToSelectList(v => v.Key, t => t.Value, 1);
+        public bool? Status { get; set; } = true;
+        public SelectList StatusList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Active"), new KeyValuePair<bool, string>(false, "Inactive") }.ToSelectList(v => v.Key, t => t.Value, true);
 
         public string Search { get; set; }
 
-        public List<CompanyViewModel> Companies { get; set; }
+    }
+
+    public class CompanySummaryModel
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        [JsonIgnore]
+        public DateTime CreatedAt { get; set; }
+
+        public string Created => CreatedAt.ToTimezone().ToIsoDate();
+
+        public bool IsDeleted { get; set; }
+
+        public bool HasAdmins { get; set; }
+
     }
 
     public class CompanyUserViewModel

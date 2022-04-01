@@ -1,11 +1,8 @@
 @using Humanizer;
-@inject ProjectSettings config;
 @model CompanyListModel
 
 @await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_CreateCompany" })
-@{
-    var hasMasterCompany = config.HasMasterCompany;
-}
+
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
     <box>
@@ -26,37 +23,12 @@
                 <thead>
                     <tr>
                         <th>Company</th>
-                        @if (hasMasterCompany)
-                        {
-                        <th>Master company</th>
-                        }
-                        <th>Description</th>
-                        <th>Date created</th>
                         <th>Status</th>
+                        <th>Date created</th>
                         <th style="width:150px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var company in Model.Companies)
-                    {
-                        <tr>
-                            <td>@company.Name</td>
-                            @if(hasMasterCompany)
-                            {
-                            <td>@company.MasterCompany</td>                                
-                            }
-                            <td>@company.Description.Truncate(75)</td>
-                            <td>@company.CreatedAt.ToTimezone().ToIsoDate()</td>
-                            <td data-search="@(company.IsDeleted ? 0 : 1)"><label type="@company.IsDeleted ? LabelType.Warning : LabelType.Success">@(company.IsDeleted ? "Archived" : "Active")</label></td>
-                            <td>
-                                <a mvc-action="Mvc.Admin.Company_Detail.AddRouteId(company.Id)" class="m-r-sm">View</a>
-                                @if (company.HasAdmins)
-                                {
-                                    @Html.LinkPost(Mvc.Admin.Company_Impersonate, "Impersonate", new { Id = company.Id }, linkClasses: "m-r-sm")
-                                }
-                            </td>
-                        </tr>
-                    }
                 </tbody>
             </table-default>
         </box-content>
@@ -71,11 +43,31 @@
         $(function () {
 
             companyTable = $('.js-company-table').dataTable({
+                "processing": true,
+                "serverSide": true,
+                "deferLoading": 0,
+                "ajax": {
+                    "url": "@Mvc.Admin.Company_ListData.Url(this.Url)",
+                    "type": "POST"
+                },
+                "columns": [
+                    { "data": "name", "orderable": true },
+                    {
+                        "data": "status", "name": "status", orderable: false, render: function (data, type, row) {
+                            return '<span class="label label-{0}">{1}</span>'.format(row.isDeleted ? "warning" : "success", row.isDeleted ? "Archived" : "Active");
+                        }
+                    },
+                    { "data": "created", "orderable": true },
+                    {
+                        "data": null, orderable: false, render: function (data, type, row) {
+                            var view = '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}" class="m-r-sm">View</a>';
+                            var impersonate = row.hasAdmins ? '<a href="#" class="js-impersonate" data-id="{0}">Impersonate</a>' : '';
+                            return view.format(data.id) + impersonate.format(data.id);
+                        }
+                    }
+                ],
                 dom: 'Tgtip',
                 "iDisplayLength": 50,
-                "columnDefs": [
-                    { "orderable": false, "targets": [@(hasMasterCompany ? 4 : 3), @(hasMasterCompany ? 5 : 4)] }
-                ],
             });
 
             $('#Search').on('keyup', function () {
@@ -86,15 +78,21 @@
                 SearchTable();
             });
 
+            SearchTable();
+
+            $('.js-company-table').on('click', '.js-impersonate', function () {
+                $.post('@Mvc.Admin.Company_Impersonate.Url(this.Url)/{0}'.format($(this).data('id')));
+            });
+
         });
 
         function SearchTable() {
             var api = companyTable.api();
 
             if ($('#Status').val() != '') {
-                api.column(@(hasMasterCompany ? 4 : 3)).search($('#Status').val(), false, false, false);
+                api.column(1).search($('#Status').val(), false, false, false);
             } else {
-                api.column(@(hasMasterCompany ? 4 : 3)).search('');
+                api.column(1).search('');
             }
 
             api.search($('#Search').val());

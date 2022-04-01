@@ -127,20 +127,67 @@ namespace ChilliCoreTemplate.Service
             return ServiceResult<CompanyEditModel>.AsSuccess(model);
         }
 
-        public ServiceResult<CompanyListModel> Company_List()
+        public PagedList<CompanySummaryModel> Company_List(IDataTablesRequest model)
         {
-            var model = new CompanyListModel
-            {
-                Companies = Company_Authorised()
-                    .AsNoTracking()
-                    .OrderBy(x => x.Name)
-                    .Materialize<Company, CompanyViewModel>()
-                    .ToList()
-            };
+            var filterModel = new CompanyListModel();
 
-            return ServiceResult<CompanyListModel>.AsSuccess(model);
+            if (!String.IsNullOrEmpty(model.Search.Value))
+            {
+                filterModel.Search = model.Search.Value;
+            }
+
+            foreach (var column in model.Columns)
+            {
+                if (!String.IsNullOrEmpty(column.Search.Value))
+                {
+                    switch (String.IsNullOrEmpty(column.Field) ? column.Name : column.Field)
+                    {
+                        case "status":
+                            filterModel.Status = bool.Parse(column.Search.Value);
+                            break;
+                    }
+                }
+            }
+
+            var query = Company_ListQuery(filterModel);
+
+            var mapping = new DataTableColumnMapping<Company>();
+            mapping.SetDefaultOrder(x => x.Name, ascending: true);
+            mapping.Add("Created", x => x.CreatedAt);
+            mapping.Add("Name", x => x.Name);
+            query = mapping.ApplyOrder(query, model);
+
+            var data = query
+                .Materialize<Company, CompanySummaryModel>()
+                .ToPagedList(model.Start / model.Length + 1, model.Length);
+            return data;
         }
 
+        public int Company_Count()
+        {
+            var query = Company_ListQuery(new CompanyListModel());
+
+            if (query == null) return 0;
+
+            return query.Count();
+        }
+
+        private IQueryable<Company> Company_ListQuery(CompanyListModel model)
+        {
+            var query = Company_Authorised();
+
+            if (!String.IsNullOrEmpty(model.Search))
+            {
+                query = query.Where(x => x.Name.StartsWith(model.Search));
+            }
+            if (model.Status.HasValue)
+            {
+                if (model.Status.Value) query = query.Where(x => !x.IsDeleted);
+                else query = query.Where(x => x.IsDeleted);
+            }
+
+            return query;
+        }
         public ApiPagedList<CompanyViewModel> Company_List(string searchTerm, ApiPaging paging, int? id)
         {
             var query = this.Company_Authorised();

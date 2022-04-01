@@ -1,6 +1,7 @@
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models.Api;
 using ChilliSource.Cloud.Core.Distributed;
+using ChilliSource.Cloud.Core.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Reflection;
@@ -30,6 +31,7 @@ namespace ChilliCoreTemplate.Data
 
             DistributedLockSetup.OnModelCreating(modelBuilder);
             TaskDefinitionSetup.OnModelCreating(modelBuilder);
+            DateTimeKindAttribute.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 

@@ -4,9 +4,9 @@
     "net6.0": {
       "ChilliSource.Cloud.Core": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0123, )",
-        "resolved": "2.0.0-alpha0123",
-        "contentHash": "dcrzg1yJ9bgfEDsNcVbKtjLFt5J4Ke6YgnSodi+RX9y6a97P3y5sOiYwpGLqoIolHl8IRppIRvjsvOCovHqTAQ==",
+        "requested": "[2.0.0-alpha0124, )",
+        "resolved": "2.0.0-alpha0124",
+        "contentHash": "O5JSkzoYu4jawuNPrtld3k4xpU5JMsUJ655/IiGEDu/IxjD7mJORfMJmV745mUolRPsTxXM6kUaksKgS4qh6rQ==",
         "dependencies": {
           "AutoMapper": "8.0.0",
           "ChilliSource.Core.Extensions": "2.0.3-alpha0013",
@@ -3001,7 +3001,7 @@
         "type": "Project",
         "dependencies": {
           "ChilliCoreTemplate.Models": "1.0.0",
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0123",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0124",
           "ChilliSource.Core.Extensions": "2.0.3",
           "Microsoft.EntityFrameworkCore": "6.0.3",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.3",
@@ -3011,7 +3011,7 @@
       "chillicoretemplate.models": {
         "type": "Project",
         "dependencies": {
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0123",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0124",
           "ChilliSource.Cloud.Web.MVC": "2.0.0-alpha0100",
           "ChilliSource.Core.Extensions": "2.0.3",
           "FoolProof.Core": "1.1.10",
@@ -3030,7 +3030,7 @@
           "ChilliCoreTemplate.Models": "1.0.0",
           "ChilliSource.Cloud.AWS": "2.0.0-alpha0012",
           "ChilliSource.Cloud.Azure": "2.0.0-alpha0008",
-          "ChilliSource.Cloud.Core": "2.0.0-alpha0123",
+          "ChilliSource.Cloud.Core": "2.0.0-alpha0124",
           "ChilliSource.Cloud.ImageSharp": "2.0.0-alpha0004",
           "ChilliSource.Cloud.Web": "2.0.0-alpha0036",
           "ChilliSource.Core.Extensions": "2.0.3",

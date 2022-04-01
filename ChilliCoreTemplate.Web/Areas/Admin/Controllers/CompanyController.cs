@@ -34,9 +34,16 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult List()
         {
-            return this.ServiceCall(() => _services.Company_List())
-                .Always(m => { return View("CompanyList", m); })
-                .Call();
+            return View("CompanyList", new CompanyListModel());
+        }
+
+        [HttpPost]
+        public IActionResult ListData(IDataTablesRequest model)
+        {
+            var data = _services.Company_List(model);
+            var count = _services.Company_Count();
+
+            return new DataTablesJsonResult(DataTablesResponse.Create(model, count, data.TotalCount, data), true);
         }
 
         public JsonResult Select2Query(string searchTerm, ApiPaging paging, int? id = null)

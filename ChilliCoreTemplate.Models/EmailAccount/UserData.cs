@@ -156,7 +156,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         {
             if (this.Role.IsCompanyRole())
             {
-                return this.CompanyId == other.CompanyId && this.Role == Role.CompanyAdmin;
+                return (this.CompanyId == other.CompanyId || this.CompanyId == other.MasterCompanyId) && this.Role == Role.CompanyAdmin;
             }
 
             return this.Role == Role.Administrator && other.Role != Role.Administrator;

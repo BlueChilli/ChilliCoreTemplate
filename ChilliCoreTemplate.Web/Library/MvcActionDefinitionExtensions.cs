@@ -80,9 +80,14 @@ namespace ChilliCoreTemplate.Web
             return await htmlHelper.LinkAsync(new Template_Button { Url = "#", Text = text, HtmlAttributes = dictionary });
         }
 
-        public static IHtmlContent ModalOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, object routeValues)
+        public static IHtmlContent ModalOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id)
         {
-            return htmlHelper.ModalOpen(actionResult, new MenuUrlValues { RouteValues = routeValues });
+            return htmlHelper.ModalOpen(actionResult, new MenuUrlValues(id));
+        }
+
+        public static IHtmlContent ModalOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, object routeValues = null, string data = "null")
+        {
+            return htmlHelper.ModalOpen(actionResult, new MenuUrlValues { RouteValues = routeValues }, data);
         }
 
         public static async Task<IHtmlContent> LinkAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id, string text, object routeValues = null, object htmlAttributes = null)

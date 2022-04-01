@@ -9,7 +9,7 @@ namespace ChilliCoreTemplate.Web
             this.ImagePath = imagePath;
             this.Command = command;
             this.AlternativeImage = alternativeImage;
-            this.ButtonText = buttonText;
+            if (buttonText != null) this.ButtonText = buttonText;
         }
 
         public override string GetViewPath()

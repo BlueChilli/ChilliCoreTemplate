@@ -124,9 +124,9 @@ namespace ChilliCoreTemplate.Web
             this.Options = options;
         }
 
-        public IDisposable BeginRow(RowBorderType borderType = RowBorderType.None, RowType rowType = RowType.Normal, RowPaddingType rowPaddingType = RowPaddingType.Normal)
+        public IDisposable BeginRow(RowBorderType borderType = RowBorderType.None, RowType rowType = RowType.Normal, RowPaddingType rowPaddingType = RowPaddingType.Normal, RowAlignment rowAlignment = RowAlignment.Left)
         {
-            return new EmailRowContainer(HtmlHelper, borderType, rowType, rowPaddingType);
+            return new EmailRowContainer(HtmlHelper, borderType, rowType, rowPaddingType, rowAlignment);
         }
 
         public IDisposable BeginColumn()
@@ -258,6 +258,14 @@ namespace ChilliCoreTemplate.Web
             TwoColumn
         }
 
+        public enum RowAlignment
+        {
+            [Data("Alignment", "left")]
+            Left,
+            [Data("Alignment", "center")]
+            Center
+        }
+
         public enum RowPaddingType
         {
             [Data("CellPaddingTop", "15px")]
@@ -302,21 +310,24 @@ namespace ChilliCoreTemplate.Web
             private RowBorderType BorderType;
             private RowType RowType;
             private RowPaddingType RowPaddingType;
+            private RowAlignment RowAlignment;
 
             private DisposableWrapper _disposableWrapper;
-            public EmailRowContainer(IHtmlHelper htmlHelper, RowBorderType borderType, RowType rowType, RowPaddingType rowPaddingType)
+            public EmailRowContainer(IHtmlHelper htmlHelper, RowBorderType borderType, RowType rowType, RowPaddingType rowPaddingType, RowAlignment rowAlignment)
             {
                 this.BorderType = borderType;
                 this.RowType = rowType;
                 this.RowPaddingType = rowPaddingType;
+                this.RowAlignment = rowAlignment;
 
                 _disposableWrapper = new DisposableWrapper(htmlHelper, this.BeginRow, this.EndRow);
             }
 
             protected IHtmlContent BeginRow()
             {
-                var defaultSuffix = this.RowType == RowType.Normal ? String.Format(@"<tr><td style=""vertical-align:top;color:#8d9aa5;font-size:15px;line-height:150%;text-align:left;border-collapse:collapse;margin:0;padding:0; {0} padding-top:{1};"">", this.BorderType.GetData<string>("Style"), this.RowPaddingType.GetData<string>("CellPaddingTop")) : string.Empty;
-                return new HtmlString(String.Format(@"<tr><td align=""center"" style=""vertical-align:top;border-collapse:collapse;padding-right:7%;padding-left:7%;padding-bottom:{1};""><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""width: 100%;"">{0}", defaultSuffix, this.RowPaddingType.GetData<string>("RowPaddingBottom")));
+                var alignment = this.RowAlignment.GetData<string>("Alignment");
+                var defaultSuffix = this.RowType == RowType.Normal ? String.Format(@"<tr><td style=""vertical-align:top;color:#8d9aa5;font-size:15px;line-height:150%;text-align:{2};border-collapse:collapse;margin:0;padding:0; {0} padding-top:{1};"">", this.BorderType.GetData<string>("Style"), this.RowPaddingType.GetData<string>("CellPaddingTop"), alignment) : string.Empty;
+                return new HtmlString(String.Format(@"<tr><td align=""{2}"" style=""vertical-align:top;border-collapse:collapse;padding-right:7%;padding-left:7%;padding-bottom:{1};""><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""width: 100%;"">{0}", defaultSuffix, this.RowPaddingType.GetData<string>("RowPaddingBottom"), alignment));
             }
 
             public IHtmlContent EndRow()

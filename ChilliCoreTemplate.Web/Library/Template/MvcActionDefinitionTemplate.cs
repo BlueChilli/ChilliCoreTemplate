@@ -94,9 +94,13 @@ namespace ChilliCoreTemplate.Web
 
         public static string ModalOpenCommand(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
         {
-            var url = GetUrl(htmlHelper.GetUrlHelper(), actionResult, urlValues);
-            var id = actionResult.GetModalId();
+            return ModelOpenCommand(htmlHelper.GetUrlHelper(), actionResult, urlValues, data);
+        }
 
+        public static string ModelOpenCommand(this IUrlHelper urlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
+        {
+            var url = GetUrl(urlHelper, actionResult, urlValues);
+            var id = actionResult.GetModalId();
             return $"$('#{id}_content').ajaxLoad({{url: '{url}', data: {data}}}).done(function() {{ $('#{id}').modal('show'); }});";
         }
 

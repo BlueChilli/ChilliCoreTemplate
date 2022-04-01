@@ -116,6 +116,11 @@ namespace ChilliCoreTemplate.Service
             LinqMapper.CreateMap<Company, CompanyDetailViewModel>(c => new CompanyDetailViewModel()
             {
             }).IncludeBase<Company, CompanyViewModel>();
+            LinqMapper.CreateMap<Company, CompanySummaryModel>(c => new CompanySummaryModel
+            {
+                HasAdmins = c.UserRoles.Any(r => r.Role == Role.CompanyAdmin && r.User.Status != UserStatus.Deleted)
+            });
+
             LinqMapper.CreateMap<UserRole, CompanyUserViewModel>(u => new CompanyUserViewModel
             {
                 Email = u.User.Email,

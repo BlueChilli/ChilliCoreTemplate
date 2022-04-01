@@ -1,4 +1,5 @@
 using ChilliCoreTemplate.Models;
+using ChilliSource.Cloud.Core.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -41,12 +42,18 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [Required, StringLength(50)]
         public string Timezone { get; set; }
 
+        [DateTimeKind]
         public DateTime CreatedAt { get; set; }
+
+        [DateTimeKind]
         public DateTime UpdatedAt { get; set; }
-        public bool IsDeleted { get; set; }
+
+        [DateTimeKind]
         public DateTime? DeletedAt { get; set; }
         public int? DeletedById { get; set; }
         public User DeletedBy { get; set; }
+        public bool IsDeleted { get; set; }
+
         public bool IsSetup { get; set; }
 
         public static Company CreateNew(string name = "Company")
