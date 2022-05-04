@@ -1,0 +1,37 @@
+@model RazorTemplateDataModel<SubscriptionEmailModel>
+@inject ProjectSettings config
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Model.Subject = $"You've signed up for the {Model.Data.Plan.GetDescription()} plan";
+    Model.EmailPreview = "thanks for supporting us";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+    var url = config.ResolveUrl(String.Format("~/account/login?email={0}", Model.Email));
+    var price = Model.Data.Plan.GetData<int>("Price").ToString("C");
+}
+
+@using (builder.BeginRow(rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    @builder.P(String.Format("Hi {0},", Model.Data.FirstName))
+    using (builder.BeginP())
+    {
+        if (Model.Data.Plan == PaymentPlan.Individual)
+        {
+            @:Congratulations on signing up for the <b>@Model.Data.Plan.GetDescription() plan for just @price a month</b>.
+            <br />
+            <br />
+            @:Your card will be billed monthly. Payments cover access to the properties handed over for both the company and the owner. Find out more in our <a href="https://www.inndox.com/terms-conditions" target="_blank">Terms and Conditions</a>. Or have a look at our pricing by clicking <a href="https://www.inndox.com/pricing" target="_blank">here</a>.
+        }
+        else if (Model.Data.Plan == PaymentPlan.Company)
+        {
+            @:Congratulations on signing up for the <b>@Model.Data.Plan.GetDescription() plan for just @price a month</b>.
+            <br />
+            <br />
+            @:Your card will be billed monthly. Payments cover access to the properties handed over for both the company and the owner. Find out more in our <a href="https://www.inndox.com/terms-conditions" target="_blank">Terms and Conditions</a>. Or have a look at our pricing by clicking <a href="https://www.inndox.com/pricing" target="_blank">here</a>.
+        }
+    }
+}
+
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, url, "Login")
+}

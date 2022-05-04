@@ -1,0 +1,24 @@
+@model RazorTemplateDataModel<AccountViewModel>
+@inject ProjectSettings config
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Model.Subject = "Oh no, your payment failed";
+    Model.EmailPreview = "please login and update your payment details";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+    var url = config.ResolveUrl(String.Format("~/account/login?email={0}", Model.Data.Email));
+}
+
+@section Header
+{
+    @using (builder.BeginHeader(rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+    {
+        @builder.P(String.Format("Hi {0},", Model.Data.FirstName))
+        @builder.P("Your last payment failed. There may be a problem with the card we have on file. Please login and check that your credit card details are up to date.")
+        @builder.P("We will continue to attempt to take payment over the next few days.")
+    }
+}
+
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, url, "Login")
+}

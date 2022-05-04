@@ -2,6 +2,8 @@
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Exceptions.Core;
+using Serilog.Exceptions.EntityFrameworkCore.Destructurers;
 using Serilog.Sinks.MSSqlServer;
 using Serilog.Sinks.MSSqlServer.Sinks.MSSqlServer.Options;
 using System;
@@ -25,7 +27,7 @@ namespace ChilliCoreTemplate.Web.Serilog
                 .Filter.ByExcluding("SourceContext = 'Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer'") //Bug in Microsoft.AspNetCore.Server.IIS.Core.IISHttpContext.GetOriginalPath() during warm up
                 .Filter.ByExcluding(x => x.Exception?.Message == "Could not obtain database time information") //Common nuisance error when connecting with low spec azure databases (Scheduled tasks)
                 .Enrich.FromLogContext()
-                .Enrich.WithExceptionDetails()
+                .Enrich.WithExceptionDetails(new DestructuringOptionsBuilder().WithDefaultDestructurers().WithDestructurers(new[] { new DbUpdateExceptionDestructurer() }))
                 .Enrich.WithExceptionMessage()
                 .Enrich.WithUserId()
                 //.Enrich.With<CustomExceptionDataEnricher>()

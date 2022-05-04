@@ -39,7 +39,7 @@ namespace ChilliCoreTemplate.Models
 
         [DisplayName("Logo")]
         [FileMaxSize(8 * 1024 * 1024), FileMinSize]
-        [HttpPostedFileExtensions(allowedExtensions: "jpg, jpeg, png, gif")]
+        [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
         public IFormFile LogoFile { get; set; }
 
         [Required, StringLength(200), DisplayName("Company name")]

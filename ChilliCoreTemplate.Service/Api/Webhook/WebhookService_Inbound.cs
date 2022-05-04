@@ -2,6 +2,7 @@
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Distributed;
 using ChilliSource.Core.Extensions;
@@ -24,9 +25,11 @@ namespace ChilliCoreTemplate.Service.Api
         private readonly IWebHostEnvironment _env;
         private readonly IFileStorage _fileStorage;
         private readonly ProjectSettings _config;
+        private readonly AccountService _accountService;
 
-        public WebhookService(IPrincipal user, DataContext context, Services services, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config) : base(user, context)
+        public WebhookService(IPrincipal user, DataContext context, Services services, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config) : base(user, context)
         {
+            _accountService = accountService;
             _services = services;
             _stripe = stripe;
             _env = env;

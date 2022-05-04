@@ -188,13 +188,14 @@ namespace ChilliCoreTemplate.Service
 
             return query;
         }
+
         public ApiPagedList<CompanyViewModel> Company_List(string searchTerm, ApiPaging paging, int? id)
         {
             var query = this.Company_Authorised();
 
             if (!String.IsNullOrEmpty(searchTerm))
             {
-                if (int.TryParse(searchTerm, out var projectId)) query = query.Where(x => x.Id == projectId);
+                if (int.TryParse(searchTerm, out var companyId)) query = query.Where(x => x.Id == companyId);
                 else query = query.Where(x => x.Name.Contains(searchTerm));
             }
             else if (id.HasValue) query = query.Where(x => x.Id == id.Value);

@@ -168,7 +168,12 @@
         for (var i = 0; i < components.length; i++)
             for (var j = 0; j < components[i].types.length; j++)
                 if (components[i].types[j] == type) result = returnLongForm ? components[i].long_name : components[i].short_name;
-        return this.val(result);
+        if (this.val(result) != this.val()) {
+            this.find("option").filter(function () {
+                return this.innerHTML == result;
+            }).prop("selected", true);
+        }
+        return this.val();
     };
 
     $.fn.googleAddress_join = function (components, types) {

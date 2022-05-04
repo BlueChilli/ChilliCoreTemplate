@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChilliCoreTemplate.Data.EmailAccount;
+using ChilliCoreTemplate.Models.EmailAccount;
 
 namespace ChilliCoreTemplate.Service.Api
 {
@@ -88,8 +90,8 @@ namespace ChilliCoreTemplate.Service.Api
                     case Stripe.Events.InvoiceUpcoming:
                         result = ProcessInvoiceUpcoming(stripeEvent);
                         break;
-                    case Stripe.Events.InvoicePaid:
-                        result = ProcessInvoicePaid(stripeEvent);
+                    case Stripe.Events.InvoicePaymentSucceeded:
+                        result = ProcessInvoicePaymentSucceeded(stripeEvent);
                         break;
                     case Stripe.Events.InvoicePaymentFailed:
                         result = ProcessInvoicePaymentFailed(stripeEvent);
@@ -99,6 +101,12 @@ namespace ChilliCoreTemplate.Service.Api
                         break;
                     case Stripe.Events.PaymentIntentSucceeded:
                         result = Stripe_ProcessPaymentIntentSucceeded(stripeEvent);
+                        break;
+                    case Stripe.Events.CustomerSubscriptionDeleted:
+                        result = ProcessSubscriptionDeleted(stripeEvent);
+                        break;
+                    case Stripe.Events.CustomerDeleted:
+                        result = ProcessCustomerDeleted(stripeEvent);
                         break;
                     default:
                         result = ServiceResult.AsError($"Stripe event {stripeEvent.Type} not handled");
@@ -241,46 +249,62 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.AsSuccess();
         }
 
-        private ServiceResult ProcessInvoicePaid(Stripe.Event stripeEvent)
+        private ServiceResult ProcessInvoicePaymentSucceeded(Stripe.Event stripeEvent)
         {
-            string jsonData = JsonConvert.SerializeObject(stripeEvent.Data.Object);
-            var model = Stripe.Invoice.FromJson(jsonData);
+            var model = stripeEvent.Data.Object as Invoice;
 
-            //if (model.AmountPaid == 0) return ServiceResult.AsSuccess();
+            if (model.AmountPaid == 0) return ServiceResult.AsSuccess();
 
-            //if (!String.IsNullOrEmpty(model.ChargeId))
-            //{
-            //    var chargeRequest = _stripe.Charge_Get(model.ChargeId);
-            //    if (!chargeRequest.Success) return ServiceResult.CopyFrom(chargeRequest);
-            //    model.Charge = chargeRequest.Result;
-            //}
+            Company company = Context.Companies.FirstOrDefault(c => c.StripeId == model.CustomerId);
+            if (company == null) ServiceResult.AsError($"Company not found for {model.CustomerId}: {stripeEvent.Id}");
 
-            //Company company = Context.Companies.FirstOrDefault(c => c.StripeId == model.CustomerId);
-            //if (company == null) return ServiceResult.AsError($"Process invoice payment - stripe account not found for: {model.CustomerId}");
+            var payment = Context.Payments.FirstOrDefault(x => (x.CompanyId == company.Id) && x.EventId == stripeEvent.Id);
+            if (payment != null) return ServiceResult.AsError($"Process invoice payment - payment already recorded: {stripeEvent.Id}");
 
-            //var payment = Context.Payments.FirstOrDefault(x => x.CompanyId == company.Id && x.EventId == stripeEvent.Id);
-            //if (payment != null) return ServiceResult.AsError($"Process invoice payment - payment already recorded: {stripeEvent.Id}");
+            if (!String.IsNullOrEmpty(model.ChargeId))
+            {
+                var chargeRequest = _stripe.Charge_Get(model.ChargeId);
+                if (!chargeRequest.Success) return ServiceResult.CopyFrom(chargeRequest);
+                model.Charge = chargeRequest.Result;
+            }
 
-            //payment = new Payment
-            //{
-            //    CompanyId = company.Id,
-            //    Number = model.Number,
-            //    Amount = model.AmountDue / 100.0M,
-            //    ReceiptUrl = model.Charge?.ReceiptUrl,
-            //    PaidOn = DateTime.UtcNow,
-            //    EventId = stripeEvent.Id
-            //};
+            var line = model.Lines.FirstOrDefault();
 
-            //Context.Payments.Add(payment);
-            //Context.SaveChanges();
+            payment = new Payment
+            {
+                Amount = model.AmountPaid / 100.0M,
+                CompanyId = company.Id,
+                PaidOn = DateTime.UtcNow,
+                ChargeId = model.ChargeId,
+                ReceiptUrl = model.Charge?.ReceiptUrl,
+                EventId = stripeEvent.Id,
+                Description = line?.Description
+            };
+
+            Context.Payments.Add(payment);
+            Context.SaveChanges();
 
             return ServiceResult.AsSuccess();
         }
 
         private ServiceResult ProcessInvoicePaymentFailed(Stripe.Event stripeEvent)
         {
-            string jsonData = JsonConvert.SerializeObject(stripeEvent.Data.Object);
-            var model = Stripe.Invoice.FromJson(jsonData);
+            var model = stripeEvent.Data.Object as Invoice;
+            if (model.AmountDue == 0) return ServiceResult.AsSuccess();
+
+            Company company = Context.Companies.FirstOrDefault(c => c.StripeId == model.CustomerId);
+            if (company == null) ServiceResult.AsError($"Company not found for {model.CustomerId}: {stripeEvent.Id}");
+
+            var admin = _accountService.GetCompanyAdmin(company.Id);
+            var emailModel = Mapper.Map<AccountViewModel>(admin);
+
+            var bcc = _env.IsProduction() ? new EmailData_Address(_config.AdminEmail) : null;
+            _accountService.QueueMail(
+                RazorTemplates.Company_PaymentInvoiceFailed,
+                admin.Email,
+                new RazorTemplateDataModel<AccountViewModel> { Data = emailModel },
+                bcc: new List<EmailData_Address> { bcc }
+            );
 
             return ServiceResult.AsSuccess();
         }
@@ -315,6 +339,49 @@ namespace ChilliCoreTemplate.Service.Api
                 //var result = _apiServices.Something_Paid(guid, intent.Charges.First(), intent.CustomerId);
                 //return ServiceResult.CopyFrom(result);
             }
+
+            return ServiceResult.AsSuccess();
+        }
+
+        private ServiceResult ProcessSubscriptionDeleted(Stripe.Event stripeEvent)
+        {
+            var model = stripeEvent.Data.Object as Subscription;
+
+            var customerRequest = _stripe.Customer_Get(model.CustomerId);
+            if (!customerRequest.Success) return ServiceResult.CopyFrom(customerRequest);
+            var customer = customerRequest.Result;
+
+            if (customer.Subscriptions != null && customer.Subscriptions.Any(x => x.IsValid())) return ServiceResult.AsSuccess();
+
+            //Project code goes here
+
+            return ServiceResult.AsSuccess();
+        }
+
+        private ServiceResult ProcessCustomerDeleted(Stripe.Event stripeEvent)
+        {
+            var model = stripeEvent.Data.Object as Customer;
+
+            Company company = Context.Companies.FirstOrDefault(c => c.StripeId == model.Id);
+
+            if (company != null)
+            {
+                company.StripeId = null;
+                company.IsDeleted = true;
+                var accounts = Context.Users.Where(x => x.UserRoles.Any(r => r.CompanyId == company.Id && r.Role == Role.CompanyAdmin) && x.Status != UserStatus.Deleted).ToList();
+                accounts.ForEach(x => x.Status = UserStatus.Deleted);
+            }
+            else
+            {
+                var account = Context.Users.FirstOrDefault(a => a.StripeId == model.Id && a.Status != UserStatus.Deleted);
+                if (account != null)
+                {
+                    account.Status = UserStatus.Deleted;
+                    account.StripeId = null;
+                }
+            }
+
+            Context.SaveChanges();
 
             return ServiceResult.AsSuccess();
         }

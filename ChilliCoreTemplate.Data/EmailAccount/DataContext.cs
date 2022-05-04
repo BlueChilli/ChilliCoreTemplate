@@ -28,5 +28,7 @@ namespace ChilliCoreTemplate.Data
 
         public DbSet<ErrorLog> ErrorLogs { get; set; }
 
+        public DbSet<BulkImport> BulkImports { get; set; }
+
     }
 }

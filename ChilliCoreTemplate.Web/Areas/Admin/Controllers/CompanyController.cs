@@ -46,6 +46,13 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             return new DataTablesJsonResult(DataTablesResponse.Create(model, count, data.TotalCount, data), true);
         }
 
+        public JsonResult ListJson(string term)
+        {
+            var companies = _services.Company_List(term, new ApiPaging(), null).Data;
+
+            return Json(new { Data = companies.ToSelectList(v => v.Id, t => t.Name) });
+        }
+
         public JsonResult Select2Query(string searchTerm, ApiPaging paging, int? id = null)
         {
             var companies = _services.Company_List(searchTerm, paging, id);

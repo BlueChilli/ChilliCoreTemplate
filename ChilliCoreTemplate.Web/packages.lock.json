@@ -230,6 +230,16 @@
           "System.Reflection.TypeExtensions": "4.7.0"
         }
       },
+      "Serilog.Exceptions.EntityFrameworkCore": {
+        "type": "Direct",
+        "requested": "[8.1.0, )",
+        "resolved": "8.1.0",
+        "contentHash": "bPL7lg+gmx4AhtCrak/Cp5RvPmpRlmXOsjWIf7BUEDRS1ld/HqHVGQj1RcuoFous9vN7DmklZeLYEq978su2lQ==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "6.0.0",
+          "Serilog.Exceptions": "8.1.0"
+        }
+      },
       "Serilog.Expressions": {
         "type": "Direct",
         "requested": "[3.3.0, )",

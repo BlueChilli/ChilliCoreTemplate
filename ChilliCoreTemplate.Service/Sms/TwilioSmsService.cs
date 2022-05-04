@@ -1,5 +1,7 @@
 ﻿using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Models.Sms;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using PhoneNumbers;
 using System;
@@ -13,11 +15,13 @@ namespace ChilliCoreTemplate.Service.Sms
     {
         ProjectSettings _config;
         SmsConfigurationSection _smsConfig;
+        AccountService _accountService;
 
-        public TwilioSmsService(ProjectSettings config)
+        public TwilioSmsService(ProjectSettings config, AccountService accountService)
         {
             _config = config;
             _smsConfig = config.SmsSettings;
+            _accountService = accountService;
         }
 
         private TwilioRestClient GetClient()
@@ -39,6 +43,12 @@ namespace ChilliCoreTemplate.Service.Sms
             var phoneUtil = PhoneNumberUtil.GetInstance();
             var userPhone = phoneUtil.Parse(model.To, "AU");
             model.To = phoneUtil.Format(userPhone, PhoneNumberFormat.E164);
+
+            if (_smsConfig.SendViaEmailRegex != null && _smsConfig.SendViaEmailRegex.IsMatch(model.To))
+            {
+                _accountService.QueueMail(RazorTemplates.SendSmsViaEmail, $"{_config.ProjectName}@mailinator.com", new RazorTemplateDataModel<string> { Data = model.Message.Replace("\n", "<br/>") });
+                return ServiceResult<string>.AsSuccess();
+            }
 
             var result = Twilio.Rest.Api.V2010.Account.MessageResource.Create(model.To, from: model.From, body: model.Message, client: client, statusCallback: callback);
 

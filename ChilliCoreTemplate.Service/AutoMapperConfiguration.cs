@@ -37,7 +37,9 @@ namespace ChilliCoreTemplate.Service
         public static void Configure()
         {
             Mapper.Initialize(cfg =>
-            {                
+            {
+                BulkImportService.AutoMapper(cfg);
+
                 cfg.CreateMap<UserRole, UserRoleModel>();
                 cfg.CreateMap<UserRole, RoleSelectionViewModel>();
                 cfg.CreateMap<UserRole, InviteRoleViewModel>();

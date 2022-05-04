@@ -105,7 +105,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public bool IsAnonymous { get; set; }
 
         [FileMaxSize(8 * 1024 * 1024), FileMinSize]
-        [HttpPostedFileExtensions(allowedExtensions: "jpg, jpeg, png, gif")]
+        [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
         public IFormFile ProfilePhotoFile { get; set; }
 
         public bool IsApi { get; set; }
@@ -247,7 +247,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string ProfilePhotoPath { get; set; }
 
         [FileMaxSize(8 * 1024 * 1024), FileMinSize]
-        [HttpPostedFileExtensions(allowedExtensions: "jpg, jpeg, png, gif")]
+        [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
         public IFormFile ProfilePhotoFile { get; set; }
     }
 
@@ -358,7 +358,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string Email { get; set; }
 
         [FileMaxSize(8 * 1024 * 1024), FileMinSize]
-        [HttpPostedFileExtensions(allowedExtensions: "jpg, jpeg, png, gif")]
+        [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
         public IFormFile ProfilePhotoFile { get; set; }
 
         public string ProfilePhotoPath { get; set; }

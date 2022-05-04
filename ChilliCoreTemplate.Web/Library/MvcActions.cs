@@ -51,6 +51,7 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition Company = MvcAction();
         public readonly IMvcActionDefinition Company_List = MvcAction();
         public readonly IMvcActionDefinition Company_ListData = MvcAction();
+        public readonly IMvcActionDefinition Company_ListJson = MvcAction();
         public readonly IMvcActionDefinition Company_Edit = MvcAction();
         public readonly IMvcActionDefinition Company_Detail = MvcAction();
         public readonly IMvcActionDefinition Company_Delete = MvcAction();

@@ -13,6 +13,9 @@ namespace ChilliCoreTemplate.Service
     public partial class RazorTemplates
     {
         public static RazorTemplate PdfExample = new RazorTemplate("Pdfs/Example");
+
+        public static RazorTemplate Company_SubscriptionCreated = new RazorTemplate("Emails/Company/SubscriptionCreated");
+        public static RazorTemplate Company_PaymentInvoiceFailed = new RazorTemplate("Emails/Company/PaymentInvoiceFailed");
     }
 
     public static class RazorTemplateExtensions

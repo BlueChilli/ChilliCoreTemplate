@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using ChilliCoreTemplate.Models.Stripe;
 using ChilliCoreTemplate.Models.Api.OAuth;
+using System.Text.RegularExpressions;
 
 namespace ChilliCoreTemplate.Models
 {
@@ -427,6 +428,8 @@ namespace ChilliCoreTemplate.Models
         public string ServiceId => _section.GetString("ServiceId");
 
         public string From => _section.GetString("From");
+
+        public Regex SendViaEmailRegex => String.IsNullOrEmpty(_section.GetString("SendViaEmailRegex")) ? null : new Regex(_section.GetString("SendViaEmailRegex"));
 
     }
 

@@ -15,6 +15,7 @@ namespace ChilliCoreTemplate.Data
         public DbSet<LocationUser> LocationUsers { get; set; }
 
         //public DbSet<Payout> Payouts { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         private void Project_OnModelCreating(ModelBuilder modelBuilder)
         {

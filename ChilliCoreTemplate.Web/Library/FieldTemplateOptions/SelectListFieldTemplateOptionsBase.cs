@@ -22,31 +22,7 @@ namespace ChilliCoreTemplate.Web
         protected void ProcessSelect(Type baseType, ModelMetadata metadata, IFieldInnerTemplateModel data)
         {
             var listPopulatedByClient = (this.SelectList != null);
-            if (listPopulatedByClient)
-            {
-                if (metadata.ModelType.IsGenericType && metadata.ModelType.GetInterfaces().Contains(typeof(IEnumerable)))
-                {
-                    data.HtmlAttributes.Add("multiple", "multiple");
-                    var selectedValues = new HashSet<string>((data.Value as IEnumerable)?.Cast<object>().Select(v => v?.ToString())
-                                                                ?? Enumerable.Empty<string>());
-                    if (data.Value is string) selectedValues = new HashSet<string>((data.Value as string).Split(','));
-
-                    foreach (var item in this.SelectList)
-                    {
-                        if (selectedValues.Contains(item.Value))
-                            item.Selected = true;
-                    }
-                }
-                else
-                {
-                    var selectedValue = data.Value?.ToString();
-                    foreach (var item in this.SelectList)
-                    {
-                        item.Selected = item.Value == selectedValue;
-                    }
-                }
-            }
-            else if (baseType == typeof(Enum))
+            if (baseType == typeof(Enum) && !listPopulatedByClient)
             {
                 Type enumType = Nullable.GetUnderlyingType(metadata.ModelType) ?? metadata.ModelType;
                 var values = EnumHelper.GetValues(enumType).Cast<object>();
@@ -64,6 +40,33 @@ namespace ChilliCoreTemplate.Web
                 var flags = enumType.GetCustomAttribute<FlagsAttribute>();
                 if (flags != null && !data.HtmlAttributes.ContainsKey("multiple"))
                     data.HtmlAttributes.Add("multiple", "multiple");
+            }
+            else
+            {
+                if (metadata.ModelType.IsGenericType && metadata.ModelType.GetInterfaces().Contains(typeof(IEnumerable)))
+                {
+                    data.HtmlAttributes.Add("multiple", "multiple");
+                    if (SelectList != null)
+                    {
+                        var selectedValues = new HashSet<string>((data.Value as IEnumerable)?.Cast<object>().Select(v => v?.ToString())
+                                                                    ?? Enumerable.Empty<string>());
+                        if (data.Value is string) selectedValues = new HashSet<string>((data.Value as string).Split(','));
+
+                        foreach (var item in this.SelectList)
+                        {
+                            if (selectedValues.Contains(item.Value))
+                                item.Selected = true;
+                        }
+                    }
+                }
+                else if (SelectList != null)
+                {
+                    var selectedValue = data.Value?.ToString();
+                    foreach (var item in this.SelectList)
+                    {
+                        item.Selected = item.Value == selectedValue;
+                    }
+                }
             }
 
             // When SelectList is populated by the client, only resolves EmptyItemAttribute if the attribute is explicitly declared.

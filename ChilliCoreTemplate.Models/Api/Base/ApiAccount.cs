@@ -89,7 +89,7 @@ namespace ChilliCoreTemplate.Models.Api
     public class PhoneRegistrationApiModel
     {
         [FileMaxSize(8 * 1024 * 1024), FileMinSize]
-        [HttpPostedFileExtensions(allowedExtensions: "jpg, jpeg, png, gif")]
+        [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
         public IFormFile ProfilePhotoFile { get; set; }
 
         [Required, MaxLength(25)]
@@ -279,7 +279,7 @@ namespace ChilliCoreTemplate.Models.Api
         public string Phone { get; set; }
 
         [FileMaxSize(8 * 1024 * 1024), FileMinSize]
-        [HttpPostedFileExtensions(allowedExtensions: "jpg, jpeg, png, gif")]
+        [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
         public IFormFile ProfilePhotoFile { get; set; }
     }
 

@@ -37,7 +37,7 @@ namespace ChilliCoreTemplate.Service.Sms
                 case SmsProvider.Email:
                     return new EmailSmsService(_config, _accountService);
                 case SmsProvider.Twilio:
-                    return new TwilioSmsService(_config);
+                    return new TwilioSmsService(_config, _accountService);
                 default:
                     throw new ApplicationException($"Unknown Sms Provider: {smsConfig.Provider}");
             }

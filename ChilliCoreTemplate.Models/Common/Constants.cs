@@ -11,5 +11,12 @@ namespace ChilliCoreTemplate.Models
         public const string UrlErrorMessage = "The {0} field is not a valid URL. Ensure you have prefixed the link with http:// or https://";
 
         public const string DefaultCountry = "AU";
+
+        public const string DefaultTimezone = "Australia/Sydney";
+
+        public const string SupportEmailAddress = "hello@support.com";
+
+        public const string AllowedGraphicExtensions = "jpg, jpeg, png, gif";
+
     }
 }
