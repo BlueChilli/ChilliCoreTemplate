@@ -28,6 +28,10 @@
                                 @Html.LinkPost(Mvc.Admin.Company_Impersonate, "Impersonate", new { Id = Model.Id }, linkClasses: "btn-default btn-sm m-t-n-xs")
                             }
                             <a class="btn btn-default btn-sm m-t-n-xs" href="javascript:void(0);" onclick="@Html.ModalOpen(Mvc.Admin.Company_Delete, Model.Id)">@archiveOrDelete</a>
+                            @if (Model.IsDeleted)
+                            {
+                                <a class="btn btn-default btn-sm m-t-n-xs" href="javascript:void(0);" onclick="@Html.ModalOpen(Mvc.Admin.Company_Purge, Model.Id)">Purge!</a>
+                            }
                         </span>
                     </div>
                 </div>
@@ -203,5 +207,6 @@
 @section Modal
 {
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.Company_Delete, Title = $"{archiveOrDelete} company", Size = ModalSize.Medium })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.Company_Purge, Title = $"Purge company", Size = ModalSize.Medium })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.Company_Admin_Remove, Title = "Remove admin", Size = ModalSize.Medium })
 }

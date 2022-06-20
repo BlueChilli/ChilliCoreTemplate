@@ -1,3 +1,4 @@
+@inject IWebHostEnvironment env;
 @model UserDetailsModel
 
 @await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Title = Model.Account.FullName })
@@ -23,6 +24,12 @@
                                 <li>
                                     <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_ChangeStatus, Model.Account.Id)">Change account status</a>
                                 </li>
+                                @if(!env.IsProduction())
+                                {
+                                <li>
+                                    <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_Purge, Model.Account.Id)">Purge account</a>
+                                </li>                                
+                                }
 
                                 @if (User.UserData().CanImpersonate(Model.Account))
                                 {
@@ -137,4 +144,5 @@
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeDetails, Title = "Change details" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeRole, Title = "Change role" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeStatus, Title = "Change status" })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_Purge, Title = "Purge account" })
 }

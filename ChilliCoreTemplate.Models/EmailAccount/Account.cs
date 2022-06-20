@@ -348,6 +348,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class InviteEditModel
     {
+        public string ExternalId { get; set; }
+
         [Required, MaxLength(25)]
         public string FirstName { get; set; }
 
@@ -464,5 +466,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public IFormFile ProfilePhotoFile { get; set; }
 
+        public string ExternalId { get; set; }
     }
 }

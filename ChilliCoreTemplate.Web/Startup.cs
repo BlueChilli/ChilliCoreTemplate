@@ -327,7 +327,19 @@ namespace ChilliCoreTemplate.Web
                 });
             }
 
-            if (!env.IsProduction())
+            if (env.IsProduction())
+            {
+                app.UseCors(policy =>
+                {
+                    policy.WithOrigins(settings.PublicUrl.Replace("www", "*"), settings.PublicUrl.Replace("www.", ""));
+                    policy.SetIsOriginAllowedToAllowWildcardSubdomains();
+                    policy.AllowCredentials();
+                    policy.WithMethods("GET", "POST", "PUT", "DELETE", "PATCH");
+                    policy.WithHeaders("Origin", "X-Requested-With", "Content-Type", "Accept", "ApiKey", "UserKey");
+                    policy.SetPreflightMaxAge(TimeSpan.FromDays(1));
+                });
+            }
+            else
             {
                 app.UseCors(policy =>
                 {

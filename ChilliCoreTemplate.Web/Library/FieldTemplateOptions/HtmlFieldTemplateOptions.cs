@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;
@@ -29,6 +30,8 @@ namespace ChilliCoreTemplate.Web
             var items = Toolbar.Select(g => $"['{g.Key}', [{g.Value.Select(i => $"'{i}'").ToDelimitedString(",")}]]").ToList();
             return MvcHtmlStringCompatibility.Create($"[{items.ToDelimitedString(",")}]");
         }
+
+        public IMvcActionDefinition ImageUpload { get; set; }
 
         public override IFieldInnerTemplateModel ProcessInnerField(IFieldInnerTemplateModel templateModel)
         {

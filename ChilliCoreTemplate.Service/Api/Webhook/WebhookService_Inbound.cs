@@ -100,15 +100,6 @@ namespace ChilliCoreTemplate.Service.Api
                                 ErrorLogHelper.LogMessage($"{task.Type} Webhook failed: {result.Error}");
                             }
                         }
-
-                        if (DateTime.UtcNow.ToTimezone().Hour == 1)
-                        {
-                            //Delete task older than 1 month
-                            var oneMonth = DateTime.UtcNow.AddMonths(-1);
-                            var oldTasks = webhookContext.Webhooks_Inbound.Where(t => t.Timestamp < oneMonth).Take(100).ToList();
-                            webhookContext.Webhooks_Inbound.RemoveRange(oldTasks);
-                            webhookContext.SaveChanges();
-                        }
                     }
                 }
             }
@@ -159,7 +150,7 @@ namespace ChilliCoreTemplate.Service.Api
             if (String.IsNullOrEmpty(model.WebhookId)) model.WebhookId = Guid.NewGuid().ToString();
             model.WebhookIdHash = model.WebhookId.GetIndependentHashCode().Value;
 
-            var log = Context.Webhooks_Inbound.Where(l => l.WebhookIdHash == model.WebhookIdHash && l.WebhookId == model.WebhookId).FirstOrDefault();
+            var log = Context.Webhooks_Inbound.Where(l => l.WebhookIdHash == model.WebhookIdHash && l.WebhookId == model.WebhookId && l.Type == model.Type).FirstOrDefault();
             if (log == null)
             {
                 Context.Webhooks_Inbound.Add(model);
@@ -191,6 +182,19 @@ namespace ChilliCoreTemplate.Service.Api
                 },
             };
             _stripe.Webhook_Create(options);
+        }
+
+        public async Task CleanWebhooks(ITaskExecutionInfo executionInfo)
+        {
+            executionInfo.SendAliveSignal();
+            if (executionInfo.IsCancellationRequested)
+                return;
+
+            //Delete task older than 1 month
+            var oneMonth = DateTime.UtcNow.AddMonths(-1);
+            var oldTasks = await Context.Webhooks_Inbound.Where(t => t.Timestamp < oneMonth).Take(100).ToListAsync();
+            Context.Webhooks_Inbound.RemoveRange(oldTasks);
+            await Context.SaveChangesAsync();
         }
     }
 

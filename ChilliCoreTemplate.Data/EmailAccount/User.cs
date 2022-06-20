@@ -11,7 +11,7 @@ using System.Linq;
 namespace ChilliCoreTemplate.Data.EmailAccount
 {
     // This is the EF model
-    public partial class User
+    public partial class User : IExternalId
     {
         public int Id { get; set; }
 
@@ -26,6 +26,11 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public virtual List<UserActivity> Activities { get; set; }
 
         public virtual List<UserOAuth> OAuths { get; set; }
+
+        [MaxLength(50)]
+        public string ExternalId { get { return _ExternalId; } set { _ExternalId = value; ExternalIdHash = CommonLibrary.CalculateHash(value); } }
+        private string _ExternalId;
+        public int? ExternalIdHash { get; set; }
 
         [StringLength(100)]
         public string Email { get { return _Email; } set { _Email = value; EmailHash = CommonLibrary.CalculateHash(value); } }
@@ -132,20 +137,26 @@ namespace ChilliCoreTemplate.Data.EmailAccount
             return true;
         }
 
-        public bool HasCompany()
+        public bool HasCompanyLoaded()
         {
             return GetFirstCompany() != null;
+        }
+
+        public bool HasCompanyId()
+        {
+            return GetFirstCompanyId() != null;
         }
 
         public Company GetFirstCompany()
         {
             if (this.UserRoles == null) return null;
-            return this.UserRoles.Where(r => r.CompanyId != null && !r.Company.IsDeleted).Select(r => r.Company).FirstOrDefault();
+            return this.UserRoles.Where(r => r.Company != null && !r.Company.IsDeleted).Select(r => r.Company).FirstOrDefault();
         }
 
         public int? GetFirstCompanyId()
         {
-            return GetFirstCompany()?.Id;
+            if (this.UserRoles == null) return null;
+            return this.UserRoles.Where(r => r.CompanyId != null).Select(r => r.CompanyId).FirstOrDefault();
         }
 
         public bool HasRole(Role role, int? companyId = null)

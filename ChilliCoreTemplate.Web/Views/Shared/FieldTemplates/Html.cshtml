@@ -18,7 +18,10 @@
         $(function () {
             $('.@jsId').summernote({
                 height: 200,
-                toolbar: @options.ToolbarJson(),
+                @if (options.Toolbar != null)
+                {
+                @:toolbar: @options.ToolbarJson(),
+                }
                 placeholder: $('#@Model.Id').attr('placeholder'),
                 dialogsInBody: @(options.IsInModal ? "true" : "false"),
                 callbacks: {
@@ -39,6 +42,10 @@
                     {
                         @:onKeyup: function (e) { var t = e.currentTarget.innerHTML; $('.js-characters-left-@jsId').text(@maxLength.Value - t.trim().length + ' characters left'); },
                         @:onInit: function () { var t = this.innerHTML; $('.js-characters-left-@jsId').text(@maxLength.Value - t.trim().length + ' characters left'); }
+                    }
+                    @if(options.ImageUpload != null)
+                    {
+                        @: onImageUpload: function (files) { for (let i = 0; i < files.length; i++) { BlueChilli.uploadSummernoteImage('.@jsId', '@options.ImageUpload.Url(this.Url)', files[i]); } }  
                     }
                 }
             });

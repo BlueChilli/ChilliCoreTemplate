@@ -269,6 +269,27 @@ BlueChilli.validateACN = function (value) {
     return check == parseInt(value.charAt(i));
 };
 
+BlueChilli.uploadSummernoteImage = function (id, url, file) {
+    formData = new FormData();
+    formData.append("ImageFile", file);
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (fileUrl) {
+            var imgNode = document.createElement('img');
+            imgNode.src = fileUrl;
+            $(id).summernote('insertNode', imgNode);
+        },
+        error: function (data) {
+            alert(data.responseText);
+        }
+    });
+};
+
 (function ($) {
     $.validator.addMethod("bluechilli_checksum", function (value, element, checksumtype) {
         if (value == null || value.length == 0) {
@@ -509,3 +530,14 @@ jQuery.fn.extend({
         toggleBody.show();
     }
 });
+
+BlueChilli.checkAnchor = function () {
+    if (document.location.hash.length > 0) {
+        $('.nav-tabs a[href="' + document.location.hash + '"]').tab("show");
+    }
+    $(window).on('hashchange ready', function () {
+        let selectedTab = window.location.hash;
+        $('a[href="' + selectedTab + '"][data-toggle="tab"]').trigger('click');
+    });
+}
+

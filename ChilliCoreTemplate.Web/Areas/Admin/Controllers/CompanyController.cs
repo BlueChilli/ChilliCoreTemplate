@@ -110,6 +110,29 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .Call();
         }
 
+        public ActionResult Purge(int id)
+        {
+            return this.ServiceCall(() => _services.Company_Get(id))
+                .Always(m =>
+                {
+                    return PartialView("CompanyPurge", m);
+                })
+                .Call();
+        }
+
+        [HttpPost, ActionName("Purge")]
+        public ActionResult PurgePost(int id)
+        {
+            return this.ServiceCall(() => _services.Company_Purge(id))
+                .OnSuccess(m =>
+                {
+                    TempData[PageMessage.Key()] = PageMessage.Success($"The company {m.Name} was purged");
+                    return Mvc.Admin.Company_List.Redirect(this);
+                })
+                .OnFailure(() => Delete(id))
+                .Call();
+        }
+
         [HttpPost]
         public IActionResult AdminList(IDataTablesRequest model, int id)
         {

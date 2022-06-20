@@ -1,0 +1,17 @@
+@model CompanyDetailViewModel
+@using (Html.BeginFormCustom(Mvc.Admin.Company_Purge, htmlAttributes: new { @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    <div class="modal-body">
+        @Html.ValidationSummary()
+        <p>Are you sure you want <b>PURGE</b> the company <b>@Model.Name?</b></p>
+        <p>This will permantly delete all properties (including handed over properties) and associated documents forever.</p>
+    </div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync(new Template_Button { Style = ButtonStyle.Danger, Text = $"Yes, purge this company" })
+        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+    </div>
+}
+<script>
+    $('#@Mvc.Admin.Company_Purge.GetFormId()').ajaxForm({ target: '#@Mvc.Admin.Company_Purge.GetModalId()_content' });
+</script>

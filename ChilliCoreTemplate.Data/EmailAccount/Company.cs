@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Data.EmailAccount
 {
-    public class Company
+    public class Company : IExternalId
     {
         public virtual List<UserRole> UserRoles { get; set; }
 
@@ -20,6 +20,11 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public Company MasterCompany { get; set; }
 
         public Guid Guid { get; set; }
+
+        [MaxLength(50)]
+        public string ExternalId { get { return _ExternalId; } set { _ExternalId = value; ExternalIdHash = CommonLibrary.CalculateHash(value); } }
+        private string _ExternalId;
+        public int? ExternalIdHash { get; set; }
 
         [Required]
         public Guid? ApiKey { get; set; }

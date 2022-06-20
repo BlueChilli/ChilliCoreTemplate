@@ -44,6 +44,7 @@ namespace ChilliCoreTemplate.Data
 
             modelBuilder.Entity<Company>().HasIndex(c => c.Guid).HasDatabaseName("IX_Company_Guid").IsUnique();
             modelBuilder.Entity<Company>().HasIndex(c => c.StripeId).IsUnique();
+            modelBuilder.Entity<Company>().HasIndex(c => c.ExternalIdHash);
 
             modelBuilder.Entity<Email>().HasIndex(c => c.TemplateIdHash);
             modelBuilder.Entity<Email>().HasIndex(c => c.DateQueued);
@@ -56,6 +57,7 @@ namespace ChilliCoreTemplate.Data
 
             modelBuilder.Entity<User>().HasIndex(c => c.EmailHash);
             modelBuilder.Entity<User>().HasIndex(c => c.PhoneHash);
+            modelBuilder.Entity<User>().HasIndex(c => c.ExternalIdHash);
             modelBuilder.Entity<User>().HasIndex(c => c.CreatedDate);
 
             modelBuilder.Entity<UserDevice>().HasIndex(c => c.PinToken);

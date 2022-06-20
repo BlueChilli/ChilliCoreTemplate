@@ -229,6 +229,40 @@ namespace ChilliCoreTemplate.Service
             return ServiceResult<CompanyViewModel>.AsError("Company not found");
         }
 
+        public ServiceResult<CompanyViewModel> Company_Purge(int id)
+        {
+            var company = Company_Authorised()
+                .Include(x => x.UserRoles)
+                .ThenInclude(x => x.User)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (company != null)
+            {
+                for (var i = 0; i < company.UserRoles.Count; i++)
+                {
+                    var role = company.UserRoles[i];
+                    if (role.Role == Role.User) role.CompanyId = null;
+                    else
+                    {
+                        _accountService.Purge(role.UserId);
+                    }
+                }
+
+                Context.SaveChanges();
+
+                Context.Companies.Remove(company);
+                Context.SaveChanges();
+
+                if (!String.IsNullOrEmpty(company.LogoPath) && _fileStorage.Exists(company.LogoPath)) _fileStorage.Delete(company.LogoPath);
+
+                if (!String.IsNullOrEmpty(company.StripeId)) _stripe.Customer_Delete(company.StripeId);
+
+                return ServiceResult<CompanyViewModel>.AsSuccess(Mapper.Map<CompanyViewModel>(company));
+            }
+
+            return ServiceResult<CompanyViewModel>.AsError("Company not found");
+        }
+
         public ServiceResult<UserDataPrincipal> Company_Impersonate(int companyId, Action<UserDataPrincipal> loginAction)
         {
             var adminAccount = Context.UserRoles.FirstOrDefault(a => a.CompanyId == companyId && a.User.Status != UserStatus.Deleted && a.Role.HasFlag(Role.CompanyAdmin));

@@ -69,7 +69,7 @@ Task 10: Create wildcard certificate, setup DNS
 
 	A: In AWS console open certificate manager in the same region you ran the creation scripts (sydney)
 	B: Request a public certificate
-	C: Enter domain as *.example.com
+	C: Enter domain as *.example.com and another as example.com
 	D: Choose DNS validation
 	E: Request
 	F: In DNS create a CNAME for develop, staging and app using value of load balancer dns name (from Web(ENV)_output.json file)
