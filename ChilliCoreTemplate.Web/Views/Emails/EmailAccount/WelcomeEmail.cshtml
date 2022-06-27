@@ -17,9 +17,12 @@
 }
 @using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
 {
-    using (builder.BeginP())
+    if(!String.IsNullOrEmpty(Model.Data.FirstName))
     {
-        @:Hi @Model.Data.FirstName,
+        using (builder.BeginP())
+        {
+            @:Hi @Model.Data.FirstName,
+        }            
     }
     using (builder.BeginP())
     {

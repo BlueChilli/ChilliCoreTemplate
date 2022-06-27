@@ -44,8 +44,33 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [MaxLength(1000)]
         public string Notes { get; set; }
 
+        #region Address
+        public bool IsManualAddress { get; set; }
+
+        [MaxLength(100)]
+        public string Address { get; set; }
+
+        [StringLength(50)]
+        public string Street { get; set; }
+
+        [StringLength(50)]
+        public string Suburb { get; set; }
+
+        [StringLength(50)]
+        public string State { get; set; }
+
+        [StringLength(10)]
+        public string Postcode { get; set; }
+
+        [StringLength(50)]
+        public string Country { get; set; }
+
+        [StringLength(2)]
+        public string Region { get; set; }
+
         [Required, StringLength(50)]
         public string Timezone { get; set; }
+        #endregion
 
         [DateTimeKind]
         public DateTime CreatedAt { get; set; }
