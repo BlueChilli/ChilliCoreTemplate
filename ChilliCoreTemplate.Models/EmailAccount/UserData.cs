@@ -102,8 +102,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             return this.CurrentRoles.Select(r => new UserRoleApiModel() { Role = r.Role, CompanyId = r.CompanyId });
         }
 
-        public ImpersonatorSummaryApiModel ImpersonatorSummary(UserData impersonator)
+        public static ImpersonatorSummaryApiModel ImpersonatorSummary(UserData impersonator)
         {
+            if (impersonator == null) return null;
             return new ImpersonatorSummaryApiModel
             {
                 FirstName = impersonator.FirstName,

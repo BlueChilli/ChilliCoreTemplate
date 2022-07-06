@@ -1,4 +1,7 @@
-﻿(function ($) {
+﻿/*!
+ * jquery.bluechilli.file-preview.js 1.0
+*/
+(function ($) {
     $.fn.filePreview = function (previewSelector, callback) {
 
         $(this).change(function () {

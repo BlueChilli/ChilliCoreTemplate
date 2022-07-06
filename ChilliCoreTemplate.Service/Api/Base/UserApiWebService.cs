@@ -114,7 +114,7 @@ namespace ChilliCoreTemplate.Service.Api
                 Status = userData.Status,
                 Email = userData.Email,
                 Phone = userData.Phone,
-                Impersonator = userData.Impersonator?.ImpersonatorSummary(userData.Impersonator)
+                Impersonator = UserData.ImpersonatorSummary(userData.Impersonator)
             };
         }
         public ServiceResult<UserAccountApiModel> Create(RegistrationApiModel model)

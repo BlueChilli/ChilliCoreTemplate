@@ -1,4 +1,7 @@
-﻿// bootstrapify the validation (client side)
+﻿/*!
+ * jquery.bluechilli-mvc.js 1.0
+*/
+// bootstrapify the validation (client side)
 $.validator.setDefaults({
     highlight: function (element) {
         $(element).closest(".form-group").addClass("error");
@@ -539,5 +542,5 @@ BlueChilli.checkAnchor = function () {
         let selectedTab = window.location.hash;
         $('a[href="' + selectedTab + '"][data-toggle="tab"]').trigger('click');
     });
-}
+};
 

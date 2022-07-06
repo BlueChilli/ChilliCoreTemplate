@@ -79,6 +79,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                     PhoneVerificationToken = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     PhoneVerificationExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PhoneVerificationRetries = table.Column<int>(type: "int", nullable: false),
+                    ExternalId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ExternalIdHash = table.Column<int>(type: "int", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     EmailHash = table.Column<int>(type: "int", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
@@ -161,24 +163,40 @@ namespace ChilliCoreTemplate.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    MasterCompanyId = table.Column<int>(type: "int", nullable: true),
                     Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExternalId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ExternalIdHash = table.Column<int>(type: "int", nullable: true),
                     ApiKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StripeId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LogoPath = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Website = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    IsManualAddress = table.Column<bool>(type: "bit", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Suburb = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Postcode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Region = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
                     Timezone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedById = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     IsSetup = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Companies", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Companies_Companies_MasterCompanyId",
+                        column: x => x.MasterCompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Companies_Users_DeletedById",
                         column: x => x.DeletedById,
@@ -431,6 +449,32 @@ namespace ChilliCoreTemplate.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BulkImports",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Records = table.Column<int>(type: "int", nullable: false),
+                    Processed = table.Column<int>(type: "int", nullable: false),
+                    Errors = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FinishedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BulkImports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BulkImports_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Locations",
                 columns: table => new
                 {
@@ -449,6 +493,31 @@ namespace ChilliCoreTemplate.Data.Migrations
                     table.PrimaryKey("PK_Locations", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Locations_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    ChargeId = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    PaidOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EventId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ReceiptUrl = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id",
@@ -550,9 +619,24 @@ namespace ChilliCoreTemplate.Data.Migrations
                 column: "ResponseStatusCode");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BulkImports_CompanyId",
+                table: "BulkImports",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Companies_DeletedById",
                 table: "Companies",
                 column: "DeletedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Companies_ExternalIdHash",
+                table: "Companies",
+                column: "ExternalIdHash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Companies_MasterCompanyId",
+                table: "Companies",
+                column: "MasterCompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Companies_StripeId",
@@ -618,6 +702,11 @@ namespace ChilliCoreTemplate.Data.Migrations
                 name: "IX_LocationUsers_UserId",
                 table: "LocationUsers",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_CompanyId",
+                table: "Payments",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PushNotifications_CreatedOn",
@@ -720,6 +809,11 @@ namespace ChilliCoreTemplate.Data.Migrations
                 column: "EmailHash");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_ExternalIdHash",
+                table: "Users",
+                column: "ExternalIdHash");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_PhoneHash",
                 table: "Users",
                 column: "PhoneHash");
@@ -766,6 +860,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                 name: "ApiLogEntries");
 
             migrationBuilder.DropTable(
+                name: "BulkImports");
+
+            migrationBuilder.DropTable(
                 name: "DistributedLocks");
 
             migrationBuilder.DropTable(
@@ -779,6 +876,9 @@ namespace ChilliCoreTemplate.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "LocationUsers");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "PushNotifications");

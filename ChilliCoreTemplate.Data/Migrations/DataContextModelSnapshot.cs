@@ -17,7 +17,7 @@ namespace ChilliCoreTemplate.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -62,7 +62,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("BulkImports");
+                    b.ToTable("BulkImports", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.Company", b =>
@@ -73,9 +73,17 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<Guid?>("ApiKey")
                         .IsRequired()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -86,10 +94,20 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Property<int?>("DeletedById")
                         .HasColumnType("int");
 
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("ExternalIdHash")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsManualAddress")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSetup")
@@ -111,7 +129,27 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("Postcode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Region")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("StripeId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Suburb")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -131,6 +169,8 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("DeletedById");
 
+                    b.HasIndex("ExternalIdHash");
+
                     b.HasIndex("Guid")
                         .IsUnique()
                         .HasDatabaseName("IX_Company_Guid");
@@ -141,7 +181,7 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .IsUnique()
                         .HasFilter("[StripeId] IS NOT NULL");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.Email", b =>
@@ -229,7 +269,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Emails");
+                    b.ToTable("Emails", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.EmailUser", b =>
@@ -266,7 +306,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EmailUsers");
+                    b.ToTable("EmailUsers", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.ErrorLog", b =>
@@ -308,7 +348,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ErrorLogs");
+                    b.ToTable("ErrorLogs", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.PushNotification", b =>
@@ -356,7 +396,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PushNotifications");
+                    b.ToTable("PushNotifications", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.SmsQueueItem", b =>
@@ -419,7 +459,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SmsQueue");
+                    b.ToTable("SmsQueue", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.User", b =>
@@ -444,6 +484,13 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("EmailHash")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("ExternalIdHash")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
@@ -529,9 +576,11 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("EmailHash");
 
+                    b.HasIndex("ExternalIdHash");
+
                     b.HasIndex("PhoneHash");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserActivity", b =>
@@ -567,7 +616,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserActivities");
+                    b.ToTable("UserActivities", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserDevice", b =>
@@ -619,7 +668,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserDevices");
+                    b.ToTable("UserDevices", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserOAuth", b =>
@@ -654,7 +703,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserOAuths");
+                    b.ToTable("UserOAuths", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserRole", b =>
@@ -683,7 +732,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
 
                     b.HasCheckConstraint("CK_UserRoles_Role", "[Role] > 0");
                 });
@@ -714,7 +763,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserTokens");
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.Location", b =>
@@ -753,7 +802,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.LocationUser", b =>
@@ -780,7 +829,7 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasIndex("LocationId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("LocationUsers");
+                    b.ToTable("LocationUsers", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.Payment", b =>
@@ -820,7 +869,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.UserSession", b =>
@@ -859,7 +908,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSessions");
+                    b.ToTable("UserSessions", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.Webhook_Inbound", b =>
@@ -903,7 +952,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("WebhookIdHash");
 
-                    b.ToTable("Webhooks_Inbound");
+                    b.ToTable("Webhooks_Inbound", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Models.Api.ApiLogEntry", b =>
@@ -968,7 +1017,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("ResponseStatusCode");
 
-                    b.ToTable("ApiLogEntries");
+                    b.ToTable("ApiLogEntries", (string)null);
                 });
 
             modelBuilder.Entity("ChilliSource.Cloud.Core.Distributed.DistributedLock", b =>
@@ -1006,7 +1055,7 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasIndex("Resource")
                         .IsUnique();
 
-                    b.ToTable("DistributedLocks");
+                    b.ToTable("DistributedLocks", (string)null);
                 });
 
             modelBuilder.Entity("ChilliSource.Cloud.Core.Distributed.RecurrentTaskDefinition", b =>
@@ -1030,7 +1079,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("Identifier");
 
-                    b.ToTable("RecurrentTasks");
+                    b.ToTable("RecurrentTasks", (string)null);
                 });
 
             modelBuilder.Entity("ChilliSource.Cloud.Core.Distributed.SingleTaskDefinition", b =>
@@ -1076,7 +1125,7 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasIndex("Status", "LockedUntil");
 
-                    b.ToTable("SingleTasks");
+                    b.ToTable("SingleTasks", (string)null);
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.BulkImport", b =>

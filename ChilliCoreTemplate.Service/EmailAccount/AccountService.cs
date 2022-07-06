@@ -124,19 +124,19 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<UserDataPrincipal> Login(SessionEditModel viewModel, Action<UserDataPrincipal> loginAction, bool isApi = false)
         {
-            var result = ServiceResult<UserDataPrincipal>.AsError("Unable to login with supplied credentials");
+            var errorResult = ServiceResult<UserDataPrincipal>.AsError("You entered an incorrect email or password");
 
             User account = GetAccountByEmail(viewModel.Email);
 
             if (account == null || account.Status == UserStatus.Deleted)
             {
                 QueueMail_Distinct(RazorTemplates.AccountNotRegistered, viewModel.Email, new RazorTemplateDataModel<string> { Data = viewModel.Email });
-                return result;
+                return errorResult;
             }
 
             if (account.Status == UserStatus.Invited)
             {
-                result.Error = "We have resent your invitation email. Please check your email to complete your registration.";
+                errorResult.Error = "We have resent your invitation email. Please check your email to complete your registration.";
 
                 Token_Add(account, UserTokenType.Invite, new TimeSpan(7, 0, 0, 0));
                 Context.SaveChanges();
@@ -144,12 +144,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var inviteModel = Mapper.Map<InviteEditModel>(account);
                 QueueMail(RazorTemplates.InviteUser, inviteModel.Email, new RazorTemplateDataModel<InviteEditModel> { Data = inviteModel });
 
-                return result;
+                return errorResult;
             }
 
             if (account.IsTooManyRetries)
             {
-                return result;
+                return errorResult;
             }
 
             if (!account.ConfirmPassword(viewModel.Password, _config.ProjectId.Value))
@@ -159,7 +159,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 Context.SaveChanges();
 
-                return result;
+                return errorResult;
             }
 
             LoginRecord(account);
@@ -179,13 +179,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             Mixpanel.SendAccountToMixpanel(account, "Login");
             Activity_Add(Context, new UserActivity { UserId = account.Id, ActivityType = ActivityType.Create, EntityId = account.Id, EntityType = EntityType.Session });
 
-            result.Success = true;
-            result.Error = string.Empty;
+            errorResult.Success = true;
+            errorResult.Error = string.Empty;
 
-            var principal = result.Result = CreatePrincipal(account, CreateUserDeviceId(account, viewModel.DeviceId));
+            var principal = errorResult.Result = CreatePrincipal(account, CreateUserDeviceId(account, viewModel.DeviceId));
             loginAction(principal);
 
-            return result;
+            return errorResult;
         }
 
         private void LoginRecord(User user)

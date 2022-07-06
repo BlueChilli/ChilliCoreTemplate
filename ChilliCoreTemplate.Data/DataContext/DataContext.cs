@@ -55,10 +55,15 @@ namespace ChilliCoreTemplate.Data
 
             modelBuilder.Entity<PushNotification>().HasIndex(c => c.CreatedOn);
 
-            modelBuilder.Entity<User>().HasIndex(c => c.EmailHash);
-            modelBuilder.Entity<User>().HasIndex(c => c.PhoneHash);
-            modelBuilder.Entity<User>().HasIndex(c => c.ExternalIdHash);
-            modelBuilder.Entity<User>().HasIndex(c => c.CreatedDate);
+            modelBuilder.Entity<User>(user =>
+            {
+                user.HasIndex(a => a.EmailHash);
+                user.HasIndex(a => a.PhoneHash);
+                user.HasIndex(a => a.ExternalIdHash);
+                user.HasIndex(a => a.CreatedDate);
+
+                user.HasMany(a => a.UserRoles).WithOne(r => r.User).IsRequired();
+            });
 
             modelBuilder.Entity<UserDevice>().HasIndex(c => c.PinToken);
 

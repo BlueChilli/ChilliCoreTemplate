@@ -33,7 +33,6 @@ namespace ChilliCoreTemplate.Web
             services.AddImageSharp()
                 .SetRequestParser<QueryCollectionRequestParser>()
                 .SetCache<PhysicalFileSystemCache>()
-                .SetCacheHash<CacheHash>()
                 //image providers
                 .RemoveProvider<PhysicalFileSystemProvider>()
                 .AddProvider<CloudStorageImageProvider>() //IRemoteStorage adapter (must be tried first otherwise never called)
@@ -56,7 +55,7 @@ namespace ChilliCoreTemplate.Web
 
         private static void MutateCommand(ImageCommandContext commandContext, string commandA, string commandB)
         {
-            if (commandContext.Context.Request.Query.ContainsKey(commandA) && !commandContext.Commands.ContainsKey(commandB))
+            if (commandContext.Context.Request.Query.ContainsKey(commandA) && !commandContext.Commands.Contains(commandB))
             {
                 commandContext.Commands[commandB] = commandContext.Context.Request.Query[commandA];
             }

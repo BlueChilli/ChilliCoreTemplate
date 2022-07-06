@@ -136,12 +136,12 @@ namespace ChilliCoreTemplate.Service.Api
 
         public ServiceResult<UserDataPrincipal> LoginWithPin(PinLoginPinApiModel model, Action<UserDataPrincipal> loginAction)
         {
-            var result = ServiceResult<UserDataPrincipal>.AsError("Unable to login with supplied credentials");
+            var errorResult = ServiceResult<UserDataPrincipal>.AsError("You entered an incorrect email or pin");
 
             var pinToken = _userKeyHelper.UnprotectGuid(model.PinToken);
             if (pinToken == null)
             {
-                return result;
+                return errorResult;
             }
 
             var device = Context.UserDevices.Where(s => s.PinToken == pinToken)
@@ -151,13 +151,13 @@ namespace ChilliCoreTemplate.Service.Api
 
             if (device == null || device.DeviceId != model.DeviceId || device.User.Status == UserStatus.Deleted)
             {
-                return result;
+                return errorResult;
             }
 
             if (device.PinLastRetryDate >= DateTime.UtcNow.AddMinutes(-10) && device.PinRetries >= 3)
             {
-                result.StatusCode = System.Net.HttpStatusCode.Forbidden;
-                return result;
+                errorResult.StatusCode = System.Net.HttpStatusCode.Forbidden;
+                return errorResult;
             }
 
             var pinHash = model.Pin.SaltedHash(device.PinToken.ToString());
@@ -168,7 +168,7 @@ namespace ChilliCoreTemplate.Service.Api
 
                 Context.SaveChanges();
 
-                return result;
+                return errorResult;
             }
 
             device.PinRetries = 0;

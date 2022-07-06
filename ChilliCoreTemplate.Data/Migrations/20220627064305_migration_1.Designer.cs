@@ -12,17 +12,60 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChilliCoreTemplate.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220305012107_migration_2")]
-    partial class migration_2
+    [Migration("20220627064305_migration_1")]
+    partial class migration_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.BulkImport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Errors")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FinishedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Processed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Records")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("BulkImports");
+                });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.Company", b =>
                 {
@@ -32,9 +75,17 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<Guid?>("ApiKey")
                         .IsRequired()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -45,10 +96,20 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Property<int?>("DeletedById")
                         .HasColumnType("int");
 
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("ExternalIdHash")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsManualAddress")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSetup")
@@ -70,7 +131,27 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("Postcode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Region")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("StripeId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Suburb")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -89,6 +170,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DeletedById");
+
+                    b.HasIndex("ExternalIdHash");
 
                     b.HasIndex("Guid")
                         .IsUnique()
@@ -405,6 +488,13 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Property<int?>("EmailHash")
                         .HasColumnType("int");
 
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("ExternalIdHash")
+                        .HasColumnType("int");
+
                     b.Property<string>("FirstName")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
@@ -487,6 +577,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasIndex("CreatedDate");
 
                     b.HasIndex("EmailHash");
+
+                    b.HasIndex("ExternalIdHash");
 
                     b.HasIndex("PhoneHash");
 
@@ -740,6 +832,46 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("LocationUsers");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ChargeId")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("EventId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("PaidOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReceiptUrl")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.UserSession", b =>
@@ -998,6 +1130,15 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.ToTable("SingleTasks");
                 });
 
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.BulkImport", b =>
+                {
+                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.Company", b =>
                 {
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "DeletedBy")
@@ -1149,6 +1290,17 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Navigation("Location");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.Payment", b =>
+                {
+                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.UserSession", b =>

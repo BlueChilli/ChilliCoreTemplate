@@ -11,10 +11,10 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.80" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0124" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0129" />
     <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0012" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0008" />
-    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0004" />
+    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
     <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0036" />
     <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3" />
     <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
@@ -24,15 +24,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="6.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="6.0.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
     <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
-    <PackageReference Include="RestSharp" Version="107.3.0" />
-    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="107.3.0" />
-    <PackageReference Include="Stripe.net" Version="39.100.0" />
-    <PackageReference Include="Twilio" Version="5.73.0" />
+    <PackageReference Include="RestSharp" Version="108.0.1" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="108.0.1" />
+    <PackageReference Include="Stripe.net" Version="39.120.0" />
+    <PackageReference Include="Twilio" Version="5.75.3" />
   </ItemGroup>
 
 
