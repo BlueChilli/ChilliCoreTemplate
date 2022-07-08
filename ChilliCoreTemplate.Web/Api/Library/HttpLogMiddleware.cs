@@ -32,6 +32,10 @@ namespace ChilliCoreTemplate.Web.Api
         public async Task Invoke(HttpContext httpContext, StreamedContentPolicySelector streamedPolicy, IBackgroundTaskQueue taskQueue)
         {
             var request = httpContext.Request;
+
+            var extensionsToIgnore = new List<string>() { ".php" };
+            if (request.Path.HasValue && extensionsToIgnore.Any(e => request.Path.Value.EndsWith(e, StringComparison.OrdinalIgnoreCase))) return;
+
             var apiLogEntry = CreateApiLogEntryWithRequestData(httpContext);
 
             var wasException = false;

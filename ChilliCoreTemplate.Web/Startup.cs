@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO.Compression;
+using System.Linq;
 using System.Security.Principal;
 
 namespace ChilliCoreTemplate.Web
@@ -262,6 +263,7 @@ namespace ChilliCoreTemplate.Web
         }
 
         readonly static PathString ApiServerPath = new PathString("/api/server");
+        readonly static string[] ApiLogExtensionsIgnore = { ".php" };
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -388,10 +390,15 @@ namespace ChilliCoreTemplate.Web
             //Logs requests after Auth middleware.
             if (settings.ApiSettings.LogApiCalls)
             {
-                app.UseWhen(context => context.Request.IsApiRequest() && !context.Request.Path.StartsWithSegments(ApiServerPath, StringComparison.OrdinalIgnoreCase), builder =>
-                {
-                    builder.UseMiddleware<HttpLogMiddleware>();
-                });
+                app.UseWhen(
+                    context =>
+                        context.Request.IsApiRequest()
+                        && !context.Request.Path.StartsWithSegments(ApiServerPath, StringComparison.OrdinalIgnoreCase)
+                        && !ApiLogExtensionsIgnore.Any(e => context.Request.Path.Value.EndsWith(e, StringComparison.OrdinalIgnoreCase)),
+                    builder =>
+                    {
+                        builder.UseMiddleware<HttpLogMiddleware>();
+                    });
             }
 
             app.UseRequestLocalization();

@@ -107,6 +107,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [FileMaxSize(8 * 1024 * 1024), FileMinSize]
         [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
         public IFormFile ProfilePhotoFile { get; set; }
+        public string ProfilePhotoUrl { get; set; }
+
+        [MaxLength(100)]
+        public string ExternalId { get; set; }
 
         public bool IsApi { get; set; }
 
@@ -125,6 +129,16 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             }
 
             return result;
+        }
+
+        public void SetNames(string fullName)
+        {
+            if (!String.IsNullOrEmpty(fullName))
+            {
+                var names = fullName.Split(' ');
+                FirstName = names[0];
+                if (names.Length > 1) LastName = String.Join(' ', names.Skip(1).ToList());
+            }
         }
     }
 
@@ -465,6 +479,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string Password { get; set; }
 
         public IFormFile ProfilePhotoFile { get; set; }
+        public string ProfilePhotoUrl { get; set; }
 
         public string ExternalId { get; set; }
     }

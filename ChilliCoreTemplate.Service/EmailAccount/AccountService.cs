@@ -467,13 +467,15 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
         }
 
-        public ServiceResult<AccountViewModel> CreateOrGet(RegistrationViewModel model)
+        public ServiceResult<AccountViewModel> CreateOrGet(RegistrationViewModel model, bool sendEmail = true)
         {
-            var userId = GetIdByEmail(model.Email);
+            int? userId = null;
+            if (!String.IsNullOrEmpty(model.ExternalId)) userId = Context.Users.HasExternalId(model.ExternalId).Where(x => x.Status != UserStatus.Deleted).Select(x => (int?)x.Id).FirstOrDefault();
+            if (userId == null) userId = GetIdByEmail(model.Email);
 
             if (userId == null)
             {
-                var createRequest = Create(model);
+                var createRequest = Create(model, sendEmail);
                 if (!createRequest.Success) return ServiceResult<AccountViewModel>.CopyFrom(createRequest);
                 userId = createRequest.Result.UserId;
             }
@@ -524,6 +526,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         private ServiceResult<User> Create(UserCreateModel model)
         {
+            if (model.Status == UserStatus.Anonymous && String.IsNullOrEmpty(model.Email))
+            {
+                model.Email = _config.EmailTemplate.Email.Replace("@", $"+{Guid.NewGuid().ToShortGuid()}@");
+            }
+
             var account = String.IsNullOrEmpty(model.Email) ? GetAccountByPhone(model.Phone, includeDeleted: true) : GetAccountByEmail(model.Email, includeDeleted: true);
 
             if (account == null || (account.Status == UserStatus.Invited || account.Status == UserStatus.Deleted))
@@ -562,8 +569,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     Token_Add(account, UserTokenType.Invite, new TimeSpan(7, 0, 0, 0));
                 }
 
-                if (model.ProfilePhotoFile != null)
-                    account.ProfilePhotoPath = _fileStorage.Save(new StorageCommand { Folder = ProfilePhotoFolder }.SetHttpPostedFileSource(model.ProfilePhotoFile));
+                if (model.ProfilePhotoFile != null) account.ProfilePhotoPath = _fileStorage.Save(new StorageCommand { Folder = ProfilePhotoFolder }.SetHttpPostedFileSource(model.ProfilePhotoFile));
+                else if (!String.IsNullOrEmpty(model.ProfilePhotoUrl)) account.ProfilePhotoPath = _fileStorage.Save(new StorageCommand { Folder = ProfilePhotoFolder }.SetUrlSource(model.ProfilePhotoUrl));
 
                 Context.SaveChanges();
 

@@ -27,7 +27,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public virtual List<UserOAuth> OAuths { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string ExternalId { get { return _ExternalId; } set { _ExternalId = value; ExternalIdHash = CommonLibrary.CalculateHash(value); } }
         private string _ExternalId;
         public int? ExternalIdHash { get; set; }
