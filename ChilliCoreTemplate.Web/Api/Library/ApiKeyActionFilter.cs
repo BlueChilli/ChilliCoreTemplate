@@ -54,8 +54,6 @@ namespace ChilliCoreTemplate.Web.Api
         {
             if (ShouldCheckApiKey(context.HttpContext))
             {
-                var env = context.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
-
                 var apiKey = context.HttpContext.Request.Headers[apiKeyHeaderKey].FirstOrDefault();
                 apiKey = apiKey ?? context.HttpContext.Request.Headers[apiKeyHeaderKey.ToLower()].FirstOrDefault();
                 apiKey = apiKey ?? context.HttpContext.Request.Query[apiKeyHeaderKey].FirstOrDefault();

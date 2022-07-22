@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using ChilliSource.Cloud.ImageSharp;
 using ChilliCoreTemplate.Service.Sms;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace ChilliCoreTemplate.Service
 {
@@ -62,8 +63,8 @@ namespace ChilliCoreTemplate.Service
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //TODO: review where to store keys
-            services.AddDataProtection();
+            services.AddDbContext<DataContext>(ConfigureDbOptions);
+            services.AddDataProtection().PersistKeysToDbContext<DataContext>();
 
             services.AddSingleton<ProjectSettings>(provider => new ProjectSettings(provider.GetRequiredService<IConfiguration>()));
             services.AddSingleton<Models.Api.PushNotificationSettings>(provider => new Models.Api.PushNotificationSettings(provider.GetRequiredService<IConfiguration>()));
@@ -93,8 +94,6 @@ namespace ChilliCoreTemplate.Service
                     var storageHelper = provider.GetRequiredService<FileStorageHelper>();
                     options.UrlPrefix = storageHelper.GetImagePrefix();
                 });
-
-            services.AddDbContext<DataContext>(ConfigureDbOptions);
 
             services.AddLazyCache(sp => new CachingService(CachingService.DefaultCacheProvider));
 

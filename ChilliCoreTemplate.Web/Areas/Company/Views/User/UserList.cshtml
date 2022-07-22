@@ -1,108 +1,121 @@
 @model UsersViewModel
 @await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_InviteUser" })
-@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerTop))
 {
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
     <div class="row">
         <div class="col-lg-12">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>List of Users</h5>
-                </div>
-                <div class="ibox-content">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover js-users-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Surname</th>
-                                    <th>Email</th>
-                                    <th class="filtersearch" data-all="All roles">Role</th>
-                                    <th class="filtersearch" data-all="Any status">Status</th>
-                                    <th>Last login</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var user in Model.Accounts)
-                                {
-                                    <tr>
-                                        <td>@user.FirstName</td>
-                                        <td>@user.LastName</td>
-                                        <td><a href="@Mvc.Company.User_Detail.Url(this.Url, new { user.Id })">@user.Email</a></td>
-                                        <td>
-                                            @String.Join(", ", user.UserRoles.Select(r => r.Role.GetDescription()))
-                                        </td>
-                                        <td><span class="label label-@(user.Status == UserStatus.Activated ? "success" : "warning")">@user.Status</span></td>
-                                        <td>@if (user.LastLoginDate.HasValue) { @user.LastLoginDate.Value.ToIsoDate() }</td>
-                                        <td>
-                                            <a href="@Mvc.Company.User_Detail.Url(this.Url, new { user.Id })">View</a>
-                                        </td>
-                                    </tr>
-                                }
-                        </table>
-                    </div>
-                </div>
-            </div>
+
+            <box>
+                <box-content>
+                    <box-title>List of Users</box-title>
+                    <form role="form" class="form-inline m-b-md">
+                        <div class="form-group m-r-lg">
+                            @await Html.FieldTemplateInnerForAsync(m => m.Role, fieldOptions:  new SelectFieldTemplateOptions { SelectList = Model.RoleList })
+                        </div>
+                        <div class="form-group">
+                            @await Html.FieldTemplateInnerForAsync(m => m.Status)
+                        </div>
+                        <div class="ml-auto">
+                            <div class="form-group">
+                                @await Html.FieldTemplateInnerForAsync(m => m.Search)
+                            </div>
+                        </div>
+                    </form>
+
+                    <table-default class="js-users-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Surname</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    </table-default>
+                </box-content>
+            </box>
+
         </div>
     </div>
 }
-<form id="impersonate" target="_self" method="post" action="@Mvc.Company.User_Impersonate.Url(this.Url)">
-    <input type="hidden" name="id" id="impersonate-id" value="" />
-</form>
 @section Scripts {
     <script>
         $(function () {
 
-            $('.js-users-table').dataTable({
-                dom: 'Tfgtip',
-                "iDisplayLength": 50,
-                "columnDefs": [
-                  { "orderable": false, "targets": [3, 4, 6] }
+            table = $('.js-users-table').dataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "@Mvc.Company.User_ListData.Url(this.Url)",
+                    "type": "POST"
+                },
+                "columns": [
+                    { "data": "firstName", "orderable": true },
+                    { "data": "lastName", "orderable": true },
+                    {
+                        "data": "email",
+                        "orderable": true,
+                        render: function (data, type, row) {
+                            return '<a href="@Mvc.Company.User_Detail.Url(this.Url)/{0}">{1}</a>'.format(row.parent == null ? row.id : row.parent.id, row.parent == null ? row.email : row.parent.name + ' (Parent)');
+                        }
+                    },
+                    { "data": "role", "orderable": false },
+                    {
+                        "data": "status",
+                        "orderable": false,
+                        render: function (data, type, row) {
+                            return '<span class="label label-{0}">{1}</span>'.format(row.status == '@UserStatus.Activated' ? "success" : "warning", row.status);
+                        }
+                    },
+                    { "data": "lastLoginOn", "orderable": true },
+                    {
+                        "orderable": false,
+                        "data": null,
+                        render: function ( data, type, row ) {
+                            return '<a href="@Mvc.Company.User_Detail.Url(this.Url)/{0}">View</a>'.format(data.id);
+                        }
+                    },
                 ],
-                buttons: [
-                     { extend: 'csv', exportOptions: { columns: [0, 1, 2, 3, 4, 5], format: { header: exportHeadingFormat } } },
-                     { extend: 'excel', title: 'Users', exportOptions: { columns: [0, 1, 2, 3, 4, 5], format: { header: exportHeadingFormat } } }
-                ],
-                initComplete: function () {
-                    var api = this.api();
-                    this.api().columns('.filtersearch').indexes().flatten().each(function (i) {
-                        var column = api.column(i);
-                        var select = $('<select class="form-control"><option selected disabled>' + $(column.header()).text() + '</option></select>')
-                            .appendTo($(column.header()).empty())
-                            .on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
-
-                                column
-                                    .search(val ? '^' + val + '$' : '', true, false)
-                                    .draw();
-                            });
-
-                        select.append('<option value="">' + $(column.header()).data('all') + '</option>');
-                        column.data().map(function (d, j) {
-                            return $.parseHTML(d)[0].textContent;
-                        }).unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d + '">' + d + '</option>')
-                        });
-                    });
-                }
+                dom: 'Tgtip',
+                "iDisplayLength": 50
             });
 
-            function exportHeadingFormat(data, column, node) {
-                if (column === 3) return 'Role';
-                if (column === 4) return 'Status';
-                return data;
+            $('#Search').on('keyup', function () {
+                SearchTable();
+            });
+
+            $('#Role,#Status').on('change', function () {
+                SearchTable();
+            });
+
+            SearchTable();
+
+
+        });
+
+       function SearchTable() {
+            var api = table.api();
+
+            if ($('#Role').val() != '') {
+                api.column(3).search($('#Role').val(), false, false, false);
+            } else {
+                api.column(3).search('');
             }
 
-            $(function () {
-                $('.js-users-table').on('click', '.js-impersonate', function (e) {
-                    e.preventDefault();
-                    $('#impersonate-id').val($(this).data('id'));
-                    $('#impersonate').submit();
-                });
-            });
-        });
+            if ($('#Status').val() != '') {
+                api.column(4).search($('#Status').val(), false, false, false);
+            } else {
+                api.column(4).search('');
+            }
+
+            api.search($('#Search').val());
+
+            api.draw();
+        }
     </script>
 }

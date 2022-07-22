@@ -2,19 +2,22 @@ using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models.Api;
 using ChilliSource.Cloud.Core.Distributed;
 using ChilliSource.Cloud.Core.EntityFramework;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Reflection;
 
 namespace ChilliCoreTemplate.Data
 {
-    public partial class DataContext : DbContext, ITaskRepository
+    public partial class DataContext : DbContext, ITaskRepository, IDataProtectionKeyContext
     {
         public DbSet<DistributedLock> DistributedLocks { get; set; }
         public DbSet<SingleTaskDefinition> SingleTasks { get; set; }
         public DbSet<RecurrentTaskDefinition> RecurrentTasks { get; set; }
 
         public DbContext DbContext => this;
+
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
         public DataContext() : base()
         {

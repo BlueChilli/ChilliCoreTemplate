@@ -23,8 +23,8 @@
                 <thead>
                     <tr>
                         <th>Company</th>
-                        <th>Status</th>
-                        <th>Date created</th>
+                        <th style="width:100px;">Status</th>
+                        <th style="width:100px;">Date created</th>
                         <th style="width:150px;">Actions</th>
                     </tr>
                 </thead>
@@ -80,8 +80,10 @@
 
             SearchTable();
 
-            $('.js-company-table').on('click', '.js-impersonate', function () {
-                $.post('@Mvc.Admin.Company_Impersonate.Url(this.Url)/{0}'.format($(this).data('id')));
+            $('.js-company-table').on('click', '.js-impersonate', function (e) {
+                e.preventDefault();
+                $('#impersonate-id').val($(this).data('id'));
+                $('#impersonate').submit();
             });
 
         });

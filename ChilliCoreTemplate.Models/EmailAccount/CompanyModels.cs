@@ -151,7 +151,6 @@ namespace ChilliCoreTemplate.Models
         }
 
         public InviteEditModel Admin { get; set; }
-
     }
 
     public class CompanyListModel
@@ -162,7 +161,6 @@ namespace ChilliCoreTemplate.Models
         public SelectList StatusList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Active"), new KeyValuePair<bool, string>(false, "Inactive") }.ToSelectList(v => v.Key, t => t.Value, true);
 
         public string Search { get; set; }
-
     }
 
     public class CompanySummaryModel
@@ -179,7 +177,6 @@ namespace ChilliCoreTemplate.Models
         public bool IsDeleted { get; set; }
 
         public bool HasAdmins { get; set; }
-
     }
 
     public class CompanyUserViewModel

@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-using ChilliSource.Cloud.Web.MVC;
-using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Models;
-using Microsoft.AspNetCore.Authorization;
+using ChilliCoreTemplate.Service.EmailAccount;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace ChilliCoreTemplate.Web.Controllers
 {
@@ -29,22 +22,12 @@ namespace ChilliCoreTemplate.Web.Controllers
                 return Mvc.Admin.Default.Redirect(this);
             }
 
-            if (User.IsInRole(AccountCommon.CompanyAdmin))
+            if (User.IsInRole(AccountCommon.CompanyAdmin) || User.IsInRole(AccountCommon.CompanyUser))
             {
                 return Mvc.Company.Default.Redirect(this);
             }
 
-            var stepResponse = _accountSvc.GetOnboardingStep();
-            if (!stepResponse.Success)
-                return Mvc.Root.EmailAccount_Login.Redirect(this);
-
-            //switch (stepResponse.Result)
-            //{
-            //    case OnboardingStep.SetupCompany:
-            //        return Mvc.Root.Company_Setup.Redirect(this);
-            //}
-
-            if (User.IsInRole(AccountCommon.User) || User.IsInRole(AccountCommon.CompanyUser))
+            if (User.IsInRole(AccountCommon.User))
             {
                 return new RedirectResult("~/index.html");
             }
@@ -59,12 +42,12 @@ namespace ChilliCoreTemplate.Web.Controllers
                 return Mvc.Admin.User_Users.Redirect(this);
             }
 
-            if (User.IsInRole(AccountCommon.CompanyAdmin))
+            if (User.IsInRole(AccountCommon.CompanyAdmin) || User.IsInRole(AccountCommon.CompanyUser))
             {
                 return Mvc.Company.Default.Redirect(this);
             }
 
-            if (User.IsInRole(AccountCommon.User) || User.IsInRole(AccountCommon.CompanyUser))
+            if (User.IsInRole(AccountCommon.User))
             {
                 return new RedirectResult("~/user/impersonate");
             }

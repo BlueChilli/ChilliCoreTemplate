@@ -1,3 +1,4 @@
+using ChilliSource.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,9 +19,13 @@ namespace ChilliCoreTemplate.Models
 
     public enum Role
     {
+        [Order(1)]
         Administrator = 1,
+        [Order(4)]
         User = 2,
+        [Order(2)]
         CompanyAdmin = 4,
+        [Order(3)]
         CompanyUser = 8
     }
 

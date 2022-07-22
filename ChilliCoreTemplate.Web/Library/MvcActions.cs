@@ -115,6 +115,7 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition Location_User_Detail = MvcAction();
 
         public readonly IMvcActionDefinition User_List = MvcAction();
+        public readonly IMvcActionDefinition User_ListData = MvcAction();
         public readonly IMvcActionDefinition User_Detail = MvcAction();
         public readonly IMvcActionDefinition User_Impersonate = MvcAction();
         public readonly IMvcActionDefinition User_UndoImpersonate = MvcAction();

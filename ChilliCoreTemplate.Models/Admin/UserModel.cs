@@ -11,28 +11,23 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.Http; using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using ChilliSource.Core.Extensions;
 
 namespace ChilliCoreTemplate.Models.Admin
 {
-    public class UsersModel
-    {
-        public UsersModel()
-        {
-            Users = new PagedList<AccountViewModel>();
-        }
-
-        public string Search { get; set; }
-        [EmptyItem("All")]
-        public UserStatus Status { get; set; }
-        public PagedList<AccountViewModel> Users { get; set; }
-        public ChartDataVM ChartData { get; set; }
-
-    }
-
     public class UsersViewModel
     {
+        [EmptyItem("Any role")]
+        public Role? Role { get; set; }
+        public SelectList RoleList { get; set; } = EnumHelper.ToList<Role>().ToSelectList();
+
+        [EmptyItem("Any status")]
+        public UserStatus? Status { get; set; }
+
+        [Placeholder("Search"), MaxLength(100)]
+        public string Search { get; set; }
+
         public List<StatisticModel> Statistics { get; set; }
-        public List<AccountViewModel> Accounts { get; set; }
     }
 
     public class InviteManageModel : InviteEditModel

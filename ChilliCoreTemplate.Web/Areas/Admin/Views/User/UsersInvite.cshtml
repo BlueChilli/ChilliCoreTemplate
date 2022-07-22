@@ -90,7 +90,7 @@
     <script>
         function checkOrganisationAdminRole() {
             var val = $('#@Html.IdFor(m => m.InviteRole.Role)').val();
-            if (val === '@Role.CompanyAdmin.ToString()') {
+            if (val === '@Role.CompanyAdmin.ToString()' || val === '@Role.CompanyUser.ToString()') {
                 $('#OrganisationAdminDetails').removeClass('hide');
             } else {
                 $('#OrganisationAdminDetails').addClass('hide');

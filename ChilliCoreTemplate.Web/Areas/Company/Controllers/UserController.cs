@@ -8,6 +8,8 @@ using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
+using DataTables.AspNet.AspNetCore;
+using DataTables.AspNet.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -42,11 +44,19 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult List()
         {
-            var model = new UsersViewModel()
-            {
-                Accounts = _service.GetUsers(),
-            };
+            var model = new UsersViewModel();
+            model.RoleList = model.RoleList.Where(x => x.Value != Role.Administrator.ToString()).ToSelectList();
             return View("UserList", model);
+        }
+
+        public virtual IActionResult ListData(IDataTablesRequest model)
+        {
+            var data = _service.Users_Query(model);
+            var total = _service.Users_Total();
+
+            var response = DataTablesResponse.Create(model, total, data.TotalCount, data.ToList());
+
+            return new DataTablesJsonResult(response, true);
         }
 
         //[HttpPost]
