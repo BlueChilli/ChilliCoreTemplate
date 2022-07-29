@@ -356,18 +356,13 @@ namespace ChilliCoreTemplate.Models.Api
         }
     }
 
-    public class DeleteUserApiModel : IValidatableObject
+    public class DeleteUserApiModel
     {
         [JsonIgnore]
         public int Id { get; set; }
 
         [Required]
-        public string Confirm { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (Confirm.ToUpperInvariant() != "DELETE") yield return new ValidationResult("Enter DELETE to confirm deactivation of account", new string[] { "Confirm" });
-        }
+        public string Password { get; set; }
     }
 
 }

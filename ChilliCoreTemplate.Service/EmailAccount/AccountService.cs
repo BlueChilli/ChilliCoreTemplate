@@ -676,6 +676,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var logs = Context.ErrorLogs.Where(x => x.UserId == userId).ToList();
                 if (logs.Any()) Context.ErrorLogs.RemoveRange(logs);
 
+                var emails = Context.Emails.Where(x => x.UserId == userId).ToList();
+                if (emails.Any()) Context.Emails.RemoveRange(emails);
+
+                var emailUsers = Context.EmailUsers.Where(x => x.UserId == userId).ToList();
+                if (emailUsers.Any()) Context.EmailUsers.RemoveRange(emailUsers);
+
                 var sms = Context.SmsQueue.Where(x => x.UserId == userId).ToList();
                 if (sms.Any()) Context.SmsQueue.RemoveRange(sms);
                 Context.SaveChanges();

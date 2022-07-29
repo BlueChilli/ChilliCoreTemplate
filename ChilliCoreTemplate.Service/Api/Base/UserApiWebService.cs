@@ -23,17 +23,19 @@ namespace ChilliCoreTemplate.Service.Api
         private readonly UserKeyHelper _userKeyHelper;
         private readonly FileStoragePath _fileStoragePath;
         private readonly UserSessionService _session;
+        private readonly ProjectSettings _config;
 
         private int? CompanyId => User?.UserData()?.CompanyId;
         private int? UserId => User?.UserData()?.UserId;
 
-        public UserApiWebService(IPrincipal user, DataContext context, AccountService accountSvc, UserKeyHelper userKeyHelper, FileStoragePath fileStoragePath, UserSessionService session)
+        public UserApiWebService(IPrincipal user, DataContext context, AccountService accountSvc, UserKeyHelper userKeyHelper, FileStoragePath fileStoragePath, UserSessionService session, ProjectSettings config)
             : base(user, context)
         {
             _accountService = accountSvc;
             _userKeyHelper = userKeyHelper;
             _fileStoragePath = fileStoragePath;
             _session = session;
+            _config = config;
         }
 
         public IQueryable<User> VisibleAccounts()
@@ -316,7 +318,15 @@ namespace ChilliCoreTemplate.Service.Api
 
         public async Task<ServiceResult<object>> Delete(DeleteUserApiModel model)
         {
+            var user = _accountService.GetAccount(model.Id);
+
+            if (user == null) return ServiceResult.AsError("User not found");
+
+            if (!user.ConfirmPassword(model.Password, _config.ProjectId.Value)) return ServiceResult.AsError("Password was not verified");
             await _accountService.SoftDeleteAsync(model.Id);
+
+            _session.Delete(User.Session().Id);
+
             return ServiceResult<object>.AsSuccess();
         }
 

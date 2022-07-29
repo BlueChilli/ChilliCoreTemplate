@@ -232,7 +232,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (executionInfo.IsCancellationRequested)
                 return;
 
-            if (_config.PurgeOldAnonymousAccounts)
+            if (_config.PurgeOldAnonymousAccounts)  //TODO use purge function
             {
                 //Delete old anonymous accounts
                 var oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
