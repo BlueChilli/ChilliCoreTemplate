@@ -33,6 +33,7 @@ namespace ChilliCoreTemplate.Service.Api
             : base(user, context)
         {
             _accountService = accountService;
+            _accountService.IsApi = true;
             _session = session;
             _userKeyHelper = userKeyHelper;
             _fileStorage = fileStorage;
@@ -49,7 +50,6 @@ namespace ChilliCoreTemplate.Service.Api
         {
             var registrationModel = Mapper.Map<RegistrationViewModel>(model);
             registrationModel.Roles = Role.User;
-            registrationModel.IsApi = true;
             var response = _accountService.Create(registrationModel);
             if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);
             return GetUserInternal(response.Result.UserId);

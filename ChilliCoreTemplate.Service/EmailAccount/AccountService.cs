@@ -56,6 +56,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public const string ProfilePhotoFolder = "Profile";
 
+        public bool IsApi { get; set; }
+
         public IQueryable<User> VisibleUsers()
         {
             return VisibleUsers(this);
@@ -446,7 +448,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 if (!model.IsAnonymous)
                 {
-                    if (_config.UserConfirmationMethod == UserConfirmationMethod.Link) SendWelcomeEmail(account, model.IsApi);
+                    if (_config.UserConfirmationMethod == UserConfirmationMethod.Link) SendWelcomeEmail(account);
 
                     if (model.MixpanelTempId != null)
                     {
@@ -581,7 +583,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<User>.AsError(account, String.IsNullOrEmpty(model.Email) ? "Phone is already registered" : "Email is already registered");
         }
 
-        private void SendWelcomeEmail(User account, bool isApi = false)
+        private void SendWelcomeEmail(User account)
         {
             if (String.IsNullOrEmpty(account.Email)) return;
 
@@ -593,8 +595,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 {
                     FirstName = account.FirstName,
                     Email = account.Email,
-                    Token = account.GetToken(UserTokenType.Activate),
-                    IsApi = isApi
+                    Token = account.GetToken(UserTokenType.Activate)
                 }
             });
         }
@@ -711,7 +712,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<AccountDetailsEditModel>.AsSuccess(mapped);
         }
 
-        public ServiceResult Update_Status(int userId, UserStatus status, bool isApi = false)
+        public ServiceResult Update_Status(int userId, UserStatus status)
         {
             var user = GetAccount(userId);
 
@@ -720,7 +721,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (user.Status == UserStatus.Anonymous && status == UserStatus.Registered)
             {
                 Token_Add(user, UserTokenType.Activate, new TimeSpan(14, 0, 0, 0));
-                SendWelcomeEmail(user, isApi);
+                SendWelcomeEmail(user);
             }
             user.Status = status;
             Context.SaveChanges();

@@ -256,7 +256,7 @@ namespace ChilliCoreTemplate.Service.Api
             if (model.AmountPaid == 0) return ServiceResult.AsSuccess();
 
             Company company = Context.Companies.FirstOrDefault(c => c.StripeId == model.CustomerId);
-            if (company == null) ServiceResult.AsError($"Company not found for {model.CustomerId}: {stripeEvent.Id}");
+            if (company == null) return ServiceResult.AsError($"Company not found for {model.CustomerId}: {stripeEvent.Id}");
 
             var payment = Context.Payments.FirstOrDefault(x => (x.CompanyId == company.Id) && x.EventId == stripeEvent.Id);
             if (payment != null) return ServiceResult.AsError($"Process invoice payment - payment already recorded: {stripeEvent.Id}");

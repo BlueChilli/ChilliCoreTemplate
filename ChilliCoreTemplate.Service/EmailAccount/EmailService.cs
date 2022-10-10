@@ -33,6 +33,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public void QueueMail(RazorTemplate template, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, EmailData_Address replyTo = null, EmailData_Address from = null, List<EmailData_Address> bcc = null)
         {
             EmailServiceHelpers.SetConfigProperties(model, _config, email);
+            model.IsApi = this.IsApi;
 
             List<IEmailAttachment> memoryAttachments = new List<IEmailAttachment>();
 

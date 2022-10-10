@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
@@ -31,6 +32,7 @@ using SixLabors.ImageSharp.Web.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Security.Principal;
@@ -362,6 +364,12 @@ namespace ChilliCoreTemplate.Web
             app.UseMiddleware<RemoteStorageMiddleware>();
 
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/.well-known")),
+                RequestPath = new PathString("/.well-known"),
+                ServeUnknownFileTypes = true
+            });
             app.UseWhen(context => context.Request.Path.Value.StartsWith("/version_check"), builder =>
             {
                 //if version check file was not found as a static file, just return 404.

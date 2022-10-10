@@ -224,6 +224,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         string PublicUrl { get; set; }
         string Logo { get; set; }
         string Email { get; set; }
+        bool IsApi { get; set; }
     }
 
 
@@ -252,6 +253,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public bool CanUnsubscribe { get; set; }
         public int? UserId { get; set; }
         public string UserEmail { get; set; }
+        public bool IsApi { get; set; }
 
         #region Template config data
         /// <summary>
@@ -275,10 +277,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string Logo { get; set; }
         #endregion
-
     }
-
-
 
     public interface IEmailAttachment
     {

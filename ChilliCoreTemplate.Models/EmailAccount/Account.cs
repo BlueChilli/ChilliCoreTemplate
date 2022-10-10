@@ -112,8 +112,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [MaxLength(100)]
         public string ExternalId { get; set; }
 
-        public bool IsApi { get; set; }
-
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var result = new List<ValidationResult>();
@@ -176,8 +174,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public Guid Token { get; set; }
 
         public TimeSpan ExpiryTime { get; set; }
-
-        public bool IsWebApi { get; set; }
     }
 
     public class ChangePasswordViewModel

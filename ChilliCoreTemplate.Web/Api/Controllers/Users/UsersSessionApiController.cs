@@ -29,6 +29,7 @@ namespace ChilliCoreTemplate.Web.Api
         public UserSessionsController(AccountService accountService, UserApiMobileService mobileService, UserApiWebService webService, ProjectSettings config)
         {
             _accountService = accountService;
+            _accountService.IsApi = true;
             _mobileService = mobileService;
             _webService = webService;
             _config = config;

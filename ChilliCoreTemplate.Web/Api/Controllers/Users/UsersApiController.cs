@@ -23,9 +23,10 @@ namespace ChilliCoreTemplate.Web.Api
 
         public UsersController(AccountService accountService, UserApiWebService webApiService, UserApiMobileService mobileApiService)
         {
-            this._accountService = accountService;
-            this._webApiService = webApiService;
-            this._mobileApiService = mobileApiService;
+            _accountService = accountService;
+            _accountService.IsApi = true;
+            _webApiService = webApiService;
+            _mobileApiService = mobileApiService;
         }
 
         /// <summary>

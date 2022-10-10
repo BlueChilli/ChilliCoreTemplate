@@ -82,8 +82,7 @@
 
             $('.js-company-table').on('click', '.js-impersonate', function (e) {
                 e.preventDefault();
-                $('#impersonate-id').val($(this).data('id'));
-                $('#impersonate').submit();
+                $.doPost('@Mvc.Admin.Company_Impersonate.Url(this.Url)', { id: $(this).data('id') });
             });
 
         });

@@ -32,6 +32,7 @@ namespace ChilliCoreTemplate.Service.Api
             : base(user, context)
         {
             _accountService = accountSvc;
+            _accountService.IsApi = true;
             _userKeyHelper = userKeyHelper;
             _fileStoragePath = fileStoragePath;
             _session = session;
@@ -123,7 +124,6 @@ namespace ChilliCoreTemplate.Service.Api
         {
             var registrationModel = Mapper.Map<RegistrationViewModel>(model);
             registrationModel.Roles = model.GetRole();
-            registrationModel.IsApi = true;
             var response = _accountService.Create(registrationModel);
             if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);
 
@@ -152,8 +152,7 @@ namespace ChilliCoreTemplate.Service.Api
         {
             var forgotPassword = new ResetPasswordRequestModel()
             {
-                Email = model.Email,
-                IsWebApi = true
+                Email = model.Email
             };
 
             return _accountService.Password_ResetRequest(forgotPassword);
@@ -167,8 +166,7 @@ namespace ChilliCoreTemplate.Service.Api
                 case UserTokenType.Password:
                     var forgotPassword = new ResetPasswordRequestModel()
                     {
-                        Email = model.Email,
-                        IsWebApi = true
+                        Email = model.Email
                     };
                     return _accountService.Password_ResetRequest(forgotPassword);
                 case UserTokenType.Activate:
@@ -272,7 +270,7 @@ namespace ChilliCoreTemplate.Service.Api
 
             if (model.Status != null)
             {
-                var updateRequest = _accountService.Update_Status(model.Id, model.Status.Value, isApi: true);
+                var updateRequest = _accountService.Update_Status(model.Id, model.Status.Value);
                 if (!updateRequest.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(updateRequest);
             }
 

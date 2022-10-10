@@ -217,6 +217,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         private async Task<ServiceResult<OAuthUserModel>> OAuth_Code_Facebook(string token, string code, OAuthsConfigurationElement oAuthConfig)
         {
             var client = new RestClient("https://graph.facebook.com/v9.0/");
+            client.UseNewtonsoftJson();
             if (token == null)
             {
                 var request = new RestRequest("oauth/access_token", Method.Post);

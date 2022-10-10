@@ -156,6 +156,13 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\.well-known\" />
+	<Content Include="wwwroot\.well-known\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+  </ItemGroup>
+	
   <Target Name="AdditionalCommentsToPublish" AfterTargets="CopyFilesToPublishDirectory">
     <ItemGroup>
       <DocFile Include="bin\$(Configuration)\$(TargetFramework)\*.xml" />
