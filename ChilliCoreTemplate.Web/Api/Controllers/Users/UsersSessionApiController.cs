@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Api
@@ -144,7 +145,7 @@ namespace ChilliCoreTemplate.Web.Api
             return await this.ApiServiceCall(() => _accountService.OAuth_Code(model))
                 .OnSuccess(x =>
                 {
-                    return Redirect($"{redirectUrl}?token={x.Result.Token.ToShortGuid()}&email={x.Result.Email}");
+                    return Redirect($"{redirectUrl}?token={x.Result.Token.ToShortGuid()}&email={WebUtility.UrlEncode(x.Result.Email)}");
                 })
                 .OnFailure(x => { return Redirect($"{redirectUrl}?error={x.Key}&errordescription={x.Error}"); })
                 .Call();

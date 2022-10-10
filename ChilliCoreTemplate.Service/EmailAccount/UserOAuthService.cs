@@ -39,7 +39,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             //    .ForMember(dest => dest.EmailIsVerified, opt => opt.MapFrom(src => src.EmailVerified));
         }
 
-        public ServiceResult<string> OAuth_Url(OAuthUrlApiModel model, OAuthMode mode)
+        public ServiceResult<string> OAuth_Url(OAuthUrlApiModel model, OAuthMode mode, string state = "")
         {
             var provider = model.Provider;
             var providerUrl = String.Empty;
@@ -66,7 +66,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 //    break;
                 default: return ServiceResult<string>.AsError(error: $"Provider {provider} not supported");
             }
-            var parameters = new Dictionary<string, string> { { "client_id", oAuthConfig.ClientId }, { "response_type", responseType }, { "redirect_uri", OAuth_Url_Redirect }, { "state", $"{provider}|{mode}|{model.RedirectUrl}|{model.UserKey}" } };
+            var parameters = new Dictionary<string, string> { { "client_id", oAuthConfig.ClientId }, { "response_type", responseType }, { "redirect_uri", OAuth_Url_Redirect }, { "state", $"{provider}|{mode}|{model.RedirectUrl}|{model.UserKey}|{state}" } };
             if (!String.IsNullOrEmpty(responseMode)) parameters.Add("response_mode", responseMode);
             if (!String.IsNullOrEmpty(loginHint)) parameters.Add("login_hint", loginHint);
             if (!String.IsNullOrEmpty(scope)) parameters.Add("scope", scope);
@@ -88,7 +88,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<UserDataPrincipal>.AsSuccess(principal);
         }
 
-        internal async Task<ServiceResult<User>> OAuth_Authenticate(OAuthProvider provider, OAuthMode mode = OAuthMode.Any, string token = null, string code = null, string sessionEmail = null)
+        internal async Task<ServiceResult<User>> OAuth_Authenticate(OAuthProvider provider, OAuthMode mode = OAuthMode.Any, string token = null, string code = null, string sessionEmail = null, Role role = Role.User, string companyName = null)
         {
             var oAuthConfig = _config.OAuthsSettings.OAuths.Where(x => x.Provider == provider).FirstOrDefault();
             ServiceResult<OAuthUserModel> oAuthUserRequest = null;
@@ -123,6 +123,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 {
                     if (mode == OAuthMode.Login) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is not registered.", key: "ACCOUNT_NOTREGISTERED_ERROR");
                     var registerModel = Mapper.Map<RegistrationViewModel>(oAuthUser);
+                    registerModel.Roles = role;
+                    registerModel.CompanyName = companyName;
                     var newUserRequest = Create(registerModel, sendEmail: !oAuthUser.EmailIsVerified);
                     if (!newUserRequest.Success) return ServiceResult<User>.CopyFrom(newUserRequest);
                     user = GetAccount(newUserRequest.Result.UserId);
@@ -170,8 +172,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var session = _session.GetByUserKey(state[3]);
                 sessionEmail = session?.UserData.Email;
             }
+            var role = Role.User;
+            String companyName = null;
+            if (state.Length >= 5)
+            {
+                var registrationState = state[4].Split(':');
+                companyName = registrationState[0];
+                role = EnumHelper.Parse<Role>(registrationState[1]);
+            }
 
-            var request = await OAuth_Authenticate(provider, mode, code: model.Code, sessionEmail: sessionEmail);
+            var request = await OAuth_Authenticate(provider, mode, code: model.Code, sessionEmail: sessionEmail, role: role, companyName: companyName);
             if (!request.Success) return ServiceResult<OAuthCodeResultApiModel>.CopyFrom(request);
 
             var user = request.Result;

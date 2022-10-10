@@ -20,9 +20,11 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition Public_ConfirmationModal = MvcAction();
 
         public readonly IMvcActionDefinition EmailAccount_Login = MvcAction();
+        public readonly IMvcActionDefinition EmailAccount_LoginWithToken = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_ChooseRole = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_SelectRole = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_Registration = MvcAction();
+        public readonly IMvcActionDefinition EmailAccount_RegistrationOAuth = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_RegistrationActivationSent = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_RegistrationComplete = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_ForgotPassword = MvcAction();

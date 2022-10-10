@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.Http; using Microsoft
 using Newtonsoft.Json;
 using ChilliCoreTemplate.Models.Api;
 using ChilliSource.Cloud.Web;
+using ChilliCoreTemplate.Models.Api.OAuth;
 
 namespace ChilliCoreTemplate.Models.EmailAccount
 {
@@ -140,6 +141,15 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         }
     }
 
+    public class RegistrationOAuthModel
+    {
+        [MaxLength(50), DisplayName("Organisation name"), Required]
+        public string CompanyName { get; set; }
+
+        [Required]
+        public OAuthProvider? Provider { get; set; }
+    }
+
     public class RegistrationCompleteViewModel
     {
         public string Token { get; set; }
@@ -164,6 +174,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [StringLength(500)]
         public string ReturnUrl { get; set; }
+
+        public Dictionary<OAuthProvider, string> OAuthUrls { get; set; } = new Dictionary<OAuthProvider, string>();
     }
 
     public class ResetPasswordRequestModel

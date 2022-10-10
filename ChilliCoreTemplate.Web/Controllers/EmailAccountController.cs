@@ -17,6 +17,7 @@ using System.Web;
 using ChilliSource.Core.Extensions;
 using System.Security.Principal;
 using Microsoft.Extensions.DependencyInjection;
+using ChilliCoreTemplate.Models.Api.OAuth;
 
 namespace ChilliCoreTemplate.Web.Controllers
 {
@@ -55,6 +56,15 @@ namespace ChilliCoreTemplate.Web.Controllers
                 Email = email,
                 ReturnUrl = returnUrl
             };
+            model.OAuthUrls.Add
+            (
+                OAuthProvider.Google,
+                _accountService.OAuth_Url(new OAuthUrlApiModel
+                {
+                    Provider = OAuthProvider.Google,
+                    RedirectUrl = Mvc.Root.EmailAccount_LoginWithToken.Url(this)
+                }, OAuthMode.Login).Result
+            );
 
             return View(model);
         }
@@ -102,14 +112,14 @@ namespace ChilliCoreTemplate.Web.Controllers
             return this.RedirectToRoot(_settings, ticket);
         }
 
-        [HttpPost]
-        public virtual ActionResult LoginWithToken([FromBody] UserTokenModel model)
+        public virtual ActionResult LoginWithToken(UserTokenModel model)
         {
             return this.ServiceCall(() => _accountService.LoginWithToken(model, this.LoginWithPrincipal))
                 .OnSuccess(m =>
                 {
                     return RedirectionAfterLogin(m);
                 })
+                .OnFailure(m => Mvc.Root.EmailAccount_Login.Redirect(this, new { error = ModelState.Errors().First().Value }))
                 .Call();
         }
 
@@ -186,6 +196,34 @@ namespace ChilliCoreTemplate.Web.Controllers
                     return View(model);
                 })
                 .Call();
+        }
+
+        [HttpPost, ActionName("RegistrationOAuth")]
+        public virtual ActionResult RegistrationOAuthPost(RegistrationOAuthModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Registration", new RegistrationViewModel { Roles = _registrationRole });
+            }
+            var url = _accountService.OAuth_Url(new OAuthUrlApiModel
+            {
+                Provider = model.Provider.Value,
+                RedirectUrl = Mvc.Root.EmailAccount_RegistrationOAuth.Url(this)
+            },
+                OAuthMode.Register,
+                $"{model.CompanyName}:{_registrationRole}"
+            ).Result;
+            return new RedirectResult(url);
+        }
+
+        public virtual ActionResult RegistrationOAuth(string email, string token, string error, string errorDescription)
+        {
+            if (!String.IsNullOrEmpty(error) || !String.IsNullOrEmpty(errorDescription))
+            {
+                ModelState.AddModelError("OAuth", errorDescription ?? error);
+                return View("Registration", new RegistrationViewModel { Roles = _registrationRole });
+            }
+            return LoginWithToken(new UserTokenModel { Email = email, Token = token });
         }
 
         public virtual ActionResult RegistrationActivationSent(string email)
