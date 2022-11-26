@@ -188,6 +188,34 @@ namespace ChilliCoreTemplate.Web.Api
         }
 
         /// <summary>
+        /// Upload new profile photo
+        /// </summary>
+        [CustomAuthorize]
+        [HttpPost("current/profilephoto")]
+        public async Task<IActionResult> ProfilePhoto(ImageFileModel file)
+        {
+            var userData = User.UserData();
+            return await this.ApiServiceCall(async () =>
+            {
+                return await _accountService.ProfilePhoto_Add(userData.UserId, file);
+            }).Call();
+        }
+
+        /// <summary>
+        /// Delete profile photo
+        /// </summary>
+        [CustomAuthorize]
+        [HttpDelete("current/profilephoto")]
+        public async Task<IActionResult> DeleteProfilePhoto()
+        {
+            var userData = User.UserData();
+            return await this.ApiServiceCall(async () =>
+            {
+                return await _accountService.ProfilePhoto_Delete(userData.UserId);
+            }).Call();
+        }
+
+        /// <summary>
         /// Delete account
         /// </summary>
         [HttpDelete]

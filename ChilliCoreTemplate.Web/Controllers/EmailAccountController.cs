@@ -300,7 +300,7 @@ namespace ChilliCoreTemplate.Web.Controllers
         [ValidateAntiForgeryToken]
         public virtual ActionResult ForgotPassword(ResetPasswordRequestModel model)
         {
-            return this.ServiceCall(() => _accountService.Password_ResetRequest(model))
+            return this.ServiceCall(() => _accountService.Password_ResetRequest(model.Email))
                 .OnSuccess(m =>
                 {
                     return Mvc.Root.EmailAccount_ForgotPasswordSent.Redirect(this, routeValues: new { Email = model.Email });

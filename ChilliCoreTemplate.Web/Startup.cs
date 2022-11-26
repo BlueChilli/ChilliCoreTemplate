@@ -148,7 +148,7 @@ namespace ChilliCoreTemplate.Web
 
                     options.LoginPath = new PathString("/EmailAccount/Login");
                     options.AccessDeniedPath = options.LoginPath;
-                    options.ExpireTimeSpan = TimeSpan.FromHours(12);
+                    options.ExpireTimeSpan = TimeSpan.FromHours(config.SessionLength);
                     options.SlidingExpiration = true;
 
                     options.Cookie.Name = config.ProjectName.Replace(" ", "");

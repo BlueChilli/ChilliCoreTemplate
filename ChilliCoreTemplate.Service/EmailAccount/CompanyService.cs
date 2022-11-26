@@ -44,17 +44,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return (Company o) => CompanyIds.Contains(o.Id) && (includeDeleted || !o.IsDeleted);
         }
 
-        public ServiceResult<EditCompanyViewModel> GetForEdit(int? id)
-        {
-            var model = this.VisibleCompanies().Where(o => o.Id == id)
-                            .Materialize<Company, EditCompanyViewModel>()
-                            .FirstOrDefault();
-
-            model = model ?? new EditCompanyViewModel() { Timezone = "Australia/Sydney" };
-
-            return ServiceResult<EditCompanyViewModel>.AsSuccess(model);
-        }
-
         internal IQueryable<Company> VisibleCompanies(bool includeDeleted = false)
         {
             var userData = User.UserData();
@@ -87,58 +76,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult<T>.AsError("Not found or acess denied");
 
             return ServiceResult<T>.AsSuccess(model);
-        }
-
-        public ServiceResult<CompanyViewModel> Save(EditCompanyViewModel model)
-        {
-            var userData = User.UserData();
-
-            var data = this.VisibleCompanies().Where(o => o.Id == model.Id)
-                        .FirstOrDefault();
-
-            if (data == null && model.Id != 0)
-                return ServiceResult<CompanyViewModel>.AsError("Company not found or access denied.");
-
-            model.Name = model.Name.Trim();
-            var duplicate = Context.Companies.Where(c => c.Name == model.Name && c.Id != model.Id && !c.IsDeleted).Select(c => (int?)c.Id).FirstOrDefault();
-            if (duplicate != null)
-                return ServiceResult<CompanyViewModel>.AsError($"Company '{model.Name}' already exists.");
-
-            data = data ?? Context.Companies.Add(Company.CreateNew()).Entity;
-            Mapper.Map(model, data);
-
-            if (model.LogoFile != null)
-                data.LogoPath = this._fileStorage.Save(new StorageCommand() { Folder = "Company" }.SetHttpPostedFileSource(model.LogoFile));
-
-            if (userData.IsInRole(Role.CompanyAdmin) && !data.IsSetup)
-            {
-                data.IsSetup = true;
-            }
-
-            Context.SaveChanges();
-
-            if (userData.GetCompanyIds().Any(id => id == data.Id))
-            {
-                _sessionService.ClearSessionCache(User.Session().Id);
-            }
-
-            return Get<CompanyViewModel>(data.Id);
-        }
-
-        public ServiceResult Delete(int id)
-        {
-            var userData = User.UserData();
-            var data = Context.Companies.Where(t => t.Id == id).FirstOrDefault();
-            if (data == null || data.IsDeleted)
-                return ServiceResult.AsSuccess();
-
-            data.IsDeleted = true;
-            data.DeletedAt = DateTime.UtcNow;
-            data.DeletedById = userData.UserId;
-
-            Context.SaveChanges();
-
-            return ServiceResult.AsSuccess();
         }
 
         public void TestDBException()

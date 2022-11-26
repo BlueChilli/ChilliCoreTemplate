@@ -1,22 +1,20 @@
-using ChilliSource.Cloud.Core;
 using ChilliCoreTemplate.Models.Api;
+using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.Api;
+using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.Security;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http.Extensions;
 using System.Text;
-using System.IO;
-using Microsoft.Extensions.DependencyInjection;
-using ChilliCoreTemplate.Service;
-using ChilliCoreTemplate.Web.Library;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Api
 {
@@ -52,7 +50,7 @@ namespace ChilliCoreTemplate.Web.Api
                     request.EnableBuffering();
                     apiLogEntry.RequestContentBody = await ReadAsStringAsync(request.Body, Encoding.UTF8, 4 * 1024, 30 * 1024);
                     if (String.IsNullOrEmpty(apiLogEntry.RequestContentBody)) apiLogEntry.RequestContentBody = null;
-                    else if (apiLogEntry.RequestContentType.Contains("application/json") && apiLogEntry.RequestContentBody.Length < 30 * 1024)
+                    else if (apiLogEntry.RequestContentType != null && apiLogEntry.RequestContentType.Contains("application/json") && apiLogEntry.RequestContentBody.Length < 30 * 1024)
                     {
                         var blacklist = new string[] { "password", "pin" };
                         apiLogEntry.RequestContentBody = apiLogEntry.RequestContentBody.MaskFields(blacklist, "*****");

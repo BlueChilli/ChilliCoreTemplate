@@ -22,11 +22,15 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (companyId.HasValue)
             {
                 var company = Context.Companies.First(c => c.Id == companyId.Value);
+                model.CompanyId = company.Id;
                 model.CompanyName = company.Name;
                 model.Logo = String.IsNullOrEmpty(company.LogoPath) ? null : _fileStoragePath.GetImagePath(company.LogoPath, fullPath: true) + "?h=75";
                 model.PublicUrl = company.Website;
                 model.Email = _config.EmailTemplate.Email;
                 if (from == null) from = new EmailData_Address(model.Email, $"{company.Name} via {_config.ProjectDisplayName}");
+
+                var companyAdmin = GetCompanyAdmin(companyId.Value);
+                model.CompanyEmail = companyAdmin.Email;
             }
             if (String.IsNullOrEmpty(model.CompanyName)) model.CompanyName = _config.ProjectDisplayName;
             if (String.IsNullOrEmpty(model.PublicUrl)) model.PublicUrl = _config.PublicUrl;

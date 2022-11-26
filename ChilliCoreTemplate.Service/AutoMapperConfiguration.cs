@@ -109,9 +109,6 @@ namespace ChilliCoreTemplate.Service
 
                 cfg.CreateMap<InviteUploadItemModel, InviteEditModel>();
 
-                cfg.CreateMap<EditCompanyViewModel, Company>()
-                    .ForMember(d => d.LogoPath, opt => opt.Ignore());
-
                 cfg.CreateMap<Email, EmailSummaryModel>();
                 cfg.CreateMap<Email, EmailViewModel>();
                 cfg.CreateMap<Email, EmailUnsubscribeModel>();

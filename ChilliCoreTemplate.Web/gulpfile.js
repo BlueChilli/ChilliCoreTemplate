@@ -1,4 +1,3 @@
-/// <binding Clean='clean, min' ProjectOpened='clean, min, watch' />
 "use strict";
 
 var fs = require("fs"),

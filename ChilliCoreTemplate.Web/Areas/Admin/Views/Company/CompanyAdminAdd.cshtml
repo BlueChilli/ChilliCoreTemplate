@@ -8,7 +8,7 @@
     @await Html.FieldTemplateForAsync(m => m.Admin.LastName)
     using (await Html.FieldTemplateOuterForAsync(m => m.Id, options: new TemplateOptions { Label = "" }))
     {
-        @await Html.ButtonSubmitAsync("Save")
+        @await Html.ButtonSubmitAsync("Invite")
         <button type="button" class="btn btn-default js-user-cancel">Cancel</button>
     }
 }

@@ -107,8 +107,8 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         public virtual ActionResult ResetPassword(int id)
         {
             var user = _accountService.Get(id, visibleOnly: true);
-            var result = _accountService.Password_SetRequestToken(user.Email);
-            var model = new ResetPasswordViewModel { Id = id, Email = user.Email, Token = result.Result.Token.ToShortGuid().ToString() };
+            var result = _accountService.Password_SetRequestToken(user.Id);
+            var model = new ResetPasswordViewModel { Id = id, Email = user.Email, Token = result.Result.ToShortGuid().ToString() };
             return PartialView(model);
         }
 

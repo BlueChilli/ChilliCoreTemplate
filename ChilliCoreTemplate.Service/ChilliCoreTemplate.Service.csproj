@@ -11,11 +11,11 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.80" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0129" />
-    <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0012" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0137" />
+    <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0014" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0008" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
-    <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0036" />
+    <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0042" />
     <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3" />
     <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
     <PackageReference Include="LazyCache" Version="2.4.0" />

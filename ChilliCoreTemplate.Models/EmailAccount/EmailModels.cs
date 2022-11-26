@@ -220,7 +220,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         string UserEmail { get; set; }
 
         string Site { get; set; }
+        int? CompanyId { get; set; }
         string CompanyName { get; set; }
+        string CompanyEmail { get; set; }
         string PublicUrl { get; set; }
         string Logo { get; set; }
         string Email { get; set; }
@@ -272,7 +274,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string InstagramUrl { get; set; }
         public string Email { get; set; }
         public string FooterTextColor { get; set; }
+        public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
+        public string CompanyEmail { get; set; }
         public string PublicUrl { get; set; }
 
         public string Logo { get; set; }

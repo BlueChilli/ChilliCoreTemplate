@@ -33,7 +33,15 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string Phone { get; set; }
 
-        public string ShortName { get { return String.IsNullOrWhiteSpace(FullName) ? "" : FirstName + " " + LastName?.ToUpper()[0] + "."; } }
+        public string ShortName
+        {
+            get
+            {
+                if (String.IsNullOrWhiteSpace(FullName)) return "";
+                if (String.IsNullOrWhiteSpace(LastName)) return FirstName;
+                return FirstName + " " + LastName?.ToUpper()[0] + ".".Trim();
+            }
+        }
         public string FullName { get; set; }
 
         public string ProfilePhotoPath { get; set; }
@@ -490,5 +498,13 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string ProfilePhotoUrl { get; set; }
 
         public string ExternalId { get; set; }
+    }
+
+    public class ImageFileModel
+    {
+        [Required]
+        [FileMaxSize(8 * 1024 * 1024), FileMinSize]
+        [HttpPostedFileExtensions(allowedExtensions: "jpg, jpeg, png, gif")]
+        public IFormFile ImageFile { get; set; }
     }
 }

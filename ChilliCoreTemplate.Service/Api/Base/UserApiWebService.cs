@@ -148,27 +148,13 @@ namespace ChilliCoreTemplate.Service.Api
             return this.GetAccount(response.Result.Id, onlyVisible: false);
         }
 
-        public ServiceResult RequestNewPassword(TokenEditApiModel model)
-        {
-            var forgotPassword = new ResetPasswordRequestModel()
-            {
-                Email = model.Email
-            };
-
-            return _accountService.Password_ResetRequest(forgotPassword);
-        }
-
         public ServiceResult Token_Create(TokenEditApiModel model)
         {
             User user;
             switch (model.Type)
             {
                 case UserTokenType.Password:
-                    var forgotPassword = new ResetPasswordRequestModel()
-                    {
-                        Email = model.Email
-                    };
-                    return _accountService.Password_ResetRequest(forgotPassword);
+                    return _accountService.Password_ResetRequest(model.Email);
                 case UserTokenType.Activate:
                     user = _accountService.GetAccountByEmail(model.Email);
                     _accountService.SendRegistrationCompleteEmail(user);

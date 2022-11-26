@@ -151,6 +151,16 @@ namespace ChilliCoreTemplate.Models
         public string AdminEmail => _baseSection.GetRequiredString("AdminEmail");
 
         /// <summary>
+        /// Session length in hours
+        /// </summary>
+        public int SessionLength => _baseSection.GetValue<int>("SessionLength");
+
+        /// <summary>
+        /// Session length in hours for devices if using cookieless flag
+        /// </summary>
+        public int SessionLengthDevice => _baseSection.GetValue<int>("SessionLengthDevice");
+
+        /// <summary>
         /// Whether to redirect requests to the index.html page (for react projects)
         /// </summary>
         public bool UseIndexHtml => _baseSection.GetValue<bool>("UseIndexHtml");

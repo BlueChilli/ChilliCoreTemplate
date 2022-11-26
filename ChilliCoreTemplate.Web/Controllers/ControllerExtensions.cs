@@ -33,8 +33,9 @@ namespace ChilliCoreTemplate.Web.Controllers
             var optionsSnapshot = serviceProvider.GetRequiredService<IOptionsSnapshot<CookieAuthenticationOptions>>();
             var cookieOptions = optionsSnapshot.Get(CookieAuthenticationDefaults.AuthenticationScheme);
             var sessionSvc = serviceProvider.GetRequiredService<UserSessionService>();
+            var settings = serviceProvider.GetRequiredService<ProjectSettings>();
 
-            var expiry = principal.UserData.UserDeviceId != null ? TimeSpan.FromDays(365) : cookieOptions.ExpireTimeSpan;
+            var expiry = principal.UserData.UserDeviceId != null ? TimeSpan.FromHours(settings.SessionLengthDevice) : cookieOptions.ExpireTimeSpan;
             principal.Id = await sessionSvc.CreateAsync(principal.UserData, DateTime.UtcNow.Add(expiry));
         }
 

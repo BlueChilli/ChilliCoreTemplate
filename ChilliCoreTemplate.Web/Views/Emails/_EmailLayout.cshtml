@@ -213,8 +213,16 @@
                                         {
                                             @if (String.IsNullOrEmpty(Model.TagLine))
                                             {
-                                                @:Thanks for using @Model.Site!
-                                                @:<br />The @Model.Site team
+                                                @if(String.IsNullOrEmpty(Model.CompanyName))
+                                                {
+                                                    @:Thanks for using @Model.Site!
+                                                    @:<br />The @Model.Site team
+                                                }
+                                                else
+                                                {
+                                                    @:Thanks for your support
+                                                    @:<br />The @Model.CompanyName team
+                                                }
                                             }
                                             else
                                             {

@@ -72,6 +72,11 @@ namespace ChilliCoreTemplate.Service
                 return ServiceResult<CompanyEditModel>.AsError("Company not found");
             }
 
+            model.Name = model.Name.Trim();
+            var hasDuplicate = Context.Companies.Where(c => c.Name == model.Name && c.Id != model.Id && !c.IsDeleted).Any();
+            if (hasDuplicate)
+                return ServiceResult<CompanyEditModel>.AsError($"Company '{model.Name}' already exists.");
+
             var isNew = company.Id == 0;
             Mapper.Map(model, company);
 
@@ -207,23 +212,35 @@ namespace ChilliCoreTemplate.Service
 
         public ServiceResult<CompanyViewModel> Company_Delete(int id)
         {
-            var company = Company_Authorised()
+            var data = Company_Authorised()
                 .Include(x => x.UserRoles)
                 .FirstOrDefault(x => x.Id == id);
 
-            if (company != null)
+            if (data != null)
             {
-                if (company.IsDeleted || company.UserRoles.Count > 0)
+                if (data.IsDeleted || data.UserRoles.Count > 0)
                 {
-                    company.IsDeleted = !company.IsDeleted;
+                    data.IsDeleted = !data.IsDeleted;
+                    if (data.IsDeleted)
+                    {
+                        data.DeletedAt = DateTime.UtcNow;
+                        data.DeletedById = UserId;
+                    }
+                    else
+                    {
+                        data.UpdatedAt = DateTime.UtcNow;
+                        data.DeletedAt = null;
+                        data.DeletedById = null;
+                    }
                 }
                 else
                 {
-                    Context.Companies.Remove(company);
+                    data.IsDeleted = true;
+                    Context.Companies.Remove(data);
                 }
                 Context.SaveChanges();
 
-                return ServiceResult<CompanyViewModel>.AsSuccess(Mapper.Map<CompanyViewModel>(company));
+                return ServiceResult<CompanyViewModel>.AsSuccess(Mapper.Map<CompanyViewModel>(data));
             }
 
             return ServiceResult<CompanyViewModel>.AsError("Company not found");

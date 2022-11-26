@@ -51,10 +51,9 @@ namespace ChilliCoreTemplate.Service
             return new ImageSharpHelper(_urlHelper, _storageHelper.GetImagePrefix());
         }
 
-
-        public string GetDefaultPath()
+        public string GetDefaultPath(bool fullPath = false)
         {
-            return GetImagePath(" ");
+            return GetImagePath(" ", fullPath);
         }
     }
 }

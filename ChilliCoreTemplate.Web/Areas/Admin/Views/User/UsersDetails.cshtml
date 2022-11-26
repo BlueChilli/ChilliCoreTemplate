@@ -24,7 +24,7 @@
                                 <li>
                                     <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_ChangeStatus, Model.Account.Id)">Change account status</a>
                                 </li>
-                                @if(!env.IsProduction())
+                                @if (Model.Account.Status == UserStatus.Deleted)
                                 {
                                 <li>
                                     <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_Purge, Model.Account.Id)">Purge account</a>

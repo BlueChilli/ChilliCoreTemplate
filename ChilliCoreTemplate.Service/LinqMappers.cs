@@ -107,7 +107,6 @@ namespace ChilliCoreTemplate.Service
             {
             });
 
-            LinqMapper.CreateMap<Company, EditCompanyViewModel>();
             LinqMapper.CreateMap<Company, CompanyViewModel>(c => new CompanyViewModel
             {
                 MasterCompany = c.MasterCompanyId == null ? null : c.MasterCompany.Name,
