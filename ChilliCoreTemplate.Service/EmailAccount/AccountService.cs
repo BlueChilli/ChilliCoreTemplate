@@ -128,11 +128,21 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             var result = ServiceResult<UserDataPrincipal>.AsError("You entered an incorrect email or password");
 
-            User account = GetAccountByEmail(viewModel.Email);
+            User account = GetAccountByEmail(viewModel.Email, includeDeleted: true);
 
-            if (account == null || account.Status == UserStatus.Deleted)
+            if (account == null)
             {
                 QueueMail_Distinct(RazorTemplates.AccountNotRegistered, viewModel.Email, new RazorTemplateDataModel<string> { Data = viewModel.Email });
+                return result;
+            }
+
+            if (account.Status == UserStatus.Deleted)
+            {
+                var request = Password_ResetRequest(account);
+                if (request.Success)
+                {
+                    result.Error = "We sent have you an forgot password email so you can reactive your account.";
+                }
                 return result;
             }
 
@@ -551,12 +561,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     account = Context.Users.Add(new User() { CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, UserRoles = new List<UserRole>() }).Entity;
                 }
 
+                Mapper.Map(model, account);
+
                 if (!String.IsNullOrEmpty(model.Password))
                 {
                     Password_Set(account, model.Password);
                 }
-
-                Mapper.Map(model, account);
 
                 var newRolesResponse = CreateNewAccountRoles(account, model.UserRoles);
                 if (!newRolesResponse.Success)
@@ -799,16 +809,21 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<object>.AsSuccess();
         }
 
-        internal User GetAccount(int? id)
+        internal User GetAccount(int? id, bool includeDeleted = false)
         {
             if (id == null)
                 return null;
 
-            var account = Context.Users.Where(a => a.Id == id && a.Status != UserStatus.Deleted)
-                            .Include(a => a.Tokens)
-                            .Include(a => a.UserRoles)
-                            .ThenInclude((UserRole r) => r.Company)
-                            .FirstOrDefault();
+            var query = Context.Users.Where(a => a.Id == id);
+
+            if (!includeDeleted)
+                query = query.Where(a => a.Status != UserStatus.Deleted);
+
+            var account = query
+                .Include(a => a.Tokens)
+                .Include(a => a.UserRoles)
+                .ThenInclude((UserRole r) => r.Company)
+                .FirstOrDefault();
 
             return account;
         }

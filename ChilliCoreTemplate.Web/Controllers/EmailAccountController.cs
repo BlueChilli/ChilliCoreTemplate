@@ -447,6 +447,15 @@ namespace ChilliCoreTemplate.Web.Controllers
             return new RedirectResult(_settings.PublicUrl);
         }
 
+        public virtual ActionResult EmailRedirectDummy(ShortGuid? emailId, string url = null)
+        {
+            if (emailId == null || url == null)
+            {
+                return new RedirectResult(_settings.PublicUrl);
+            }
+            return new RedirectResult(url);
+        }
+
         //public ActionResult EmailUnsubscribe(ShortGuid id)
         //{
         //    return this.ServiceCall(() => _accountService.Email_GetForUnsubscribe(id)).Call();

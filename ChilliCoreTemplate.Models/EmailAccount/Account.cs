@@ -209,10 +209,21 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public bool Success { get; set; }
     }
 
-    public class UserTokenModel
+    public class UserTokenModel : TokenModel
     {
-        [Required, EmailAddressWeb]
-        public string Email { get; set; }
+        [JsonIgnore]
+        public string Email { get { return Id.UrlSafeDecode<string>(); } set { Id = value.UrlSafeEncode(); } }
+
+        public TokenModel ToTokenModel()
+        {
+            return new TokenModel { Id = Id, Token = Token };
+        }
+    }
+
+    public class TokenModel
+    {
+        [Required]
+        public string Id { get; set; }
 
         [Required]
         public string Token { get; set; }

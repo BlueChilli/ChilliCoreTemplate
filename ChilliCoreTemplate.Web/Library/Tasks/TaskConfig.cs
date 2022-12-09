@@ -44,7 +44,7 @@ namespace ChilliCoreTemplate.Web
             manager.EnqueueRecurrentTask<SmsDeliveryTask>((long)TimeSpan.FromSeconds(20).TotalMilliseconds);
 
             manager.RegisterTaskType(typeof(CleanUpTask), new TaskSettings(TaskDescription.CleanUpTask_Id));
-            manager.EnqueueRecurrentTask<CleanUpTask>((long)TimeSpan.FromHours(1).TotalMilliseconds);
+            manager.EnqueueRecurrentTask<CleanUpTask>((long)TimeSpan.FromMinutes(15).TotalMilliseconds);
 
             manager.RegisterTaskType(typeof(ErrorLogTask), new TaskSettings(TaskDescription.ErrorLogTask_Id));
             manager.EnqueueRecurrentTask<ErrorLogTask>((long)TimeSpan.FromSeconds(300).TotalMilliseconds);

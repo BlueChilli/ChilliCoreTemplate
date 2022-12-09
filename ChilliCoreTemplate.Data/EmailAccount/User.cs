@@ -7,6 +7,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace ChilliCoreTemplate.Data.EmailAccount
 {
@@ -32,7 +35,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         private string _ExternalId;
         public int? ExternalIdHash { get; set; }
 
-        [StringLength(100)]
+        [Required, StringLength(100)]
         public string Email { get { return _Email; } set { _Email = value; EmailHash = CommonLibrary.CalculateHash(value); } }
         private string _Email;
 
@@ -166,4 +169,18 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         }
 
     }
+
+    public class UserConfiguration : IEntityTypeConfiguration<User>
+    {
+        public void Configure(EntityTypeBuilder<User> builder)
+        {
+            builder.HasIndex(x => x.EmailHash);
+            builder.HasIndex(x => x.Email).IsUnique();
+            builder.HasIndex(x => x.PhoneHash);
+            builder.HasIndex(x => x.ExternalIdHash);
+            builder.HasIndex(x => x.CreatedDate);
+            builder.HasMany(x => x.UserRoles).WithOne(r => r.User).IsRequired();
+        }
+    }
+
 }

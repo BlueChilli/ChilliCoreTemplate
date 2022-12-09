@@ -56,7 +56,12 @@ namespace ChilliCoreTemplate.Web.Api
             {
                 var apiKey = context.HttpContext.Request.Headers[apiKeyHeaderKey].FirstOrDefault();
                 apiKey = apiKey ?? context.HttpContext.Request.Headers[apiKeyHeaderKey.ToLower()].FirstOrDefault();
-                apiKey = apiKey ?? context.HttpContext.Request.Query[apiKeyHeaderKey].FirstOrDefault();
+
+                var env = context.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
+                if (env.IsDevelopment())
+                {
+                    apiKey = apiKey ?? context.HttpContext.Request.Query[apiKeyHeaderKey].FirstOrDefault();
+                }
 
                 if (string.Compare(_apiKey, apiKey, StringComparison.InvariantCultureIgnoreCase) != 0)
                 {

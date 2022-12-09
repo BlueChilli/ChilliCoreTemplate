@@ -221,8 +221,6 @@ namespace ChilliCoreTemplate.Service.Api
 
         public ServiceResult<UserAccountApiModel> PatchUser(PatchAccountApiModel model)
         {
-            var user = User.UserData();
-
             if (model.PasswordSpecified)
             {
                 var passwordRequest = _accountService.Password_Change(new ChangePasswordViewModel()
@@ -265,7 +263,7 @@ namespace ChilliCoreTemplate.Service.Api
 
         public ServiceResult<UserAccountApiModel> PatchUser(PatchAccountTokenApiModel model)
         {
-            var userRequest = _accountService.User_GetByEmailToken(model);
+            var userRequest = _accountService.User_GetAccountByEmailToken(model, includeDeleted: !String.IsNullOrEmpty(model.Password));
             if (!userRequest.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(userRequest);
 
             int userId = userRequest.Result.Id;
@@ -285,16 +283,7 @@ namespace ChilliCoreTemplate.Service.Api
 
             if (!String.IsNullOrEmpty(model.Password))
             {
-                var response = _accountService.Password_Reset(new ResetPasswordViewModel()
-                {
-                    Id = userId,
-                    Email = model.Email,
-                    Token = model.Token,
-                    NewPassword = model.Password,
-                    ConfirmPassword = model.Password
-                });
-
-                if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);
+                _accountService.Password_Set(userRequest.Result, model.Password);
             }
 
             return this.GetAccount(userId, onlyVisible: false);

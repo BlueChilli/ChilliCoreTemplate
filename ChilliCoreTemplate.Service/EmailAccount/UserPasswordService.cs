@@ -11,36 +11,22 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 {
     public partial class AccountService : Service<DataContext>
     {
-
-        internal void Password_Set(User user, string password)
-        {
-            user.SetPassword(password, _config.ProjectId.Value);
-        }
-
         public ServiceResult<int> Password_Reset(ResetPasswordViewModel model, bool isAdmin = false)
         {
-            var userRequest = User_GetAccountByEmailToken(new UserTokenModel { Email = model.Email, Token = model.Token });
+            var userRequest = User_GetAccountByEmailToken(new UserTokenModel { Email = model.Email, Token = model.Token }, includeDeleted: true);
 
             if (!userRequest.Success) return ServiceResult<int>.AsError(userRequest.Error);
 
             var user = userRequest.Result;
 
-            Password_Set(user, model.NewPassword);
-
-            if (user.Status == UserStatus.Invited) Invite_Confirm(user);
-
-            Context.SaveChanges();
-
-            Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Delete, EntityId = user.Id, EntityType = EntityType.Password });
-
-            if (!isAdmin && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
+            Password_Set(user, model.NewPassword, isAdmin);
 
             return ServiceResult<int>.AsSuccess(user.Id);
         }
 
         public ServiceResult Password_Change(ChangePasswordViewModel model)
         {
-            var user = GetAccount(model.UserId);
+            var user = GetAccount(model.UserId, includeDeleted: true);
 
             if (!user.ConfirmPassword(model.CurrentPassword, _config.ProjectId.Value))
             {
@@ -52,21 +38,31 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult.AsError("New password cannot be same as current password");
             }
 
-            if (user.Status == UserStatus.Invited) Invite_Confirm(user);
-
             Password_Set(user, model.NewPassword);
-            Context.SaveChanges();
-
-            Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Update, EntityId = user.Id, EntityType = EntityType.Password });
-
-            if (user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
 
             return ServiceResult.AsSuccess();
         }
 
+        internal void Password_Set(User user, string password, bool isAdmin = false)
+        {
+            user.SetPassword(password, _config.ProjectId.Value);
+
+            if (user.Id != 0)
+            {
+                if (user.Status == UserStatus.Invited) Invite_Confirm(user);
+                if (user.Status == UserStatus.Deleted) user.Status = UserStatus.Activated;
+
+                Context.SaveChanges();
+
+                Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Update, EntityId = user.Id, EntityType = EntityType.Password });
+
+                if (!isAdmin && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
+            }
+        }
+
         public ServiceResult Password_ResetRequest(string email)
         {
-            var account = GetAccountByEmail(email);
+            var account = GetAccountByEmail(email, includeDeleted: true);
             return Password_ResetRequest(account);
         }
 

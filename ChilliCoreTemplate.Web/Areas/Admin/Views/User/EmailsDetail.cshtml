@@ -18,7 +18,7 @@
             @Html.ValidationSummary()
             @if (!String.IsNullOrEmpty(Model.Data.MessageHtml))
             {
-                @Html.Raw(Model.Data.MessageHtml.Replace("EmailOpen", "EmailDummyOpen"))
+                @Html.Raw(Model.Data.MessageHtml.Replace("EmailOpen", "EmailDummyOpen").Replace("EmailRedirect", "EmailRedirectDummy"))
             }
             else
             {

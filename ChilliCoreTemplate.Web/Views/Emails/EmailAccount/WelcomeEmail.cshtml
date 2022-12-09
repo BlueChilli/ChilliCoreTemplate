@@ -5,7 +5,7 @@
     Model.Subject = String.Format("Complete your {0} sign up", Model.CompanyName);
     Model.EmailPreview = config.UserConfirmationMethod == UserConfirmationMethod.Link ? "please verify your email address" : "please read the onboarding instructions carefully";
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
-    var data = new UserTokenModel { Email = Model.Data.Email, Token = Model.Data.Token };
+    var data = new UserTokenModel { Email = Model.Data.Email, Token = Model.Data.Token }.ToTokenModel();
     var url = Model.IsApi 
         ? config.ResolveUrl("~/account/confirmemail", data)
         : Mvc.Root.EmailAccount_RegistrationComplete.Url(this.Url, routeValues: data, protocol: "https");

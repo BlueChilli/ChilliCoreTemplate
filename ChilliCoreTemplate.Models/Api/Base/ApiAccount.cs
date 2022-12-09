@@ -239,15 +239,6 @@ namespace ChilliCoreTemplate.Models.Api
         public int? CompanyId { get; set; }
     }
 
-    public class AccountTokenApiModel
-    {
-        [Required]
-        [StringLength(100)]
-        public virtual string Email { get; set; }
-
-        public virtual string Token { get; set; }
-    }
-
     [HybridBindClass(defaultBindingOrder: new[] { Source.Route, Source.Body, Source.Form })]
     public class PatchAccountTokenApiModel : UserTokenModel
     {

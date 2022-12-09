@@ -54,7 +54,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<User>.AsError(user == null ? "Account not found or access denied" : "Token is invalid or has expired");
         }
 
-        public ServiceResult<AccountViewModel> User_GetByEmailToken(UserTokenModel model)
+        public ServiceResult<AccountViewModel> User_GetByEmailToken(UserTokenModel model, bool includeDeleted = false)
         {
             var accountResult = User_GetAccountByEmailToken(model);
 
@@ -63,9 +63,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<AccountViewModel>.AsSuccess(GetSingle<AccountViewModel, User>(accountResult.Result));
         }
 
-        internal ServiceResult<User> User_GetAccountByEmailToken(UserTokenModel model)
+        internal ServiceResult<User> User_GetAccountByEmailToken(UserTokenModel model, bool includeDeleted = false)
         {
-            var account = GetAccountByEmail(model.Email);
+            var account = GetAccountByEmail(model.Email, includeDeleted);
             return Token_Check(account, model.Token);
         }
 

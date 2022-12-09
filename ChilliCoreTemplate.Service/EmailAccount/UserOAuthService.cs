@@ -1,25 +1,22 @@
-using ChilliSource.Cloud.Core;
+using AutoMapper;
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Api.OAuth;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core;
+using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+using RestSharp;
+using RestSharp.Serializers.NewtonsoftJson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ChilliCoreTemplate.Models.Api.OAuth;
-using RestSharp;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using ChilliSource.Core.Extensions;
-using System.Text;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.WebUtilities;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
+using System.Text;
 //using AppleAuth;
 using System.Threading.Tasks;
-using ChilliCoreTemplate.Models.Api;
-using RestSharp.Serializers.NewtonsoftJson;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
