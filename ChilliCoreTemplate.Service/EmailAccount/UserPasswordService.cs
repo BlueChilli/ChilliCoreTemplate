@@ -11,7 +11,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 {
     public partial class AccountService : Service<DataContext>
     {
-        public ServiceResult<int> Password_Reset(ResetPasswordViewModel model, bool isAdmin = false)
+        public ServiceResult<int> Password_Reset(ResetPasswordViewModel model, bool sendEmail = true)
         {
             var userRequest = User_GetAccountByEmailToken(new UserTokenModel { Email = model.Email, Token = model.Token }, includeDeleted: true);
 
@@ -19,7 +19,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var user = userRequest.Result;
 
-            Password_Set(user, model.NewPassword, isAdmin);
+            Password_Set(user, model.NewPassword, sendEmail);
 
             return ServiceResult<int>.AsSuccess(user.Id);
         }
@@ -43,7 +43,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult.AsSuccess();
         }
 
-        internal void Password_Set(User user, string password, bool isAdmin = false)
+        internal void Password_Set(User user, string password, bool sendEmail = true)
         {
             user.SetPassword(password, _config.ProjectId.Value);
 
@@ -56,7 +56,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Update, EntityId = user.Id, EntityType = EntityType.Password });
 
-                if (!isAdmin && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
+                if (!sendEmail && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
             }
         }
 

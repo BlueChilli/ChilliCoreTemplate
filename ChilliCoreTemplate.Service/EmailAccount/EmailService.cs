@@ -241,19 +241,19 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     new EmailPreviewItemModel
                     {
                         Template = RazorTemplates.AccountAlreadyRegistered,
-                        Data = Constants.SupportEmailAddress
+                        Data = _config.AdminEmail
                     },
                     new EmailPreviewItemModel
                     {
                         Template = RazorTemplates.AccountNotRegistered,
-                        Data = Constants.SupportEmailAddress
+                        Data = _config.AdminEmail
                     },
                     new EmailPreviewItemModel
                     {
                         Template = RazorTemplates.InviteUser,
                         Data = new InviteEditModel
                         {
-                            Email = Constants.SupportEmailAddress,
+                            Email = _config.AdminEmail,
                             FirstName = "Jim",
                             LastName = "Smith",
                             InviteRole = new InviteRoleViewModel { Role = Role.CompanyAdmin },
@@ -269,12 +269,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     new EmailPreviewItemModel
                     {
                         Template = RazorTemplates.RegistrationComplete,
-                        Data = new RegistrationCompleteViewModel { Email = Constants.SupportEmailAddress, FirstName = "Jim", Token = "ABC123" }
+                        Data = new RegistrationCompleteViewModel { Email = _config.AdminEmail, FirstName = "Jim", Token = "ABC123" }
                     },
                     new EmailPreviewItemModel
                     {
                         Template = RazorTemplates.ResetPassword,
-                        Data = new ResetPasswordRequestModel { Email = Constants.SupportEmailAddress, Token = Guid.NewGuid() }
+                        Data = new ResetPasswordRequestModel { Email = _config.AdminEmail, Token = Guid.NewGuid() }
                     },
                     new EmailPreviewItemModel
                     {
@@ -282,7 +282,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                         Data =  new RegistrationCompleteViewModel
                         {
                             FirstName = "Developer",
-                            Email = Constants.SupportEmailAddress,
+                            Email = _config.AdminEmail,
                             Token = "ABC123"
                         }
                     },

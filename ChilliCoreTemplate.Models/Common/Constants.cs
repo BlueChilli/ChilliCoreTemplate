@@ -14,8 +14,6 @@ namespace ChilliCoreTemplate.Models
 
         public const string DefaultTimezone = "Australia/Sydney";
 
-        public const string SupportEmailAddress = "hello@support.com";
-
         public const string AllowedGraphicExtensions = "jpg, jpeg, png, gif";
 
     }

@@ -292,7 +292,7 @@ namespace ChilliCoreTemplate.Web
                 if (this.ActionContext != null)
                 {
                     var queryString = this.ActionContext.HttpContext.Request.Query[key];
-                    return queryString.Any(s => String.Equals(s, value, StringComparison.OrdinalIgnoreCase));
+                    return queryString.Any(s => s.Same(value));
                 }
 
                 return false;

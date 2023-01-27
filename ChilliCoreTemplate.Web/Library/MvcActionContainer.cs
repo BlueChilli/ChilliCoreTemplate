@@ -1,4 +1,5 @@
 ﻿using ChilliCoreTemplate.Models;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
@@ -66,9 +67,9 @@ namespace ChilliCoreTemplate.Web
                 var parsed = new RouteValueDictionary(values);
                 foreach (var kvp in parsed)
                 {
-                    if (kvp.Key.Equals("area", StringComparison.OrdinalIgnoreCase)
-                        || kvp.Key.Equals("controller", StringComparison.OrdinalIgnoreCase)
-                        || kvp.Key.Equals("action", StringComparison.OrdinalIgnoreCase))
+                    if (kvp.Key.Same("area")
+                        || kvp.Key.Same("controller")
+                        || kvp.Key.Same("action"))
                         continue;
 
                     clone._routeValues[kvp.Key] = kvp.Value;

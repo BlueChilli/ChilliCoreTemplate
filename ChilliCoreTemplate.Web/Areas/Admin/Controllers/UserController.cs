@@ -117,7 +117,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = _accountService.Password_Reset(model, isAdmin: true);
+                var result = _accountService.Password_Reset(model, sendEmail: false);
                 if (result.Success)
                 {
                     model.Success = true;

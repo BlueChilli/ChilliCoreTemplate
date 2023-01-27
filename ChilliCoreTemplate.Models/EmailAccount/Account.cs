@@ -295,7 +295,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class NewSessionApiModel
     {
-        [Required, MaxLength(100), EmailAddressWeb, DataType(DataType.EmailAddress)]
+        [Required, MaxLength(100), EmailAddressWeb]
         public string Email { get; set; }
 
         [Required, DataType(DataType.Password), MaxLength(50)]

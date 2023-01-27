@@ -1,4 +1,6 @@
 ﻿using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +53,7 @@ namespace ChilliCoreTemplate.Web.Api
 
         public async Task Invoke(HttpContext httpContext)
         {
-            if (httpContext.Response.HasStarted || httpContext.Request.IsApiRequest() || !String.Equals(httpContext.Request.Method, "GET", StringComparison.OrdinalIgnoreCase))
+            if (httpContext.Response.HasStarted || httpContext.Request.IsApiRequest() || !httpContext.Request.Method.Same("GET"))
             {
                 await _next.Invoke(httpContext);
                 return;

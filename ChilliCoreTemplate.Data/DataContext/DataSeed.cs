@@ -1,14 +1,12 @@
-using System;
-using ChilliSource.Cloud.Core;
-using ChilliSource.Core.Extensions;
-
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using ChilliSource.Cloud.Core;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ChilliCoreTemplate.Data
 {
@@ -24,26 +22,17 @@ namespace ChilliCoreTemplate.Data
 
         public void Run(DataContext context)
         {
-            var adminEmail = $"{_env.EnvironmentName.ToLower()}@{GetDomain(_config.PublicUrl)}";
+            var adminEmail = $"{_env.EnvironmentName.ToLower()}@{new Uri(_config.PublicUrl).Domain()}";
             if (_env.IsProduction())
             {
                 //Note password will be the project guid in lowercase
-                adminEmail = $"admin@{GetDomain(_config.PublicUrl)}";
+                adminEmail = $"admin@{new Uri(_config.PublicUrl).Domain()}";
                 AddAdmin(context, adminEmail, _config.ProjectId.Value.ToString());
             }
             else
             {
                 AddAdmin(context, adminEmail, "123456");
             }
-        }
-
-        private static string GetDomain(string url)
-        {
-            var uri = new Uri(url);
-            var host = uri.DnsSafeHost;
-            var splits = host.Split('.');
-
-            return String.Join(".", splits.Skip(1));
         }
 
         private void AddAdmin(DataContext context, string adminEmail, string password)

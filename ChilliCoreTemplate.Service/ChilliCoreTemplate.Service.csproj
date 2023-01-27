@@ -16,7 +16,7 @@
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0008" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
     <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0042" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.3" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0004" />
     <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />    

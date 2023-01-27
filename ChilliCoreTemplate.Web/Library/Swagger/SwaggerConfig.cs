@@ -40,6 +40,7 @@ namespace ChilliCoreTemplate.Web
                     c.AddSecurityDefinition("userKeyHeader", new OpenApiSecurityScheme { Name = "UserKey", In = ParameterLocation.Header, Type = SecuritySchemeType.ApiKey, Description = "User session key for cookieless authentication (private)" });
 
                     c.OperationFilter<SwaggerOperationFilter>();
+                    c.SchemaFilter<AddSwaggerFoolProofSchemaFilter>();
                 });
 
             services.AddOptions<SwaggerUIOptions>()

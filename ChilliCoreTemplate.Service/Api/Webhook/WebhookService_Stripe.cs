@@ -293,7 +293,7 @@ namespace ChilliCoreTemplate.Service.Api
             if (model.AmountDue == 0) return ServiceResult.AsSuccess();
 
             Company company = Context.Companies.FirstOrDefault(c => c.StripeId == model.CustomerId);
-            if (company == null) ServiceResult.AsError($"Company not found for {model.CustomerId}: {stripeEvent.Id}");
+            if (company == null) return ServiceResult.AsError($"Company not found for {model.CustomerId}: {stripeEvent.Id}");
 
             var admin = _accountService.GetCompanyAdmin(company.Id);
             var emailModel = Mapper.Map<AccountViewModel>(admin);

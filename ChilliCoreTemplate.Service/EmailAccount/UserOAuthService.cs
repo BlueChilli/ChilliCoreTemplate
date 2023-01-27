@@ -130,7 +130,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 else
                 {
                     if (mode == OAuthMode.Register) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is already registered.", key: "ACCOUNT_ALREADYREGISTERED_ERROR");
-                    if (!existingUser.Email.Equals(sessionEmail, StringComparison.OrdinalIgnoreCase))
+                    if (!existingUser.Email.Same(sessionEmail))
                         return ServicesLibrary.AsError<User>(error: $"To link account with email address {existingUser.Email}, you must be logged in as this account", key: "ACCOUNT_LINK_ERROR");
                     user = existingUser;
                 }

@@ -1,12 +1,16 @@
 ﻿using ChilliCoreTemplate.Models;
+using ChilliSource.Cloud.Web;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web
@@ -69,6 +73,38 @@ namespace ChilliCoreTemplate.Web
                 throw new ApplicationException("No route was found");
 
             return url;
+        }
+        public static bool IsCurrent(this IMvcActionDefinition actionResult, IUrlHelper urlHelper)
+        {
+            var routeValues = actionResult.GetRouteValueDictionary();
+            return urlHelper.IsCurrent(routeValues);
+        }
+
+        public async static Task<bool> IsRefererAsync(this IMvcActionDefinition actionResult, HttpContext context)
+        {
+            if (!Uri.TryCreate(context.Request.Headers.Referer.FirstOrDefault(), UriKind.Absolute, out var uri))
+                return false;
+
+            var refererContext = new DefaultHttpContext();
+            refererContext.Request.Path = uri.PathAndQuery;
+
+            var routeContext = new RouteContext(refererContext);
+            var router = context.GetRouteData().Routers.First();
+
+            await router.RouteAsync(routeContext); //router updates routeContext
+
+            var routeValues = new RouteValueDictionary(actionResult.GetRouteValueDictionary());
+            var refererValues = routeContext.RouteData.Values;
+
+            if (RouteHelper.CurrentArea(routeValues).Same(RouteHelper.CurrentArea(refererValues)))
+            {
+                if (RouteHelper.CurrentController(routeValues).Same(RouteHelper.CurrentController(refererValues)))
+                {
+                    return RouteHelper.CurrentAction(routeValues).Same(RouteHelper.CurrentAction(refererValues));
+                }
+            }
+
+            return false;
         }
 
         public static async Task<IHtmlContent> ModalOpenLinkAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, string text, object routeValues, object htmlAttributes = null)

@@ -4,6 +4,7 @@ using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.LinqMapper;
+using ChilliSource.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,7 @@ namespace ChilliCoreTemplate.Service.Api
 
             if (userRole == null) return ServiceResult.AsError("User not found in company");
 
-            if (String.IsNullOrEmpty(userRole.User.Email) || !userRole.User.Email.Equals(model.Email, StringComparison.OrdinalIgnoreCase))
+            if (String.IsNullOrEmpty(userRole.User.Email) || !userRole.User.Email.Same(model.Email))
             {
                 if (_accountService.Exists(model.Email, model.Id)) return ServiceResult.AsError("Email address already exists");
             }

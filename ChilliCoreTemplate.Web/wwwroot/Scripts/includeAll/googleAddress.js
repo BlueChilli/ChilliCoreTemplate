@@ -173,7 +173,7 @@
                 return this.innerHTML == result;
             }).prop("selected", true);
         }
-        return this.val();
+        return this;
     };
 
     $.fn.googleAddress_join = function (components, types) {

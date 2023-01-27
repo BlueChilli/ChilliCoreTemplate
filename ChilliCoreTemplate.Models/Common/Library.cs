@@ -53,16 +53,6 @@ namespace ChilliCoreTemplate.Models
                 .ToList();
         }
 
-        public static DateTime PreviousDayOfWeek(this DateTime date, DayOfWeek previousWeekDay = DayOfWeek.Sunday)
-        {
-            int diff = date.DayOfWeek - previousWeekDay;
-            if (diff < 0)
-            {
-                diff += 7;
-            }
-            return date.AddDays(-diff).Date;
-        }
-
         public static string PhoneFormat(string phone, string region)
         {
             if (String.IsNullOrEmpty(phone)) return phone;

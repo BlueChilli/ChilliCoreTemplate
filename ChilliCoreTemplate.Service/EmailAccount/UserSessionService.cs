@@ -147,14 +147,20 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             var sessionGuid = GetGuidFromString(id);
 
-            var query = Context.UserSessions.Where(x => x.SessionId == sessionGuid);
+            var query = Context.UserSessions.AsNoTracking().Where(x => x.SessionId == sessionGuid);
             var session = isAsync ? await query.FirstOrDefaultAsync()
                                   : query.FirstOrDefault();
             if (session != null)
             {
                 Context.UserSessions.Remove(session);
-                _ = isAsync ? await Context.SaveChangesAsync()
-                            : Context.SaveChanges();
+                try
+                {
+                    _ = isAsync ? await Context.SaveChangesAsync()
+                                : Context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                }
             }
 
             _cache.Remove(id);
