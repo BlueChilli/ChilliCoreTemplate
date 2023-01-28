@@ -20,11 +20,12 @@ using ChilliSource.Core.Extensions;
 using Newtonsoft.Json;
 using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Core;
+using ChilliCoreTemplate.Models.Api;
 
 namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [RequireHttpsWeb, CustomAuthorize(Roles = AccountCommon.Administrator)]
+    [CustomAuthorize(Roles = AccountCommon.Administrator)]
     public class UserController : Controller
     {
         private AdminService _service;
@@ -52,7 +53,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var model = new UsersViewModel()
             {
                 //Accounts = _service.GetUsers(),
-                Statistics = _service.GetRegistrationStatistics()
+                //Statistics = _service.GetRegistrationStatistics()
             };
             return View("Users", model);
         }
@@ -65,6 +66,13 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var response = DataTablesResponse.Create(model, total, data.TotalCount, data.ToList());
 
             return new DataTablesJsonResult(response, true);
+        }
+
+        public JsonResult UsersJson(string term)
+        {
+            var users = _service.User_List(term, new ApiPaging(), null).Data;
+
+            return Json(new { Data = users.ToSelectList(v => v.Id, t => t.Name) });
         }
 
         [HttpPost]
@@ -222,7 +230,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public virtual ActionResult Activity()
         {
-            return View();
+            return View(new UserActivityModel());
         }
 
         public virtual IActionResult ActivityQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, EntityType? entityType, ActivityType? activityType)
@@ -346,7 +354,12 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         #region Emails
         public virtual ActionResult Emails()
         {
-            return View("Emails");
+            return this.ServiceCall(() => _accountService.Email_List())
+            .Always(m =>
+            {
+                return View(m);
+            })
+            .Call();
         }
 
         [HttpPost]
@@ -434,12 +447,12 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         #region Errors
         public ViewResult ErrorList()
         {
-            return View("ErrorList");
+            return View("ErrorList", new ErrorListModel());
         }
 
-        public IActionResult ErrorQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo)
+        public IActionResult ErrorQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, string search)
         {
-            var data = _accountService.Error_Search(model, dateFrom, dateTo);
+            var data = _accountService.Error_Search(model, dateFrom, dateTo, search);
             var count = _accountService.Error_Count();
 
             var response = DataTablesResponse.Create(model, count, data.TotalCount, data.ToList());

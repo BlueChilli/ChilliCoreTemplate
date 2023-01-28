@@ -9,8 +9,8 @@
             @if (!String.IsNullOrEmpty(Model.Title))
             {
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h2>@Model.Title</h2>
+                    <h5 class="modal-title">@Model.Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             }
             <div id="@Model.Menu.GetModalId()_content"></div>

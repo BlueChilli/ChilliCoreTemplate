@@ -6,7 +6,7 @@ var fs = require("fs"),
     cssmin = require("gulp-cssmin"),
     htmlmin = require("gulp-htmlmin"),
     terser = require("gulp-terser"),
-    sass = require('gulp-sass')(require('node-sass')),
+    sass = require('gulp-sass')(require('sass')),
     merge = require("merge-stream"),
     del = require("del"),
     stripJsonComments = require("strip-json-comments"),
@@ -48,7 +48,7 @@ gulp.task("min:css", function () {
     var tasks = getBundles(regex.css).map(function (bundle) {
         return gulp
             .src(bundle.inputFiles, { base: "." })
-            .pipe(sass().on("error", sass.logError))
+            .pipe(sass({ includePaths: 'node_modules' }).on("error", sass.logError))
             .pipe(concat(bundle.outputFileName))
             .pipe(cssmin())
             .pipe(gulp.dest("."));

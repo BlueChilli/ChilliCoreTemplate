@@ -22,9 +22,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     {
         public List<AccountViewModel> GetPendingInvites()
         {
-            var users = VisibleUsers().Where(a => a.Status == UserStatus.Invited)
-                            .OrderBy(a => a.InvitedDate)
-                            .Include(a => a.UserRoles);
+            var users = VisibleUsers().Where(a => a.UserRoles.Any(r => r.Status == RoleStatus.Invited))
+                .OrderBy(a => a.InvitedDate)
+                .Include(a => a.UserRoles);
 
             return GetList<AccountViewModel, User>(users);
         }
@@ -75,8 +75,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         private void Invite_Confirm(User user)
         {
-            user.Status = UserStatus.Activated;
-            user.ActivatedDate = DateTime.UtcNow;
+            if (user.UserRoles.Count == 1 && user.UserRoles[0].Status == RoleStatus.Invited)
+            {
+                user.UserRoles[0].Status = null;
+                user.Status = UserStatus.Activated;
+                user.ActivatedDate = DateTime.UtcNow;
+            }
 
             Mixpanel.SendAccountToMixpanel(user, "Invite confirmed");
             Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
@@ -189,11 +193,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                             Email = account.Email,
                             FirstName = account.FirstName,
                             LastName = account.LastName,
-                            InviteUrl = model.Status.Value == UserStatus.Invited ? _config.ResolveUrl("~/EmailAccount/ConfirmInvite", new UserTokenModel
-                            {
-                                Token = account.GetToken(UserTokenType.Invite),
-                                Email = account.Email
-                            }) : ""
+                            //InviteUrl = model.Status.Value == UserStatus.Invited ? _config.ResolveUrl("~/EmailAccount/ConfirmInvite", new UserTokenModel
+                            //{
+                            //    Token = account.GetToken(UserTokenType.Invite),
+                            //    Email = account.Email
+                            //}) : ""
                         });
                     }
                 }

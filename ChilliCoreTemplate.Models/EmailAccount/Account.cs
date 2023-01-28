@@ -1,20 +1,17 @@
+using ChilliCoreTemplate.Models.Api;
+using ChilliCoreTemplate.Models.Api.OAuth;
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Web;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security.Principal;
-using System.Web;
-using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.Http; using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
-using ChilliCoreTemplate.Models.Api;
-using ChilliSource.Cloud.Web;
-using ChilliCoreTemplate.Models.Api.OAuth;
 
 namespace ChilliCoreTemplate.Models.EmailAccount
 {
@@ -60,6 +57,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public DateTime? InvitedDate { get; set; }
 
         public UserStatus Status { get; set; }
+
+        public string StatusDescription => UserRoles.Count == 1 && UserRoles[0].Status.HasValue ? UserRoles[0].Status.GetDescription() : Status.GetDescription();
     }
 
     public class RoleSelectionViewModel
@@ -69,6 +68,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
         public Guid? CompanyGuid { get; set; }
+        public RoleStatus? Status { get; set; }
     }
 
     public class RegistrationViewModel : ProcessResultsViewModel, IValidatableObject
@@ -100,7 +100,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [Required, DataType(DataType.Password), Placeholder("Your password"), MinLength(6), MaxLength(50)]
         public string Password { get; set; }
 
-        [MustBeTrue(ErrorMessage = "Please accept terms and conditions")]
+        [MustBeTrue(ErrorMessage = "Please accept terms and conditions"), CheckBox]
         public bool AcceptTermsConditions { get; set; }
 
         public Role Roles { get; set; }
@@ -151,7 +151,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class RegistrationOAuthModel
     {
-        [MaxLength(50), DisplayName("Organisation name"), Required]
+        [MaxLength(50), DisplayName("Company name"), Required]
         public string CompanyName { get; set; }
 
         [Required]
@@ -509,6 +509,13 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string ProfilePhotoUrl { get; set; }
 
         public string ExternalId { get; set; }
+    }
+
+    public class UserBasicModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
     }
 
     public class ImageFileModel

@@ -1,6 +1,6 @@
 @model StatisticsModel
 
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         @foreach (var statistic in Model.StatisticsRow1)

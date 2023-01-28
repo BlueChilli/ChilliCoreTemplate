@@ -40,7 +40,7 @@ namespace ChilliCoreTemplate.Service
 
         protected int? CompanyId { get { return User.UserData() == null ? null : (int?)User.UserData().CompanyId; } }
 
-        protected bool IsAdmin { get { return User.IsInRole(AccountCommon.Administrator); } }
+        internal bool IsAdmin { get { return User.IsInRole(AccountCommon.Administrator); } }
 
         protected bool IsCompanyAdmin { get { return User.IsInRole(AccountCommon.CompanyAdmin); } }
 

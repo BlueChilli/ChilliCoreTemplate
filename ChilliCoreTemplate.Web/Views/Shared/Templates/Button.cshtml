@@ -6,6 +6,7 @@
     if (Model.IsButton)
     {
         attributes.Merge("class", "btn");
+        attributes.Merge("class", Model.Size.GetData<string>("css"));
         attributes.Merge("class", laddaClass);
         attributes.Merge("class", String.Format("btn-{0}", Model.Style.GetDescription().ToLower()));
         attributes.AddOrSkipIfExists("type", Model.Type.GetDescription().ToLower());
@@ -13,7 +14,7 @@
         {
             attributes.AddOrSkipIfExists("data-style", "expand-right");
             attributes.Merge("class", "ladda-button");
-            if (Model.Style == ButtonStyle.Default)
+            if (Model.Style == ButtonStyle.Neutral)
             {
                 attributes.AddOrSkipIfExists("data-spinner-color", "#000000");
             }

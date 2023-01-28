@@ -1,4 +1,5 @@
 using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace ChilliCoreTemplate.Web
             return htmlHelper.TemplateAsync(TemplateTypes.Button, options);
         }
 
+        public static Template_Button ButtonModalDismissOptions => new Template_Button { Text = "Cancel", IsLaddaButton = false, HtmlAttributes = new { data_bs_dismiss = "modal" } };
+
         public static Task<IHtmlContent> ButtonSubmitAsync(this IHtmlHelper htmlHelper, string text)
         {
             return htmlHelper.ButtonSubmitAsync(new Template_Button { Text = text });
@@ -22,9 +25,9 @@ namespace ChilliCoreTemplate.Web
 
         public static Task<IHtmlContent> ButtonSubmitAsync(this IHtmlHelper htmlHelper, Template_Button options = null)
         {
-            if (options == null) options = new Template_Button();
+            if (options == null) options = new Template_Button { Size = ButtonSize.Small };
             options.Type = ButtonType.Submit;
-            if (options.Style == ButtonStyle.Default) options.Style = ButtonStyle.Primary;
+            if (options.Style == ButtonStyle.Neutral) options.Style = ButtonStyle.Primary;
 
             return htmlHelper.TemplateAsync(TemplateTypes.Button, options);
         }
@@ -56,6 +59,8 @@ namespace ChilliCoreTemplate.Web
 
         public ButtonStyle Style { get; set; }
 
+        public ButtonSize Size { get; set; }
+
         public bool IsButton { get { return Type == ButtonType.Button || Type == ButtonType.Submit; } }
     }
 
@@ -68,11 +73,21 @@ namespace ChilliCoreTemplate.Web
 
     public enum ButtonStyle
     {
-        Default,
+        Neutral,
         Primary,
         Secondary,
         Danger,
         Warning
+    }
+
+    public enum ButtonSize
+    {
+        [Data("css", "btn-sm")]
+        Small,
+        [Data("css", "btn-md")]
+        Medium,
+        [Data("css", "btn-lg")]
+        Large
     }
 
 }

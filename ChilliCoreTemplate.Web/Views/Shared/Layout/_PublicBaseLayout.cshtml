@@ -1,0 +1,35 @@
+﻿@using ChilliSource.Cloud.Web.MVC.Misc;
+@inject ProjectSettings config
+
+<!DOCTYPE html>
+<html>
+<head>
+    @Html.BlueChilliAsciiMotif()
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@Html.GetCurrentMenu().Title | @config.ProjectDisplayName</title>
+    @if (config.GoogleAnalytics.Enabled == true)
+    {
+        @using (await Html.ContainerTemplateAsync(TemplateTypes.GoogleAnalytics))
+        {
+            @:ga('send', 'pageview');
+        }
+    }
+    <link rel="stylesheet" href="~/bundles/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/bundles/stylebundle.min.css" asp-append-version="true" />
+    @RenderSection("styles", required: false)
+    @await Html.PartialAsync("~/Views/Shared/Layout/_Icons.cshtml")
+</head>
+<body class="public-body">
+    @Html.RenderBundle("~/bundles/scriptbundle.min.js")
+    <div>
+        @RenderBody()
+    </div>
+    @RenderSection("scripts", required: false)
+    @Html.RenderCustomSection("scripts")
+    @RenderSection("modal", required: false)
+    @await Html.PartialAsync("Layout/_MiniProfiler")
+</body>
+</html>

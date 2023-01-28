@@ -1,6 +1,6 @@
 @model IFieldInnerTemplateModel<SelectFieldTemplateOptions>
 @{
-    Model.HtmlAttributes.Merge("class", "form-control");
+    Model.HtmlAttributes.Merge("class", "form-select");
     var optGroup = "";
 }
 <select id="@Model.Id" name="@Model.Name" @Model.HtmlAttributes.ToAttributeHtmlContent()>

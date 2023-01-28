@@ -1,25 +1,23 @@
 
 using ChilliCoreTemplate.Data;
-using ChilliCoreTemplate.Models.Admin;
-using ChilliCoreTemplate.Service.EmailAccount;
-using ChilliCoreTemplate.Models.EmailAccount;
-using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Data.EmailAccount;
+using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Admin;
+using ChilliCoreTemplate.Models.Api;
+using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Service.EmailAccount;
+using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.LinqMapper;
+using ChilliSource.Core.Extensions;
+using DataTables.AspNet.Core;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
-using DataTables.AspNet.Core;
-using ChilliSource.Core.Extensions;
-
-using ChilliSource.Cloud.Core;
-using System.Security.Principal;
+using System.Linq;
 using System.Linq.Expressions;
-using LinqKit;
-using ChilliSource.Cloud.Core.LinqMapper;
+using System.Security.Principal;
 
 namespace ChilliCoreTemplate.Service.Admin
 {
@@ -41,8 +39,6 @@ namespace ChilliCoreTemplate.Service.Admin
                 account.Status = model.Status;
                 account.UpdatedDate = DateTime.UtcNow;
 
-                if (account.Status == UserStatus.Invited) account.InvitedDate = DateTime.UtcNow;
-
                 Context.SaveChanges();
             }
         }      
@@ -56,7 +52,7 @@ namespace ChilliCoreTemplate.Service.Admin
 
         public PagedList<UserSummaryViewModel> Users_Query(IDataTablesRequest model)
         {
-            Expression<Func<User, bool>> filter = (User x) => (x.Status != UserStatus.Deleted);
+            Expression<Func<User, bool>> filter = (User x) => true;
             if (!String.IsNullOrEmpty(model.Search.Value))
             {
                 filter = filter.And(x => x.FirstName.Contains(model.Search.Value) || x.LastName.Contains(model.Search.Value) || x.Email.Contains(model.Search.Value) || x.Phone.Contains(model.Search.Value));
@@ -133,6 +129,22 @@ namespace ChilliCoreTemplate.Service.Admin
             return AccountService.VisibleUsers(this)
                 .Where(a => a.Status != UserStatus.Deleted)
                 .Count();
+        }
+
+        public ApiPagedList<DataLinkModel> User_List(string searchTerm, ApiPaging paging, int? id)
+        {
+            var query = AccountService.VisibleUsers(this);
+
+            if (!String.IsNullOrEmpty(searchTerm))
+            {
+                if (int.TryParse(searchTerm, out var userId)) query = query.Where(x => x.Id == userId);
+                else query = query.Where(x => x.FullName.Contains(searchTerm));
+            }
+            else if (id.HasValue) query = query.Where(x => x.Id == id.Value);
+
+            return query.Materialize<User, DataLinkModel>()
+                .Query(q => q.OrderBy(x => x.Name))
+                .ToPagedList(paging);
         }
 
         public StatisticsModel GetUsersStatistics()

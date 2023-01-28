@@ -1,5 +1,5 @@
 @model FieldTemplateModel
-<div class="form-group row">
+<div class="row form-group mb-3">
     <label class="col-md-3 col-form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName @if(!String.IsNullOrEmpty(Model.HelpText)) { <br/><small>@Html.Raw(Model.HelpText)</small>   }</label>
     <div class="col-md-@Model.FieldColumnSize.GetValueOrDefault(9)">
         <div class="row">

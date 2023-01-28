@@ -508,6 +508,12 @@ namespace ChilliCoreTemplate.Models
         }
 
         /// <summary>
+        /// Gets the allowed hosts (defaults to *). Comma delimited.
+        /// https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.forwardedheadersoptions.allowedhosts
+        /// </summary>
+        public string[] AllowedHosts => (_section.GetString("AllowedHosts") ?? "*").Split(',');
+
+        /// <summary>
         /// Gets the bucket name
         /// </summary>
         public bool UnderELB => _section.GetValue<bool>("UnderELB");
@@ -551,6 +557,8 @@ namespace ChilliCoreTemplate.Models
 
         public OAuthProvider Provider => EnumHelper.Parse<OAuthProvider>(_section.GetString("Provider") ?? "Unknown");
 
+        public string AppBundleId => _section.GetString("AppBundleId");
+
         public string ClientId => _section.GetString("ClientId");
 
         public string ClientSecret => _section.GetString("ClientSecret");
@@ -558,6 +566,10 @@ namespace ChilliCoreTemplate.Models
         public OAuthJWT ClientJWT => _section.GetSection("ClientJWT").Get<OAuthJWT>();
 
         public string Scopes => _section.GetString("Scopes");
+
+        public bool AutoLink => _section.GetValue<bool>("AutoLink");
+
+        public bool AutoSignInUp => _section.GetValue<bool>("AutoSignInUp");
 
     }
     public class GoogleApisSection

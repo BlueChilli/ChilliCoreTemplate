@@ -1,18 +1,16 @@
 @model InviteManageModel
 
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
-@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
-{
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
+<page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
-    <div class="ibox">
-        <div class="ibox-title">
-            <h5>Invite user</h5>
+    <box>
+        <box-title title="Invite user">
             @*TODO: modal*@
             @*<div class="float-right-not-xs">
-                    <a class="btn btn-default btn-sm m-t-n-xs" href="javascript:@Html.ModalOpen(Mvc.Admin.User_InviteUpload)">Upload</a>
-                </div>*@
-        </div>
-        <div class="ibox-content">
+            <a class="btn btn-neutral btn-sm m-t-n-xs" href="javascript:@Html.ModalOpen(Mvc.Admin.User_InviteUpload)">Upload</a>
+            </div>*@
+        </box-title>
+        <box-content>
             @using (Html.BeginFormCustom(Mvc.Admin.User_Invite, htmlAttributes: new { enctype = "multipart/form-data" }))
             {
                 @Html.ValidationSummary()
@@ -22,8 +20,8 @@
                 @await Html.FieldTemplateForAsync(m => m.Email)
 
                 @await Html.FieldTemplateForAsync(m => m.InviteRole.Role, fieldOptions: new SelectFieldTemplateOptions() { SelectList = Model.RoleSelectionOptions })
-                <div id="OrganisationAdminDetails" class="hide">
-                    @await Html.FieldTemplateForAsync(m => m.InviteRole.CompanyId, new TemplateOptions() { Label = "Company", IsMandatory = true }, fieldOptions: new SelectFieldTemplateOptions() { SelectList = Model.InviteRole.CompanyList })
+                <div id="CompanyAdminDetails" class="hide">
+                    @await Html.FieldTemplateForAsync(m => m.InviteRole.CompanyId, new TemplateOptions() { Label = "Company", IsMandatory = true, FieldSize = FieldTemplateSize.Large }, fieldOptions: new SelectFieldTemplateOptions() { SelectList = Model.InviteRole.CompanyList })
                     @*@await Html.FieldTemplateForAsync(m => m.InviteRole.CompanyName, new TemplateOptions() { Label = "Company name", IsMandatory = true })*@
                 </div>
 
@@ -39,16 +37,13 @@
                     </div>
                 </div>
             }
-        </div>
-    </div>
-    <div class="ibox">
-        <div class="ibox-title">
-            <h5>Pending invitations</h5>
-        </div>
-        <div class="ibox-content">
-
+        </box-content>
+    </box>
+    <box>
+        <box-title>Pending invitations</box-title>
+        <box-content>
             <table class="table table-striped">
-                <thead>
+                <thead class="table-light">
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
@@ -77,37 +72,36 @@
                     }
                 </tbody>
             </table>
-        </div>
-    </div>
-}
-@section modal
-    {
-    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_InviteUpload, Title = "Upload invitations" })
-}
-
+        </box-content>
+    </box>
+</page>
 @section scripts
-    {
+{
     <script>
-        function checkOrganisationAdminRole() {
+        function checkCompanyAdminRole() {
             var val = $('#@Html.IdFor(m => m.InviteRole.Role)').val();
-            if (val === '@Role.CompanyAdmin.ToString()' || val === '@Role.CompanyUser.ToString()') {
-                $('#OrganisationAdminDetails').removeClass('hide');
+            if (val === '@Role.CompanyAdmin.ToString()') {
+                $('#CompanyAdminDetails').removeClass('hide');
             } else {
-                $('#OrganisationAdminDetails').addClass('hide');
+                $('#CompanyAdminDetails').addClass('hide');
             }
         }
 
         $(function () {
-            $('.i-checks').iCheck({
-                checkboxClass: 'icheckbox_square-green',
-                radioClass: 'iradio_square-green'
-            });
-
-            checkOrganisationAdminRole();
+            checkCompanyAdminRole();
 
             $('#@Html.IdFor(m => m.InviteRole.Role)').on('change', function () {
-                checkOrganisationAdminRole();
+                checkCompanyAdminRole();
             });
+
+            $('#@Html.IdFor(m => m.InviteRole.CompanyId)').chosen({
+                width: "100%",
+                allow_single_deselect: true
+            })
         });
     </script>
+}
+@section modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_InviteUpload, Title = "Upload invitations" })
 }

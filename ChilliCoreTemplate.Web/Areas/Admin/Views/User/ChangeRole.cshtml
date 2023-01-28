@@ -15,7 +15,7 @@
     </div>
     <div class="modal-footer">
         @await Html.ButtonSubmitAsync("Submit")
-        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+        @await Html.ButtonAsync(FieldTemplateHelper.ButtonModalDismissOptions)
     </div>
 }
 <script>
@@ -23,7 +23,7 @@
 
     $('#@Html.IdFor(m => m.CompanyId)').select2({
         width: '100%',
-        placeholder: 'Select company',
+        placeholder: 'Select Company',
         dropdownParent: $("#@Mvc.Admin.User_ChangeRole.GetModalId()"),
         ajax: {
             url: '@Url.Action("Select2Query", "Company")',

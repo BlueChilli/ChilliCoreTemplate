@@ -1,0 +1,73 @@
+@inject ProjectSettings config
+@inject IWebHostEnvironment env;
+@using System.Linq;
+@{
+    var mainMenu = new MenuGroup { RootMenus = MenuConfigByRole.GetRootMenus(this.Context).Where(a => !a.MenuHidden) };
+}
+<nav class="navbar show navbar-vertical h-lg-screen navbar-expand-lg px-0 py-3 navbar-light bg-white border-bottom border-bottom-lg-0 border-end-lg" id="sidebar">
+    <div class="container-fluid">
+        <!-- Toggler -->
+        <button class="navbar-toggler ms-n2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Brand -->
+        <a class="navbar-brand py-lg-2 mb-lg-5 px-lg-6 me-0" href="/">
+            <img src="@Url.Content("~/Images/Generic/GenericLogo.png?height=40")" alt="...">
+        </a>
+        @if (User.IsAuthenticated())
+        {
+            var userData = User.UserData();
+            <!-- User menu (mobile) -->
+            <div class="navbar-user d-lg-none">
+                <!-- Dropdown -->
+                <div class="dropdown">
+                    <!-- Toggle -->
+                    <a href="#" id="sidebarAvatar" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="avatar-parent-child">
+                            <img alt="..." src="@Html.Resizer().ImageUrl(userData.ProfilePhotoPath, new ImageSharpCommand { Width = 25, Height = 25 }, alternativeImage: "~/Images/generic/default-profile-image.jpg")" class="avatar avatar-sm rounded-circle">
+                            <span class="avatar-child avatar-badge bg-success"></span>
+                        </div>
+                    </a>
+                    <!-- Menu -->
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="sidebarAvatar">
+                        <a class="dropdown-item" mvc-modal="Mvc.Root.EmailAccount_ChangeDetails"><i class="bi bi-pencil me-3"></i>Profile</a>
+                        <a class="dropdown-item" mvc-modal="Mvc.Root.EmailAccount_ChangePassword"><i class="bi bi-lock me-3"></i>Password</a>
+                        <hr class="dropdown-divider">
+                        <a class="dropdown-item" mvc-action="@(Mvc.Root.EmailAccount_Logout)"><i class="bi bi-box-arrow-left me-3"></i>Logout</a>
+                    </div>
+                </div>
+            </div>            
+        }
+        <!-- Collapse -->
+        <div class="collapse navbar-collapse" id="sidebarCollapse">
+            <!-- Navigation -->
+            @await Html.PartialAsync("_LeftMenuGroup.cshtml", mainMenu)
+
+            <!-- Push content down -->
+            <div class="mt-auto"></div>
+
+            @if (User.IsAuthenticated())
+            {
+                var userData = User.UserData();
+            <!-- User menu -->
+                <div class="my-4 px-lg-6 position-relative">
+                    <div class="dropup w-full">
+                        <button class="btn-neutral d-flex w-full py-3 ps-3 pe-4 align-items-center shadow shadow-3-hover rounded-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="flex-fill text-start text-sm font-semibold">
+                                &copy; @DateTime.UtcNow.Year <strong>@config.ProjectDisplayName</strong> @if (!env.IsProduction()) { @env.EnvironmentName }
+                            </span>
+                            <span>
+                                <i class="bi bi-chevron-expand text-white text-opacity-70"></i>
+                            </span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end w-full">
+                            <a class="dropdown-item" href="https://www.bluechilli.com/" target="_blank"><img class="me-1" src="@Url.Content("~/Images/Icons/apple-touch-icon.png?w=18")">powered by BlueChilli</a>
+                            <a class="dropdown-item" href="https://itinerant.digital/" target="_blank"><img class="me-1" src="@Url.Content("~/Images/Icons/itinerantdigital.png?w=18")">built by Itinerant Digital</a>
+                            <a class="dropdown-item" href="https://www.beechrysdesign.com/" target="_blank"><img class="me-1" src="@Url.Content("~/Images/Icons/bcdesign.png?w=18")">design by Bee Chrys Design</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</nav>

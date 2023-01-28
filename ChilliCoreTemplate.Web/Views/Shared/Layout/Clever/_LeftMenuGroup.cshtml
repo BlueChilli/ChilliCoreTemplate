@@ -1,0 +1,17 @@
+@model MenuGroup
+<ul class="navbar-nav">
+    @if(Model.Name != null)
+    {
+    <li>
+        <span class="nav-link text-xs font-semibold text-uppercase text-muted ls-wide">
+            @Model.Name
+        </span>
+    </li>        
+    }
+    @foreach (var menu in Model.RootMenus)
+    {
+        @await Html.PartialAsync("_LeftMenu.cshtml", menu);
+    }
+</ul>
+<!-- Divider -->
+<hr class="navbar-divider my-5 opacity-70">

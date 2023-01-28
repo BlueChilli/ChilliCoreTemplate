@@ -1,13 +1,24 @@
-﻿using ChilliSource.Core.Extensions;
+﻿using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Models.EmailAccount
 {
+    public class ErrorListModel
+    {
+        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.Date.ToTimezone().AddDays(-7);
+        public DateTime? DateTo { get; set; } = DateTime.UtcNow.Date.ToTimezone();
+
+        [Placeholder("Search"), MaxLength(100)]
+        public string Search { get; set; }
+    }
+
     public class ErrorLogSummaryModel
     {
         public int Id { get; set; }

@@ -11,7 +11,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 {
 
     [Area("Admin")]
-    [RequireHttpsWeb, CustomAuthorize(Roles = AccountCommon.Administrator)]
+    [CustomAuthorize(Roles = AccountCommon.Administrator)]
     public class DefaultController : Controller
     {
 

@@ -215,6 +215,7 @@ namespace ChilliCoreTemplate.Web
             {
                 options.EnableEndpointRouting = false;
                 options.AddFlagsEnumModelBinderProvider();
+                options.AddStringModelBinderProvider();
             })
             .AddControllersAsServices()
             .AddNewtonsoftJson()
@@ -235,6 +236,7 @@ namespace ChilliCoreTemplate.Web
                 {
                     options.AllowInputFormatterExceptionMessages = env.IsDevelopment();
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    options.SerializerSettings.Converters.Add(new TrimStringJsonConverter());
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
 
@@ -245,13 +247,15 @@ namespace ChilliCoreTemplate.Web
                 });
 
             //Needed when under ELB
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardLimit = 2;
-                options.ForwardedHeaders = ForwardedHeaders.All;
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-            });
+            services.AddOptions<ForwardedHeadersOptions>()
+                 .Configure<ProjectSettings>((options, settings) =>
+                 {
+                     options.ForwardLimit = 2;
+                     options.ForwardedHeaders = ForwardedHeaders.All;
+                     options.AllowedHosts = settings.Hosting.AllowedHosts;
+                     options.KnownNetworks.Clear();
+                     options.KnownProxies.Clear();
+                 });
 
             services.Configure<RouteOptions>(options =>
             {

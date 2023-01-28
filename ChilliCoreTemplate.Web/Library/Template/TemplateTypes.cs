@@ -18,11 +18,12 @@ namespace ChilliCoreTemplate.Web
     }
 
     public class FieldTemplateLayouts
-    {        
+    {
         public static readonly FieldTemplateLayout StandardField = new FieldTemplateLayout("FieldTemplateLayouts/StandardField");
         public static readonly FieldTemplateLayout VerticalField = new FieldTemplateLayout("FieldTemplateLayouts/VerticalField");
         public static readonly FieldTemplateLayout OptionalField = new FieldTemplateLayout("FieldTemplateLayouts/OptionalField");
         public static readonly FieldTemplateLayout ModalField = new FieldTemplateLayout("FieldTemplateLayouts/ModalField");
         public static readonly FieldTemplateLayout HiddenField = new FieldTemplateLayout("FieldTemplateLayouts/HiddenField");
+        public static readonly FieldTemplateLayout FloatingField = new FieldTemplateLayout("FieldTemplateLayouts/FloatingField");
     }
 }

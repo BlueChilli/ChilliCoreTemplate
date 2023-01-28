@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amdi.Models
+namespace ChilliCoreTemplate.Models
 {
     public class DataLinkModel
     {

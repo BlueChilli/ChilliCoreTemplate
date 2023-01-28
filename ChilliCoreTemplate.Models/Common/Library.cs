@@ -1,6 +1,8 @@
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Phone;
 using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Routing;
+using NodaTime;
 using NodaTime.TimeZones;
 using PhoneNumbers;
 using System;
@@ -18,6 +20,9 @@ namespace ChilliCoreTemplate.Models
 
 
         public const string DefaultTimezone = "Australia/Sydney";
+
+        public static DateTimeZone DefaultDateTimezone => DateTimeZoneProviders.Tzdb[DefaultTimezone];
+
 
         //TODO use if possible current user timezone
         public static DateTime ToTimezone(this DateTime dt)
@@ -71,6 +76,16 @@ namespace ChilliCoreTemplate.Models
             {
                 return phone;
             }
+        }
+
+        public static IReadOnlyDictionary<string, object> AddRouteValues(this IReadOnlyDictionary<string, object> route, IDictionary<string, string> routeValues)
+        {
+            if (routeValues == null || routeValues.Count == 0) return route;
+
+            var result = new RouteValueDictionary(route);
+            foreach (var set in routeValues) result[set.Key] = set.Value;
+
+            return result;
         }
 
     }

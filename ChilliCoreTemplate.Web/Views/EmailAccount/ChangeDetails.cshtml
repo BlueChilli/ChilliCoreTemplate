@@ -1,27 +1,23 @@
 @model AccountDetailsEditModel
-@{
-    Layout = "~/Views/Shared/Layout/_Layout.cshtml";
-}
-
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { })
-@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
+@using (Html.BeginFormCustom(Mvc.Root.EmailAccount_ChangeDetails, htmlAttributes: new { enctype = "multipart/form-data" }))
 {
-    @await Html.TemplateAsync(TemplateTypes.PageMessage)
-    using (Html.BeginFormCustom(Mvc.Root.EmailAccount_ChangeDetails, htmlAttributes: new { enctype = "multipart/form-data" }))
-    {
-        @Html.ValidationSummary()
-        <div class="ibox">
-            <div class="ibox-title">
-                <h5>Account details</h5>
-            </div>
-            <div class="ibox-content">
-                @await Html.FieldTemplateForAsync(m => m.FirstName)
-                @await Html.FieldTemplateForAsync(m => m.LastName)
-                @await Html.FieldTemplateForAsync(m => m.Email)
-
-                @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.ProfilePhotoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 200, Height = 200, Quality = 70, Mode = ResizeMode.Pad }) { AlternativeImage = "~/Images/generic/default-profile-image.jpg" })
-            </div>
-        </div>
-        @await Html.TemplateAsync(TemplateTypes.PageButtons, new Template_PageButtons());
-    }
+<div class="modal-body">
+    @Html.ValidationSummary()
+    @await Html.FieldTemplateForAsync(m => m.Email, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.FirstName, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.LastName, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.Phone, FieldTemplateLayouts.ModalField)
+    @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, new TemplateOptions { Template = FieldTemplateLayouts.ModalField, FieldSize = FieldTemplateSize.Large, IsMandatory = true },
+        fieldOptions: new FieldImageUploadWithPreviewOptions(Model.ProfilePhotoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 100, Height = 100, Quality = 70, Mode = ResizeMode.Pad }) { AlternativeImage = "~/Images/generic/default-profile-image.jpg" })
+</div>
+<div class="modal-footer">
+    @await Html.ButtonSubmitAsync("Update")
+    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">Cancel</button>
+</div>
 }
+@Html.RenderCustomSection("scripts")
+<script>
+    $('#@Mvc.Root.EmailAccount_ChangeDetails.GetFormId()').ajaxForm({ target: '#@Mvc.Root.EmailAccount_ChangeDetails.GetModalId()_content' }).done(function () {
+        window.location.reload();
+    });
+</script>

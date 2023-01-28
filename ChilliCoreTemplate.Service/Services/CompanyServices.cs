@@ -1,28 +1,35 @@
 using AutoMapper;
+using ChilliCoreTemplate.Data.EmailAccount;
+using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Api;
+using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.LinqMapper;
 using ChilliSource.Cloud.Web;
 using ChilliSource.Cloud.Web.MVC;
+using DataTables.AspNet.Core;
 using Microsoft.EntityFrameworkCore;
-using ChilliCoreTemplate.Data;
-using ChilliCoreTemplate.Data.EmailAccount;
-using ChilliCoreTemplate.Models;
-using ChilliCoreTemplate.Models.EmailAccount;
-using ChilliCoreTemplate.Service.EmailAccount;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
-using DataTables.AspNet.Core;
-using ChilliCoreTemplate.Models.Api;
 
 namespace ChilliCoreTemplate.Service
 {
     public partial class Services
     {
-        private IQueryable<Company> Company_Authorised()
+        internal IQueryable<Company> Company_Authorised()
         {
             var query = Context.Companies;
+
+            if (IsAdmin) return query;
+
+            return query.Where(x => !x.IsDeleted);
+        }
+
+        internal IQueryable<Company> Company_Authorised(int id)
+        {
+            var query = Context.Companies.Where(x => x.Id == id);
 
             if (IsAdmin) return query;
 
@@ -126,7 +133,6 @@ namespace ChilliCoreTemplate.Service
             if (company == null && id.GetValueOrDefault(0) != 0) return ServiceResult<CompanyEditModel>.AsError("Company not found");
 
             var model = Mapper.Map<CompanyEditModel>(company) ?? new CompanyEditModel { ApiKey = Guid.NewGuid(), Timezone = "Australia/Sydney" };
-            model.CompanyList = Context.Companies.Where(x => x.Id != id && x.MasterCompanyId == null && !x.IsDeleted).Select(x => new { x.Id, x.Name }).OrderBy(x => x.Name).ToSelectList(v => v.Id, t => t.Name);
             model.TimezoneList = CommonLibrary.TimeZones().ToSelectList(v => v.ZoneId, t => $"{t.CountryName} {(String.IsNullOrEmpty(t.Comment) ? "" : " - " + t.Comment)}");
 
             return ServiceResult<CompanyEditModel>.AsSuccess(model);
@@ -194,7 +200,7 @@ namespace ChilliCoreTemplate.Service
             return query;
         }
 
-        public ApiPagedList<CompanyViewModel> Company_List(string searchTerm, ApiPaging paging, int? id)
+        public ApiPagedList<DataLinkModel> Company_List(string searchTerm, ApiPaging paging, int? id)
         {
             var query = this.Company_Authorised();
 
@@ -205,7 +211,7 @@ namespace ChilliCoreTemplate.Service
             }
             else if (id.HasValue) query = query.Where(x => x.Id == id.Value);
 
-            return query.Materialize<Company, CompanyViewModel>()
+            return query.Materialize<Company, DataLinkModel>()
                 .Query(q => q.OrderBy(x => x.Name))
                 .ToPagedList(paging);
         }

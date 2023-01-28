@@ -20,6 +20,7 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition Public_ConfirmationModal = MvcAction();
 
         public readonly IMvcActionDefinition EmailAccount_Login = MvcAction();
+        public readonly IMvcActionDefinition EmailAccount_LoginOAuth = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_LoginWithToken = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_ChooseRole = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_SelectRole = MvcAction();
@@ -62,6 +63,7 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition Company_Admin_Detail = MvcAction();
         public readonly IMvcActionDefinition Company_Admin_Add = MvcAction();
         public readonly IMvcActionDefinition Company_Admin_Remove = MvcAction();
+        public readonly IMvcActionDefinition Company_Admin_Resend = MvcAction();
         public readonly IMvcActionDefinition Company_Impersonate = MvcAction();
 
         public readonly IMvcActionDefinition User_Users = MvcAction();
@@ -105,16 +107,6 @@ namespace ChilliCoreTemplate.Web
         public CompanyActions() : base(area: "Company") { }
 
         public readonly IMvcActionDefinition Default = MvcAction();
-
-        public readonly IMvcActionDefinition Location = MvcAction();
-        public readonly IMvcActionDefinition Location_List = MvcAction();
-        public readonly IMvcActionDefinition Location_Edit = MvcAction();
-        public readonly IMvcActionDefinition Location_Detail = MvcAction();
-        public readonly IMvcActionDefinition Location_Delete = MvcAction();
-        public readonly IMvcActionDefinition Location_User_List = MvcAction();
-        public readonly IMvcActionDefinition Location_User_Add = MvcAction();
-        public readonly IMvcActionDefinition Location_User_Delete = MvcAction();
-        public readonly IMvcActionDefinition Location_User_Detail = MvcAction();
 
         public readonly IMvcActionDefinition User_List = MvcAction();
         public readonly IMvcActionDefinition User_ListData = MvcAction();

@@ -1,0 +1,106 @@
+@{
+    var userData = this.User.UserData();
+}
+<nav class="navbar navbar-light position-lg-sticky top-lg-0 d-none d-lg-block overlap-10 flex-none bg-white border-bottom px-0 py-3" id="topbar">
+    <div class="container-fluid">
+        @if (userData != null)
+        {
+            <p>@(userData.CompanyId.HasValue ? userData.CompanyName : "Super admin")</p>
+            if (userData.Impersonator != null)
+            {
+                <a mvc-action="(userData.CompanyId.HasValue ? Mvc.Company.User_UndoImpersonate : Mvc.Admin.User_UndoImpersonate)"><span class="text-muted"> Impersonating as <b> @userData.Email</b></span> Undo</a>
+            }
+        }
+@*        <div class="hstack gap-2">
+            <button type="button" class="btn btn-sm btn-square bg-tertiary bg-opacity-20 bg-opacity-100-hover text-tertiary text-white-hover">C</button>
+            <button type="button" class="btn btn-sm btn-square bg-primary bg-opacity-20 bg-opacity-100-hover text-primary text-white-hover">D</button>
+            <button type="button" class="btn btn-sm btn-square bg-warning bg-opacity-20 bg-opacity-100-hover text-warning text-white-hover">A</button>
+            <button type="button" class="btn btn-sm btn-square btn-neutral border-dashed shadow-none">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+*@
+@*        <!-- Form -->
+        <form class="form-inline ms-auto me-4 d-none d-md-flex">
+            <div class="input-group input-group-inline shadow-none">
+                <span class="input-group-text border-0 shadow-none ps-0 pe-3">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" class="form-control form-control-flush" placeholder="Search" aria-label="Search">
+            </div>
+        </form>
+*@
+        <!-- Right menu -->
+        <div class="navbar-user d-none d-sm-block">
+            <div class="hstack gap-3 ms-4">
+@*                <div class="dropdown">
+                    <a href="#" class="nav-link px-3 text-base text-muted text-opacity-70 text-opacity-100-hover" id="dropdown-notifications" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell-fill"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end px-2" aria-labelledby="dropdown-notifications">
+                        <div class="dropdown-item d-flex align-items-center">
+                            <h6 class="dropdown-header p-0 m-0 font-semibold">Notifications</h6>
+                            <a href="#" class="text-sm font-semibold ms-auto">Clear all</a>
+                        </div>
+                        {% for item in notifications %}
+                        <div class="dropdown-item py-3 d-flex">
+                            <div>
+                                {% if item.avatar.type == 'image' %}
+                                <img alt="..." src="{{ item.avatar.img.src | url  }}" class="avatar rounded-circle" />
+                                {% else %}
+                                <div class="avatar bg-{{ item.avatar.color }} text-white rounded-circle">
+                                    {{ item.avatar.text }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-fill ms-3">
+                                <div class="text-sm lg-snug w-64 text-wrap">
+                                    <a href="#" class="font-semibold text-heading text-primary-hover">Robert</a> sent a message to <a href="#" class="font-semibold text-heading text-primary-hover">Webpixels</a>
+                                </div>
+                                <span class="text-muted text-xs">30 mins ago</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item py-2 text-center">
+                            <a href="#" class="font-semibold text-muted text-primary-hover">View all</a>
+                        </div>
+                    </div>
+                </div>
+*@                
+                @if (userData != null)
+                {
+                <div class="dropdown">
+                    <a class="d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                        <div>
+                            <div class="avatar avatar-sm bg-warning rounded-circle text-white">
+                                <img alt="..." src="@Html.Resizer().ImageUrl(User.UserData().ProfilePhotoPath, new ImageSharpCommand { Width = 25, Height = 25 }, alternativeImage: "~/Images/generic/default-profile-image.jpg")">
+                            </div>
+                        </div>
+                        <div class="d-none d-sm-block ms-3">
+                            <span class="h6">@User.UserData().FirstName</span>
+                        </div>
+                        <div class="d-none d-md-block ms-md-2">
+                            <i class="bi bi-chevron-down text-muted text-xs"></i>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <div class="dropdown-header">
+                            <span class="d-block text-sm text-muted mb-1">Signed in as</span>
+                            <span class="d-block text-heading font-semibold">@User.Identity.Name</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" mvc-action="Mvc.Root.Entry_Index"><i class="bi bi-house me-3"></i>Home</a>
+                            <a class="dropdown-item" mvc-modal="Mvc.Root.EmailAccount_ChangeDetails"><i class="bi bi-pencil me-3"></i>Profile</a>
+                            <a class="dropdown-item" mvc-modal="Mvc.Root.EmailAccount_ChangePassword"><i class="bi bi-lock me-3"></i>Password</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" mvc-action="Mvc.Root.EmailAccount_Logout"><i class="bi bi-box-arrow-left me-3"></i>Logout</a>
+                        </a>
+                    </div>
+                </div>                    
+                }
+            </div>
+        </div>
+    </div>
+</nav>

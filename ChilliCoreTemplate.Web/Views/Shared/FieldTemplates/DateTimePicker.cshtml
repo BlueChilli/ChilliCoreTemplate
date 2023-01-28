@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="input-group">
-            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
             <input id="@(Model.Id)_Date" name="@(Model.Name)_DateTime" value="@dateValue" type="text" @dateAttributes.ToAttributeHtmlContent()>
             @if (Model.Options.PostAddOn != null)
             {
@@ -29,7 +29,7 @@
     <div class="col-md-6">
         <div class="input-group clockpicker" data-autoclose="true">
             <input id="@(Model.Id)_Time" name="@(Model.Name)_DateTime" value="@timeValue" type="text" @timeAttributes.ToAttributeHtmlContent()>
-            <span class="input-group-addon"><i class="fa fa-clock"></i></span>
+            <span class="input-group-text"><i class="fa fa-clock"></i></span>
         </div>
     </div>
 </div>

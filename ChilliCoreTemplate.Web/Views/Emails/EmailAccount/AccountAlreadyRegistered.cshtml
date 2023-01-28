@@ -14,9 +14,8 @@
     @using (builder.BeginHeader())
     {
         @builder.H1("Oops, you're already registered with us")
-        @builder.H2(String.Format("Try signing in with the email you used, or if you cannot remember your login details <a target=\"_blank\" href=\"{0}\">request a new password</a>.", resetPasswordUrl))
-
-        @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, loginUrl, "Login to your account")
-
     }
 }
+@builder.P(String.Format("Try signing in with the email you used, or if you cannot remember your login details <a target=\"_blank\" href=\"{0}\">request a new password</a>.", resetPasswordUrl))
+
+@builder.ButtonTrack(Model.TrackingId, Model.TemplateId, loginUrl, "Login to your account")

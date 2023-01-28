@@ -205,6 +205,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         string TemplateId { get; set; }
         string EmailPreview { get; set; }
         string TagLine { get; set; }
+        string YouAreReceivingText { get; set; }
         string FileStoragePath { get; set; }
         bool HasSocialMedia { get; }
         string TwitterUrl { get; set; }
@@ -264,6 +265,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         /// </summary>
         public string EmailPreview { get; set; }
         public string TagLine { get; set; }
+        public string YouAreReceivingText { get; set; }
         public string FileStoragePath { get; set; }
         public bool HasSocialMedia { get { return !String.IsNullOrEmpty(TwitterUrl) || !String.IsNullOrEmpty(FacebookUrl) || !String.IsNullOrEmpty(GooglePlusUrl) || !String.IsNullOrEmpty(YoutubeUrl) || !String.IsNullOrEmpty(LinkedInUrl) || !String.IsNullOrEmpty(InstagramUrl); } }
         public string TwitterUrl { get; set; }
@@ -641,6 +643,27 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public bool IsClicked { get; set; }
 
         public bool IsDeleted { get; set; }
+    }
+
+    public class EmailListModel
+    {
+        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.Date.ToTimezone().AddDays(-7);
+        public DateTime? DateTo { get; set; } = DateTime.UtcNow.Date.ToTimezone();
+
+        [EmptyItem("Any template")]
+        public string Template { get; set; }
+        public SelectList TemplateList { get; set; }
+
+        [EmptyItem("Opened?")]
+        public bool? Opened { get; set; }
+        public SelectList OpenedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Opened"), new KeyValuePair<bool, string>(false, "Unopened") }.ToSelectList(v => v.Key, t => t.Value, true);
+
+        [EmptyItem("Clicked?")]
+        public bool? Clicked { get; set; }
+        public SelectList ClickedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Clicked"), new KeyValuePair<bool, string>(false, "Unclicked") }.ToSelectList(v => v.Key, t => t.Value, true);
+
+        [Placeholder("Search"), MaxLength(100)]
+        public string Search { get; set; }
     }
 
     public class EmailViewModel

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AppleAuth.NET" Version="1.0.5" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.80" />
     <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0139" />
     <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0014" />

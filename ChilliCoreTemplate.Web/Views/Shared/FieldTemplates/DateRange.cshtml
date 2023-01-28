@@ -15,7 +15,7 @@
 }
 <div class="input-daterange input-group" id="datepicker-@Model.Id">
     <input type="text" class="form-control" id="@Model.Id" name="@Model.Name" value="@valueFormat(date1)" />
-    <span class="input-group-addon">&nbsp;to&nbsp;</span>
+    <span class="input-group-text">&nbsp;to&nbsp;</span>
     <input type="text" class="form-control" id="@Model2.Id" name="@Model2.Name" value="@valueFormat(date2)" />
 </div>
 @Html.RegisterCustomScripts(

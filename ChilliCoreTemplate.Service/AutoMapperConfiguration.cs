@@ -24,14 +24,6 @@ namespace ChilliCoreTemplate.Service
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.LogoPath, opt => opt.Ignore());
             cfg.CreateMap<Company, CompanyViewModel>();
-
-            cfg.CreateMap<Location, LocationEditModel>();
-            cfg.CreateMap<LocationEditModel, Location>()
-                .ForMember(dest => dest.CreatedOn, opt => opt.Condition(src => src.Id == 0))
-                .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
-            cfg.CreateMap<Location, LocationViewModel>();
-            cfg.CreateMap<Location, LocationDetailModel>();
         }
 
         public static void Configure()
@@ -50,6 +42,7 @@ namespace ChilliCoreTemplate.Service
                     .AfterMap((src, dest) =>
                     {
                         var roles = Mapper.Map<List<UserRole>, List<UserRoleModel>>(src.UserRoles.Where(x => x.CompanyId == null || x.Company == null || !x.Company.IsDeleted).ToList());
+                        if (!roles.Any()) roles.Add(new UserRoleModel { Role = Role.User });
                         dest.SetCurrentRoles(roles);
                         var company = src.GetFirstCompany();
                         if (company != null)
@@ -87,7 +80,7 @@ namespace ChilliCoreTemplate.Service
                          dest.UserRoles = new List<RoleSelectionViewModel> { new RoleSelectionViewModel { Role = src.Roles, CompanyName = src.CompanyName, CompanyGuid = src.CompanyGuid } };
                      });
                 cfg.CreateMap<InviteEditModel, UserCreateModel>()
-                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatus.Invited))
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatus.Registered))
                     .AfterMap((src, dest) =>
                     {
                         dest.UserRoles = new List<RoleSelectionViewModel> { new RoleSelectionViewModel { Role = src.InviteRole.Role.Value, CompanyName = src.InviteRole.CompanyName, CompanyId = src.InviteRole.CompanyId } };
@@ -98,7 +91,7 @@ namespace ChilliCoreTemplate.Service
 
                 cfg.CreateMap<InviteEditModel, User>()
                     .ForMember(dest => dest.InvitedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatus.Invited));
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatus.Registered));
 
                 cfg.CreateMap<User, InviteEditModel>()
                     .ForMember(dest => dest.InviteRole, opt => opt.MapFrom(src => src.GetLatestUserRole()))

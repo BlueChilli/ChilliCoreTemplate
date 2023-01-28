@@ -3,7 +3,7 @@
     var termsUrl = "#";
 }
 
-<h2 class="m-t-md m-b-xl">Account registration</h2>
+<h2 class="mb-10">Account registration</h2>
 
 @using (Html.BeginFormCustom(Mvc.Root.EmailAccount_Registration))
 {
@@ -11,27 +11,48 @@
     @Html.HiddenFor(m => m.Roles)
     if (Model.Roles.IsCompanyRole())
     {
-        <div class="form-group">
-            @await Html.FieldTemplateInnerForAsync(m => m.CompanyName, htmlAttributes: new { autofocus = "autofocus", @class = "form-control-lg" })
-        </div>
+        @await Html.FieldTemplateForAsync(m => m.CompanyName, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField, IsMandatory = true }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
     }
-    <div class="form-group">
-        @await Html.FieldTemplateInnerForAsync(m => m.FirstName, htmlAttributes: new { autofocus = Model.Roles.IsCompanyRole() ? "" : "autofocus", @class = "form-control-lg" })
-    </div>
-    <div class="form-group">
-        @await Html.FieldTemplateInnerForAsync(m => m.LastName, htmlAttributes: new { @class = "form-control-lg" })
-    </div>
-    <div class="form-group">
-        @await Html.FieldTemplateInnerForAsync(m => m.Email, htmlAttributes: new { @class = "form-control-lg" })
-    </div>
-    <div class="form-group">
-        @await Html.FieldTemplateInnerForAsync(m => m.Password, htmlAttributes: new { @class = "form-control-lg" })
-    </div>
-    <div class="form-group">
-        @await Html.FieldTemplateInnerForAsync(m => m.AcceptTermsConditions, new CheckboxFieldTemplateOptions { CheckBoxAttribute = new CheckBoxAttribute { IsAlternative = true, Label = $"I accept the <a href=\"{termsUrl}\" target=\"_blank\">terms & conditions</a>" } })
-    </div>
+    @await Html.FieldTemplateForAsync(m => m.FirstName, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = Model.Roles.IsCompanyRole() ? "" : "autofocus" } })
+    @await Html.FieldTemplateForAsync(m => m.LastName, FieldTemplateLayouts.FloatingField)
+    @await Html.FieldTemplateForAsync(m => m.Email, FieldTemplateLayouts.FloatingField)
+    @await Html.FieldTemplateForAsync(m => m.Password, FieldTemplateLayouts.FloatingField)
+    @await Html.FieldTemplateForAsync(m => m.AcceptTermsConditions, new TemplateOptions { Label = "", FieldColumnSize = 12, FieldSize = FieldTemplateSize.ExtraLarge }, new CheckboxFieldTemplateOptions { CheckBoxAttribute = new CheckBoxAttribute { Label = $"I accept the <a href=\"{termsUrl}\" target=\"_blank\">terms & conditions</a>" } })
 
-    <button type="submit" class="btn btn-primary btn-lg full-width m-b">Join</button>
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Join</button>
+    </div>
+}
+<div class="py-5 text-center">
+    <span class="text-xs text-uppercase font-semibold">or</span>
+</div>
+<div class="row g-3">
+    <div class="col-sm-6">
+        <a href="#" class="btn btn-neutral w-full oauth" data-provider="@ChilliCoreTemplate.Models.Api.OAuth.OAuthProvider.Google">
+            <span class="icon icon-sm pe-2">
+                <i class="bi bi-google"></i>
+            </span>
+            <span>Continue with Google</span>
+        </a>
+    </div>
+    <div class="col-sm-6">
+        <a href="#" class="btn btn-neutral w-full oauth" data-provider="@ChilliCoreTemplate.Models.Api.OAuth.OAuthProvider.Apple">
+            <span class="icon icon-sm pe-2">
+                <i class="bi bi-apple"></i>
+            </span>
+            <span>Continue with Apple</span>
+        </a>
+    </div>
+</div>
+<br>
+<a mvc-action="@Mvc.Root.EmailAccount_Login">Already have an account?</a>
+@section scripts
+{
+    <script>
+        $('.oauth').click(function (e) {
+            e.preventDefault();
+            $.doPost('@Mvc.Root.EmailAccount_RegistrationOAuth.Url(this.Url)', { Provider: $(this).data('provider'), CompanyName: $('#CompanyName').val() });
+        });
+    </script>
 
-    <a mvc-action="@Mvc.Root.EmailAccount_Login">Already have an account?</a>
 }

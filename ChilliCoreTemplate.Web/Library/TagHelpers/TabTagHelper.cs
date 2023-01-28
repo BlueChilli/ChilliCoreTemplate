@@ -31,9 +31,13 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             output.TagName = "ul";
             output.AddClass("nav", HtmlEncoder.Default);
             output.AddClass("nav-tabs", HtmlEncoder.Default);
+            output.AddClass("overflow-x", HtmlEncoder.Default);
+            output.AddClass("border-0", HtmlEncoder.Default);
             output.Attributes.Add("role", "tablist");
         }
     }
+
+    //<ul class="nav nav-tabs overflow-x border-0"><li class="nav-item"><a href = "#" class="nav-link active">View all</a></li><li class="nav-item"><a href = "#" class="nav-link">Most recent</a></li><li class="nav-item"><a href = "#" class="nav-link">Popular</a></li></ul>
 
     public class TabTagHelper : TagHelper
     {
@@ -43,8 +47,9 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "li";
+            output.AddClass("nav-item", HtmlEncoder.Default);
 
-            output.PreContent.SetHtmlContent($"<a class=\"nav-link {(IsActive ? "active" : "")}\" data-toggle=\"tab\" href=\"#tab-{Id}\">");
+            output.PreContent.SetHtmlContent($"<a class=\"nav-link {(IsActive ? "active" : "")}\" data-bs-toggle=\"tab\" data-bs-target=\"#tab-{Id}\" role=\"tab\">");
             output.PostContent.SetHtmlContent($"</a>");
         }
     }
@@ -67,7 +72,12 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         {
             output.TagName = "div";
             output.AddClass("tab-pane", HtmlEncoder.Default);
-            if (IsActive) output.AddClass("active", HtmlEncoder.Default);
+            output.AddClass("fade", HtmlEncoder.Default);
+            if (IsActive)
+            {
+                output.AddClass("active", HtmlEncoder.Default);
+                output.AddClass("show", HtmlEncoder.Default);
+            }
             output.Attributes.Add("id", $"tab-{Id}");
             output.Attributes.Add("role", "tabpanel");
 

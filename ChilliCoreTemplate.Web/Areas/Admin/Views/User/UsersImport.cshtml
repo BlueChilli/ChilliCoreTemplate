@@ -7,7 +7,7 @@
         Layout = null;
     }
 }
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
 {
     @await Html.TemplateAsync(TemplateTypes.PageMessage)

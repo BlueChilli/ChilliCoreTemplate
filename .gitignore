@@ -44,7 +44,6 @@ node_modules/
 *.lock
 .vs
 .nuget
-*.Web/wwwroot/Styles/inspinia_old
 
 # Don't include NuGet Packages
 packages/

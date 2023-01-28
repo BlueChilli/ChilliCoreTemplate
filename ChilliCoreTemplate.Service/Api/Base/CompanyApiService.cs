@@ -47,6 +47,21 @@ namespace ChilliCoreTemplate.Service.Api
             return query.Where(x => x.Id == CompanyId && !x.IsDeleted);
         }
 
+        public ServiceResult<List<CompanyApiModel>> Company_List(CompanyFilterApiModel model)
+        {
+            var query = Context.Companies.Where(x => !x.IsDeleted);
+
+            if (!String.IsNullOrEmpty(model.Search)) query = query.Where(x => x.Name.Contains(model.Search));
+            if (model.LastChangedAt.HasValue) query = query.Where(x => x.UpdatedAt >= model.LastChangedAt.Value);
+
+            var records = query
+                .OrderBy(x => x.Name)
+                .Materialize<Company, CompanyApiModel>()
+                .ToList();
+
+            return ServiceResult<List<CompanyApiModel>>.AsSuccess(records);
+        }
+
         public ServiceResult Company_Create(CompanyEditApiModel model)
         {
             var company = Company.CreateNew(model.Name);
@@ -139,7 +154,7 @@ namespace ChilliCoreTemplate.Service.Api
             userRole.User.Email = model.Email;
             Context.SaveChanges();
 
-            if (userRole.User.Status == UserStatus.Invited) _accountService.Reinvite(userRole.UserId);
+            if (userRole.Status == RoleStatus.Invited) _accountService.Reinvite(userRole.UserId);
 
             return ServiceResult.AsSuccess();
         }

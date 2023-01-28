@@ -1,31 +1,28 @@
 @using Humanizer;
 @model CompanyListModel
 
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_CreateCompany" })
-
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Partial = "_CreateCompany", Description = "This is a page description" })
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+    <filter>
+        <filter-left>
+            @await Html.FieldTemplateInnerForAsync(m => m.Status)
+        </filter-left>
+        <filter-right>
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
+        </filter-right>
+    </filter>
+
     <box>
         <box-content>
-
-            <form role="form" class="form-inline m-b-md">
-                <div class="form-group">
-                    @await Html.FieldTemplateInnerForAsync(m => m.Status, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.StatusList })
-                </div>
-                <div class="ml-auto">
-                    <div class="form-group">
-                        @await Html.FieldTemplateInnerForAsync(m => m.Search)
-                    </div>
-                </div>
-            </form>
-
-            <table-default class="js-company-table">
-                <thead>
+            <table-default class="js-Company-table">
+                <thead class="table-light">
                     <tr>
-                        <th>Company</th>
-                        <th style="width:100px;">Status</th>
-                        <th style="width:100px;">Date created</th>
-                        <th style="width:150px;">Actions</th>
+                        <th data-priority="1">Company</th>
+                        <th data-priority="3">Status</th>
+                        <th data-priority="4">Date created</th>
+                        <th data-priority="2"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,18 +31,19 @@
         </box-content>
     </box>
 </page>
-
 @section Scripts
 {
     <script>
-        var companyTable;
+        var CompanyTable;
 
         $(function () {
 
-            companyTable = $('.js-company-table').dataTable({
+            CompanyTable = $('.js-Company-table').dataTable({
+                responsive: true,
                 "processing": true,
                 "serverSide": true,
                 "deferLoading": 0,
+                "deferRender": true,
                 "ajax": {
                     "url": "@Mvc.Admin.Company_ListData.Url(this.Url)",
                     "type": "POST"
@@ -53,24 +51,31 @@
                 "columns": [
                     { "data": "name", "orderable": true },
                     {
-                        "data": "status", "name": "status", orderable: false, render: function (data, type, row) {
-                            return '<span class="label label-{0}">{1}</span>'.format(row.isDeleted ? "warning" : "success", row.isDeleted ? "Archived" : "Active");
+                        "data": "id", name: "status", orderable: false, render: function (data, type, row) {
+                            return '<span class="badge bg-{0}">{1}</span>'.format(row.statusBadge, row.status);
                         }
                     },
                     { "data": "created", "orderable": true },
                     {
-                        "data": null, orderable: false, render: function (data, type, row) {
-                            var view = '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}" class="m-r-sm">View</a>';
-                            var impersonate = row.hasAdmins ? '<a href="#" class="js-impersonate" data-id="{0}">Impersonate</a>' : '';
+                        "data": null, orderable: false, className: 'text-end', render: function (data, type, row) {
+                            var view = '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="View"><i class="bi bi-eye"></i></a>';
+                            var impersonate = row.hasAdmins ? '<a href="#" class="js-impersonate btn btn-sm btn-square btn-neutral" data-id="{0}" data-bs-toggle="tooltip" data-bs-original-title="Impersonate"><i class="bi bi-person-bounding-box"></i> </a>' : '';
                             return view.format(data.id) + impersonate.format(data.id);
                         }
                     }
                 ],
                 dom: 'Tgtip',
                 "iDisplayLength": 50,
+                drawCallback: function(settings) {
+                    initTooltips();
+                }
             });
 
             $('#Search').on('keyup', function () {
+                SearchTable();
+            });
+
+            $('#Type').on('change', function () {
                 SearchTable();
             });
 
@@ -80,20 +85,25 @@
 
             SearchTable();
 
-            $('.js-company-table').on('click', '.js-impersonate', function (e) {
+            $('.js-Company-table').on('click', '.js-impersonate', function (e) {
                 e.preventDefault();
                 $.doPost('@Mvc.Admin.Company_Impersonate.Url(this.Url)', { id: $(this).data('id') });
             });
-
         });
 
         function SearchTable() {
-            var api = companyTable.api();
+            var api = CompanyTable.api();
 
-            if ($('#Status').val() != '') {
-                api.column(1).search($('#Status').val(), false, false, false);
+            if ($('#Type').val() != '') {
+                api.column(1).search($('#Type').val(), false, false, false);
             } else {
                 api.column(1).search('');
+            }
+
+            if ($('#Status').val() != '') {
+                api.column(3).search($('#Status').val(), false, false, false);
+            } else {
+                api.column(3).search('');
             }
 
             api.search($('#Search').val());

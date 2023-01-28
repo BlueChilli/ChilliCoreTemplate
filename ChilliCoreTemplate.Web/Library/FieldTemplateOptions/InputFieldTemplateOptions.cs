@@ -95,7 +95,7 @@ namespace ChilliCoreTemplate.Web
             switch (metadata.DataTypeName)
             {
                 case "Currency":
-                    this.PreAddOn = MvcHtmlStringCompatibility.Create("<span class=\"input-group-addon\">$</span>");
+                    this.PreAddOn = MvcHtmlStringCompatibility.Create("<span class=\"input-group-text\">$</span>");
                     break;
 
             }

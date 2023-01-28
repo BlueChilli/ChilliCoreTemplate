@@ -1,53 +1,53 @@
 @model UsersViewModel
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_InviteUser" })
-@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerTop))
-{
-    @await Html.TemplateAsync(TemplateTypes.PageMessage)
-    <div class="row">
-        <div class="col-lg-12">
-
-            <box>
-                <box-content>
-                    <box-title>List of Users</box-title>
-                    <form role="form" class="form-inline m-b-md">
-                        <div class="form-group m-r-lg">
-                            @await Html.FieldTemplateInnerForAsync(m => m.Role, fieldOptions:  new SelectFieldTemplateOptions { SelectList = Model.RoleList })
-                        </div>
-                        <div class="form-group">
-                            @await Html.FieldTemplateInnerForAsync(m => m.Status)
-                        </div>
-                        <div class="ml-auto">
-                            <div class="form-group">
-                                @await Html.FieldTemplateInnerForAsync(m => m.Search)
-                            </div>
-                        </div>
-                    </form>
-
-                    <table-default class="js-users-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Surname</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Last login</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    </table-default>
-                </box-content>
-            </box>
-
-        </div>
-    </div>
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Partial = "_InviteUser" })
+@{
+    var roles = new List<Role> { Role.CompanyAdmin }.ToSelectList();
 }
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    <filter>
+        <filter-left>
+            @await Html.FieldTemplateInnerForAsync(m => m.Role, fieldOptions: new SelectFieldTemplateOptions { SelectList = roles })
+            @await Html.FieldTemplateInnerForAsync(m => m.Status)
+        </filter-left>
+        <filter-right>
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
+        </filter-right>
+    </filter>
+    <box>
+        <box-content>
+            <table-default class="js-users-table">
+                <thead class="table-light">
+                    <tr>
+                        <th data-priority="1">Name</th>
+                        <th data-priority="2">Surname</th>
+                        <th data-priority="3">Email</th>
+                        <th data-priority="7">Phone</th>
+                        <th data-priority="4">Role</th>
+                        <th data-priority="5">Status</th>
+                        <th data-priority="8">Last login</th>
+                        <th data-priority="2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table-default>
+        </box-content>
+    </box>
+</page>
 @section Scripts {
     <script>
         $(function () {
+            $('.js-users-table').on('click', '.js-resend', function (e) {
+                e.preventDefault();
+                userId = $(this).data('id');
+                @Html.ModalOpen(Mvc.Company.User_InviteResend, data: "{ userId: userId }");
+            });
 
             table = $('.js-users-table').dataTable({
+                dom: 'Tgtip',
+                "iDisplayLength": 50,
+                responsive: true,
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -64,25 +64,28 @@
                             return '<a href="@Mvc.Company.User_Detail.Url(this.Url)/{0}">{1}</a>'.format(row.parent == null ? row.id : row.parent.id, row.parent == null ? row.email : row.parent.name + ' (Parent)');
                         }
                     },
+                    { "data": "phone", "orderable": false },
                     { "data": "role", "orderable": false },
                     {
                         "data": "status",
                         "orderable": false,
                         render: function (data, type, row) {
-                            return '<span class="label label-{0}">{1}</span>'.format(row.status == '@UserStatus.Activated' ? "success" : "warning", row.status);
+                            return '<span class="badge bg-{0}">{1}</span>'.format(row.status == '@UserStatus.Activated' ? "success" : "warning", row.status);
                         }
                     },
                     { "data": "lastLoginOn", "orderable": true },
                     {
                         "orderable": false,
                         "data": null,
-                        render: function ( data, type, row ) {
-                            return '<a href="@Mvc.Company.User_Detail.Url(this.Url)/{0}">View</a>'.format(data.id);
+                        render: function (data, type, row) {
+                            var s = '<a href="@Mvc.Company.User_Detail.Url(this.Url)/{0}" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="View"><i class="bi bi-eye"></i></a>';
+                            if (data.status == 'Invited') {
+                                s += '<a class="js-resend btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="Resend" href="#" data-id="{0}"><i class="bi bi-arrow-repeat"></i></a>';
+                            }
+                            return s.format(data.id);
                         }
                     },
-                ],
-                dom: 'Tgtip',
-                "iDisplayLength": 50
+                ]
             });
 
             $('#Search').on('keyup', function () {
@@ -92,25 +95,21 @@
             $('#Role,#Status').on('change', function () {
                 SearchTable();
             });
-
-            SearchTable();
-
-
         });
 
        function SearchTable() {
             var api = table.api();
 
             if ($('#Role').val() != '') {
-                api.column(3).search($('#Role').val(), false, false, false);
+                api.column(4).search($('#Role').val(), false, false, false);
             } else {
-                api.column(3).search('');
+                api.column(4).search('');
             }
 
             if ($('#Status').val() != '') {
-                api.column(4).search($('#Status').val(), false, false, false);
+                api.column(5).search($('#Status').val(), false, false, false);
             } else {
-                api.column(4).search('');
+                api.column(5).search('');
             }
 
             api.search($('#Search').val());
@@ -118,4 +117,8 @@
             api.draw();
         }
     </script>
+}
+@section Modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_InviteResend, Title = "Resend invite", Size = ModalSize.Medium })
 }

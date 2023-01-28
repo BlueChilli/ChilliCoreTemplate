@@ -21,7 +21,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     public partial class AccountService
     {
 
-        public PagedList<ErrorLogSummaryModel> Error_Search(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo)
+        public PagedList<ErrorLogSummaryModel> Error_Search(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, string search)
         {
             dateFrom = dateFrom.FromUserTimezone();
             dateTo = dateTo.FromUserTimezone().Add(new TimeSpan(23, 59, 59));
@@ -29,9 +29,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var query = Context.ErrorLogs
             .Where(e => (e.TimeStamp > dateFrom && e.TimeStamp < dateTo));
 
-            if (!String.IsNullOrEmpty(model.Search.Value))
+            if (!String.IsNullOrEmpty(search))
             {
-                query = query.Where(x => x.User.Email.Contains(model.Search.Value) || x.Message.Contains(model.Search.Value) || x.ExceptionMessage.Contains(model.Search.Value));
+                query = query.Where(x => x.User.Email.Contains(search) || x.Message.Contains(search) || x.ExceptionMessage.Contains(search));
             }
 
             return query
@@ -50,7 +50,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var errorDetails = Context.ErrorLogs.Where(x => x.Id == id).Select(x => new { x.Exception, x.LogEvent }).First();
 
             var properties = JsonConvert.DeserializeObject<IDictionary<string, object>>(
-                errorDetails.LogEvent, 
+                errorDetails.LogEvent,
                 new JsonConverter[] { new NestedJsonConverter() }
                 );
 

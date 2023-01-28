@@ -146,7 +146,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return result;
             }
 
-            if (account.Status == UserStatus.Invited)
+            if (account.UserRoles.Count == 1 && account.UserRoles.First().Status == RoleStatus.Invited)
             {
                 result.Error = "We have resent your invitation email. Please check your email to complete your registration.";
 
@@ -412,7 +412,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     User = account,
                     CreatedAt = DateTime.UtcNow,
                     Role = selectedRole.Role,
-                    CompanyId = selectedRole.CompanyId
+                    CompanyId = selectedRole.CompanyId,
+                    Status = selectedRole.Status
                 });
             }
 
@@ -554,7 +555,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var account = String.IsNullOrEmpty(model.Email) ? GetAccountByPhone(model.Phone, includeDeleted: true) : GetAccountByEmail(model.Email, includeDeleted: true);
 
-            if (account == null || (account.Status == UserStatus.Invited || account.Status == UserStatus.Deleted))
+            var isInvited = account != null && account.UserRoles.Count == 1 && account.UserRoles.First().Status == RoleStatus.Invited;
+            if (account == null || isInvited || account.Status == UserStatus.Deleted)
             {
                 if (account == null)
                 {
@@ -574,17 +576,17 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 MergeAccountRoles(account, newRolesResponse.Result, deleteUnmatched: true);
 
-                if (model.Status == UserStatus.Registered)
+                if (isInvited)
+                {
+                    account.InvitedDate = DateTime.UtcNow;
+                    Token_Add(account, UserTokenType.Invite, new TimeSpan(7, 0, 0, 0));
+                }
+                else if (model.Status == UserStatus.Registered)
                 {
                     if (_config.UserConfirmationMethod == UserConfirmationMethod.Link)
                         Token_Add(account, UserTokenType.Activate, new TimeSpan(14, 0, 0, 0));
                     else
                         Password_OneTime(account);
-                }
-                else if (model.Status == UserStatus.Invited)
-                {
-                    account.InvitedDate = DateTime.UtcNow;
-                    Token_Add(account, UserTokenType.Invite, new TimeSpan(7, 0, 0, 0));
                 }
 
                 if (model.ProfilePhotoFile != null) account.ProfilePhotoPath = _fileStorage.Save(new StorageCommand { Folder = ProfilePhotoFolder }.SetHttpPostedFileSource(model.ProfilePhotoFile));
@@ -599,7 +601,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<User>.AsError(account, String.IsNullOrEmpty(model.Email) ? "Phone is already registered" : "Email is already registered");
         }
 
-        private void SendWelcomeEmail(User account)
+        private void SendWelcomeEmail(User account, bool isApi = false)
         {
             if (String.IsNullOrEmpty(account.Email)) return;
 
@@ -611,7 +613,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 {
                     FirstName = account.FirstName,
                     Email = account.Email,
-                    Token = account.GetToken(UserTokenType.Activate)
+                    Token = account.GetToken(UserTokenType.Activate),
+                    IsApi = isApi
                 }
             });
         }
@@ -656,15 +659,34 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult.AsSuccess();
         }
 
-        public async Task SoftDeleteAsync(int accountId)
+        public async Task SoftDeleteAsync(int userId)
         {
-            User account = Context.Users.Find(accountId);
+            var user = await Context.Users
+                .Include(x => x.UserRoles)
+                .Include(x => x.OAuths)
+                .Where(x => x.Id == userId)
+                .FirstAsync();
 
-            if (account != null)
+            if (user != null)
             {
-                account.Status = UserStatus.Deleted;
-                account.ClosedDate = DateTime.UtcNow;
-                account.UpdatedDate = DateTime.UtcNow;
+                user.Status = UserStatus.Deleted;
+                user.ClosedDate = DateTime.UtcNow;
+                user.UpdatedDate = DateTime.UtcNow;
+
+                user.FirstName = null;
+                user.LastName = null;
+                user.Email = $"{Guid.NewGuid()}@{new Uri(_config.PublicUrl).Domain()}";
+
+                if (user.UserRoles.Any()) Context.UserRoles.RemoveRange(user.UserRoles);
+
+                foreach (var oauth in user.OAuths)
+                {
+                    if (oauth.Provider == Models.Api.OAuth.OAuthProvider.Apple)
+                    {
+                        await this.OAuth_Revoke(oauth);
+                    }
+                    Context.UserOAuths.Remove(oauth);
+                }
 
                 await Context.SaveChangesAsync();
             }
@@ -728,7 +750,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<AccountDetailsEditModel>.AsSuccess(mapped);
         }
 
-        public ServiceResult Update_Status(int userId, UserStatus status)
+        public ServiceResult Update_Status(int userId, UserStatus status, bool isApi = false)
         {
             var user = GetAccount(userId);
 
@@ -737,7 +759,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (user.Status == UserStatus.Anonymous && status == UserStatus.Registered)
             {
                 Token_Add(user, UserTokenType.Activate, new TimeSpan(14, 0, 0, 0));
-                SendWelcomeEmail(user);
+                SendWelcomeEmail(user, isApi);
             }
             user.Status = status;
             Context.SaveChanges();
@@ -874,34 +896,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                                 .ToList();
 
             return roles.OrderBy(r => r.RoleDesc).ToList();
-        }
-
-        public ServiceResult<OnboardingStep> GetOnboardingStep()
-        {
-            var userData = User.UserData();
-            if (userData == null)
-                return ServiceResult<OnboardingStep>.AsError("Not logged in.");
-
-            if (userData.IsInRole(Role.Administrator))
-                return ServiceResult<OnboardingStep>.AsSuccess(OnboardingStep.Complete);
-
-            OnboardingStep step = OnboardingStep.Complete;
-
-            if (userData.IsInRole(Role.CompanyAdmin))
-            {
-                var companyId = userData.GetCompanyIds().FirstOrDefault();
-                var company = Context.Companies.Where(c => c.Id == companyId).Select(c => new { c.IsSetup }).FirstOrDefault();
-                if (company == null)
-                    return ServiceResult<OnboardingStep>.AsError("Company not found for company admin.");
-
-                if (!company.IsSetup)
-                {
-                    step = OnboardingStep.SetupCompany;
-                }
-            }
-
-            return ServiceResult<OnboardingStep>.AsSuccess(step);
-        }
+        } 
 
         public UserDataPrincipal Session_Create(int id, int? userDeviceId, TimeSpan expiry, Action<UserDataPrincipal> loginAction)
         {

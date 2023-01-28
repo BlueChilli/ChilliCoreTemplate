@@ -12,7 +12,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" type="submit">Upload</button>
-        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+        @await Html.ButtonAsync(FieldTemplateHelper.ButtonModalDismissOptions)
     </div>
 }
 @Html.RenderCustomSection("scripts")

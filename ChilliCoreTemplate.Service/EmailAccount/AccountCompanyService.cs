@@ -38,6 +38,28 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         }
 
+        public void QueueCompanyWideMail(int companyId, RazorTemplate template, IEmailTemplateDataModel model)
+        {
+            var company = Context.Companies
+                .AsNoTracking()
+                .Include(c => c.UserRoles).ThenInclude(c => c.User)
+                .Where(c => c.Id == companyId)
+                .FirstOrDefault();
+
+            model.CompanyName = company.Name;
+            //model.Logo = String.IsNullOrEmpty(company.LogoPath) ? null : _fileStoragePath.GetImagePath(company.LogoPath, fullPath: true) + "?h=75";
+            //model.PublicUrl = company.Website;
+            model.Email = _config.EmailTemplate.Email;
+
+            var to = company.UserRoles
+                .Where(x => x.Status == null && x.User.Status != UserStatus.Deleted)
+                .Select(x => x.User.Email)
+                .ToList();
+            if (!to.Any()) to.Add(_config.AdminEmail);
+            foreach (var email in to)
+                QueueMail(template, email, model);
+        }
+
         internal User GetCompanyAdmin(int companyId)
         {
             return Context.Users

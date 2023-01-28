@@ -1,23 +1,20 @@
-using ChilliSource.Cloud.Web;
+using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Api;
+using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Service;
+using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Web.MVC;
+using DataTables.AspNet.AspNetCore;
+using DataTables.AspNet.Core;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using ChilliCoreTemplate.Models;
-using ChilliCoreTemplate.Service;
-using ChilliCoreTemplate.Web;
-using ChilliCoreTemplate.Web.Controllers;
 using System.Linq;
-using DataTables.AspNet.Core;
-using System.Collections.Generic;
-using ChilliCoreTemplate.Models.EmailAccount;
-using DataTables.AspNet.AspNetCore;
-using ChilliCoreTemplate.Models.Api;
 
 namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 {
 
     [Area("Admin")]
-    [RequireHttpsWeb, CustomAuthorize(Roles = AccountCommon.Administrator)]
+    [CustomAuthorize(Roles = AccountCommon.Administrator)]
     public class CompanyController : Controller
     {
         private Services _services;
@@ -57,7 +54,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         {
             var companies = _services.Company_List(searchTerm, paging, id);
 
-            return Json(new Select2QueryModel<CompanyViewModel, object>(companies, x => new { id = x.Id, text = x.Name }));
+            return Json(new Select2QueryModel<DataLinkModel, object>(companies, x => new { id = x.Id, text = x.Name }));
         }
 
         public ActionResult Detail(int id)

@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,22 +24,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         {
             if (Type == 0) return;
             output.TagName = "span";
-            output.AddClass("label", NullHtmlEncoder.Create());
-            output.AddClass($"label-{Type.GetDescription()}", NullHtmlEncoder.Create());
+            output.AddClass("badge", NullHtmlEncoder.Create());
+            output.AddClass($"bg-{Type.GetDescription()}", NullHtmlEncoder.Create());
         }
     }
-}
-
-namespace ChilliCoreTemplate.Web
-{
-    public enum LabelType
-    {
-        [Description("success")]
-        Success = 1,
-        [Description("warning")]
-        Warning,
-        [Description("danger")]
-        Danger
-    }
-
 }

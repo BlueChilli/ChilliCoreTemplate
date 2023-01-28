@@ -6,7 +6,7 @@
 }
 <div class="input-group clockpicker" data-autoclose="true">
     <input id="@Model.Id" name="@Model.Name" value="@value" type="text" @Model.HtmlAttributes.ToAttributeHtmlContent()>
-    <span class="input-group-addon"><i class="fa fa-clock"></i></span>
+    <span class="input-group-text"><i class="fa fa-clock"></i></span>
 </div>
 @if (Model.Options.AutoWireUpJavascript)
 {

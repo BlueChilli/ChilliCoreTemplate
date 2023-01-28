@@ -1,15 +1,13 @@
-using ChilliSource.Cloud.Core;
 using ChilliCoreTemplate.Models;
+using ChilliSource.Cloud.Core;
 using ChilliSource.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.RegularExpressions;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 
 namespace ChilliCoreTemplate.Data.EmailAccount
 {
@@ -109,7 +107,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public DateTime? LastPasswordChangedDate { get; set; }
 
-        public DateTime? InvitedDate { get; set; }
+        public DateTime? InvitedDate { get; set; } //TODO This should be on UserRole
 
         public bool IsTooManyRetries
         {

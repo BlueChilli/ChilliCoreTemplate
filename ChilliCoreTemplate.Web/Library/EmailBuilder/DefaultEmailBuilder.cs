@@ -103,15 +103,15 @@ namespace ChilliCoreTemplate.Web
     {
         private static readonly Dictionary<string, string> EmailTemplateValues = new Dictionary<string, string>()
         {
-            { "H1Begin", @"<h1 style=""font-family:Helvetica,sans-serif;color:{0};display:block;font-size:24px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-top:15px;margin-bottom:15px;margin-left:0;text-align:left;"">" },
+            { "H1Begin", @"<h1 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:24px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-top:15px;margin-bottom:15px;margin-left:0;text-align:left;"">" },
             { "H1End", "</h1>" },
-            { "H2Begin", @"<h2 style=""font-family:Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:normal;line-height:150%;letter-spacing:normal;margin-right:0;margin-top:15px;margin-bottom:6px;margin-left:0;text-align:left;"">" },
+            { "H2Begin", @"<h2 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:normal;line-height:150%;letter-spacing:normal;margin-right:0;margin-top:15px;margin-bottom:6px;margin-left:0;text-align:left;"">" },
             { "H2End", @"</h2>" },
-            { "H3Begin", @"<h3 style=""font-family:Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:15px;margin-bottom:5px;text-align:left;"">" },
+            { "H3Begin", @"<h3 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:15px;margin-bottom:5px;text-align:left;"">" },
             { "H3End", @"</h3>" },
-            { "H4Begin", @"<h4 style=""font-family:Helvetica,sans-serif;color:{0};display:block;font-size:14px;font-weight:normal;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:2px;margin-bottom:15px;text-align:left;"">" },
+            { "H4Begin", @"<h4 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:14px;font-weight:normal;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:2px;margin-bottom:15px;text-align:left;"">" },
             { "H4End", @"</h4>" },
-            { "PBegin", @"<p style=""font-family:Helvetica,sans-serif;line-height:150%;margin-top:15px;margin-bottom:15px;color:{0};"">" },
+            { "PBegin", @"<p style=""font-family:Open Sans,Helvetica,sans-serif;line-height:150%;margin-top:15px;margin-bottom:15px;color:{0};"">" },
             { "PEnd", @"</p>" }
         };
 

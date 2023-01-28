@@ -1,4 +1,5 @@
 ﻿using ChilliCoreTemplate.Models;
+using ChilliSource.Cloud.Web.MVC;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -41,22 +42,10 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
             var route = Action.GetRouteValueDictionary();
-            route = AddRouteValues(route);
+            route = route.AddRouteValues(RouteValues);
 
             var url = urlHelper.RouteUrl(route);
             output.Attributes.SetAttribute("href", url);
-        }
-
-        private IReadOnlyDictionary<string, object> AddRouteValues(IReadOnlyDictionary<string, object> route)
-        {
-            if (this.RouteValues == null || this.RouteValues.Count == 0)
-                return route;
-
-            var routeValues = new RouteValueDictionary(route);
-            foreach (var set in RouteValues)
-                routeValues[set.Key] = set.Value;
-
-            return routeValues;
         }
     }
 
@@ -88,21 +77,10 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             output.Attributes.RemoveAll(ActionAttribute);
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
-            var url = urlHelper.ModelOpenCommand(Action);
+            var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues });
             output.Attributes.SetAttribute("onclick", url);
             output.Attributes.SetAttribute("href", "javascript: void(0);");
         }
-
-        private IReadOnlyDictionary<string, object> AddRouteValues(IReadOnlyDictionary<string, object> route)
-        {
-            if (this.RouteValues == null || this.RouteValues.Count == 0)
-                return route;
-
-            var routeValues = new RouteValueDictionary(route);
-            foreach (var set in RouteValues)
-                routeValues[set.Key] = set.Value;
-
-            return routeValues;
-        }
     }
+
 }

@@ -1,4 +1,4 @@
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
 @await Html.TemplateAsync(TemplateTypes.PageMessage)
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
@@ -17,7 +17,7 @@
                                 <label>Date range</label>
                                 <div class="input-daterange input-group">
                                     <input type="text" class="input-sm form-control" id="DateFrom" value="@DateTime.UtcNow.Date.ToTimezone().AddDays(-7).ToIsoDate()" />
-                                    <span class="input-group-addon">to</span>
+                                    <span class="input-group-text">to</span>
                                     <input type="text" class="input-sm form-control" id="DateTo" value="@DateTime.UtcNow.Date.ToTimezone().ToIsoDate()" />
                                 </div>
                             </div>
@@ -26,7 +26,7 @@
 
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover js-sms-table">
-                            <thead>
+                            <thead class="table-light">
                                 <tr>
                                     <th>Date</th>
                                     <th>User</th>

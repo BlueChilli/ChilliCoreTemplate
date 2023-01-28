@@ -1,7 +1,9 @@
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,10 +43,17 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class UserActivityModel
     {
+        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.Date.ToTimezone().AddDays(-7);
+        public DateTime? DateTo { get; set; } = DateTime.UtcNow.Date.ToTimezone();
+
+        [EmptyItem("Any entity")]
         public EntityType? Entity { get; set; }
 
+        [EmptyItem("Any activity")]
         public ActivityType? Activity { get; set; }
 
+        [Placeholder("Search"), MaxLength(100)]
+        public string Search { get; set; }
     }
 
     public class UserDetailsModel

@@ -1,0 +1,23 @@
+@model MenuElement
+@{
+    var children = Model.GetChildren().Where(a => !a.MenuHidden).ToList();
+    var id = Model.Title.ToCssClass();
+}
+<li class="nav-item">
+    <a class="nav-link @Html.When(Model.IsActive, "active show")" href="@(children.Any() ? $"#sidebar-{id}" : Model.Url)" @if(children.Any()) { <text>data-bs-toggle="collapse" role="button" aria-expanded="@(Model.IsActive ? "true" : "false")" aria-controls="sidebar-@id"</text>}>
+        @await Html.PartialAsync("~/Views/Shared/Layout/Clever/_MenuIcon.cshtml", Model.Icon)@Model.Title
+    </a>
+    @if (children.Any())
+    {
+    <div class="collapse @Html.When(Model.IsActive, "show")" id="sidebar-@id">
+        <ul class="nav nav-sm flex-column">
+            @foreach (var child in children)
+            {
+            <li class="nav-item">
+                <a href="@child.Url" class="nav-link @Html.When(child.IsActive, "font-bold")">@child.Title</a>
+            </li>
+            }
+        </ul>
+    </div>        
+    }
+</li>

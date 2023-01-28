@@ -1,19 +1,17 @@
-using ChilliSource.Cloud.Core.LinqMapper;
-using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Admin;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Service.Admin;
+using ChilliCoreTemplate.Service.Api;
+using ChilliCoreTemplate.Service.EmailAccount;
+using ChilliSource.Cloud.Core.LinqMapper;
+using ChilliSource.Core.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Linq.Expressions;
-using Microsoft.Extensions.DependencyInjection;
-using ChilliSource.Core.Extensions;
-using ChilliCoreTemplate.Service.Admin;
-using ChilliCoreTemplate.Service.EmailAccount;
-using ChilliCoreTemplate.Service.Api;
 
 namespace ChilliCoreTemplate.Service
 {
@@ -78,7 +76,7 @@ namespace ChilliCoreTemplate.Service
             {
                 Date = x.TimeStamp,
                 UserEmail = x.User == null ? null : x.User.Email,
-                Message = x.ExceptionMessage == null ? x.Message.Substring(0, 200) : x.ExceptionMessage.Substring(0, 200)
+                Message = x.ExceptionMessage == null ? x.Message.Substring(0, 90) : x.ExceptionMessage.Substring(0, 90)
             });
 
             LinqMapper.CreateMap<UserRole, UserRoleModel>(x => new UserRoleModel
@@ -87,9 +85,10 @@ namespace ChilliCoreTemplate.Service
             });
 
             LinqMapper.CreateMap<User, AccountViewModel>();
+            LinqMapper.CreateMap<User, UserBasicModel>(x => new UserBasicModel { Name = x.FullName });
             LinqMapper.CreateMap<User, UserSummaryViewModel>(x => new UserSummaryViewModel
             {
-                Status = x.Status.ToString(),
+                Status = x.UserRoles.Count == 1 && x.UserRoles.Any(r => r.Status.HasValue) ? x.UserRoles.Select(r => r.Status.ToString()).FirstOrDefault() : x.Status.ToString(),
                 LastLoginOn = x.LastLoginDate == null ? "" : x.LastLoginDate.Value.ToIsoDate()
             });
             Materializer.RegisterAfterMap<UserSummaryViewModel>((x) =>
@@ -101,11 +100,12 @@ namespace ChilliCoreTemplate.Service
                     x.Company = role.CompanyId.HasValue ? new CompanySummaryViewModel { Id = role.CompanyId.Value, Name = role.CompanyName } : null;
                 }
             });
+            LinqMapper.CreateMap<User, DataLinkModel>(x => new DataLinkModel
+            {
+                Name = x.FullName
+            });
 
             LinqMapper.CreateMap<UserActivity, UserActivityViewModel>();
-            LinqMapper.CreateMap<User, LocationUserDetails>(u => new LocationUserDetails
-            {
-            });
 
             LinqMapper.CreateMap<Company, CompanyViewModel>(c => new CompanyViewModel
             {
@@ -124,19 +124,12 @@ namespace ChilliCoreTemplate.Service
             {
                 Email = u.User.Email,
                 Name = u.User.FullName,
-                Status = u.User.Status.ToString(),
+                Status = u.Status != null ? u.Status.ToString() : u.User.Status.ToString()
             });
 
-            LinqMapper.CreateMap<LocationUser, LocationUserViewModel>(u => new LocationUserViewModel
+            LinqMapper.CreateMap<Company, DataLinkModel>(c => new DataLinkModel
             {
-                Id = u.LocationId,
-                UserId = u.UserId,
-                Email = u.User.Email,
-                Name = u.User.FullName,
-                Status = u.User.Status.ToString(),
-                CreatedOn = u.CreatedOn,
             });
-
         }
 
         private static bool IsComplexType(Type propertyType)

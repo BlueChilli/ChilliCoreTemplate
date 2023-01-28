@@ -1,4 +1,165 @@
-﻿//windows and mac make fonts same
+﻿//Changes not directly realted to clever
+@import 'clever/themes/default';
+
+//Breadcrumb styling
+.breadcrumb > li {
+    color: #A7B1C2;
+    font-weight: 600;
+}
+
+.breadcrumb > li a:hover {
+    color: $gray-700;
+}
+
+.breadcrumb > li a {
+    color: inherit;
+}
+
+.breadcrumb > .active {
+    color: inherit;
+}
+
+//Datatables
+div.table-responsive div.dataTables_wrapper div.dataTables_info {
+    float: left;
+    margin-left: 1.5rem;
+    font-size: .8125rem;
+}
+
+div.table-responsive div.dataTables_wrapper div.dataTables_paginate {
+    float: right;
+    margin-right: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+//validation summary
+.validation-summary-errors {
+    background-color: rgb(255, 95, 95);
+    margin-bottom: 1.5rem;
+}
+
+.error .form-control {
+    border: 1px solid rgb(255, 95, 95);
+}
+
+.error label {
+    color: rgb(255, 95, 95);
+}
+
+.field-validation-error {
+    color: red;
+}
+
+.validation-summary-errors .close {
+    color: white;
+    opacity: 1;
+}
+
+.validation-summary-errors ul {
+    color: white;
+    opacity: 1;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.mandatory::before {
+    content: '* ';
+    color: red;
+    font-size: 12px;
+}
+
+// validation summary - From boostrap 4
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+}
+
+.close:hover {
+    color: #000;
+    text-decoration: none;
+}
+
+.close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {
+    opacity: .75;
+}
+
+//ichecks for bootstrap 5
+.i-checks {
+    margin-top: 0.5rem;
+}
+
+//buttons
+button.close {
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+}
+
+.btn-primary {
+    background-color: $primary-btn-bg;
+    border-color: $primary-btn-bg;
+
+    &:hover, &:active, &:focus, &:active:focus {
+        background: $primary-btn-bg-hover;
+        border-color: $primary-btn-bg-hover;
+    }
+}
+
+.btn-primary.btn[disabled] {
+    background-color: lighten($primary-btn-bg, 20%);
+    border-color: lighten($primary-btn-bg, 20%);
+}
+
+//Align icons to center of button
+.btn-square.btn-sm {
+    padding: 0.5rem;
+}
+
+//Links
+a {
+    color: $link-color;
+
+    &:hover,
+    &:focus {
+        color: $link-hover-color;
+    }
+}
+
+// Changed table colors
+.table {
+    color: $table-text-color;
+
+    a {
+        color: $table-link-color;
+    }
+}
+
+table.dataTable.table-hover > tbody > tr.odd:hover > * {
+    background: $table-hover-color;
+    color: $table-text-color;
+    box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 1%);
+}
+
+table.dataTable.table-hover > tbody > tr.even:hover > * {
+    background: $table-hover-color;
+    color: $table-text-color;
+    box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 1%);
+}
+
+//Removed in Bootstrap4 for d-none
+.hide {
+    display: none !important;
+}
+/* Previous core which may still be needed. Also lots from inspinia patch which probably needs to be in here
+    
+//windows and mac make fonts same
 body, html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -7,20 +168,15 @@ body, html {
 //email account layout styles
 .loginscreen.middle-box {
     width: 350px;
-}
+}*/
 
-.emailaccount-background {
+/*.emailaccount-background {
     background: $navy url("../Images/bg-image.png") no-repeat;
     background-size: cover;
 }
-
-div.background-image h2, div.background-image label, div.background-image p:not(.alert) {
+*/
+/*div.background-image h2, div.background-image label, div.background-image p:not(.alert) {
     color: #fff;
-}
-
-//Removed in Bootstrap4 for d-none
-.hide {
-    display: none !important;
 }
 
 //Removed in Bootstrap4
@@ -81,4 +237,4 @@ div.background-image h2, div.background-image label, div.background-image p:not(
         box-shadow: none;
         opacity: .65;
     }
-}
+}*/

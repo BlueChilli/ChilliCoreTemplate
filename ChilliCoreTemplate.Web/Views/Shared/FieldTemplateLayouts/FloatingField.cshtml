@@ -1,0 +1,9 @@
+@model FieldTemplateModel
+@{ 
+    Model.HtmlAttributes.Merge("class", "form-floating");
+    Model.HtmlAttributes.Merge("class", "mb-3");
+}
+<div @Model.HtmlAttributes.ToAttributeHtmlContent()>
+    @FieldTemplateModel.InnerTemplateMarker
+    <label for="" class="@Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName</label>
+</div>

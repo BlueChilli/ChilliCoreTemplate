@@ -21,6 +21,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public Role Role { get; set; }
 
+        public RoleStatus? Status { get; set; }
+
         public int? CompanyId { get; set; }
         public Company Company { get; set; }
 

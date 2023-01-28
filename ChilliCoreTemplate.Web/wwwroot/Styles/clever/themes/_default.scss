@@ -1,0 +1,38 @@
+// Custom variables
+//
+// Variables should follow the `$component-state-property-size` formula for
+// consistent naming. Ex: $nav-link-disabled-color and $modal-content-box-shadow-xs.
+
+// White/Grays/Black colors
+$white: #FFF !default;
+$gray-50: #FAFAFA !default; // Alternate background
+$gray-100: #F5F9FC !default; // Base background
+$gray-200: #E7EAF0 !default;
+$gray-300: #CFD6DF !default;
+$gray-400: #ABB6C5 !default;
+$gray-500: #8898A9 !default; // Disabled text
+$gray-600: #6B7B93 !default; // Placeholder text
+$gray-700: #525F7F !default; // Text content
+$gray-800: #2D3748 !default; // Text content old(44444e)
+$gray-900: #16192C !default; // Text content
+$black: #000 !default;
+
+// Need additional variables? Simply create it here and make sure you follow the naming formula explained at the top of this file.
+
+$primary: #172850;
+$secondary: #FAFCFE;
+$dark: $gray-900 !default;
+
+$headings-color: #1A294D !default;
+
+$primary-btn-bg: #B42533;
+$primary-btn-bg-hover: #9C1724;
+
+$link-color: #246BFD !default;
+$link-hover-color: darken($link-color, 15%) !default;
+$table-link-color: $link-color;
+$table-text-color: $headings-color;
+$table-hover-color: #ECF2F8;
+
+$surface-colors: () !default;
+$surface-colors: map-merge(( "primary": $white, "secondary": $secondary, "tertiary": $gray-50, "light": $gray-200, "dark": shade-color($dark, 7%) ), $surface-colors);

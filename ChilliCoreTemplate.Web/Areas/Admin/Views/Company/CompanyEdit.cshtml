@@ -1,9 +1,8 @@
-@inject ProjectSettings config;
 @model CompanyEditModel
 @{
-    var breadcrumb = new BreadcrumbOptions
+    var breadcrumb = new PageHeaderOptions
     {
-        Heading = Model.Id == 0 ? "Create a new company" : Model.Name,
+        Heading = Model.Id == 0 ? "Create a new Company" : Model.Name,
         Title = Model.Id == 0 ? "Create" : Model.Name,
     };
     var pageButtons = new Template_PageButtons
@@ -11,11 +10,10 @@
         CancelMenuUrl = Model.Id == 0 ? Mvc.Admin.Company_List.Url(this.Url) : Mvc.Admin.Company_Detail.Url(this.Url, Model.Id)
     };
 }
-@await Html.PartialAsync("Layout/_Breadcrumb", breadcrumb)
-@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
-{
+@await Html.PartialAsync("Layout/_PageHeader", breadcrumb)
+<page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
-    using (Html.BeginFormCustom(Mvc.Admin.Company_Edit, htmlAttributes: new { @class = "form-horizontal", enctype = "multipart/form-data", autocomplete = "off" }))
+    @using (Html.BeginFormCustom(Mvc.Admin.Company_Edit, htmlAttributes: new { @class = "form-horizontal", enctype = "multipart/form-data", autocomplete = "off" }))
     {
         @Html.ValidationSummary()
         @await Html.TemplateAsync(TemplateTypes.PageButtons, pageButtons)
@@ -27,10 +25,6 @@
             <box-content>
                 @await Html.FieldTemplateForAsync(m => m.LogoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.LogoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 150, Height = 50, Quality = 80, Mode = ResizeMode.Max }) { ButtonText = "Upload", HasRemoveButton = false, BackgroundSize = "contain" })
                 @await Html.FieldTemplateForAsync(m => m.Name)
-                @if(config.HasMasterCompany)
-                {
-                @await Html.FieldTemplateForAsync(m => m.MasterCompanyId, fieldOptions: new SelectFieldTemplateOptions() { SelectList = Model.CompanyList })                    
-                }
                 @using (await Html.FieldTemplateOuterForAsync(m => m.StripeId))
                 {
                     if (String.IsNullOrEmpty(Model.StripeId))
@@ -49,7 +43,7 @@
         </box>
 
     }
-}
+</page>
 @section scripts
 {
     <script>

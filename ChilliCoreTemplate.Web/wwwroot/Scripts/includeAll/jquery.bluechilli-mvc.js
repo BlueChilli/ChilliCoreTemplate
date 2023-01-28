@@ -272,6 +272,12 @@ BlueChilli.validateACN = function (value) {
     return check == parseInt(value.charAt(i));
 };
 
+BlueChilli.checkAnchor = function () {
+    if (document.location.hash.length > 0) {
+        $('.nav-tabs a[data-bs-target="' + document.location.hash + '"]').tab("show");
+    }
+}
+
 BlueChilli.uploadSummernoteImage = function (id, url, file) {
     formData = new FormData();
     formData.append("ImageFile", file);
@@ -533,14 +539,3 @@ jQuery.fn.extend({
         toggleBody.show();
     }
 });
-
-BlueChilli.checkAnchor = function () {
-    if (document.location.hash.length > 0) {
-        $('.nav-tabs a[href="' + document.location.hash + '"]').tab("show");
-    }
-    $(window).on('hashchange ready', function () {
-        let selectedTab = window.location.hash;
-        $('a[href="' + selectedTab + '"][data-toggle="tab"]').trigger('click');
-    });
-};
-

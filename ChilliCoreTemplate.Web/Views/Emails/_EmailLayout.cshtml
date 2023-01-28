@@ -165,7 +165,7 @@
         </div>
     }
     <center>
-        <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" style="background:rgba(255, 255, 255, 0.00);font-family:Helvetica,sans-serif;height:100% !important;margin:0;padding:0;width:100% !important;font-size:14px;color:#8d9aa5;">
+        <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" style="background:rgba(255, 255, 255, 0.00);font-family:Open Sans, Helvetica,sans-serif;height:100% !important;margin:0;padding:0;width:100% !important;font-size:14px;color:#8d9aa5;">
             <tr>
                 <td align="center" style="vertical-align:top;padding-top:15px;padding-bottom:15px;border-collapse:collapse;max-width:600px;">
                     <!-- // BEGIN CONTAINER -->
@@ -240,10 +240,10 @@
                                 <table id="footer" border="0" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px">
                                     <tr>
                                         <td class="contact-info" style="text-align:center;vertical-align:top;padding-top:25px;border-collapse:collapse;">
-                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">You're receiving this because you are registered with @Model.Site (<a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="@Model.PublicUrl">@(new Uri(Model.PublicUrl).AsFriendlyName())</a>)</p>
-                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">Have a question? Email us at <a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="mailto:@Model.Email">@Model.Email</a></p>
-                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">&copy; @Model.Site @DateTime.UtcNow.ToTimezone().Year all rights reserved</p>
-                                            <p style="font-family:Helvetica,sans-serif;line-height:160%;font-family:Helvetica,sans-serif;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;"><img src="@Model.FileStoragePath/logo-icon.png" width="20" alt="Icon" /></p>
+                                            <p style="font-family:Open Sans,Helvetica,sans-serif;line-height:160%;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">@Model.YouAreReceivingText (<a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="@Model.PublicUrl">@(new Uri(Model.PublicUrl).AsFriendlyName())</a>)</p>
+                                            <p style="font-family:Open Sans,Helvetica,sans-serif;line-height:160%;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">Have a question? Email us at <a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="mailto:@Model.Email">@Model.Email</a></p>
+                                            <p style="font-family:Open Sans,Helvetica,sans-serif;line-height:160%;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">&copy; @Model.Site @DateTime.UtcNow.ToTimezone().Year all rights reserved</p>
+                                            <p style="font-family:Open Sans,Helvetica,sans-serif;line-height:160%;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;"><img src="@Model.FileStoragePath/logo-icon.png" width="20" alt="Icon" /></p>
                                             @*@if (Model.CanUnsubscribe)
                                                 {
                                                     <p style="font-family:Helvetica,sans-serif;line-height:160%;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">

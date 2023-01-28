@@ -1,130 +1,101 @@
 @inject IWebHostEnvironment env;
 @model UserDetailsModel
 
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Title = Model.Account.FullName })
-<div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox">
-                <div class="ibox-title">
-                    <h5>User: @Model.Account.FullName <span class="ibox-title-help">(@Model.Account.Email)</span></h5>
-                    <div class="float-sm-right">
-                        <div class="btn-group js-manage">
-                            <button data-toggle="dropdown" class="btn btn-default btn-sm m-t-n-xs">Manage <span class="caret"></span></button>
-                            <ul class="dropdown-menu float-right">
-                                <li>
-                                    <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_ResetPassword, Model.Account.Id)">Reset password</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_ChangeDetails, Model.Account.Id)">Change account details</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_ChangeRole, Model.Account.Id)">Change account role</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_ChangeStatus, Model.Account.Id)">Change account status</a>
-                                </li>
-                                @if (Model.Account.Status == UserStatus.Deleted)
-                                {
-                                <li>
-                                    <a class="dropdown-item" onclick="@Html.ModalOpen(Mvc.Admin.User_Purge, Model.Account.Id)">Purge account</a>
-                                </li>                                
-                                }
-
-                                @if (User.UserData().CanImpersonate(Model.Account))
-                                {
-                                    <li>
-                                        <a href="#" class="dropdown-item js-impersonate">Impersonate</a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    Account information
-                                </div>
-                                <div class="panel-body">
-                                    <p><b>Role:</b> @String.Join(", ", Model.Account.UserRoles.Select(r => r.Role.GetDescription()))</p>
-                                    @if (Model.Account.UserRoles.Any(r => r.CompanyId.HasValue))
-                                    {
-                                        <p>
-                                            <b>Company:</b>
-                                            @foreach (var role in Model.Account.UserRoles.Where(r => r.CompanyId.HasValue))
-                                            {
-                                                <a mvc-action="Mvc.Admin.Company_Detail.AddRouteId(role.CompanyId.Value)">@role.CompanyName</a>
-                                            }
-                                        </p>
-                                    }
-                                    <p><b>Status:</b> @Model.Account.Status.GetDescription()</p>
-                                    <p><b>Email:</b> <a href="mailto:@Model.Account.Email">@Model.Account.Email</a></p>
-                                    @if (!String.IsNullOrEmpty(Model.Account.Phone))
-                                    {
-                                        <p><b>Phone:</b> @Model.Account.Phone</p>
-                                    }
-                                    @if (!String.IsNullOrEmpty(Model.Account.ProfilePhotoPath))
-                                    {
-                                        <p><b>Profile:</b> @Html.Resizer().Image(Model.Account.ProfilePhotoPath, new ImageSharpCommand { Width = 100, Format = ImageSharpFormat.JPG, Quality = 100 })</p>
-                                    }
-                                    @if (Model.Account.LastLoginDate.HasValue)
-                                    {
-                                        <p><b>Last Login Date:</b> @Model.Account.LastLoginDate.Value.ToTimezone().ToIsoDateTime()</p>
-                                    }
-                                    @if (Model.Account.ActivatedDate.HasValue)
-                                    {
-                                        <p><b>Activated Date:</b> @Model.Account.ActivatedDate.Value.ToTimezone().ToIsoDateTime()</p>
-                                    }
-                                    @if (Model.Account.LastPasswordChangedDate != null)
-                                    {
-                                        <p><b>Password Changed At:</b> @Model.Account.LastPasswordChangedDate.Value.ToTimezone().ToIsoDateTime()</p>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <span class="float-left">Last activity</span>
-                                    <span class="ibox-tools">
-                                        <a href="@Mvc.Admin.User_Activity.Url(this.Url, routeValues: new { UserId = Model.Account.Id })">
-                                            <i class="fa fa-external-link-alt m-r-md"></i>
-                                        </a>
-                                    </span>
-                                </div>
-                                <div class="panel-body">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Type</th>
-                                                <th>Activity</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var activity in Model.LastActivities)
-                                            {
-                                                <tr>
-                                                    <td>@activity.ActivityOn.ToTimezone().ToIsoDateTime()</td>
-                                                    <td>@activity.EntityType.GetDescription()</td>
-                                                    <td>@activity.ActivityType.GetDescription()</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Title = Model.Account.FullName })
+<page>
+    <box>
+        <box-title title="@Model.Account.FullName" help="(@Model.Account.Email)">
+            <div class="btn-group ms-auto">
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Manage
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ResetPassword" asp-route-id="@Model.Account.Id">Reset password</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ChangeDetails" asp-route-id="@Model.Account.Id">Change account details</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ChangeRole" asp-route-id="@Model.Account.Id">Change account role</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ChangeStatus" asp-route-id="@Model.Account.Id">Change account status</a>
+                    </li>
+                    @if(Model.Account.Status == UserStatus.Deleted)
+                    {
+                    <li>
+                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_Purge" asp-route-id="@Model.Account.Id">Purge account</a>
+                    </li>                                
+                    }
+                    @if (User.UserData().CanImpersonate(Model.Account))
+                    {
+                        <li>
+                            <a href="#" class="dropdown-item js-impersonate">Impersonate</a>
+                        </li>
+                    }
+                  </ul>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+        </box-title>
+        <box-content>
+            <div class="row">
+                <div class="col-lg-6">
+                    <headings title="Account information" class="bg-gray-100">
+                        <heading title="Role">@String.Join(", ", Model.Account.UserRoles.Select(r => r.Role.GetDescription()))</heading>
+                        <heading title="Company" Condition="Model.Account.UserRoles.Any(r => r.CompanyId.HasValue)">
+                            @foreach (var role in Model.Account.UserRoles.Where(r => r.CompanyId.HasValue))
+                            {
+                                <a mvc-action="Mvc.Admin.Company_Detail" asp-route-id="@role.CompanyId.Value">@role.CompanyName</a>
+                            }
+                        </heading>
+                        <heading title="Status">@(Model.Account.StatusDescription)</heading>
+                        <heading title="Email"><a href="mailto:@Model.Account.Email">@Model.Account.Email</a></heading>
+                        <heading title="Phone" Condition="!String.IsNullOrEmpty(Model.Account.Phone)">@Model.Account.Phone</heading>
+                        <heading title="Profile" Condition="!String.IsNullOrEmpty(Model.Account.ProfilePhotoPath)">@Html.Resizer().Image(Model.Account.ProfilePhotoPath, new ImageSharpCommand { Width = 100, Format = ImageSharpFormat.JPG, Quality = 100 })</heading>
+                        <heading title="Last login" Condition="Model.Account.LastLoginDate.HasValue">@Model.Account.LastLoginDate.Value.ToTimezone().ToIsoDateTime()</heading>
+                        <heading title="Activated on" Condition="Model.Account.ActivatedDate.HasValue">@Model.Account.ActivatedDate.Value.ToTimezone().ToIsoDateTime()</heading>
+                        <heading title="Password changed on" Condition="Model.Account.LastPasswordChangedDate.HasValue">@Model.Account.LastPasswordChangedDate.Value.ToTimezone().ToIsoDateTime()</heading>
+                    </headings>
+                </div>
+                <div class="col-lg-6">
+                    <box>
+                        <box-title title="Last activity" class="bg-gray-100">
+                            <div class="ms-auto">
+                                <a mvc-action="@Mvc.Admin.User_Activity.AddRouteValues(new { UserId = Model.Account.Id })">
+                                    <i class="fa fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </box-title>
+                        <box-content>
+                            <table class="table table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Activity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var activity in Model.LastActivities)
+                                    {
+                                        <tr>
+                                            <td>@activity.ActivityOn.ToTimezone().ToIsoDateTime()</td>
+                                            <td>@activity.EntityType.GetDescription()</td>
+                                            <td>@activity.ActivityType.GetDescription()</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </box-content>
+                    </box>
+                </div>
+            </div>
+        </box-content>
+    </box>
+
+</page>
 <form id="impersonate" target="_self" method="post" action="@Mvc.Admin.User_Impersonate.Url(this.Url)">
     <input type="hidden" name="id" id="impersonate-id" value="@Model.Account.Id" />
 </form>

@@ -11,13 +11,13 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 {
 
     [Area("Company")]
-    [RequireHttpsWeb, CustomAuthorize(MultipleRoles = new string[] { AccountCommon.CompanyAdmin, AccountCommon.CompanyUser })]
+    [CustomAuthorize(MultipleRoles = new string[] { AccountCommon.CompanyAdmin, AccountCommon.CompanyUser })]
     public class DefaultController : Controller
     {
 
         public virtual ActionResult Index()
         {
-            return Mvc.Company.Location_List.Redirect(this);
+            return Mvc.Company.User_List.Redirect(this);
         }
     }
 }

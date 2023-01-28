@@ -17,12 +17,17 @@ namespace ChilliCoreTemplate.Web
 
         public static IHtmlContent AddOn(string text, string classes = "")
         {
-            return new HtmlString($"<span class=\"input-group-addon {classes}\">{text}</span>");
+            return new HtmlString($"<span class=\"input-group-text {classes}\">{text}</span>");
         }
 
         public static IHtmlContent ButtonAddOn(string text, string classes = "")
         {
-            return MvcHtmlStringCompatibility.Create($"<span class=\"input-group-btn\"><button type=\"button\" class=\"btn {classes}\">{text}</button></span>");
+            return new HtmlString($"<span class=\"input-group-btn\"><button type=\"button\" class=\"btn {classes}\">{text}</button></span>");
+        }
+
+        public static IHtmlContent IconAddOn(string type)
+        {
+            return new HtmlString($"<span class=\"input-group-text\"><i class=\"bi bi-{type}\"></i></span>");
         }
 
         public override IFieldInnerTemplateModel CreateFieldInnerTemplateModel<TModel, TValue>(IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)

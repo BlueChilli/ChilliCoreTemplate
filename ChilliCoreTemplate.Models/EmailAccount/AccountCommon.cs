@@ -13,7 +13,6 @@ namespace ChilliCoreTemplate.Models
         Registered = 1,
         Activated,
         Deleted,
-        Invited,
         Anonymous
     }
 
@@ -27,6 +26,12 @@ namespace ChilliCoreTemplate.Models
         CompanyAdmin = 4,
         [Order(3)]
         CompanyUser = 8
+    }
+
+    public enum RoleStatus
+    {
+        Invited = 1,
+        Applied
     }
 
     public static class RoleHelper

@@ -17,8 +17,8 @@
 }
 <div id="js-image-cropper-@jsId">
     <div class="m-b-sm">
-        <button type="button" class="btn btn-default js-image-select-@jsId">@buttonText</button>
-        <button type="button" class="btn btn-default js-image-remove-@jsId">@removeButtonText</button>
+        <button type="button" class="btn btn-neutral js-image-select-@jsId">@buttonText</button>
+        <button type="button" class="btn btn-neutral js-image-remove-@jsId">@removeButtonText</button>
     </div>
     <div class="cropit-preview" style="width:@(widthInPixels)px;height:@(heightInPixels)px;"></div>
     <input type="file" id="@(Model.Id)" name="@Model.Name" @Model.HtmlAttributes.ToAttributeHtmlContent() />

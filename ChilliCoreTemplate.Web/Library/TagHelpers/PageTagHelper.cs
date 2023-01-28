@@ -21,9 +21,10 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         //</div>
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            output.TagName = "div";
+            output.TagName = "main";
             output.Attributes.SetAttribute("id", "page-container");
-            output.PreContent.SetHtmlContent($"<div class=\"row m-b-sm\"><div class=\"col-lg-12\">");
+            output.Attributes.SetAttribute("class", "py-6 bg-surface-secondary");
+            output.PreContent.SetHtmlContent($"<div class=\"container-fluid\"><div class=\"vstack gap-4\">");
             output.PostContent.SetHtmlContent("</div></div>");
         }
     }

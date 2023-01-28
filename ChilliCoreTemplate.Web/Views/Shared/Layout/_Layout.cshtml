@@ -6,13 +6,13 @@
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
     @Html.BlueChilliAsciiMotif()
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="dark light">
     <title>@Html.GetCurrentMenu().Title | @config.ProjectDisplayName</title>
     @if (config.GoogleAnalytics.Enabled == true)
     {
@@ -22,44 +22,31 @@
         }
     }
     <link rel="stylesheet" href="~/bundles/bootstrap.min.css" asp-append-version="true" />
-    @Html.RenderBundle("~/bundles/stylebundle.min.css")
-    <link rel="stylesheet" href="~/bundles/stylebundle2.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/bundles/stylebundle.min.css" asp-append-version="true" />
     @RenderSection("styles", required: false)
     @await Html.PartialAsync("~/Views/Shared/Layout/_Icons.cshtml")
     @await Html.PartialAsync("~/Views/Shared/ConfirmationModalHandlebars.cshtml")
 </head>
-<body class="@Html.When(!leftLayout, "top-navigation")">
-    <div id="wrapper">
-        @if (leftLayout)
-        {
-            @await Html.PartialAsync("Layout/_NavigationLeft")
-            <div id="page-wrapper" class="gray-bg">
-                @await Html.PartialAsync("Layout/_NavigationLeft_NavBar")
-                @RenderBody()
-                @await Html.PartialAsync("Layout/_Footer")
-            </div>
-        }
-        else
-        {
-            <div id="page-wrapper" class="gray-bg">
-                <div class="row border-bottom white-bg">
-                    @await Html.PartialAsync("Layout/_NavigationTop")
-                </div>
-                <div class="wrapper wrapper-content">
-                    <div class="container">
-                        @RenderBody()
-                    </div>
-                </div>
-                @await Html.PartialAsync("Layout/_Footer")
-            </div>
-        }
+
+<body>
+    <div class="d-flex flex-column flex-lg-row h-lg-full bg-surface-secondary">
+        <!-- Sidebar -->
+        @await Html.PartialAsync("~/Views/Shared/Layout/Clever/_SideBar.cshtml")
+
+        <!-- Content -->
+        <div class="flex-lg-1 h-screen overflow-y-lg-auto">
+            @await Html.PartialAsync("~/Views/Shared/Layout/Clever/_NavBar.cshtml")
+
+            @RenderBody()
+        </div>
     </div>
+
     @Html.RenderBundle("~/bundles/scriptbundle.min.js")
 
     @RenderSection("scripts", required: false)
     @Html.RenderCustomSection("scripts")
     @RenderSection("modal", required: false)
-    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.Public_ConfirmationModal })
-    @await Html.PartialAsync("Layout/_MiniProfiler")
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.EmailAccount_ChangeDetails, Title = "Update profile" })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.EmailAccount_ChangePassword, Title = "Change password" })
 </body>
 </html>

@@ -22,22 +22,23 @@
     @using (builder.BeginHeader())
     {
         @builder.H1(String.Format("You've been invited as a {0} for {1}", Model.Data.InviteRole.Role.Value.GetDescription(), Model.CompanyName))
-        using (builder.BeginH2())
-        {
-            if (String.IsNullOrEmpty(Model.Data.Inviter))
-            {
-                <text>You're receiving this email because you have been invited to @Model.CompanyName.</text>
-            }
-            else
-            {
-                <text>You're receiving this email because @Model.Data.Inviter has invited you to @Model.CompanyName.</text>
-            }
-            @:<br /><br />To set your password and start using @Model.CompanyName click on the button below.
-        }
-        @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, url, "Set password")
     }
 }
+@using (builder.BeginP())
+{
+    if (String.IsNullOrEmpty(Model.Data.Inviter))
+    {
+        <text>You're receiving this email because you have been invited to @Model.CompanyName.</text>
+    }
+    else
+    {
+        <text>You're receiving this email because @Model.Data.Inviter has invited you to @Model.CompanyName.</text>
+    }
+    @:<br /><br />To set your password and start using @Model.CompanyName click on the button below.
+}
+<br/>
+@builder.ButtonTrack(Model.TrackingId, Model.TemplateId, url, "Set password")
 @using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
 {
-    @:For your security, this link expires in 7 days, so if you’ve taken longer than that, click <a target="_blank" href="@forgotPasswordUrl">here</a> to receive a reset password email.
+    @:For your security, this link expires in 7 days, so if you've taken longer than that, click <a target="_blank" href="@forgotPasswordUrl">here</a> to receive a reset password email.
 }

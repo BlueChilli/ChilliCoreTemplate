@@ -49,14 +49,14 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (user.Id != 0)
             {
-                if (user.Status == UserStatus.Invited) Invite_Confirm(user);
+                Invite_Confirm(user);
                 if (user.Status == UserStatus.Deleted) user.Status = UserStatus.Activated;
 
                 Context.SaveChanges();
 
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Update, EntityId = user.Id, EntityType = EntityType.Password });
 
-                if (!sendEmail && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
+                if (sendEmail && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
             }
         }
 

@@ -35,12 +35,12 @@ namespace ChilliCoreTemplate.Web
 
             MenuConfigByRole.Config(Role.Administrator, cfg =>
             {
-                cfg.AddRoot(Mvc.Admin.Company_List, title: "Companies", icon: "fa-city").SetChildren(
+                cfg.AddRoot(Mvc.Admin.Company_List, title: "Companies", icon: "building").SetChildren(
                     cfg.CreateBreadcrumb(Mvc.Admin.Company_Edit),
                     cfg.CreateBreadcrumb(Mvc.Admin.Company_Detail)
                 );
 
-                cfg.AddRoot(Mvc.Admin.User_Users, icon: "fa-users").SetChildren(
+                cfg.AddRoot(Mvc.Admin.User_Users, icon: "people").SetChildren(
                         cfg.Create(Mvc.Admin.User_Users, breadcrumbHidden: true).SetChildren(
                             cfg.CreateBreadcrumb(Mvc.Admin.User_Users_Details),
                             cfg.CreateBreadcrumb(Mvc.Admin.User_Invite)
@@ -57,14 +57,10 @@ namespace ChilliCoreTemplate.Web
 
             MenuConfigByRole.Config(Role.CompanyAdmin, cfg =>
             {
-                cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "fa-users").SetChildren(
+                cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "people").SetChildren(
                         cfg.CreateBreadcrumb(Mvc.Company.User_Detail),
                         cfg.CreateBreadcrumb(Mvc.Company.User_Invite)                       
                     );
-
-                cfg.AddRoot(Mvc.Company.Location_List, title: "Locations", icon: "fa-building").SetChildren(
-                    cfg.CreateBreadcrumb(Mvc.Company.Location_Edit)
-                );
             });
         }
 
@@ -361,5 +357,12 @@ namespace ChilliCoreTemplate.Web
         {
             yield return this;
         }
+    }
+
+    public class MenuGroup
+    {
+        public string Name { get; set; }
+
+        public IEnumerable<MenuElement> RootMenus { get; set; }
     }
 }

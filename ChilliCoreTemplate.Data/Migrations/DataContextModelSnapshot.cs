@@ -17,7 +17,7 @@ namespace ChilliCoreTemplate.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
+                .HasAnnotation("ProductVersion", "6.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -691,6 +691,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Property<int>("OAuthIdHash")
                         .HasColumnType("int");
 
+                    b.Property<int>("Platform")
+                        .HasColumnType("int");
+
                     b.Property<int>("Provider")
                         .HasColumnType("int");
 
@@ -725,6 +728,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Status")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -768,72 +774,6 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserTokens");
-                });
-
-            modelBuilder.Entity("ChilliCoreTemplate.Data.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Timezone")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Locations");
-                });
-
-            modelBuilder.Entity("ChilliCoreTemplate.Data.LocationUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("LocationId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("LocationUsers");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.Payment", b =>
@@ -1283,36 +1223,6 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChilliCoreTemplate.Data.Location", b =>
-                {
-                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("ChilliCoreTemplate.Data.LocationUser", b =>
-                {
-                    b.HasOne("ChilliCoreTemplate.Data.Location", "Location")
-                        .WithMany("Users")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ChilliCoreTemplate.Data.Payment", b =>
                 {
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.Company", "Company")
@@ -1373,11 +1283,6 @@ namespace ChilliCoreTemplate.Data.Migrations
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserDevice", b =>
                 {
                     b.Navigation("UserSessions");
-                });
-
-            modelBuilder.Entity("ChilliCoreTemplate.Data.Location", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ChilliSource.Cloud.Core.Distributed.RecurrentTaskDefinition", b =>

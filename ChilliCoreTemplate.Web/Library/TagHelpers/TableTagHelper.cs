@@ -27,8 +27,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.AddClass("table-responsive", NullHtmlEncoder.Create());
-            output.PreContent.SetHtmlContent($"<table id=\"{Id}\" class=\"table table-striped table-bordered table-hover {Class}\">");
+            output.PreContent.SetHtmlContent($"<table id=\"{Id}\" class=\"table table-hover {Class}\" width=\"100%\">");
             output.PostContent.SetHtmlContent("</table>");
         }
     }

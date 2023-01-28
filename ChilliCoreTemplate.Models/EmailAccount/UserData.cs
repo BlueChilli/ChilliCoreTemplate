@@ -102,7 +102,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             return this.CurrentRoles.Select(r => new UserRoleApiModel() { Role = r.Role, CompanyId = r.CompanyId });
         }
 
-        public static ImpersonatorSummaryApiModel ImpersonatorSummary(UserData impersonator)
+        public  ImpersonatorSummaryApiModel ImpersonatorSummary(UserData impersonator)
         {
             if (impersonator == null) return null;
             return new ImpersonatorSummaryApiModel
@@ -152,6 +152,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public int? MasterCompanyId { get; set; }
 
         public string CompanyName { get; set; }
+
+        public RoleStatus? Status { get; set; }
 
         public bool CanImpersonate(UserRoleModel other)
         {

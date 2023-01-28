@@ -1,23 +1,16 @@
+using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Api.OAuth;
+using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Service;
+using ChilliCoreTemplate.Service.EmailAccount;
+using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Web.MVC;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-using ChilliCoreTemplate.Service.EmailAccount;
-using ChilliCoreTemplate.Models.EmailAccount;
-using ChilliCoreTemplate.Models;
-using ChilliCoreTemplate.Service;
-using ChilliSource.Cloud.Web.MVC;
-using Microsoft.AspNetCore.Authorization;
-using ChilliSource.Cloud.Core;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Web;
-using ChilliSource.Core.Extensions;
-using System.Security.Principal;
-using Microsoft.Extensions.DependencyInjection;
-using ChilliCoreTemplate.Models.Api.OAuth;
 
 namespace ChilliCoreTemplate.Web.Controllers
 {
@@ -40,9 +33,11 @@ namespace ChilliCoreTemplate.Web.Controllers
             _settings = settings;
         }
 
-        public virtual async Task<ActionResult> Login(string returnUrl = "", string email = "")
+        public virtual async Task<ActionResult> Login(string returnUrl = "", string email = "", string error = "")
         {
             ModelState.Clear();
+
+            if (!String.IsNullOrEmpty(error)) ModelState.AddModelError("Login failed", error);
 
             if (User.Identity.IsAuthenticated)
             {
@@ -56,21 +51,40 @@ namespace ChilliCoreTemplate.Web.Controllers
                 Email = email,
                 ReturnUrl = returnUrl
             };
-            model.OAuthUrls.Add
+            model.OAuthUrls = OAuthUrls();
+
+            return View(model);
+        }
+
+        private Dictionary<OAuthProvider, string> OAuthUrls()
+        {
+            var urls = new Dictionary<OAuthProvider, string>();
+
+            urls.Add
             (
                 OAuthProvider.Google,
                 _accountService.OAuth_Url(new OAuthUrlApiModel
                 {
                     Provider = OAuthProvider.Google,
-                    RedirectUrl = Mvc.Root.EmailAccount_LoginWithToken.Url(this)
+                    RedirectUrl = Mvc.Root.EmailAccount_LoginOAuth.Url(this)
                 }, OAuthMode.Login).Result
             );
 
-            return View(model);
+            urls.Add
+            (
+                OAuthProvider.Apple,
+                _accountService.OAuth_Url(new OAuthUrlApiModel
+                {
+                    Provider = OAuthProvider.Apple,
+                    RedirectUrl = Mvc.Root.EmailAccount_LoginOAuth.Url(this)
+                }, OAuthMode.Login).Result
+            );
+
+            return urls;
         }
 
-        [HttpPost, ActionName("Login")]
         [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Login")]
         public virtual ActionResult LoginPost(SessionEditModel model)
         {
             if (!ModelState.IsValid)
@@ -90,7 +104,7 @@ namespace ChilliCoreTemplate.Web.Controllers
                 {
                     ModelState.AddModelError("Login failed", loginResult.Error);
                 }
-
+                model.OAuthUrls = OAuthUrls();
                 return View(model);
             }
 
@@ -112,7 +126,17 @@ namespace ChilliCoreTemplate.Web.Controllers
             return this.RedirectToRoot(_settings, ticket);
         }
 
-        public virtual ActionResult LoginWithToken(UserTokenModel model)
+        public virtual ActionResult LoginOAuth(string email, string token, string error, string errorDescription)
+        {
+            if (!String.IsNullOrEmpty(error) || !String.IsNullOrEmpty(errorDescription))
+            {
+                ModelState.AddModelError("OAuth", errorDescription ?? error);
+                return View("Login", new SessionEditModel { OAuthUrls = OAuthUrls() });
+            }
+            return LoginWithToken(new UserTokenModel { Email = email, Token = token });
+        }
+
+        private ActionResult LoginWithToken(UserTokenModel model)
         {
             return this.ServiceCall(() => _accountService.LoginWithToken(model, this.LoginWithPrincipal))
                 .OnSuccess(m =>
@@ -179,7 +203,7 @@ namespace ChilliCoreTemplate.Web.Controllers
 
         [HttpPost, ActionName("Registration")]
         [ValidateAntiForgeryToken]
-        public virtual ActionResult RegistrationPost(RegistrationViewModel model)
+        public virtual ActionResult RegistrationPost([FromForm] RegistrationViewModel model)
         {
             if (model != null) model.Roles = _registrationRole;
             return this.ServiceCall(() => _accountService.Create(model))
@@ -357,7 +381,7 @@ namespace ChilliCoreTemplate.Web.Controllers
             return this.ServiceCall(() => _accountService.GetForEdit(UserData.UserId))
                  .Always(m =>
                  {
-                     return View(m);
+                     return PartialView(m);
                  })
                  .Call();
         }
@@ -370,12 +394,11 @@ namespace ChilliCoreTemplate.Web.Controllers
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success("Your account details have been successfully updated");
-
-                    return Mvc.Root.EmailAccount_ChangeDetails.Redirect(this);
+                    return PartialView(model);
                 })
                 .OnFailure(() =>
                 {
-                    return View(model);
+                    return PartialView(model);
                 })
                 .Call();
         }
@@ -385,7 +408,7 @@ namespace ChilliCoreTemplate.Web.Controllers
         {
             ChangePasswordViewModel viewModel = new ChangePasswordViewModel();
 
-            return View(viewModel);
+            return PartialView(viewModel);
         }
 
         [CustomAuthorize]
@@ -398,11 +421,11 @@ namespace ChilliCoreTemplate.Web.Controllers
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success("Your password has been successfully updated");
-                    return Mvc.Root.EmailAccount_ChangePassword.Redirect(this);
+                    return PartialView(model);
                 })
                 .OnFailure(() =>
                 {
-                    return View(model);
+                    return PartialView(model);
                 })
                 .Call();
         }

@@ -89,10 +89,10 @@ namespace ChilliCoreTemplate.Service
                 .ForMember(dest => dest.IsOwner, opt => opt.MapFrom(src => src.Relationship.Owner))
                 .ForMember(dest => dest.VerificationStatus, opt => opt.MapFrom(src => EnumHelper.Parse<PersonVerificationStatus>(src.Verification.Status)));
 
-            cfg.CreateMap<StripePayoutDetail, Data.Payout>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.PayoutId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
+            //cfg.CreateMap<StripePayoutDetail, Data.Payout>()
+            //    .ForMember(dest => dest.Id, opt => opt.Ignore())
+            //    .ForMember(dest => dest.PayoutId, opt => opt.MapFrom(src => src.Id))
+            //    .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
 
         }
     }

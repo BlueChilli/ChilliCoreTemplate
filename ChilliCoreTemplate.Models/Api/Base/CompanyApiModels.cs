@@ -21,10 +21,11 @@ namespace ChilliCoreTemplate.Models.Api
 
     public class CompanyApiModel
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
 
         public string LogoPath { get; set; }
-
     }
 
     public class CompanyUserApiModel
@@ -60,4 +61,10 @@ namespace ChilliCoreTemplate.Models.Api
 
     }
 
+    public class CompanyFilterApiModel
+    {
+        public string Search { get; set; }
+
+        public DateTime? LastChangedAt { get; set; }
+    }
 }

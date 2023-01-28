@@ -117,7 +117,7 @@ namespace ChilliCoreTemplate.Service.Api
                 Status = userData.Status,
                 Email = userData.Email,
                 Phone = userData.Phone,
-                Impersonator = UserData.ImpersonatorSummary(userData.Impersonator)
+                Impersonator = userData.Impersonator?.ImpersonatorSummary(userData.Impersonator)
             };
         }
         public ServiceResult<UserAccountApiModel> Create(RegistrationApiModel model)
@@ -132,7 +132,7 @@ namespace ChilliCoreTemplate.Service.Api
 
         public async Task<ServiceResult<UserAccountApiModel>> Create(OAuthRegisterApiModel model)
         {
-            var request = await _accountService.OAuth_Authenticate(model.Provider.Value, OAuthMode.Register, model.Token, model.Code);
+            var request = await _accountService.OAuth_Authenticate(model.Provider.Value, OAuthMode.Register, model.Platform, model.Token, model.Code, model.User);
             if (!request.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(request);
 
             return await this.GetAccountAsync(request.Result.Id, onlyVisible: false);
@@ -254,7 +254,7 @@ namespace ChilliCoreTemplate.Service.Api
 
             if (model.Status != null)
             {
-                var updateRequest = _accountService.Update_Status(model.Id, model.Status.Value);
+                var updateRequest = _accountService.Update_Status(model.Id, model.Status.Value, isApi: true);
                 if (!updateRequest.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(updateRequest);
             }
 

@@ -1,0 +1,244 @@
+//
+// Skin: Default
+// Mode: Dark
+//
+
+$white:    #fff !default;
+$gray-100: #F9FAFC !default;
+$gray-200: #EFF2F7 !default;
+$gray-300: #E5E9F2 !default;
+$gray-400: #b1b4b9 !default;
+$gray-500: #848890 !default;
+$gray-600: #494a4b !default;
+$gray-700: #3e3f41 !default;    // Used for text color
+$gray-800: #3a3b3d !default;    // Used for headings color
+$gray-900: #242527 !default;
+$black:    #18191b !default;
+
+// Colors
+$indigo:  #5C60F5 !default;
+
+// Theme colors
+
+$primary:       $indigo !default;
+$secondary:     $gray-700 !default;
+$neutral:       $gray-900 !default;
+$light:         $gray-700 !default;
+$dark:          $gray-900 !default;
+
+// Body
+
+$body-bg:       $black !default;
+$body-color:    $gray-400 !default;
+
+// Sections
+//
+// Colors used for content area background colors
+
+$surface-colors: () !default;
+$surface-colors: map-merge((
+    "primary":      $body-bg,
+    "secondary":    darken($gray-900, 7%),
+    "light":        $gray-900,
+    "dark":         darken($dark, 7%)
+), $surface-colors);
+
+
+// Typography
+
+$text-muted:                  $gray-500 !default;
+
+// Border
+
+$border-color:                  $gray-700 !default;
+
+// Components
+
+$component-active-color:        $white !default;
+$component-active-bg:           darken($primary, 5%) !default;
+$component-active-border-color: darken($primary, 5%) !default;
+
+$component-hover-color:         $gray-900 !default;
+$component-hover-bg:            $gray-900 !default;
+$component-hover-border-color:  $gray-900 !default;
+
+// Headings
+
+$headings-color:                $gray-300 !default;
+
+// Buttons
+
+// $btn-box-shadow:                inset 0 1px 0 rgba($black, .15) !default;
+// $btn-active-box-shadow:         $btn-box-shadow !default;
+
+// Inputs
+
+$input-bg:                          $gray-800 !default;
+$input-disabled-bg:                 $gray-500 !default;
+
+$input-color:                       $white !default;
+$input-border-color:                $gray-800 !default;
+
+$input-placeholder-color:           $gray-500 !default;
+
+$custom-control-indicator-bg:       $gray-700 !default;
+
+$input-label-color:                 $gray-500 !default;
+
+// Card
+
+$card-bg:                           $gray-900 !default;
+$card-border-color:                 $gray-900 !default;
+$card-color:                        $body-color !default;
+
+// Avatar
+
+$avatar-stack-border-color:         $gray-800 !default;
+
+// Dropdown
+
+$dropdown-bg:                       $dark !default;
+$dropdown-border-color:             $border-color !default;
+$dropdown-divider-bg:               $black !default;
+$dropdown-heading-color:            $gray-500 !default;
+
+$dropdown-link-color:               $gray-700 !default;
+
+$dropdown-link-hover-color:         $white !default;
+$dropdown-link-hover-bg:            transparent !default;
+
+// Divider
+
+$divider-border-color:              $white !default;
+
+// Nav
+
+$nav-link-color:                    $gray-400 !default;
+$nav-link-disabled-color:           $gray-700 !default;
+
+$nav-link-active-color:             $gray-200 !default;
+
+$nav-tabs-link-color:               $nav-link-color !default;
+$nav-tabs-link-hover-color:         $gray-200 !default;
+
+$nav-tabs-link-active-color:        $nav-link-active-color !default;
+
+// Navbar
+
+$navbar-dark-bg:                    $dark !default;
+$navbar-dark-hover-bg:              rgba(255, 255, 255, .1) !default;
+$navbar-dark-active-bg:             rgba(255, 255, 255, .1) !default;
+$navbar-dark-border-color:          rgba(255, 255, 255, .1) !default;
+$navbar-dark-color:                 rgba($white, .85) !default;
+$navbar-dark-hover-color:           $white !default;
+$navbar-dark-active-color:          $white !default;
+$navbar-dark-disabled-color:        rgba($white, .25) !default;
+$navbar-dark-caret-bg:              str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 16' fill='#{$navbar-dark-color}' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"), "#", "%23") !default;
+$navbar-dark-icon-color:            $gray-100 !default;
+
+$navbar-light-bg:                   $dark !default;
+$navbar-light-border-color:         $border-color !default;
+$navbar-light-hover-bg:             $gray-100 !default;
+$navbar-light-active-bg:            $gray-100 !default;
+$navbar-light-color:                $gray-900 !default;
+$navbar-light-hover-color:          lighten($navbar-light-color, 30%) !default;
+$navbar-light-active-color:         $gray-900 !default;
+$navbar-light-disabled-color:       $gray-500 !default;
+$navbar-light-caret-bg:             str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 16' fill='#{$navbar-light-color}' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"), "#", "%23") !default;
+$navbar-light-icon-color:           $text-muted !default;
+
+$navbar-light-toggler-color:        $gray-600 !default;
+$navbar-light-toggler-bg:           transparent !default;
+$navbar-light-toggler-icon-bg:      str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='#{$navbar-light-toggler-color}' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"), "#", "%23") !default;
+$navbar-light-toggler-border-color: transparent !default;
+$navbar-light-toggler-focus-color:  transparent !default;
+$navbar-light-toggler-focus-bg:     $gray-100 !default;
+
+$navbar-dark-toggler-color:         $gray-200 !default;
+$navbar-dark-toggler-bg:            transparent !default;
+$navbar-dark-toggler-icon-bg:       str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='#{$navbar-dark-toggler-color}' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"), "#", "%23") !default;
+$navbar-dark-toggler-border-color:  transparent !default;
+$navbar-dark-toggler-focus-color:   transparent !default;
+$navbar-dark-toggler-focus-bg:      $gray-100 !default;
+
+
+
+
+$navbar-dropdown-bg:                       $dark !default;
+$navbar-dropdown-heading-color:            lighten($gray-300, 7%) !default;
+
+$navbar-dropdown-link-color:               $gray-500 !default;
+$navbar-dropdown-link-bg:                  transparent !default;
+
+$navbar-dropdown-link-hover-color:         lighten($navbar-dropdown-link-color, 20%) !default;
+$navbar-dropdown-link-hover-bg:            lighten($navbar-dropdown-bg, 3%) !default;
+
+$navbar-dropdown-link-active-color:        $navbar-dropdown-link-hover-color !default;
+$navbar-dropdown-link-active-bg:           transparent !default;
+
+// List group
+
+$list-group-bg:                     transparent !default;
+$list-group-border-color:           rgba(lighten($list-group-bg, 15%), .3) !default;
+
+$list-group-hover-bg:               lighten($list-group-bg, 3%) !default;
+
+$list-group-active-color:           $component-active-color !default;
+$list-group-active-bg:              $component-active-bg !default;
+$list-group-active-border-color:    $list-group-active-bg !default;
+
+$list-group-disabled-color:         $gray-600 !default;
+$list-group-disabled-bg:            $list-group-bg !default;
+
+$list-group-action-color:           $gray-700 !default;
+$list-group-action-hover-color:     $list-group-action-color !default;
+
+$list-group-action-active-color:    $list-group-action-color !default;
+$list-group-action-active-bg:       darken($list-group-bg, 3%) !default;
+
+// Modal
+
+$modal-content-bg:                  $card-bg !default;
+$modal-header-border-color:         $card-border-color !default;
+
+// Pagination
+
+$pagination-color:                  $gray-300 !default;
+$pagination-bg:                     $gray-900  !default;
+$pagination-border-color:           $gray-900 !default;
+
+$pagination-hover-color:            $gray-200 !default;
+$pagination-hover-bg:               $gray-800 !default;
+$pagination-hover-border-color:     $gray-800 !default;
+
+$pagination-active-color:           $component-active-color !default;
+$pagination-active-bg:              $component-active-bg !default;
+$pagination-active-border-color:    $pagination-active-bg !default;
+
+$pagination-disabled-color:         $gray-500 !default;
+$pagination-disabled-bg:            $gray-800 !default;
+$pagination-disabled-border-color:  $gray-800 !default;
+
+// Progress
+
+$progress-bg:                       $gray-800 !default;
+
+// Table
+
+$table-bg:                          transparent !default;
+$table-accent-bg:                   rgba($black, .3) !default;
+$table-hover-bg:                    $black !default;
+$table-active-bg:                   $table-hover-bg !default;
+$table-border-color:                $black !default;
+
+// Tooltip
+
+$tooltip-bg:                        $gray-800 !default;
+
+// Footer
+
+$footer-dark-bg:                    $gray-900 !default;
+$footer-dark-color:                 $gray-500 !default;
+$footer-dark-heading-color:         $gray-300 !default;
+$footer-dark-link-color:            $gray-500 !default;
+$footer-dark-link-hover-color:      $white !default;

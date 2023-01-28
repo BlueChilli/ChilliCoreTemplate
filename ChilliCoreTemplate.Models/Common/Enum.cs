@@ -520,4 +520,13 @@ namespace ChilliCoreTemplate.Models
         Danger,
     }
 
+    public enum LabelType
+    {
+        [Description("success")]
+        Success = 1,
+        [Description("warning")]
+        Warning,
+        [Description("danger")]
+        Danger
+    }
 }

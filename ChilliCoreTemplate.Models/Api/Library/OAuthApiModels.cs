@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Xml.Linq;
 
 namespace ChilliCoreTemplate.Models.Api.OAuth
 {
@@ -15,7 +16,14 @@ namespace ChilliCoreTemplate.Models.Api.OAuth
         Unknown,
         Google,
         Facebook,
-        //Apple Not completed
+        Apple,
+    }
+
+    public enum Platform
+    {
+        Web,
+        IOS,
+        Android
     }
 
     public class OAuthRegisterApiModel
@@ -29,6 +37,10 @@ namespace ChilliCoreTemplate.Models.Api.OAuth
         [RequiredIfEmpty("Token")]
         public string Code { get; set; }
 
+        public string User { get; set; }
+
+        [HybridBindProperty(Source.Header, "x-platform")]
+        public Platform Platform { get; set; }
     }
 
     public class OAuthLoginApiModel : OAuthRegisterApiModel
@@ -77,8 +89,7 @@ namespace ChilliCoreTemplate.Models.Api.OAuth
         [Required]
         public string State { get; set; }
 
-        public string Id_Token { get; set; }    //Apple
-
+        public string User { get; set; }  //Apple (only sent on first response for each id)
     }
 
     public class OAuthCodeResultApiModel
@@ -215,7 +226,7 @@ namespace ChilliCoreTemplate.Models.Api.OAuth
         public string LastName { get; set; }
 
         [JsonProperty("picture")]
-        public OAuthFacebookDataModel<OAuthFacebookPictureModel> Picture {get; set; }
+        public OAuthFacebookDataModel<OAuthFacebookPictureModel> Picture { get; set; }
 
     }
 
@@ -234,6 +245,24 @@ namespace ChilliCoreTemplate.Models.Api.OAuth
         [JsonProperty("user_id")]
         public string UserId { get; set; }
 
+    }
+
+    public class OAuthAppleUserModel
+    {
+        [JsonProperty("name")]
+        public OAuthAppleNameModel Name { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+    }
+
+    public class OAuthAppleNameModel
+    {
+        [JsonProperty("firstName")]
+        public string FirstName { get; set; }
+
+        [JsonProperty("lastName")]
+        public string LastName { get; set; }
     }
 
     public enum OAuthMode

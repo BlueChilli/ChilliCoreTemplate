@@ -1,3 +1,5 @@
+using AppleAuth;
+using AppleAuth.TokenObjects;
 using AutoMapper;
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
@@ -15,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-//using AppleAuth;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
@@ -31,9 +32,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             cfg.CreateMap<OAuthGoogleUserModel, OAuthUserModel>();
             cfg.CreateMap<OAuthFacebookUserModel, OAuthUserModel>()
                 .ForMember(dest => dest.ProfilePhotoUrl, opt => opt.MapFrom(src => src.Picture == null ? null : src.Picture.Data.Url));
-            //cfg.CreateMap<AppleAuth.TokenObjects.UserInformation, OAuthUserModel>()
-            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserID))
-            //    .ForMember(dest => dest.EmailIsVerified, opt => opt.MapFrom(src => src.EmailVerified));
+            cfg.CreateMap<AppleAuth.TokenObjects.UserInformation, OAuthUserModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserID))
+                .ForMember(dest => dest.EmailIsVerified, opt => opt.MapFrom(src => src.EmailVerified));
+            cfg.CreateMap<OAuthAppleUserModel, OAuthUserModel>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Name.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Name.LastName));
         }
 
         public ServiceResult<string> OAuth_Url(OAuthUrlApiModel model, OAuthMode mode, string state = "")
@@ -45,7 +49,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var loginHint = String.Empty;
             var scope = String.Empty;
             var oAuthConfig = _config.OAuthsSettings.OAuths.Where(x => x.Provider == provider).FirstOrDefault();
-            switch(provider)
+            if (oAuthConfig == null || String.IsNullOrEmpty(oAuthConfig.ClientId)) return ServiceResult<string>.AsSuccess(null);
+            switch (provider)
             {
                 case OAuthProvider.Google:
                     providerUrl = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -56,11 +61,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     providerUrl = "https://www.facebook.com/v9.0/dialog/oauth";
                     scope = "email";
                     break;
-                //case OAuthProvider.Apple:
-                //    providerUrl = "https://appleid.apple.com/auth/authorize";
-                //    responseType = "code id_token";
-                //    responseMode = "form_post";
-                //    break;
+                case OAuthProvider.Apple:
+                    providerUrl = "https://appleid.apple.com/auth/authorize";
+                    responseType = "code id_token";
+                    responseMode = "form_post";
+                    scope = "name email";
+                    break;
                 default: return ServiceResult<string>.AsError(error: $"Provider {provider} not supported");
             }
             var parameters = new Dictionary<string, string> { { "client_id", oAuthConfig.ClientId }, { "response_type", responseType }, { "redirect_uri", OAuth_Url_Redirect }, { "state", $"{provider}|{mode}|{model.RedirectUrl}|{model.UserKey}|{state}" } };
@@ -75,7 +81,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public async Task<ServiceResult<UserDataPrincipal>> OAuth_Login(OAuthLoginApiModel model, Action<UserDataPrincipal> loginAction)
         {
-            var request = await OAuth_Authenticate(model.Provider.Value, OAuthMode.Login, model.Token, model.Code, sessionEmail: User.UserData()?.Email);
+            var request = await OAuth_Authenticate(model.Provider.Value, OAuthMode.Login, model.Platform, model.Token, model.Code, model.User, sessionEmail: User.UserData()?.Email);
             if (!request.Success) return ServiceResult<UserDataPrincipal>.CopyFrom(request);
 
             var user = request.Result;
@@ -85,7 +91,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<UserDataPrincipal>.AsSuccess(principal);
         }
 
-        internal async Task<ServiceResult<User>> OAuth_Authenticate(OAuthProvider provider, OAuthMode mode = OAuthMode.Any, string token = null, string code = null, string sessionEmail = null, Role role = Role.User, string companyName = null)
+        internal async Task<ServiceResult<User>> OAuth_Authenticate(OAuthProvider provider, OAuthMode mode = OAuthMode.Any, Platform platform = Platform.Web, string token = null, string code = null, string userInfo = null, string sessionEmail = null, Role role = Role.User, string companyName = null)
         {
             var oAuthConfig = _config.OAuthsSettings.OAuths.Where(x => x.Provider == provider).FirstOrDefault();
             ServiceResult<OAuthUserModel> oAuthUserRequest = null;
@@ -97,9 +103,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 case OAuthProvider.Facebook:
                     oAuthUserRequest = await OAuth_Code_Facebook(token, code, oAuthConfig);
                     break;
-                //case OAuthProvider.Apple:
-                //    oAuthUserRequest = await OAuth_Code_Apple(model, oAuthConfig);
-                //    break;
+                case OAuthProvider.Apple:
+                    oAuthUserRequest = await OAuth_Code_Apple(platform, token ?? code, userInfo, oAuthConfig);
+                    break;
                 default: return ServiceResult<User>.AsError(error: $"Provider {provider} not supported");
             }
             if (!oAuthUserRequest.Success) return ServiceResult<User>.CopyFrom(oAuthUserRequest);
@@ -118,7 +124,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var existingUser = GetAccountByEmail(oAuthUser.Email);
                 if (existingUser == null)
                 {
-                    if (mode == OAuthMode.Login) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is not registered.", key: "ACCOUNT_NOTREGISTERED_ERROR");
+                    if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Login) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is not registered.", key: "ACCOUNT_NOTREGISTERED_ERROR");
                     var registerModel = Mapper.Map<RegistrationViewModel>(oAuthUser);
                     registerModel.Roles = role;
                     registerModel.CompanyName = companyName;
@@ -129,8 +135,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
                 else
                 {
-                    if (mode == OAuthMode.Register) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is already registered.", key: "ACCOUNT_ALREADYREGISTERED_ERROR");
-                    if (!existingUser.Email.Same(sessionEmail))
+                    if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Register) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is already registered.", key: "ACCOUNT_ALREADYREGISTERED_ERROR");
+                    if (!oAuthConfig.AutoLink && !existingUser.Email.Same(sessionEmail))
                         return ServicesLibrary.AsError<User>(error: $"To link account with email address {existingUser.Email}, you must be logged in as this account", key: "ACCOUNT_LINK_ERROR");
                     user = existingUser;
                 }
@@ -138,11 +144,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 {
                     UserId = user.Id,
                     Provider = provider,
+                    Platform = platform,
                     OAuthId = oAuthUser.Id,
                     Token = oAuthUser.Token
                 });
             }
-            else if (mode == OAuthMode.Register) 
+            else if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Register)
                 return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is already registered.", key: "ACCOUNT_ALREADYREGISTERED_ERROR");
 
             if (String.IsNullOrEmpty(user.FirstName) && !String.IsNullOrEmpty(oAuthUser.FirstName))
@@ -150,9 +157,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (String.IsNullOrEmpty(user.LastName) && !String.IsNullOrEmpty(oAuthUser.LastName))
                 user.LastName = oAuthUser.LastName;
             if (String.IsNullOrEmpty(user.ProfilePhotoPath) && !String.IsNullOrEmpty(oAuthUser.ProfilePhotoUrl))
-            {
                 user.ProfilePhotoPath = _fileStorage.Save(new StorageCommand { Folder = ProfilePhotoFolder }.SetUrlSource(oAuthUser.ProfilePhotoUrl));
-            }
+            if (user.Status == UserStatus.Registered && oAuthUser.EmailIsVerified)
+                user.Status = UserStatus.Activated;
+
             await Context.SaveChangesAsync();
             return ServiceResult<User>.AsSuccess(user);
         }
@@ -171,14 +179,14 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
             var role = Role.User;
             String companyName = null;
-            if (state.Length >= 5)
+            if (state.Length >= 5 && !String.IsNullOrEmpty(state[4]))
             {
                 var registrationState = state[4].Split(':');
                 companyName = registrationState[0];
                 role = EnumHelper.Parse<Role>(registrationState[1]);
             }
 
-            var request = await OAuth_Authenticate(provider, mode, code: model.Code, sessionEmail: sessionEmail, role: role, companyName: companyName);
+            var request = await OAuth_Authenticate(provider, mode, code: model.Code, userInfo: model.User, sessionEmail: sessionEmail, role: role, companyName: companyName);
             if (!request.Success) return ServiceResult<OAuthCodeResultApiModel>.CopyFrom(request);
 
             var user = request.Result;
@@ -224,7 +232,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         private async Task<ServiceResult<OAuthUserModel>> OAuth_Code_Facebook(string token, string code, OAuthsConfigurationElement oAuthConfig)
         {
             var client = new RestClient("https://graph.facebook.com/v9.0/");
-            client.UseNewtonsoftJson();
             if (token == null)
             {
                 var request = new RestRequest("oauth/access_token", Method.Post);
@@ -258,16 +265,28 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<OAuthUserModel>.AsSuccess(user);
         }
 
-        //private async Task<ServiceResult<OAuthUserModel>> OAuth_Code_Apple(OAuthCodeApiModel model, OAuthsConfigurationElement oAuthConfig)
-        //{
-        //    var provider = new AppleAuthProvider(oAuthConfig.ClientId, oAuthConfig.ClientJWT.Issuer, oAuthConfig.ClientJWT.KeyId, OAuth_Url_Redirect, model.State);
-        //    var url = provider.GetButtonHref();
-        //    var result = await provider.GetAuthorizationToken(model.Code, oAuthConfig.ClientJWT.Key);
+        private async Task<ServiceResult<OAuthUserModel>> OAuth_Code_Apple(Platform platform, string code, string userInfo, OAuthsConfigurationElement oAuthConfig)
+        {
+            try
+            {
+                var provider = new AppleAuthProvider(platform == Platform.IOS ? oAuthConfig.AppBundleId : oAuthConfig.ClientId, oAuthConfig.ClientJWT.Issuer, oAuthConfig.ClientJWT.KeyId, OAuth_Url_Redirect, null);
+                var result = await provider.GetAuthorizationToken(code, oAuthConfig.ClientJWT.Key);
 
-        //    var user = Mapper.Map<OAuthUserModel>(result.UserInformation);
-        //    user.Token = result.Token;
-        //    return ServiceResult<OAuthUserModel>.AsSuccess(user);
-        //}
+                var user = Mapper.Map<OAuthUserModel>(result.UserInformation);
+                user.Token = result.RefreshToken;
+
+                if (!String.IsNullOrEmpty(userInfo))
+                {
+                    var info = userInfo.FromJson<OAuthAppleUserModel>();
+                    Mapper.Map(info, user);
+                }
+                return ServiceResult<OAuthUserModel>.AsSuccess(user);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<OAuthUserModel>.AsError(ex.Message);
+            }
+        }
 
         public ServiceResult OAuth_Deauth(OAuthDeauthApiModel model)
         {
@@ -335,6 +354,35 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult.AsSuccess();
         }
 
+        private async Task<ServiceResult> OAuth_Revoke(UserOAuth model)
+        {
+            var provider = model.Provider;
+            var oAuthConfig = _config.OAuthsSettings.OAuths.Where(x => x.Provider == provider).FirstOrDefault();
+
+            switch (provider)
+            {
+                case OAuthProvider.Apple:
+                    return await OAuth_Revoke_Apple(model, oAuthConfig);
+                default: return ServiceResult.AsError(error: $"Provider {provider} not supported");
+            }
+
+        }
+
+        private async Task<ServiceResult> OAuth_Revoke_Apple(UserOAuth model, OAuthsConfigurationElement oAuthConfig)
+        {
+            try
+            {
+                var provider = new AppleAuthProvider(model.Platform == Platform.IOS ? oAuthConfig.AppBundleId : oAuthConfig.ClientId, oAuthConfig.ClientJWT.Issuer, oAuthConfig.ClientJWT.KeyId, OAuth_Url_Redirect, null);
+                await provider.RevokeToken(model.Token, oAuthConfig.ClientJWT.Key, TokenType.RefreshToken);
+
+                return ServiceResult.AsSuccess();
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult.AsError(ex.Message);
+            }
+
+        }
     }
 
 }

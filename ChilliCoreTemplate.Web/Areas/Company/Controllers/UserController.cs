@@ -19,7 +19,7 @@ using System.Linq;
 namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 {
     [Area("Company")]
-    [RequireHttpsWeb, CustomAuthorize(Roles = AccountCommon.CompanyAdmin)]
+    [CustomAuthorize(Roles = AccountCommon.CompanyAdmin)]
     public class UserController : Controller
     {
         private AdminService _service;
@@ -81,11 +81,11 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
             if (result.Success)
             {
-                redirectUrl = (result.Result.UserData().CompanyId == null) ? Mvc.Admin.Company_List.Url(this) : Mvc.Company.Location_List.Url(this);
+                redirectUrl = (result.Result.UserData().CompanyId == null) ? Mvc.Admin.Company_List.Url(this) : Mvc.Company.User_List.Url(this);
             }
             else if (redirectUrl == null)
             {
-                redirectUrl = Mvc.Company.Location_List.Url(this);
+                redirectUrl = Mvc.Company.User_List.Url(this);
             }
 
             return new RedirectResult(redirectUrl);
@@ -245,7 +245,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         }
 
         [HttpPost, ActionName("Invite")]
-        public virtual ActionResult InvitePost(InviteManageModel model)
+        public virtual ActionResult InvitePost([FromForm] InviteManageModel model)
         {
             return this.ServiceCall(() => _accountService.Invite(model, sendEmail: true))
                 .OnSuccess(m =>

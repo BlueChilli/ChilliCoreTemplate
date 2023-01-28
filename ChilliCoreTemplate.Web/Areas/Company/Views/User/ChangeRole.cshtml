@@ -11,7 +11,7 @@
     </div>
     <div class="modal-footer">
         @await Html.ButtonSubmitAsync("Submit")
-        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+        @await Html.ButtonAsync(FieldTemplateHelper.ButtonModalDismissOptions)
     </div>
 }
 <script>

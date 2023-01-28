@@ -1,57 +1,50 @@
 @model UsersViewModel
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions { Partial = "_InviteUser" })
-@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
-{
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Partial = "_InviteUser" })
+<page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
-    <div class="row">
-        @foreach (var statistic in Model.Statistics)
-        {
-            <div class="col-md-4">
-                @await Html.PartialAsync("_Statistic", statistic)
-            </div>
-        }
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-
-            <box>
-                <box-content>
-                    <box-title>List of Users</box-title>
-                    <form role="form" class="form-inline m-b-md">
-                        <div class="form-group m-r-lg">
-                            @await Html.FieldTemplateInnerForAsync(m => m.Role)
-                        </div>
-                        <div class="form-group">
-                            @await Html.FieldTemplateInnerForAsync(m => m.Status)
-                        </div>
-                        <div class="ml-auto">
-                            <div class="form-group">
-                                @await Html.FieldTemplateInnerForAsync(m => m.Search)
-                            </div>
-                        </div>
-                    </form>
-
-                    <table-default class="js-users-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Surname</th>
-                                <th>Email</th>
-                                <th>Clinic</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Last login</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    </table-default>
-                </box-content>
-            </box>
-
+@*    <div class="row">
+    @foreach (var statistic in Model.Statistics)
+    {
+        <div class="col-md-4">
+            @await Html.PartialAsync("_Statistic", statistic)
         </div>
-    </div>
-}
+    }
+</div>
+*@
+
+    <filter>
+        <filter-left>
+            @await Html.FieldTemplateInnerForAsync(m => m.Role)
+            @await Html.FieldTemplateInnerForAsync(m => m.Status)
+        </filter-left>
+        <filter-right>
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
+        </filter-right>
+    </filter>
+
+    <box>
+        <box-content>
+            <table-default class="js-users-table">
+                <thead class="table-light">
+                    <tr>
+                        <th data-priority="1">Name</th>
+                        <th data-priority="2">Surname</th>
+                        <th data-priority="3">Email</th>
+                        <th data-priority="7">Phone</th>
+                        <th data-priority="6">Company</th>
+                        <th data-priority="4">Role</th>
+                        <th data-priority="5">Status</th>
+                        <th data-priority="8">Last login</th>
+                        <th data-priority="2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table-default>
+        </box-content>
+    </box>
+</page>
+
 <form id="impersonate" target="_self" method="post" action="@Mvc.Admin.User_Impersonate.Url(this.Url)">
     <input type="hidden" name="id" id="impersonate-id" value="" />
 </form>
@@ -61,6 +54,9 @@
         $(function () {
 
             table = $('.js-users-table').dataTable({
+                dom: 'Tgtip',
+                "iDisplayLength": 50,
+                responsive: true,
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -74,13 +70,14 @@
                         "data": "email",
                         "orderable": true,
                         render: function (data, type, row) {
-                            return '<a href="@Mvc.Admin.User_Users_Details.Url(this.Url)/{0}">{1}</a>'.format(row.parent == null ? row.id : row.parent.id, row.parent == null ? row.email : row.parent.name + ' (Parent)');
+                            return '<a href="@Mvc.Admin.User_Users_Details.Url(this.Url)/{0}">{1}</a>'.format(row.id, row.email);
                         }
                     },
+                    { "data": "phone", "orderable": false },
                     {
-                        "data": "company", "orderable": true,
+                        "data": "Company", "orderable": true,
                         render: function (data, type, row) {
-                            return row.company == null ? '' : '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}">{1}</a>'.format(row.company.id, row.company.name);
+                            return row.Company == null ? '' : '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}">{1}</a>'.format(row.Company.id, row.Company.name);
                         }
                     },
                     { "data": "role", "orderable": false },
@@ -88,7 +85,7 @@
                         "data": "status",
                         "orderable": false,
                         render: function (data, type, row) {
-                            return '<span class="label label-{0}">{1}</span>'.format(row.status == '@UserStatus.Activated' ? "success" : "warning", row.status);
+                            return '<span class="badge bg-{0}">{1}</span>'.format(row.status == '@UserStatus.Activated' ? "success" : "warning", row.status);
                         }
                     },
                     { "data": "lastLoginOn", "orderable": true },
@@ -96,12 +93,10 @@
                         "orderable": false,
                         "data": null,
                         render: function ( data, type, row ) {
-                            return '<a href="@Mvc.Admin.User_Users_Details.Url(this.Url)/{0}">View</a>'.format(data.id);
+                            return '<a href="@Mvc.Admin.User_Users_Details.Url(this.Url)/{0}" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="View"><i class="bi bi-eye"></i></a>'.format(data.id);
                         }
                     },
-                ],
-                dom: 'Tgtip',
-                "iDisplayLength": 50
+                ]
             });
 
             $('#Search').on('keyup', function () {
@@ -111,24 +106,21 @@
             $('#Role,#Status').on('change', function () {
                 SearchTable();
             });
-
-            SearchTable();
-
         });
 
         function SearchTable() {
             var api = table.api();
 
             if ($('#Role').val() != '') {
-                api.column(4).search($('#Role').val(), false, false, false);
+                api.column(5).search($('#Role').val(), false, false, false);
             } else {
-                api.column(4).search('');
+                api.column(5).search('');
             }
 
             if ($('#Status').val() != '') {
-                api.column(5).search($('#Status').val(), false, false, false);
+                api.column(6).search($('#Status').val(), false, false, false);
             } else {
-                api.column(5).search('');
+                api.column(6).search('');
             }
 
             api.search($('#Search').val());

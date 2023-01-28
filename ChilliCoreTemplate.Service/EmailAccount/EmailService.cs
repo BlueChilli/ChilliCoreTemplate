@@ -85,6 +85,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             };
         }
 
+        public ServiceResult<EmailListModel> Email_List()
+        {
+            var model = new EmailListModel();
+            model.TemplateList = Context.Emails.Select(x => x.TemplateId).Distinct().ToList().ToSelectList();
+            return ServiceResult<EmailListModel>.AsSuccess(model);
+        }
+
         public ServiceResult<EmailViewModel> Email_Get(int id)
         {
             var email = Context.Emails.FirstOrDefault(e => e.Id == id);

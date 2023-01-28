@@ -1,14 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api.OAuth;
-using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Data.EmailAccount
 {
@@ -22,6 +16,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         [Required]
         public OAuthProvider Provider { get; set; }
+
+        public Platform Platform { get; set; }
 
         [Required, MaxLength(50)]
         public string OAuthId { get { return _OAuthId; } set { _OAuthId = value; OAuthIdHash = CommonLibrary.CalculateHash(value).Value; } }

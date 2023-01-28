@@ -11,17 +11,10 @@ namespace ChilliCoreTemplate.Data
 {
     public partial class DataContext : DbContext
     {
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<LocationUser> LocationUsers { get; set; }
-
-        //public DbSet<Payout> Payouts { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
         private void Project_OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<LocationUser>()
-                .HasIndex(nameof(LocationUser.LocationId), nameof(LocationUser.UserId))
-                .IsUnique();
         }
 
     }

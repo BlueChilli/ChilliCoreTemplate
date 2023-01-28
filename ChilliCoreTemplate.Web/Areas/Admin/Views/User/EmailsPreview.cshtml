@@ -1,29 +1,30 @@
 @model EmailPreviewModel
-@await Html.PartialAsync("Layout/_Breadcrumb", new BreadcrumbOptions())
-@using (await Html.ContainerTemplateAsync(TemplateTypes.PageContainerLeft))
-{
-    using (Html.BeginFormCustom(Mvc.Admin.User_EmailsPreview, htmlAttributes: new { enctype = "multipart/form-data" }))
+@{
+    var pageButtons = new Template_PageButtons
+    {
+        SaveMenuText = null,
+        CancelMenuUrl = Mvc.Admin.User_Emails.Url(this.Url)
+    };
+    pageButtons.Buttons.Add(await Html.ButtonAsync(new Template_Button { Style = ButtonStyle.Primary, Type = ButtonType.Button, Text = "Preview", IsLaddaButton = false, HtmlAttributes = new { onclick = Html.ModalOpen(Mvc.Admin.User_EmailsPreviewShow, data: "{ id: $('#Id').val(), data: $('#Data').val() }") } }));
+}
+
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    @using (Html.BeginFormCustom(Mvc.Admin.User_EmailsPreview, htmlAttributes: new { enctype = "multipart/form-data" }))
     {
         @Html.ValidationSummary()
-        @await Html.TemplateAsync(TemplateTypes.PageMessage)
+        @await Html.TemplateAsync(TemplateTypes.PageButtons, pageButtons)
 
-        <div class="float-right m-t-n m-b-sm">
-            <a class="btn btn-primary btn-sm m-t-n-xs" onclick="@Html.ModalOpen(Mvc.Admin.User_EmailsPreviewShow, data: "{ id: $('#Id').val(), data: $('#Data').val() }")">Preview</a>
-            <a class="btn btn-default btn-sm m-t-n-xs" href="@Mvc.Admin.User_Emails.Url(this.Url)">Cancel</a>
-        </div>
-        <div class="ibox float-e-margins">
-            <div class="ibox-title">
-                <h5>Email preview</h5>
-            </div>
-            <div class="ibox-content">
-
-                @await Html.FieldTemplateForAsync(m => m.Id, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.EmailList })
-                @await Html.FieldTemplateForAsync(m => m.Data)
-
-            </div>
-        </div>
+        <box>
+            <box-title>Email preview</box-title>
+            <box-content>
+                @await Html.FieldTemplateForAsync(m => m.Id, options: new TemplateOptions { FieldSize = FieldTemplateSize.Large }, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.EmailList })
+                @await Html.FieldTemplateForAsync(m => m.Data, options: new TemplateOptions { FieldSize = FieldTemplateSize.Large })
+            </box-content>
+        </box>
     }
-}
+</page>
 @section Scripts
 {
     <script>

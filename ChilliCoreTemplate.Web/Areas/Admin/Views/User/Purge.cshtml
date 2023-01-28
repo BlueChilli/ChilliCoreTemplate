@@ -7,7 +7,7 @@
     </div>
     <div class="modal-footer">
         @await Html.ButtonSubmitAsync(new Template_Button { Style = ButtonStyle.Danger, Text = $"Yes, purge this account" })
-        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+        @await Html.ButtonAsync(FieldTemplateHelper.ButtonModalDismissOptions)
     </div>
 }
 <script>

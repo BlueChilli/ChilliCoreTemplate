@@ -26,7 +26,7 @@ namespace ChilliCoreTemplate.Web.Api
             _env = env;
         }
 
-        [RequireHttpsWeb, CustomAuthorize(MultipleRoles = new string[] { AccountCommon.Administrator })]
+        [CustomAuthorize(MultipleRoles = new string[] { AccountCommon.Administrator })]
         [HttpGet]
         [Route("run")]
         public void Run(string webhookId)

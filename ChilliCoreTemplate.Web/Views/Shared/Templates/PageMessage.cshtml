@@ -7,8 +7,7 @@
     {
         var message = ((string)TempData[key]).FromJson<PageMessage>();
         if (!message.IsStatic) { hasDynamic = true; }
-        <div class="alert alert-@message.MessageClass alert-dismissable m-t-xs" id="@Html.When(!message.IsStatic, "js-page-message")">
-            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">&#215;</button>
+        <div class="alert alert-@message.MessageClass alert-dismissible fade show" id="@Html.When(!message.IsStatic, "js-page-message")">
             @if (message.IsHtml)
             {
                 @Html.Raw(message.Message)
@@ -17,6 +16,7 @@
             {
                 @message.Message
             }
+            <button aria-hidden="true" data-bs-dismiss="alert" class="btn-close" type="button"></button>
         </div>
     }
 }

@@ -57,7 +57,9 @@ namespace ChilliCoreTemplate.Service
             builder.UseLoggerFactory(LoggerFactory);
 
             builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)
+                options => options
+                    .CommandTimeout(180)
+                    .EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)
                     .UseNetTopologySuite());
         }
 

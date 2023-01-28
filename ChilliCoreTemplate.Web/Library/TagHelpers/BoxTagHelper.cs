@@ -27,7 +27,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.AddClass("ibox", NullHtmlEncoder.Create());
+            output.Attributes.SetAttribute("class", $"card mb-10");
         }
     }
 
@@ -39,12 +39,13 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.AddClass("ibox-title", NullHtmlEncoder.Create());
 
-            var help = String.IsNullOrEmpty(Help) ? "" : $"<span class=\"ibox-title-help\">{Help}</span>";
-            if(String.IsNullOrEmpty(Title))
+            output.Attributes.AppendAttribute("class", "card-header border-bottom d-flex align-items-center");
+
+            var help = String.IsNullOrEmpty(Help) ? "" : $"<span class=\"text-sm text-muted\">{Help}</span>";
+            if (String.IsNullOrEmpty(Title))
             {
-                output.PreContent.SetHtmlContent("<h5>");
+                output.PreContent.SetHtmlContent("<h5 class=\"me-auto\">");
                 output.PostContent.SetHtmlContent($" {help}</h5>");
             }
             else
@@ -56,10 +57,21 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
     public class BoxContentTagHelper : TagHelper
     {
+        public bool FullWidth { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.AddClass("ibox-content", NullHtmlEncoder.Create());
+            if (!FullWidth) output.AddClass("card-body", NullHtmlEncoder.Create());
+        }
+    }
+
+    public class BoxFooterTagHelper : TagHelper
+    {
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "div";
+            output.Attributes.SetAttribute("class", $"card-footer border-0 py-5");
         }
     }
 }

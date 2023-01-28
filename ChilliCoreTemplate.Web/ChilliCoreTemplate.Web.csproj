@@ -104,7 +104,7 @@
   <ItemGroup>
     <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0139" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
-    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0109" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0111" />
     <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0004" />
     <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="HybridModelBinding" Version="0.18.0" />
@@ -149,9 +149,6 @@
     <Content Update="Views\Shared\Layout\_Icons.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Shared\Layout\_EmailAccountLayout.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -159,6 +156,25 @@
 	<Content Include="wwwroot\.well-known\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Shared\Layout\Clever\_LeftMenu.cshtml" />
+    <None Include="Views\Shared\Layout\Clever\_LeftMenuGroup.cshtml" />
+    <None Include="Views\Shared\Layout\Clever\_MenuIcon.cshtml" />
+    <None Include="Views\Shared\Layout\Clever\_NavBar.cshtml" />
+    <None Include="Views\Shared\Layout\Clever\_PublicLayout.cshtml" />
+    <None Include="Views\Shared\Layout\Clever\_Sidebar.cshtml" />
+    <None Include="wwwroot\Styles\boostrap5c-chosen\build.scss" />
+    <None Include="wwwroot\Styles\boostrap5c-chosen\_component-chosen.scss" />
+    <None Include="wwwroot\Styles\boostrap5c-chosen\_component-variables.scss" />
+    <None Include="wwwroot\Styles\clever\libs\_apexcharts.scss" />
+    <None Include="wwwroot\Styles\clever\libs\_flatpickr.scss" />
+    <None Include="wwwroot\Styles\clever\main.scss" />
+    <None Include="wwwroot\Styles\clever\themes\_default-dark.scss" />
+    <None Include="wwwroot\Styles\clever\themes\_default.scss" />
+    <None Include="wwwroot\Styles\clever\utilities.scss" />
+    <None Include="wwwroot\Styles\clever\_custom.scss" />
   </ItemGroup>
 	
   <Target Name="AdditionalCommentsToPublish" AfterTargets="CopyFilesToPublishDirectory">
@@ -175,10 +191,8 @@
   </Target>
   <Target Name="AdditionalFilesToPublish" AfterTargets="CopyFilesToPublishDirectory">
     <ItemGroup>
-      <Files Include="..\front-end\build\**\*" />
-      <Files Include="..\front-end\package.j*" />
-      <Files Include="..\front-end\custom_modules\**\*" />
-    </ItemGroup>
+		<Files Include="..\front-end\app_artifact\**\*" />
+	</ItemGroup>
     <Copy SourceFiles="@(Files)" DestinationFolder="$(PublishDir)wwwroot\%(RecursiveDir)" />
   </Target>
 </Project>

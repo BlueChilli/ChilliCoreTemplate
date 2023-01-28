@@ -1,0 +1,22 @@
+@model CompanyUserViewModel
+@using (Html.BeginFormCustom(Mvc.Company.User_InviteResend, htmlAttributes: new { @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.UserId)
+    <div class="modal-body">
+        @Html.ValidationSummary()
+        <p>Are you sure you want resend the invite for <b>@Model.Name</b>?</p>
+    </div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync(new Template_Button { Style = ButtonStyle.Primary, Text = "Yes, resend the invite" })
+        @await Html.ButtonAsync(FieldTemplateHelper.ButtonModalDismissOptions)
+    </div>
+}
+<script>
+    $('#@Mvc.Company.User_InviteResend.GetFormId()')
+        .ajaxForm({ target: '#@Mvc.Company.User_InviteResend.GetModalId()_content' })
+        .done(function () {
+            SearchTable();
+            $('#@Mvc.Company.User_InviteResend.GetModalId()').modal('hide');
+        });
+</script>

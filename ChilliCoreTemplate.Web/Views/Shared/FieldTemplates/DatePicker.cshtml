@@ -5,7 +5,7 @@
     var value = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : (string)Model.Value;
 }
 <div class="input-group">
-    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
     <input id="@Model.Id" name="@Model.Name" value="@value" type="text" @Model.HtmlAttributes.ToAttributeHtmlContent()>
     @if (Model.Options.PostAddOn != null)
     {
