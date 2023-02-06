@@ -1,0 +1,46 @@
+@model CompanyEditModel
+@{
+    var breadcrumb = new PageHeaderOptions
+    {
+        Heading = Model.Name,
+        Title = Model.Name,
+    };
+    var pageButtons = new Template_PageButtons
+    {
+        CancelMenuUrl = Mvc.Company.Company_Detail.Url(this.Url)
+    };
+}
+@await Html.PartialAsync("Layout/_PageHeader", breadcrumb)
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    @using (Html.BeginFormCustom(Mvc.Company.Company_Edit, htmlAttributes: new { @class = "form-horizontal", enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        @Html.ValidationSummary()
+        @await Html.TemplateAsync(TemplateTypes.PageButtons, pageButtons)
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.ApiKey)
+
+        <box>
+            <box-title>Company details</box-title>
+            <box-content>
+                @await Html.FieldTemplateForAsync(m => m.LogoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.LogoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 150, Height = 50, Quality = 80, Mode = ResizeMode.Max }) { ButtonText = "Upload", HasRemoveButton = false, BackgroundSize = "contain" })
+                @await Html.FieldTemplateForAsync(m => m.Name)
+                @await Html.FieldTemplateForAsync(m => m.Website)
+                @await Html.FieldTemplateForAsync(m => m.Timezone, fieldOptions: new SelectFieldTemplateOptions() { SelectList = TimezoneHelper.GetSelectTimezones(Model.Timezone) })
+            </box-content>
+        </box>
+
+    }
+</page>
+@section scripts
+{
+    <script>
+        $(function () {
+
+            $('#Timezone').chosen({
+                width: "100%"
+            });
+
+        });
+    </script>
+}

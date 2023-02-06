@@ -1,0 +1,46 @@
+@model CompanyDetailViewModel
+@inject IWebHostEnvironment env;
+@{
+    var breadcrumb = new PageHeaderOptions
+    {
+        Heading = Model.Name,
+        Title = "Details"
+    };
+}
+@await Html.PartialAsync("Layout/_PageHeader", breadcrumb)
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    <box>
+        <box-title title="@Model.Name">
+            <div class="btn-group ms-auto">
+                <button style="Primary" mvc-action="Mvc.Company.Company_Edit" asp-route-id="@Model.Id">Edit</button>
+            </div>
+        </box-title>
+        <box-content>
+            <div class="row">
+                <div class="col-lg-6">
+                    <headings>
+                        <heading title="Description" Condition="!String.IsNullOrEmpty(Model.Description)">@Model.Description</heading>
+                        <heading title="Website" Condition="!String.IsNullOrEmpty(Model.Website)">@Model.Website</heading>
+                        <heading title="Logo" condition="!String.IsNullOrEmpty(Model.LogoPath)">
+                            @Html.Resizer().Image(Model.LogoPath, new ImageSharpCommand { Height = 50 })
+                        </heading>
+                    </headings>
+                </div>
+                <div class="col-lg-6">
+                    <heading title="Guid">@Model.Guid</heading>
+                </div>
+            </div>
+        </box-content>
+    </box>
+</page>
+@section scripts
+{
+    <script>
+        $(function () {
+        });
+    </script>
+}
+@section Modal
+{
+}

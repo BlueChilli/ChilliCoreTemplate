@@ -68,13 +68,13 @@ namespace ChilliCoreTemplate.Service
 
         public ServiceResult<CompanyEditModel> Company_Edit(CompanyEditModel model)
         {
-            var company = Company_Authorised()
+            var record = Company_Authorised()
                 .Where(x => x.Id == model.Id)
                 .FirstOrDefault();
 
-            if (company == null) company = Company.CreateNew(model.Name);
+            if (record == null) record = Company.CreateNew(model.Name);
 
-            if (company.Id != model.Id)
+            if (record.Id != model.Id)
             {
                 return ServiceResult<CompanyEditModel>.AsError("Company not found");
             }
@@ -84,23 +84,23 @@ namespace ChilliCoreTemplate.Service
             if (hasDuplicate)
                 return ServiceResult<CompanyEditModel>.AsError($"Company '{model.Name}' already exists.");
 
-            var isNew = company.Id == 0;
-            Mapper.Map(model, company);
+            var isNew = record.Id == 0;
+            Mapper.Map(model, record, opts => opts.Items["IsAdmin"] = IsAdmin);
 
             if (model.LogoFile != null)
-                company.LogoPath = this._fileStorage.Save(new StorageCommand() { Folder = "Company" }.SetHttpPostedFileSource(model.LogoFile));
+                record.LogoPath = this._fileStorage.Save(new StorageCommand() { Folder = "Company" }.SetHttpPostedFileSource(model.LogoFile));
 
-            if (isNew) Context.Companies.Add(company);
+            if (isNew) Context.Companies.Add(record);
             Context.SaveChanges();
-            model.Id = company.Id;
+            model.Id = record.Id;
 
-            if (String.IsNullOrEmpty(company.StripeId) && model.CreateStripeAccount)
+            if (String.IsNullOrEmpty(record.StripeId) && model.CreateStripeAccount)
             {
-                var stripeResult = Company_AddStripe(company);
+                var stripeResult = Company_AddStripe(record);
                 if (!stripeResult.Success) return ServiceResult<CompanyEditModel>.CopyFrom(stripeResult);
             }
 
-            AccountService.Activity_Add(Context, new UserActivity { UserId = UserId.Value, ActivityType = model.Id == 0 ? ActivityType.Create : ActivityType.Update, EntityId = company.Id, EntityType = EntityType.Company });
+            AccountService.Activity_Add(Context, new UserActivity { UserId = UserId.Value, ActivityType = model.Id == 0 ? ActivityType.Create : ActivityType.Update, EntityId = record.Id, EntityType = EntityType.Company });
 
             return ServiceResult<CompanyEditModel>.AsSuccess(model);
         }
@@ -127,12 +127,14 @@ namespace ChilliCoreTemplate.Service
         public ServiceResult<CompanyEditModel> Company_GetForEdit(int? id = null)
         {
             if (id == null) id = CompanyId;
-            var company = Company_Authorised()
-                .FirstOrDefault(x => x.Id == id);
+            var model = Company_Authorised(id.Value)
+                .Materialize<Company, CompanyEditModel>()
+                .FirstOrDefault();
 
-            if (company == null && id.GetValueOrDefault(0) != 0) return ServiceResult<CompanyEditModel>.AsError("Company not found");
+            if (model == null && id.GetValueOrDefault(0) != 0) return ServiceResult<CompanyEditModel>.AsError("Company not found");
 
-            var model = Mapper.Map<CompanyEditModel>(company) ?? new CompanyEditModel { ApiKey = Guid.NewGuid(), Timezone = "Australia/Sydney" };
+            if (model == null) model = new CompanyEditModel { ApiKey = Guid.NewGuid(), Timezone = "Australia/Sydney" };
+
             model.TimezoneList = CommonLibrary.TimeZones().ToSelectList(v => v.ZoneId, t => $"{t.CountryName} {(String.IsNullOrEmpty(t.Comment) ? "" : " - " + t.Comment)}");
 
             return ServiceResult<CompanyEditModel>.AsSuccess(model);
@@ -151,7 +153,7 @@ namespace ChilliCoreTemplate.Service
             {
                 if (!String.IsNullOrEmpty(column.Search.Value))
                 {
-                    switch (String.IsNullOrEmpty(column.Field) ? column.Name : column.Field)
+                    switch (String.IsNullOrEmpty(column.Name) ? column.Field : column.Name)
                     {
                         case "status":
                             filterModel.Status = bool.Parse(column.Search.Value);

@@ -57,6 +57,11 @@ namespace ChilliCoreTemplate.Web
 
             MenuConfigByRole.Config(Role.CompanyAdmin, cfg =>
             {
+                cfg.AddRoot(Mvc.Company.Company_Detail, title: "Company", icon: "building").SetChildren(
+                        cfg.CreateBreadcrumb(Mvc.Company.Company_Detail),
+                        cfg.CreateBreadcrumb(Mvc.Company.Company_Edit)
+                    );
+
                 cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "people").SetChildren(
                         cfg.CreateBreadcrumb(Mvc.Company.User_Detail),
                         cfg.CreateBreadcrumb(Mvc.Company.User_Invite)                       

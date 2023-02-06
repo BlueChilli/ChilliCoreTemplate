@@ -9,6 +9,8 @@ namespace ChilliCoreTemplate.Models.Api
     public class ApiPaging : IApiOrderable
     {
         public static int DefaultPageSize = 40;
+        public static int MaxPageSize = 100;
+        public static readonly ApiPaging Max = new ApiPaging() { _pageSize = MaxPageSize };
 
         public ApiPaging()
         {
@@ -40,7 +42,7 @@ namespace ChilliCoreTemplate.Models.Api
             set
             {
                 // 1 <= x <= 100 ; default 30
-                _pageSize = Math.Min(100, Math.Max(value ?? DefaultPageSize, 1));
+                _pageSize = Math.Min(MaxPageSize, Math.Max(value ?? DefaultPageSize, 1));
             }
         }
 

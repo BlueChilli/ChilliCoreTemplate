@@ -78,7 +78,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success("Company {0} has been successfully {1}.".FormatWith(m.Name, model.Id == 0 ? "created" : "saved"));
-                    return Mvc.Admin.Company_List.Redirect(this);
+                    return Mvc.Admin.Company_Detail.Redirect(this, m.Id);
                 })
                 .OnFailure(() => Edit(model.Id))
                 .Call();

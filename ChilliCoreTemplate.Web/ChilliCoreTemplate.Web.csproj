@@ -159,6 +159,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Areas\Company\Views\Company\CompanyDetail.cshtml" />
+    <None Include="Areas\Company\Views\Company\CompanyEdit.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_LeftMenu.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_LeftMenuGroup.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_MenuIcon.cshtml" />

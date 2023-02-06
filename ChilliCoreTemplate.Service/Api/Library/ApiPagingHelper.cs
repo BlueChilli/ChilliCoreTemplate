@@ -73,5 +73,12 @@ namespace ChilliCoreTemplate.Service.Api
             };
         }
 
+        public static ApiPagedList<T> CreateFrom<T2>(ChilliSource.Cloud.Core.PagedList<T2> from)
+        {
+            var data = Mapper.Map<List<T>>(from);
+            var result = new ApiPagedList<T> { Data = data, CurrentPage = from.CurrentPage, PageCount = from.PageCount, PageSize = from.PageSize, TotalCount = from.TotalCount };
+            return result;
+        }
+
     }
 }

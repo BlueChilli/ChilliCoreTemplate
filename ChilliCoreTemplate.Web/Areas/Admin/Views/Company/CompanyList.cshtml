@@ -7,7 +7,7 @@
 
     <filter>
         <filter-left>
-            @await Html.FieldTemplateInnerForAsync(m => m.Status)
+            @await Html.FieldTemplateInnerForAsync(m => m.Status, new SelectFieldTemplateOptions { SelectList = Model.StatusList })
         </filter-left>
         <filter-right>
             @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
@@ -51,8 +51,8 @@
                 "columns": [
                     { "data": "name", "orderable": true },
                     {
-                        "data": "id", name: "status", orderable: false, render: function (data, type, row) {
-                            return '<span class="badge bg-{0}">{1}</span>'.format(row.statusBadge, row.status);
+                        "data": "isDeleted", name: "status", orderable: false, render: function (data, type, row) {
+                            return '<span class="badge bg-{0}">{1}</span>'.format(row.isDeleted ? "warning" : "success", row.isDeleted ? "Archived" : "Active");
                         }
                     },
                     { "data": "created", "orderable": true },
@@ -75,10 +75,6 @@
                 SearchTable();
             });
 
-            $('#Type').on('change', function () {
-                SearchTable();
-            });
-
             $('#Status').on('change', function () {
                 SearchTable();
             });
@@ -94,16 +90,10 @@
         function SearchTable() {
             var api = CompanyTable.api();
 
-            if ($('#Type').val() != '') {
-                api.column(1).search($('#Type').val(), false, false, false);
+            if ($('#Status').val() != '') {
+                api.column(1).search($('#Status').val(), false, false, false);
             } else {
                 api.column(1).search('');
-            }
-
-            if ($('#Status').val() != '') {
-                api.column(3).search($('#Status').val(), false, false, false);
-            } else {
-                api.column(3).search('');
             }
 
             api.search($('#Search').val());
