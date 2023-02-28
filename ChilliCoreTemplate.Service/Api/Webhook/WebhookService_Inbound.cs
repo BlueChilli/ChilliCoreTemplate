@@ -27,7 +27,7 @@ namespace ChilliCoreTemplate.Service.Api
         private readonly ProjectSettings _config;
         private readonly AccountService _accountService;
 
-        public WebhookService(IPrincipal user, DataContext context, Services services, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config) : base(user, context)
+        public WebhookService(BackgroundTaskPrincipal user, DataContext context, Services services, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config) : base(user, context)
         {
             _accountService = accountService;
             _services = services;

@@ -16,7 +16,7 @@
 
     <box>
         <box-content>
-            <table-default class="js-Company-table">
+            <table-default class="js-company-table">
                 <thead class="table-light">
                     <tr>
                         <th data-priority="1">Company</th>
@@ -34,11 +34,11 @@
 @section Scripts
 {
     <script>
-        var CompanyTable;
+        var companyTable;
 
         $(function () {
 
-            CompanyTable = $('.js-Company-table').dataTable({
+            companyTable = $('.js-company-table').dataTable({
                 responsive: true,
                 "processing": true,
                 "serverSide": true,
@@ -81,14 +81,14 @@
 
             SearchTable();
 
-            $('.js-Company-table').on('click', '.js-impersonate', function (e) {
+            $('.js-company-table').on('click', '.js-impersonate', function (e) {
                 e.preventDefault();
                 $.doPost('@Mvc.Admin.Company_Impersonate.Url(this.Url)', { id: $(this).data('id') });
             });
         });
 
         function SearchTable() {
-            var api = CompanyTable.api();
+            var api = companyTable.api();
 
             if ($('#Status').val() != '') {
                 api.column(1).search($('#Status').val(), false, false, false);

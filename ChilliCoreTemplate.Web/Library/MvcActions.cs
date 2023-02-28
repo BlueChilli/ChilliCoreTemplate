@@ -68,6 +68,7 @@ namespace ChilliCoreTemplate.Web
 
         public readonly IMvcActionDefinition User_Users = MvcAction();
         public readonly IMvcActionDefinition User_Users_Query = MvcAction();
+        public readonly IMvcActionDefinition User_Users_Json = MvcAction();
         public readonly IMvcActionDefinition User_Users_Details = MvcAction();
         public readonly IMvcActionDefinition User_Statistics = MvcAction();
         public readonly IMvcActionDefinition User_Impersonate = MvcAction();

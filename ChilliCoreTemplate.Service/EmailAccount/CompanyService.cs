@@ -41,7 +41,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var CompanyIds = userData.GetCompanyIds();
 
-            return (Company o) => CompanyIds.Contains(o.Id) && (includeDeleted || !o.IsDeleted);
+            return (Company o) => (o.Id == userData.CompanyId.Value || o.MasterCompanyId == userData.CompanyId.Value) && (includeDeleted || !o.IsDeleted);
         }
 
         internal IQueryable<Company> VisibleCompanies(bool includeDeleted = false)

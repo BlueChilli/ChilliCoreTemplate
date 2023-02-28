@@ -15,6 +15,8 @@ namespace ChilliCoreTemplate.Service
 
         public ServiceResult<Customer> Customer_AddOrUpdate(StripeCustomerEditModel model, string accountId = null)
         {
+            if (!model.Metadata.ContainsKey(SYSTEM)) model.Metadata.Add(SYSTEM, _config.BaseUrl);
+
             Customer customer = null;
             if (!String.IsNullOrEmpty(model.Id))
             {
@@ -35,6 +37,7 @@ namespace ChilliCoreTemplate.Service
                 {
                     Email = model.Email,
                     Description = model.Description,
+                    Metadata = model.Metadata,
                     Source = model.Token
                 }, accountId);
             }
@@ -47,6 +50,7 @@ namespace ChilliCoreTemplate.Service
             {
                 Email = model.Email,
                 Description = model.Description,
+                Metadata = model.Metadata,
                 Source = model.Token,
                 DefaultSource = model.Card
             }, accountId);

@@ -1,4 +1,4 @@
-@model UsersViewModel
+@model UserListModel
 @await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Partial = "_InviteUser" })
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
@@ -14,6 +14,7 @@
 
     <filter>
         <filter-left>
+            @await Html.FieldTemplateInnerForAsync(m => m.CompanyId, new SelectFieldTemplateOptions { SelectList = Model.CompanyList })
             @await Html.FieldTemplateInnerForAsync(m => m.Role)
             @await Html.FieldTemplateInnerForAsync(m => m.Status)
         </filter-left>
@@ -53,10 +54,28 @@
         var table;
         $(function () {
 
+            $('#CompanyId').chosen({
+                width: "100%",
+                placeholder_text: "Any company"
+            });
+
+            $('#CompanyId').ajaxChosen({
+                type: 'POST',
+                url: '@Mvc.Admin.Company_ListJson.Url(Url)',
+                dataType: 'json'
+            }, function (data) {
+                var results = [];
+                $.each(data.data, function (i, val) {
+                    results.push({ value: val.value, text: val.text });
+                });
+                return results;
+            });
+
             table = $('.js-users-table').dataTable({
                 dom: 'Tgtip',
                 "iDisplayLength": 50,
                 responsive: true,
+                "deferLoading": 0,
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -75,9 +94,9 @@
                     },
                     { "data": "phone", "orderable": false },
                     {
-                        "data": "Company", "orderable": true,
+                        "data": "company", "orderable": true,
                         render: function (data, type, row) {
-                            return row.Company == null ? '' : '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}">{1}</a>'.format(row.Company.id, row.Company.name);
+                            return row.company == null ? '' : '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}">{1}</a>'.format(row.company.id, row.company.name);
                         }
                     },
                     { "data": "role", "orderable": false },
@@ -103,13 +122,21 @@
                 SearchTable();
             });
 
-            $('#Role,#Status').on('change', function () {
+            $('#CompanyId,#Role,#Status').on('change', function () {
                 SearchTable();
             });
+
+            SearchTable();
         });
 
         function SearchTable() {
             var api = table.api();
+
+            if ($('#CompanyId').val() != '') {
+                api.column(4).search($('#CompanyId').val(), false, false, false);
+            } else {
+                api.column(4).search('');
+            }
 
             if ($('#Role').val() != '') {
                 api.column(5).search($('#Role').val(), false, false, false);

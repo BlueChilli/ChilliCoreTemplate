@@ -206,7 +206,7 @@ namespace ChilliCoreTemplate.Web.Api
         //        .Call();
         //}
 
-        [ProducesResponseType(typeof(LoginResultMobileModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
         [HttpPost("bypin")]
         public virtual IActionResult AddByPin(PinLoginPinApiModel model)
         {

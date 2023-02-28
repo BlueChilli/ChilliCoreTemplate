@@ -40,6 +40,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         [HttpPost]
         public ActionResult Edit([FromForm]CompanyEditModel model)
         {
+            model.MasterCompanyId = User.UserData().CompanyId;
             return this.ServiceCall(() => _services.Company_Edit(model))
                 .OnSuccess(m =>
                 {

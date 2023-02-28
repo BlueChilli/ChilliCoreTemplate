@@ -44,7 +44,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult List()
         {
-            var model = new UsersViewModel();
+            var model = new UserListModel();
             model.RoleList = model.RoleList.Where(x => x.Value != Role.Administrator.ToString()).ToSelectList();
             return View("UserList", model);
         }

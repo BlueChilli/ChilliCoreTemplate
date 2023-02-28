@@ -13,6 +13,8 @@ namespace ChilliCoreTemplate.Models.Stripe
 
         public string Description { get; set; }
 
+        public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
+
         public string Token { get; set; }
 
         public string Card { get; set; }

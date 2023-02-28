@@ -74,11 +74,4 @@ namespace ChilliCoreTemplate.Web
         }
     }
 
-    public class BackgroundTaskPrincipal : GenericPrincipal
-    {
-        public BackgroundTaskPrincipal()
-            : base(new GenericIdentity("BackgroundTaskIdentity"), new string[] { AccountCommon.System })
-        {
-        }
-    }
 }

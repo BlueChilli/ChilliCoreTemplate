@@ -29,7 +29,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public int? UserId { get; set; }
         public User User { get; set; }
 
-        [StringLength(50)]
+        [StringLength(100)]
         public string TemplateId { get; set; }
 
         public int TemplateIdHash { get; set; }

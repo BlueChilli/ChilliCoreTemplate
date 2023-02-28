@@ -39,7 +39,7 @@ namespace ChilliCoreTemplate.Service
                 cfg.CreateMap<User, UserData>()
                     .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-                    .AfterMap((src, dest) =>
+                    .AfterMap((src, dest, ctx) =>
                     {
                         var roles = Mapper.Map<List<UserRole>, List<UserRoleModel>>(src.UserRoles.Where(x => x.CompanyId == null || x.Company == null || !x.Company.IsDeleted).ToList());
                         if (!roles.Any()) roles.Add(new UserRoleModel { Role = Role.User });
@@ -51,6 +51,13 @@ namespace ChilliCoreTemplate.Service
                             dest.CompanyLogoPath = company.LogoPath;
                             dest.CompanyName = company.Name;
                             dest.Timezone = company.Timezone;
+                            //TODO add check that mastercompany flag is turned on
+                            if (ctx.Options.Items.ContainsKey("DataContext"))
+                            {
+                                var context = ctx.Options.Items["DataContext"] as DataContext;
+                                var isMasterCompany = context.Companies.Any(x => x.MasterCompanyId == company.Id);
+                                if (isMasterCompany) dest.IsMasterCompany = true;
+                            }
                         }
                     });
 

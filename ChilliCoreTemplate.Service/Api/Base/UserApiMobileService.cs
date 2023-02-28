@@ -172,8 +172,9 @@ namespace ChilliCoreTemplate.Service.Api
             }
 
             device.PinRetries = 0;
-            var account = device.User;
+            device.LastLoginDate = DateTime.UtcNow;
 
+            var account = device.User;
             account.LastLoginDate = DateTime.UtcNow;
             account.LoginCount += 1;
             Context.SaveChanges();
@@ -186,24 +187,11 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult<UserDataPrincipal>.AsSuccess(session);
         }
 
-
-        public ServiceResult<DevicePinResponseApiModel> SaveDevicePin(PersistDevicePinApiModel model)
+        public async Task<ServiceResult<DevicePinResponseApiModel>> SaveDevicePin(PersistDevicePinApiModel model)
         {
-            Guid sessionId = Guid.Empty;
-            Guid.TryParse(User?.Session()?.Id, out sessionId);
-
-            if (sessionId == Guid.Empty)
-            {
-                return NoAuthDevice<DevicePinResponseApiModel>();
-            }
-
-            var device = Context.UserDevices.Where(d => d.UserSessions.Any(s => s.SessionId == sessionId))
-                            .FirstOrDefault();
-
-            if (device == null || device.DeviceId != model.DeviceId)
-            {
-                return NoAuthDevice<DevicePinResponseApiModel>();
-            }
+            var deviceRequest = await GetDeviceFromSession();
+            if (!deviceRequest.Success) return ServiceResult<DevicePinResponseApiModel>.CopyFrom(deviceRequest);
+            var device = (UserDevice)deviceRequest.Result;
 
             device.PinToken = Guid.NewGuid();
             device.PinHash = model.Pin.SaltedHash(device.PinToken.ToString());
@@ -224,19 +212,11 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult<T>.AsError("Device not authenticated.", System.Net.HttpStatusCode.Unauthorized);
         }
 
-        public ServiceResult DeleteDevicePin()
+        public async Task<ServiceResult<object>> DeleteDevicePin()
         {
-            Guid sessionId = Guid.Empty;
-            Guid.TryParse(User?.Session()?.Id, out sessionId);
-            
-            if (sessionId == Guid.Empty)
-                return ServiceResult.AsSuccess();
-
-            var device = Context.UserDevices.Where(d => d.UserSessions.Any(s => s.SessionId == sessionId))
-                            .FirstOrDefault();
-
-            if (device == null)
-                return ServiceResult.AsSuccess();
+            var deviceRequest = await GetDeviceFromSession();
+            if (!deviceRequest.Success) return deviceRequest;
+            var device = (UserDevice)deviceRequest.Result;
 
             device.PinHash = null;
             Context.SaveChanges();
@@ -245,6 +225,47 @@ namespace ChilliCoreTemplate.Service.Api
         }
 
         public async Task<ServiceResult<object>> RegisterPushToken(PushTokenRegistrationApiModel model)
+        {
+            var deviceRequest = await GetDeviceFromSession();
+            if (!deviceRequest.Success) return deviceRequest;
+            var device = (UserDevice)deviceRequest.Result;
+
+            var alreadyExists = await Context.UserDevices.AnyAsync(x => x.Id != device.Id && x.PushToken == model.Token);
+            if (alreadyExists) return ServiceResult<object>.AsError("Push token is already registered");
+
+            device.PushToken = model.Token;
+            device.PushProvider = model.Provider;
+            device.PushAppId = model.AppId;
+
+            var tokenRequest = await _push.GetService(model.AppId).RegisterPushTokenToSNSAsync(device.PushToken, model.Provider.Value);
+            if (!tokenRequest.Success) return ServiceResult<object>.CopyFrom(tokenRequest);
+            device.PushTokenId = tokenRequest.Result;
+
+            await Context.SaveChangesAsync();
+
+            return ServiceResult.AsSuccess();
+        }
+
+        public async Task<ServiceResult<object>> TestPushNotification()
+        {
+            var deviceRequest = await GetDeviceFromSession();
+            if (!deviceRequest.Success) return deviceRequest;
+            var device = (UserDevice)deviceRequest.Result;
+
+            var notification = new SendNotificationModel
+            {
+                PushTokenId = device.PushTokenId,
+                Provider = device.PushProvider.Value,
+                Type = PushNotificationType.Test,
+                Title = "Test",
+                Message = "Test message"
+            };
+            var sendRequest = await _push.SendPushNotification(notification);
+
+            return ServiceResult.AsSuccess();
+        }
+
+        private async Task<ServiceResult<object>> GetDeviceFromSession()
         {
             var sessionId = Guid.Empty;
             Guid.TryParse(User?.Session()?.Id, out sessionId);
@@ -257,25 +278,12 @@ namespace ChilliCoreTemplate.Service.Api
                 .Where(d => d.UserSessions.Any(s => s.SessionId == sessionId))
                 .FirstOrDefaultAsync();
 
-            if (device == null || device.DeviceId != model.DeviceId)
+            if (device == null)
             {
                 return NoAuthDevice<object>();
             }
 
-            var alreadyExists = await Context.UserDevices.AnyAsync(x => x.Id != device.Id && x.PushToken == model.Token);
-            if (alreadyExists) return ServiceResult<object>.AsError("Push token is already registered");
-
-            device.PushToken = model.Token;
-            device.PushProvider = model.Provider;
-            device.PushAppId = model.AppId;
-
-            var tokenRequest = await _push.GetService(model.AppId.Value).RegisterPushTokenToSNSAsync(device.PushToken, model.Provider.Value);
-            if (!tokenRequest.Success) return ServiceResult<object>.CopyFrom(tokenRequest);
-            device.PushTokenId = tokenRequest.Result;
-
-            await Context.SaveChangesAsync();
-
-            return ServiceResult.AsSuccess();
+            return ServiceResult.AsSuccess(device);
         }
     }
 }

@@ -25,7 +25,22 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
-
-
+        public ServiceResult<PaymentIntent> PaymentIntent_Get(string id)
+        {
+            try
+            {
+                var service = new PaymentIntentService(_client);
+                var response = service.Get(id);
+                return ServiceResult<PaymentIntent>.AsSuccess(response);
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is StripeException))
+                {
+                    ex.LogException();
+                }
+                return ServiceResult<PaymentIntent>.AsError(ex.Message);
+            }
+        }
     }
 }

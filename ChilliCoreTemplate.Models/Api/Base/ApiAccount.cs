@@ -131,8 +131,7 @@ namespace ChilliCoreTemplate.Models.Api
         [Required]
         public PushNotificationProvider? Provider { get; set; }
 
-        [Required]
-        public PushNotificationAppId? AppId { get; set; }
+        public PushNotificationAppId AppId { get; set; } = PushNotificationAppId.Default;
 
     }
 
@@ -155,17 +154,6 @@ namespace ChilliCoreTemplate.Models.Api
 
         [MinLength(4), MaxLength(4), Numeric]
         public string Pin { get; set; } //Add required if using PIN for mobile authentication
-    }
-
-    public class LoginResultMobileModel
-    {
-        public int UserId { get; set; }
-
-        public string UserKey { get; set; }
-
-        public bool MustChangePassword { get; set; }
-        public bool IsVerified { get; set; }
-        public bool IsInvited { get; set; }
     }
 
     public class ChangePinViewModel

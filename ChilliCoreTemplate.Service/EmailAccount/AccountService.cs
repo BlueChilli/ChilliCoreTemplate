@@ -78,7 +78,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (userData.IsInRole(Role.CompanyAdmin))
             {
                 var companyId = userData.CompanyId;
-                return svc.Context.Users.Where(u => u.UserRoles.Any(r => r.CompanyId == companyId));
+                return svc.Context.Users.Where(u => u.UserRoles.Any(r => r.CompanyId == companyId || r.Company.MasterCompanyId == companyId));
             }
 
             return svc.Context.Users.Where(u => u.Id == userData.UserId);
@@ -301,7 +301,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 {
                     UserId = account.Id,
                     PinToken = Guid.NewGuid(), //Setting pin token because it is indexed.
-                    DeviceId = deviceId
+                    DeviceId = deviceId,
+                    LastLoginDate = DateTime.Now
                 }).Entity;
 
                 Context.SaveChanges();
@@ -556,7 +557,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var account = String.IsNullOrEmpty(model.Email) ? GetAccountByPhone(model.Phone, includeDeleted: true) : GetAccountByEmail(model.Email, includeDeleted: true);
 
             var isInvited = account != null && account.UserRoles.Count == 1 && account.UserRoles.First().Status == RoleStatus.Invited;
-            if (account == null || isInvited || account.Status == UserStatus.Deleted)
+            if (account == null || isInvited || account.Status == UserStatus.Deleted || account.Status == UserStatus.Anonymous)
             {
                 if (account == null)
                 {
@@ -850,13 +851,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return account;
         }
 
-        public bool Exists(string email, int accountId)
+        public bool Exists(string email, int? accountId = null)
         {
-            using (MiniProfiler.Current.Step("AccountService.Exists"))
-            {
-                if (String.IsNullOrEmpty(email)) return false;
-                return Context.Users.Where(a => a.Email == email && a.Id != accountId && a.Status != UserStatus.Deleted).Any();
-            }
+            if (String.IsNullOrEmpty(email)) return false;
+            var hash = CommonLibrary.CalculateHash(email);
+            var query = Context.Users.Where(a => a.EmailHash == hash && a.Email == email && a.Status != UserStatus.Deleted);
+            if (accountId.HasValue) query = query.Where(a => a.Id != accountId);
+            return query.Any();
         }
 
         public bool Exists_Phone(string phone, int accountId)

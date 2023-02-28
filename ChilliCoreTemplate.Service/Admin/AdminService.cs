@@ -8,6 +8,7 @@ using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.LinqMapper;
+using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using DataTables.AspNet.Core;
 using LinqKit;
@@ -49,6 +50,11 @@ namespace ChilliCoreTemplate.Service.Admin
                                                     .Where(a => a.Status != UserStatus.Deleted)
                                                     .Include(a => a.UserRoles));
         }
+        public ServiceResult<UserListModel> User_List(UserListModel model)
+        {
+            if (model.CompanyId.HasValue) model.CompanyList = Context.Companies.Where(x => x.Id == model.CompanyId.Value).ToSelectList(v => v.Id, t => t.Name);
+            return ServiceResult<UserListModel>.AsSuccess(model);
+        }
 
         public PagedList<UserSummaryViewModel> Users_Query(IDataTablesRequest model)
         {
@@ -62,6 +68,10 @@ namespace ChilliCoreTemplate.Service.Admin
             {
                 switch (column.Field)
                 {
+                    case "company":
+                        var companyId = int.Parse(column.Search.Value);
+                        filter = filter.And(x => x.UserRoles.Any(r => r.CompanyId == companyId));
+                        break;
                     case "role":
                         var role = EnumHelper.Parse<Role>(column.Search.Value.ToLower());
                         filter = filter.And(x => x.UserRoles.Any(r => r.Role == role));
@@ -131,7 +141,7 @@ namespace ChilliCoreTemplate.Service.Admin
                 .Count();
         }
 
-        public ApiPagedList<DataLinkModel> User_List(string searchTerm, ApiPaging paging, int? id)
+        public ApiPagedList<DataLinkModel> User_List(string searchTerm, ApiPaging paging, int? id, Role? role)
         {
             var query = AccountService.VisibleUsers(this);
 
@@ -141,6 +151,8 @@ namespace ChilliCoreTemplate.Service.Admin
                 else query = query.Where(x => x.FullName.Contains(searchTerm));
             }
             else if (id.HasValue) query = query.Where(x => x.Id == id.Value);
+
+            if (role.HasValue) query = query.Where(x => x.UserRoles.Any(r => r.Role == role.Value));
 
             return query.Materialize<User, DataLinkModel>()
                 .Query(q => q.OrderBy(x => x.Name))

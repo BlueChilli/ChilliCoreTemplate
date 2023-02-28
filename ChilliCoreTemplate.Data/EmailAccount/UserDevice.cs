@@ -19,6 +19,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public virtual User User { get; set; }
         public int UserId { get; set; }
 
+        public DateTime? LastLoginDate { get; set; }
+
         [Required]
         public Guid PinToken { get; set; }
 

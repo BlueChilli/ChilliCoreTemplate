@@ -126,7 +126,7 @@ namespace ChilliCoreTemplate.Service
 
         public ServiceResult<CompanyEditModel> Company_GetForEdit(int? id = null)
         {
-            if (id == null) id = CompanyId;
+            if (id == null) id = User.UserData().IsMasterCompany ? 0 : CompanyId ?? 0;
             var model = Company_Authorised(id.Value)
                 .Materialize<Company, CompanyEditModel>()
                 .FirstOrDefault();
@@ -302,6 +302,7 @@ namespace ChilliCoreTemplate.Service
         {
             var company = Company_Authorised()
                 .FirstOrDefault(x => x.Id == id);
+
             Context.Entry(company)
                 .Collection(x => x.UserRoles)
                 .Query()
@@ -312,11 +313,15 @@ namespace ChilliCoreTemplate.Service
             if (company.UserRoles.Any()) return ServiceResult<CompanyDetailViewModel>.AsError($"Company already has the user {model.Email}");
 
             var user = _accountService.GetAccountByEmail(model.Email);
-            if (user != null) return ServiceResult<CompanyDetailViewModel>.AsError($"User {model.Email} already has an account");
-
-            var newUserRequest = _accountService.Invite(model, true);
-            if (!newUserRequest.Success) return ServiceResult<CompanyDetailViewModel>.CopyFrom(newUserRequest);
-
+            if (user == null)
+            {
+                var newUserRequest = _accountService.Invite(model, true);
+                if (!newUserRequest.Success) return ServiceResult<CompanyDetailViewModel>.CopyFrom(newUserRequest);
+            }
+            else
+            {
+                user.UserRoles.Add(new UserRole { CompanyId = id, Role = Role.CompanyAdmin });
+            }
             Context.SaveChanges();
 
             return ServiceResult<CompanyDetailViewModel>.AsSuccess(Company_Get(id).Result);

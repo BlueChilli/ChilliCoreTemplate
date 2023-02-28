@@ -15,6 +15,7 @@ namespace ChilliCoreTemplate.Service
         private readonly IMemoryCache _cache;
 
         internal const string TRANSACTIONID = "TransactionId";
+        internal const string SYSTEM = "System";
 
         public StripeService(ProjectSettings config, IMemoryCache memoryCache)
         {

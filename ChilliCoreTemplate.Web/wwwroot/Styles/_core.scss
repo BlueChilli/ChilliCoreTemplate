@@ -141,13 +141,7 @@ a {
     }
 }
 
-table.dataTable.table-hover > tbody > tr.odd:hover > * {
-    background: $table-hover-color;
-    color: $table-text-color;
-    box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 1%);
-}
-
-table.dataTable.table-hover > tbody > tr.even:hover > * {
+table.table-hover > tbody > tr:hover > * {
     background: $table-hover-color;
     color: $table-text-color;
     box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 1%);

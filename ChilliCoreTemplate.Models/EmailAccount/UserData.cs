@@ -50,6 +50,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string CompanyName { get; set; }
 
+        public bool IsMasterCompany { get; set; }
+
         public UserData Impersonator { get; set; }
         public int? UserDeviceId { get; set; }
 

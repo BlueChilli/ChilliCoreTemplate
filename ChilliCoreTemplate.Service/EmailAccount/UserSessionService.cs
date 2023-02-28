@@ -57,7 +57,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         internal UserData MapUserData(User user, int? userDeviceId)
         {
-            var userData = Mapper.Map<UserData>(user);
+            var userData = Mapper.Map<UserData>(user, opts => opts.Items["DataContext"] = Context);
             userData.UserDeviceId = userDeviceId;
             return userData;
         }
@@ -147,7 +147,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             var sessionGuid = GetGuidFromString(id);
 
-            var query = Context.UserSessions.AsNoTracking().Where(x => x.SessionId == sessionGuid);
+            var query = Context.UserSessions.Where(x => x.SessionId == sessionGuid);
             var session = isAsync ? await query.FirstOrDefaultAsync()
                                   : query.FirstOrDefault();
             if (session != null)

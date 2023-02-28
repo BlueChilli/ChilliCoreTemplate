@@ -16,6 +16,9 @@
         @builder.H1("Oops, you're already registered with us")
     }
 }
-@builder.P(String.Format("Try signing in with the email you used, or if you cannot remember your login details <a target=\"_blank\" href=\"{0}\">request a new password</a>.", resetPasswordUrl))
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    @builder.P(String.Format("Try signing in with the email you used, or if you cannot remember your login details <a target=\"_blank\" href=\"{0}\">request a new password</a>.", resetPasswordUrl))
 
-@builder.ButtonTrack(Model.TrackingId, Model.TemplateId, loginUrl, "Login to your account")
+    @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, loginUrl, "Login to your account")
+}

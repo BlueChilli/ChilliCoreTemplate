@@ -97,7 +97,7 @@ namespace ChilliCoreTemplate.Service
                 if (role != null)
                 {
                     x.Role = role.Role.GetDescription();
-                    x.Company = role.CompanyId.HasValue ? new CompanySummaryViewModel { Id = role.CompanyId.Value, Name = role.CompanyName } : null;
+                    x.Company = role.CompanyId.HasValue ? new DataLinkModel { Id = role.CompanyId.Value, Name = role.CompanyName } : null;
                 }
             });
             LinqMapper.CreateMap<User, DataLinkModel>(x => new DataLinkModel

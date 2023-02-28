@@ -230,22 +230,5 @@ namespace ChilliCoreTemplate.Web.Api
                 return await _webApiService.Delete(model);
             }).Call();
         }
-
-        /// <summary>
-        /// Add pushtoken to users device
-        /// </summary>
-        [HttpPost]
-        [Route("push")]
-        [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddPush(PushTokenRegistrationApiModel model)
-        {
-            return await this.ApiServiceCall(() => _mobileApiService.RegisterPushToken(model))
-                 .OnSuccess(x =>
-                 {
-                     return Ok();
-                 })
-                 .Call();
-        }
-
     }
 }

@@ -64,6 +64,7 @@ namespace ChilliCoreTemplate.Web
 
             services.AddHttpContextAccessor();
             services.AddTransient<IPrincipal>(provider => provider.GetService<IHttpContextAccessor>()?.HttpContext?.User);
+            services.AddScoped<BackgroundTaskPrincipal>();
 
             //services.Configure<CookiePolicyOptions>(options =>
             //{
@@ -478,7 +479,7 @@ namespace ChilliCoreTemplate.Web
             }
             else
             {
-                options.AddRewrite("^$", "/EmailAccount/Login", skipRemainingRules: true);
+                options.AddRewrite("^$", "/Entry/Index", skipRemainingRules: true);
             }
 
             //options.AddRedirect("^admin$", "/User/Users");

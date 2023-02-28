@@ -3,9 +3,13 @@
     Model.HtmlAttributes.Merge("class", "form-control");
     Model.HtmlAttributes.Add("data-date-format", "dd/mm/yyyy");
     var value = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : (string)Model.Value;
+    if (Model.Options.PreAddOn == null)
+    {
+        Model.Options.PreAddOn = FieldTemplateOptions.IconAddOn("calendar-fill");
+    }
 }
 <div class="input-group">
-    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+    @Model.Options.PreAddOn
     <input id="@Model.Id" name="@Model.Name" value="@value" type="text" @Model.HtmlAttributes.ToAttributeHtmlContent()>
     @if (Model.Options.PostAddOn != null)
     {

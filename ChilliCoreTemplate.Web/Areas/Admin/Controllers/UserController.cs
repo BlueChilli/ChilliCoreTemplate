@@ -48,14 +48,14 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             return RedirectToAction("Users");
         }
 
-        public virtual ActionResult Users()
+        public virtual ActionResult Users(UserListModel model)
         {
-            var model = new UsersViewModel()
-            {
-                //Accounts = _service.GetUsers(),
-                //Statistics = _service.GetRegistrationStatistics()
-            };
-            return View("Users", model);
+            return this.ServiceCall(() => _service.User_List(model))
+                .OnSuccess(m =>
+                {
+                    return View("UsersList", m);
+                })
+                .Call();
         }
 
         public virtual IActionResult UsersQuery(IDataTablesRequest model)
@@ -68,9 +68,9 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             return new DataTablesJsonResult(response, true);
         }
 
-        public JsonResult UsersJson(string term)
+        public JsonResult UsersJson(string term, Role? role = null)
         {
-            var users = _service.User_List(term, new ApiPaging(), null).Data;
+            var users = _service.User_List(term, new ApiPaging(), null, role).Data;
 
             return Json(new { Data = users.ToSelectList(v => v.Id, t => t.Name) });
         }

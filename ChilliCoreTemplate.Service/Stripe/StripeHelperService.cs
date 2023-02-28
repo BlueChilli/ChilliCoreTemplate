@@ -1,4 +1,5 @@
-﻿using ChilliCoreTemplate.Data;
+﻿using AutoMapper;
+using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
@@ -102,38 +103,20 @@ namespace ChilliCoreTemplate.Service
                 });
         }
 
-        private ServiceResult<Customer> Stripe_UpdateOrCreate(User user, string token = null, string coupon = null)
+        private ServiceResult<Customer> Stripe_UpdateOrCreate(User user, string token = null, string coupon = null, string accountId = null)
         {
-            var name = _environment.IsProduction() ? user.FullName : $"{_environment.EnvironmentName} - {user.FullName}";
-            var metadata = new Dictionary<string, string> { { "UserId", user.Id.ToString() } };
+            var model = Mapper.Map<StripeCustomerEditModel>(user);
+            model.Token = token;
+            var customerRequest = _stripe.Customer_AddOrUpdate(model, accountId);
+            if (!customerRequest.Success) return ServiceResult<Customer>.CopyFrom(customerRequest);
 
             if (String.IsNullOrEmpty(user.StripeId))
             {
-                var request = _stripe.Customer_Create(
-                    new CustomerCreateOptions
-                    {
-                        Name = name,
-                        Email = user.Email,
-                        Metadata = metadata,
-                        Source = token,
-                        Coupon = coupon,
-                        Expand = new List<string> { "default_source" }
-                    });
-                if (!request.Success) return request;
-                user.StripeId = request.Result.Id;
+                user.StripeId = customerRequest.Result.Id;
                 Context.SaveChanges();
-                return ServiceResult<Customer>.AsSuccess(request.Result);
             }
-            return _stripe.Customer_Update(user.StripeId,
-                new CustomerUpdateOptions
-                {
-                    Name = name,
-                    Email = user.Email,
-                    Metadata = metadata,
-                    Source = token,
-                    Coupon = coupon,
-                    Expand = new List<string> { "default_source" }
-                });
+
+            return customerRequest;
         }
 
         public ServiceResult<Customer> Stripe_SetPlan(PaymentPlan planType, Stripe.Customer customer, string firstName, string email)

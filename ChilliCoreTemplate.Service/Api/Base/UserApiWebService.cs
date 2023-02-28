@@ -108,6 +108,7 @@ namespace ChilliCoreTemplate.Service.Api
         {
             return new SessionSummaryApiModel
             {
+                UserId = userData.UserId,
                 UserKey = sessionId.HasValue ? _userKeyHelper.ProtectGuid(sessionId.Value) : null,
                 FirstName = userData.FirstName,
                 LastName = userData.LastName,

@@ -15,8 +15,12 @@ using ChilliSource.Core.Extensions;
 
 namespace ChilliCoreTemplate.Models.Admin
 {
-    public class UsersViewModel
+    public class UserListModel
     {
+        [EmptyItem]
+        public int? CompanyId { get; set; }
+        public SelectList CompanyList { get; set; }
+
         [EmptyItem("Any role")]
         public Role? Role { get; set; }
         public SelectList RoleList { get; set; } = EnumHelper.ToList<Role>().ToSelectList();
@@ -45,18 +49,12 @@ namespace ChilliCoreTemplate.Models.Admin
         public string FullName { get { return String.Concat(FirstName, " ", LastName).Trim(); } }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public CompanySummaryViewModel Company { get; set; }
+        public DataLinkModel Company { get; set; }
         public string Role { get; set; }
         public string Status { get; set; }
 
         [JsonIgnore]
         public List<UserRoleModel> UserRoles { get; set; }
         public string LastLoginOn { get; set; }
-    }
-
-    public class CompanySummaryViewModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

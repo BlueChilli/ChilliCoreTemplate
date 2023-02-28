@@ -104,6 +104,11 @@ namespace ChilliCoreTemplate.Models
             return url;
         }
 
+        public string ResolveAppUrl(string url, object parameters = null)
+        {
+            return ResolveUrl(url.Replace("~", this.AppUrl), parameters);
+        }
+
         public string ResolveApiUrl(string url, object parameters = null)
         {
             return ResolveUrl(url.Replace("~", this.ApiUrl), parameters);
@@ -113,6 +118,8 @@ namespace ChilliCoreTemplate.Models
         /// Gets  a value of base url for the project configuration.
         /// </summary>
         public string BaseUrl => _baseSection.GetRequiredString("BaseUrl");
+
+        public string AppUrl => _baseSection.GetString("AppUrl").DefaultTo(BaseUrl);
 
         public string ApiUrl => _baseSection.GetString("ApiUrl").DefaultTo(BaseUrl);
 

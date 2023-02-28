@@ -1,40 +1,27 @@
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Service.EmailAccount;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace ChilliCoreTemplate.Web.Controllers
 {
-    [CustomAuthorize]
     public class EntryController : Controller
     {
-        AccountService _accountSvc;
+        private readonly ProjectSettings _settings;
 
-        public EntryController(AccountService accountSvc)
+        public EntryController(ProjectSettings settings)
         {
-            _accountSvc = accountSvc;
+            _settings = settings;
         }
 
+        [AllowAnonymous]
         public virtual ActionResult Index()
         {
-            if (User.IsInRole(AccountCommon.Administrator))
-            {
-                return Mvc.Admin.Default.Redirect(this);
-            }
-
-            if (User.IsInRole(AccountCommon.CompanyAdmin) || User.IsInRole(AccountCommon.CompanyUser))
-            {
-                return Mvc.Company.Default.Redirect(this);
-            }
-
-            if (User.IsInRole(AccountCommon.User))
-            {
-                return new RedirectResult("~/index.html");
-            }
-
-            throw new ApplicationException("No dashboard specified for this user type.");
+            return this.RedirectToRoot(_settings);
         }
 
+        [CustomAuthorize]
         public virtual ActionResult ImpersonateRedirect()
         {
             if (User.IsInRole(AccountCommon.Administrator))

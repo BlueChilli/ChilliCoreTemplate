@@ -58,7 +58,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public UserStatus Status { get; set; }
 
-        public string StatusDescription => UserRoles.Count == 1 && UserRoles[0].Status.HasValue ? UserRoles[0].Status.GetDescription() : Status.GetDescription();
+        public string StatusDescription => UserRoles == null ? "" : UserRoles.Count == 1 && UserRoles[0].Status.HasValue ? UserRoles[0].Status.GetDescription() : Status.GetDescription();
     }
 
     public class RoleSelectionViewModel
@@ -320,6 +320,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class SessionSummaryApiModel
     {
+        public int UserId { get; set; }
+
         public string UserKey { get; set; }
 
         public string FirstName { get; set; }
@@ -340,7 +342,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public DateTime? ExpiresOn { get; set; }
 
         public ImpersonatorSummaryApiModel Impersonator { get; set; }
-
     }
 
     public class ImpersonatorSummaryApiModel
