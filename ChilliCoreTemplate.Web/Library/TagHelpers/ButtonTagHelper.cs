@@ -125,6 +125,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             if (Action == null)
                 return;
 
+            output.TagName = "button";
             output.Attributes.SetAttribute("type", "button");
             output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm");
 
@@ -135,7 +136,13 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             route = route.AddRouteValues(RouteValues);
 
             var url = urlHelper.RouteUrl(route);
-            output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', {JsonData ?? "null"});");
+            var target = "";
+            if (output.Attributes.ContainsName("target"))
+            {
+                target = output.Attributes["target"].Value.ToString();
+                output.Attributes.RemoveAll("target");
+            }
+            output.Attributes.SetAttribute("onclick", $"debugger;$.doPost('{url}', '{target}', {JsonData ?? "null"});");
         }
     }
 }

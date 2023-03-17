@@ -216,15 +216,15 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 message.ReplyToList.Add(data.ReplyTo.ToMailAddress());
             }
 
-            if (mailSettings.RedirectTo != null)
+            var to = data.To.DefaultTo(message.From.Address);
+            if (mailSettings.Quarantine.ShouldQuarantine(to))
             {
-                message.To.Add(mailSettings.RedirectTo.ToMailAddress());
+                message.To.Add(mailSettings.Quarantine.Quarantine(to));
             }
             else
             {
-                message.To.Add(data.To.DefaultTo(message.From.Address));
+                message.To.Add(to);
             }
-
 
             if (mailSettings.Bcc != null)
             {

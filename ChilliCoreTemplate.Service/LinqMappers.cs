@@ -88,7 +88,7 @@ namespace ChilliCoreTemplate.Service
             LinqMapper.CreateMap<User, UserBasicModel>(x => new UserBasicModel { Name = x.FullName });
             LinqMapper.CreateMap<User, UserSummaryViewModel>(x => new UserSummaryViewModel
             {
-                Status = x.UserRoles.Count == 1 && x.UserRoles.Any(r => r.Status.HasValue) ? x.UserRoles.Select(r => r.Status.ToString()).FirstOrDefault() : x.Status.ToString(),
+                Status = x.Status.ToString(),
                 LastLoginOn = x.LastLoginDate == null ? "" : x.LastLoginDate.Value.ToIsoDate()
             });
             Materializer.RegisterAfterMap<UserSummaryViewModel>((x) =>
@@ -97,6 +97,8 @@ namespace ChilliCoreTemplate.Service
                 if (role != null)
                 {
                     x.Role = role.Role.GetDescription();
+                    if (role.Status != null)
+                        x.Status = role.Status.ToString();
                     x.Company = role.CompanyId.HasValue ? new DataLinkModel { Id = role.CompanyId.Value, Name = role.CompanyName } : null;
                 }
             });

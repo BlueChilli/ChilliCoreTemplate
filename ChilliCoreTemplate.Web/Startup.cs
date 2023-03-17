@@ -220,7 +220,7 @@ namespace ChilliCoreTemplate.Web
             })
             .AddControllersAsServices()
             .AddNewtonsoftJson()
-            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+            //.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
             .AddCookieTempDataProvider()
             .AddHybridModelBinder()
             .ConfigureApiBehaviorOptions(options =>

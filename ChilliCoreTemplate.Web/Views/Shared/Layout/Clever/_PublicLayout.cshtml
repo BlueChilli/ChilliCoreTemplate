@@ -1,9 +1,10 @@
+@inject ProjectSettings config;
 @{ Layout = "~/Views/Shared/Layout/_PublicBaseLayout.cshtml"; }
 <div class="px-5 py-5 p-lg-0 min-h-screen bg-surface-secondary d-flex flex-column justify-content-center">
     <div class="d-flex justify-content-center">
         <div class="col-lg-5 col-xl-4 p-12 p-xl-20 position-fixed start-0 top-0 h-screen overflow-y-hidden bg-primary d-none d-lg-flex flex-column">
             <!-- Logo -->
-            <a class="d-block" href="#">
+            <a class="d-block mx-auto" href="@config.PublicUrl">
                 <img src="@Url.Content("~/Images/Generic/GenericLogo.png?height=80")" class="h-20" alt="...">
             </a>
             <!-- Title -->
@@ -15,8 +16,9 @@
                     Maybe some text here will help me see it better. Oh God. Oke, let’s do it then.
                 </p>
             </div>
-            <!-- Circle -->
-            @*<div class="w-56 h-56 bg-orange-500 rounded-circle position-absolute bottom-0 end-20 transform translate-y-1/3"></div>*@
+            <div class="position-absolute bottom-10 start-40">
+                Powered by <img src="@Url.Content("~/Images/Icons/itinerantdigital.png?h=40")">
+            </div>
         </div>
         <div class="col-12 col-md-9 col-lg-5 col-xl-4 offset-lg-5 border-left-lg min-h-screen d-flex flex-column justify-content-center position-relative text-center">
             @RenderBody()

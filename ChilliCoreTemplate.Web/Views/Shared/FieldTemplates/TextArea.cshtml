@@ -1,7 +1,7 @@
 @model IFieldInnerTemplateModel<TextAreaFieldTemplateOptions>
 @{
     Model.HtmlAttributes.Merge("class", "form-control");
-    Model.HtmlAttributes.AddOrSkipIfExists("rows", 4);
+    Model.HtmlAttributes.AddOrSkipIfExists("rows", Model.Options.Rows);
     var jsId = Model.Id.ToLower().Replace("_", "-");
     var isCharactersLeft = (bool?)Model.HtmlAttributes["charactersleft"];
     var maxLength = (int?)Model.HtmlAttributes["maxlength"];

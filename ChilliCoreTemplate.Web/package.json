@@ -30,6 +30,7 @@
     "icheck": "1.0.2",
     "summernote": "0.8.20",
     "cropit.jquery3": "0.1.2",
+    "clockpicker": "0.0.7",
     "datatables.net-bs5": "1.12.1",
     "datatables.net-responsive-bs5": "2.3.0"
   }

@@ -34,62 +34,6 @@
     <Compile Remove="logs\**" />
     <Compile Remove="node_modules\**" />
     <Compile Remove="wwwroot\is-cache\**" />
-    <Compile Remove="wwwroot\lib\%40fortawesome\**" />
-    <Compile Remove="wwwroot\lib\**" />
-    <Compile Remove="wwwroot\lib\bootstrap-datepicker\**" />
-    <Compile Remove="wwwroot\lib\bootstrap\**" />
-    <Compile Remove="wwwroot\lib\chosen-js\**" />
-    <Compile Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
-    <Compile Remove="wwwroot\lib\jquery-validation\**" />
-    <Compile Remove="wwwroot\lib\jquery\**" />
-    <Compile Remove="wwwroot\lib\popper.js\**" />
-    <Compile Remove="wwwroot\lib\summernote\**" />
-    <Compile Remove="wwwroot\Styles\Inspinia_old\**" />
-    <Content Remove="localstorage\**" />
-    <Content Remove="logs\**" />
-    <Content Remove="node_modules\**" />
-    <Content Remove="wwwroot\is-cache\**" />
-    <Content Remove="wwwroot\lib\%40fortawesome\**" />
-    <Content Remove="wwwroot\lib\**" />
-    <Content Remove="wwwroot\lib\bootstrap-datepicker\**" />
-    <Content Remove="wwwroot\lib\bootstrap\**" />
-    <Content Remove="wwwroot\lib\chosen-js\**" />
-    <Content Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
-    <Content Remove="wwwroot\lib\jquery-validation\**" />
-    <Content Remove="wwwroot\lib\jquery\**" />
-    <Content Remove="wwwroot\lib\popper.js\**" />
-    <Content Remove="wwwroot\lib\summernote\**" />
-    <Content Remove="wwwroot\Styles\Inspinia_old\**" />
-    <EmbeddedResource Remove="localstorage\**" />
-    <EmbeddedResource Remove="logs\**" />
-    <EmbeddedResource Remove="wwwroot\is-cache\**" />
-    <EmbeddedResource Remove="wwwroot\lib\%40fortawesome\**" />
-    <EmbeddedResource Remove="wwwroot\lib\**" />
-    <EmbeddedResource Remove="wwwroot\lib\bootstrap-datepicker\**" />
-    <EmbeddedResource Remove="wwwroot\lib\bootstrap\**" />
-    <EmbeddedResource Remove="wwwroot\lib\chosen-js\**" />
-    <EmbeddedResource Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
-    <EmbeddedResource Remove="wwwroot\lib\jquery-validation\**" />
-    <EmbeddedResource Remove="wwwroot\lib\jquery\**" />
-    <EmbeddedResource Remove="wwwroot\lib\popper.js\**" />
-    <EmbeddedResource Remove="wwwroot\lib\summernote\**" />
-    <EmbeddedResource Remove="wwwroot\Styles\Inspinia_old\**" />
-    <None Remove="localstorage\**" />
-    <None Remove="logs\**" />
-    <None Remove="node_modules\**" />
-    <None Remove="wwwroot\is-cache\**" />
-    <None Remove="wwwroot\lib\%40fortawesome\**" />
-    <None Remove="wwwroot\lib\**" />
-    <None Remove="wwwroot\lib\bootstrap-datepicker\**" />
-    <None Remove="wwwroot\lib\bootstrap\**" />
-    <None Remove="wwwroot\lib\chosen-js\**" />
-    <None Remove="wwwroot\lib\jquery-validation-unobtrusive\**" />
-    <None Remove="wwwroot\lib\jquery-validation\**" />
-    <None Remove="wwwroot\lib\jquery\**" />
-    <None Remove="wwwroot\lib\popper.js\**" />
-    <None Remove="wwwroot\lib\summernote\**" />
-    <None Remove="wwwroot\Styles\Inspinia_old\**" />
-    <Content Remove="wwwroot\yarn.lock" />
   </ItemGroup>
 
   <ItemGroup>
@@ -102,10 +46,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0139" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0142" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
-    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0111" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0004" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0113" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0008" />
     <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="HybridModelBinding" Version="0.18.0" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
@@ -152,10 +96,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\.well-known\" />
+	<Folder Include="wwwroot\.well-known\" />
+	<Content Remove="wwwroot\.well-known\dummy.txt" />
 	<Content Include="wwwroot\.well-known\**">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DocumentCache\cache.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="DocumentCache\cache.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -167,6 +122,7 @@
     <None Include="Views\Shared\Layout\Clever\_NavBar.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_PublicLayout.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_Sidebar.cshtml" />
+    <None Include="wwwroot\.well-known\dummy.txt" />
     <None Include="wwwroot\Styles\boostrap5c-chosen\build.scss" />
     <None Include="wwwroot\Styles\boostrap5c-chosen\_component-chosen.scss" />
     <None Include="wwwroot\Styles\boostrap5c-chosen\_component-variables.scss" />

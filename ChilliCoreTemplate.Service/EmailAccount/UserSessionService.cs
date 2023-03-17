@@ -237,33 +237,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             executionInfo.SendAliveSignal();
             if (executionInfo.IsCancellationRequested)
                 return;
-
-            if (_config.PurgeOldAnonymousAccounts)  //TODO use purge function
-            {
-                //Delete old anonymous accounts
-                var oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
-                var users = Context.Users
-                    .Include(x => x.UserRoles)
-                    .Include(x => x.Sessions)
-                    .Include(x => x.Tokens)
-                    .Include(x => x.Activities)
-                    .Include(x => x.Devices)
-                    .Where(x => x.Status == UserStatus.Anonymous && x.CreatedDate < oneMonthAgo)
-                    .Take(50)
-                    .ToList();
-
-                foreach (var user in users)
-                {
-                    if (user.UserRoles.Any()) Context.UserRoles.RemoveRange(user.UserRoles);
-                    if (user.Sessions.Any()) Context.UserSessions.RemoveRange(user.Sessions);
-                    if (user.Tokens.Any()) Context.UserTokens.RemoveRange(user.Tokens);
-                    if (user.Activities.Any()) Context.UserActivities.RemoveRange(user.Activities);
-                    if (user.Devices.Any()) Context.UserDevices.RemoveRange(user.Devices);
-                    Context.Users.Remove(user);
-                    Context.SaveChanges();
-                }
-            }
-
         }
 
         public void ClearSessionCache(string id)

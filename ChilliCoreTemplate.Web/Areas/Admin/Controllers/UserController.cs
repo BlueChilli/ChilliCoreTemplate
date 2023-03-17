@@ -269,7 +269,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             model.RoleSelectionOptions = new List<SelectListItem>()
             {
                 new SelectListItem() { Text = "Super admin", Value = Role.Administrator.ToString() },
-                new SelectListItem() { Text = "Company admin", Value = Role.CompanyAdmin.ToString() }
+                new SelectListItem() { Text = Role.CompanyAdmin.GetDescription(), Value = Role.CompanyAdmin.ToString() }
             };
 
             return View("UsersInvite", model);

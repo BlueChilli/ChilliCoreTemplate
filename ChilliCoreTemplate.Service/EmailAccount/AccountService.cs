@@ -5,6 +5,7 @@ using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Admin;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.Distributed;
 using ChilliSource.Cloud.Core.LinqMapper;
 using ChilliSource.Cloud.Web;
 using ChilliSource.Core.Extensions;
@@ -743,12 +744,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<AccountDetailsEditModel> GetForEdit(int accountId)
         {
-            var account = Context.Users.Where(a => a.Id == accountId).FirstOrDefault();
-            if (account == null)
-                return ServiceResult<AccountDetailsEditModel>.AsError("Account not found or access denied.");
+            var record = Context.Users.Where(a => a.Id == accountId)
+                .Materialize<User, AccountDetailsEditModel>()
+                .FirstOrDefault();
 
-            var mapped = Mapper.Map<User, AccountDetailsEditModel>(account);
-            return ServiceResult<AccountDetailsEditModel>.AsSuccess(mapped);
+            if (record == null) return ServiceResult<AccountDetailsEditModel>.AsError("Account not found or access denied.");
+
+            return ServiceResult<AccountDetailsEditModel>.AsSuccess(record);
         }
 
         public ServiceResult Update_Status(int userId, UserStatus status, bool isApi = false)
@@ -926,6 +928,26 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         internal void Session_Clear(string id)
         {
             _session.ClearSessionCache(id);
+        }
+
+        public async Task Anonymous_CleanAsync(ITaskExecutionInfo executionInfo)
+        {
+            executionInfo.SendAliveSignal();
+            if (executionInfo.IsCancellationRequested)
+                return;
+
+            if (_config.PurgeOldAnonymousAccounts)
+            {
+                //Delete old anonymous accounts
+                var oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
+                var users = await Context.Users
+                    .Where(x => x.Status == UserStatus.Anonymous && ((x.CreatedDate < oneMonthAgo && x.LastLoginDate == null) || x.LastLoginDate < oneMonthAgo))
+                    .Take(50)
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                users.ForEach(x => Purge(x));
+            }
         }
     }
 }

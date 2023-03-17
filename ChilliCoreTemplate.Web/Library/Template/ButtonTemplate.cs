@@ -11,7 +11,7 @@ namespace ChilliCoreTemplate.Web
         public static Task<IHtmlContent> ButtonAsync(this IHtmlHelper htmlHelper, Template_Button options = null)
         {
             if (options == null) options = new Template_Button();
-            options.Type = ButtonType.Button;
+            if (options.Type == 0) options.Type = ButtonType.Button;
 
             return htmlHelper.TemplateAsync(TemplateTypes.Button, options);
         }

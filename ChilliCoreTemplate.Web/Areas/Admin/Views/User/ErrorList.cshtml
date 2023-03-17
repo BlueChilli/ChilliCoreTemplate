@@ -15,10 +15,10 @@
             <table-default class="js-table">
                 <thead class="table-light">
                     <tr>
-                        <th>Date</th>
-                        <th>User</th>
-                        <th>Message</th>
-                        <th>Actions</th>
+                        <th data-priority="1">Date</th>
+                        <th data-priority="4">User</th>
+                        <th data-priority="3">Message</th>
+                        <th data-priority="2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,6 +48,7 @@
             var table = $('.js-table').DataTable({
                 "processing": true,
                 "serverSide": true,
+                responsive: true,
                 "ajax": {
                     "url": "@Mvc.Admin.User_Error_Query.Url(this.Url)",
                     "data": function ( d ) {

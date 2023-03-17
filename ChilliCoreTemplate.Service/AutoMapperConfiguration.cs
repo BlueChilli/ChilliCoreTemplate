@@ -65,7 +65,6 @@ namespace ChilliCoreTemplate.Service
 
                 cfg.CreateMap<User, AccountViewModel>().ReverseMap();
 
-                cfg.CreateMap<User, AccountDetailsEditModel>();
                 cfg.CreateMap<AccountDetailsEditModel, User>()
                     .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
                     .ForMember(dest => dest.ProfilePhotoPath, opt => opt.Condition(src => src.ProfilePhotoFile != null));
@@ -90,7 +89,7 @@ namespace ChilliCoreTemplate.Service
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatus.Registered))
                     .AfterMap((src, dest) =>
                     {
-                        dest.UserRoles = new List<RoleSelectionViewModel> { new RoleSelectionViewModel { Role = src.InviteRole.Role.Value, CompanyName = src.InviteRole.CompanyName, CompanyId = src.InviteRole.CompanyId } };
+                        dest.UserRoles = new List<RoleSelectionViewModel> { new RoleSelectionViewModel { Role = src.InviteRole.Role.Value, CompanyName = src.InviteRole.CompanyName, CompanyId = src.InviteRole.CompanyId, Status = RoleStatus.Invited } };
                     });
 
                 cfg.CreateMap<UserCreateModel, User>()

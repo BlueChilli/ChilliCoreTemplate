@@ -13,6 +13,7 @@
     //Model.TwitterUrl = "https://twitter.com/myproject";
     //Model.FacebookUrl = "https://www.facebook.com/myproject/";
     //Model.InstagramUrl = "https://www.instagram.com/myproject/";
+    if (Model.YouAreReceivingText == null) Model.YouAreReceivingText = $"You're receiving this because you are registered with {Model.Site}";
 }
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -175,7 +176,7 @@
                                 <!-- // BEGIN PREHEADER -->
                                 <table border="0" cellpadding="0" cellspacing="0" style="background-color:#FFF;width:100%;">
                                     <tr>
-                                        <td align="left" width="600" style="text-align:center;background-color:#26275f;width:600px;vertical-align:top;padding-top:21px;padding-bottom:21px;border-collapse:collapse;">
+                                        <td align="left" width="600" style="text-align:center;background-color:#382EBE;width:600px;vertical-align:top;padding-top:21px;padding-bottom:21px;border-collapse:collapse;">
                                             <a href="@Model.PublicUrl">
                                                 <img id="logo" style="border:0;line-height:100%;outline:none;text-decoration:none;" src="@Model.Logo" alt="logo" />
                                             </a>
@@ -190,7 +191,7 @@
                             <tr>
                                 <td align="center" style="vertical-align:top;border-collapse:collapse;">
                                     <!-- // BEGIN HEADER -->
-                                    <table id="header" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFF;width: 100%">
+                                    <table id="header" border="0" cellpadding="0" cellspacing="0" style="background-color:#382EBE;width: 100%">
                                         <tr>
                                             <td align="center" style="vertical-align:top;border-collapse:collapse;padding-right:7%;padding-left:7%;">
                                                 @RenderSection("Header")
@@ -237,7 +238,7 @@
                         <tr style="padding-bottom:50px">
                             <td align="left" style="vertical-align:top;border-collapse:collapse;">
                                 <!-- // BEGIN FOOTER -->
-                                <table id="footer" border="0" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px">
+                                <table id="footer" border="0" cellpadding="0" cellspacing="0" style="background-color:#382EBE;width:100%;max-width:600px">
                                     <tr>
                                         <td class="contact-info" style="text-align:center;vertical-align:top;padding-top:25px;border-collapse:collapse;">
                                             <p style="font-family:Open Sans,Helvetica,sans-serif;line-height:160%;color:@Model.FooterTextColor;font-size:12px;margin-top:0;margin-bottom:0;">@Model.YouAreReceivingText (<a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="@Model.PublicUrl">@(new Uri(Model.PublicUrl).AsFriendlyName())</a>)</p>

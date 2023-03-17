@@ -235,7 +235,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
     {
         public RazorTemplateDataModel()
         {
-            FooterTextColor = "#000";
+            FooterTextColor = "#FFF";
         }
 
         public RazorTemplateDataModel(T data) : base()

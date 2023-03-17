@@ -40,11 +40,11 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public int? EmailHash { get; set; }
 
         [StringLength(25)]
-        public string FirstName { get { return _FirstName; } set { _FirstName = value?.Trim(); FullName = String.Concat(_FirstName, " ", _LastName).Trim(); } }
+        public string FirstName { get { return _FirstName; } set { _FirstName = value?.NullIfBlank(); FullName = String.Concat(_FirstName, " ", _LastName).NullIfBlank(); } }
         private string _FirstName;
 
         [StringLength(25)]
-        public string LastName { get { return _LastName; } set { _LastName = value?.Trim(); FullName = String.Concat(_FirstName, " ", _LastName).Trim(); } }
+        public string LastName { get { return _LastName; } set { _LastName = value?.NullIfBlank(); FullName = String.Concat(_FirstName, " ", _LastName).NullIfBlank(); } }
         private string _LastName;
 
         [StringLength(55)]

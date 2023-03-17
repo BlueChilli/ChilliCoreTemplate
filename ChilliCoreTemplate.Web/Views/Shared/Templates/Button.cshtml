@@ -7,11 +7,11 @@
     {
         attributes.Merge("class", "btn");
         attributes.Merge("class", Model.Size.GetData<string>("css"));
-        attributes.Merge("class", laddaClass);
         attributes.Merge("class", String.Format("btn-{0}", Model.Style.GetDescription().ToLower()));
         attributes.AddOrSkipIfExists("type", Model.Type.GetDescription().ToLower());
         if (Model.IsLaddaButton)
         {
+            attributes.Merge("class", laddaClass);
             attributes.AddOrSkipIfExists("data-style", "expand-right");
             attributes.Merge("class", "ladda-button");
             if (Model.Style == ButtonStyle.Neutral)
@@ -31,9 +31,16 @@
 }
 else
 {
-    if (Model.Type == ButtonType.Button && !String.IsNullOrEmpty(Model.Url))
+    if (!String.IsNullOrEmpty(Model.Url))
     {
-        attributes.AddOrSkipIfExists("onclick", "window.location='" + Model.Url + "';");
+        if (Model.Type == ButtonType.Button)
+        {
+            attributes.AddOrSkipIfExists("onclick", "window.location='" + Model.Url + "';");
+        }
+        else
+        {
+            attributes.AddOrSkipIfExists("formaction", Model.Url);
+        }
     }
 
     <button @attributes.ToAttributeHtmlContent()>@Model.Text</button>

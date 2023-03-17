@@ -305,44 +305,46 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public ServiceResult<EmailViewModel> Email_Preview(EmailPreviewModel model)
         {
             var email = Email_Preview().Result.Emails[model.Id.Value];
-            IEmailTemplateDataModel templateModel = null;
 
-            if (email.Template == RazorTemplates.AccountAlreadyRegistered)
+            if (email.Template == RazorTemplates.AccountAlreadyRegistered || email.Template == RazorTemplates.AccountNotRegistered)
             {
-                templateModel = new RazorTemplateDataModel<string> { Data = model.Data.FromJson<string>() };
-            }
-            else if (email.Template == RazorTemplates.AccountNotRegistered)
-            {
-                templateModel = new RazorTemplateDataModel<string> { Data = model.Data.FromJson<string>() };
+                email.Data = model.Data.FromJson<string>();
+                return Email_Preview<string>(email);
             }
             else if (email.Template == RazorTemplates.InviteUser)
             {
-                templateModel = new RazorTemplateDataModel<InviteEditModel> { Data = model.Data.FromJson<InviteEditModel>() };
+                email.Data = model.Data.FromJson<InviteEditModel>();
+                return Email_Preview<InviteEditModel>(email);
             }
             else if (email.Template == RazorTemplates.PasswordChanged)
             {
-                templateModel = new RazorTemplateDataModel<AccountViewModel> { Data = model.Data.FromJson<AccountViewModel>() };
-            }
-            else if (email.Template == RazorTemplates.RegistrationComplete)
-            {
-                templateModel = new RazorTemplateDataModel<RegistrationCompleteViewModel> { Data = model.Data.FromJson<RegistrationCompleteViewModel>() };
+                email.Data = model.Data.FromJson<AccountViewModel>();
+                return Email_Preview<AccountViewModel>(email);
             }
             else if (email.Template == RazorTemplates.ResetPassword)
             {
-                templateModel = new RazorTemplateDataModel<ResetPasswordRequestModel> { Data = model.Data.FromJson<ResetPasswordRequestModel>() };
+                email.Data = model.Data.FromJson<ResetPasswordRequestModel>();
+                return Email_Preview<ResetPasswordRequestModel>(email);
             }
-            else if (email.Template == RazorTemplates.WelcomeEmail)
+            else if (email.Template == RazorTemplates.RegistrationComplete || email.Template == RazorTemplates.WelcomeEmail)
             {
-                templateModel = new RazorTemplateDataModel<RegistrationCompleteViewModel>
-                {
-                    Data = model.Data.FromJson<RegistrationCompleteViewModel>()
-                };
+                email.Data = model.Data.FromJson<RegistrationCompleteViewModel>();
+                return Email_Preview<RegistrationCompleteViewModel>(email);
             }
+
+            return ServiceResult<EmailViewModel>.AsError("Template not found");
+        }
+
+        internal ServiceResult<EmailViewModel> Email_Preview<T>(EmailPreviewItemModel email) where T : class
+        {
+            var templateModel = new RazorTemplateDataModel<T>(email.Data as T);
             templateModel.TemplateId = email.Id;
             templateModel.TrackingId = FakeTrackingId.ToShortGuid();
             EmailServiceHelpers.SetConfigProperties(templateModel, _config, _config.AdminEmail);
 
             var html = TaskHelper.GetResultSafeSync(() => _templateViewRenderer.RenderAsync(email.Template.TemplateName, templateModel));
+
+            //MjmlToHtmlHelper.Render(ref html);
 
             var data = new EmailData.Builder()
                         .To("fake@example.com")

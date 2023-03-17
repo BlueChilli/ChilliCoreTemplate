@@ -77,17 +77,18 @@ $.validator.setDefaults({
     });
 })(jQuery);
 
-// $.doPost('/MyController/MyAction', { id: 10 });
+// $.doPost('/MyController/MyAction', '_blank', { id: 10 });
 // Used by ButtonPost
 (function ($) {
     $.extend({
         doGet: function (url, params) {
             document.location = url + '?' + $.param(params);
         },
-        doPost: function (url, params) {
+        doPost: function (url, target, params) {
             var $form = $("<form>")
                 .attr("method", "post")
-                .attr("action", url);
+                .attr("action", url)
+                .attr("target", target);
             if (params != null) {
                 $.each(params, function (name, value) {
                     $("<input type='hidden'>")

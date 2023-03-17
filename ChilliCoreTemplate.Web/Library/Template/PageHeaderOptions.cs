@@ -89,6 +89,12 @@ namespace ChilliCoreTemplate.Web
             if (index < 0) AddPath(item);
             else _pathItems[index] = item;
         }
+
+        public void RemovePath(IUrlHelper urlHelper, IMvcActionDefinition action)
+        {
+            var index = PathItems.IndexOf(x => x.Url == action.Url(urlHelper));
+            if (index >= 0) _pathItems.RemoveAt(index);
+        }
     }
 
     public class BreadcrumbPathItem

@@ -1,4 +1,5 @@
 @inject IWebHostEnvironment env;
+@inject ProjectSettings config;
 @model UserDetailsModel
 
 @await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Title = Model.Account.FullName })
@@ -52,6 +53,10 @@
                         </heading>
                         <heading title="Status">@(Model.Account.StatusDescription)</heading>
                         <heading title="Email"><a href="mailto:@Model.Account.Email">@Model.Account.Email</a></heading>
+                        @if (config.MailSettings.Quarantine.QuarantineDomain == "mailinator.com" && config.MailSettings.Quarantine.ShouldQuarantine(Model.Account.Email))
+                        {
+                            <heading title="Inbox"><a href="https://www.mailinator.com/v4/public/inboxes.jsp?to=@WebUtility.UrlEncode(config.MailSettings.Quarantine.Quarantine(Model.Account.Email, noDomain: true))" target="_blank">Mailinator <i class="bi bi-box-arrow-in-up-right"></i></a></heading>
+                        }
                         <heading title="Phone" Condition="!String.IsNullOrEmpty(Model.Account.Phone)">@Model.Account.Phone</heading>
                         <heading title="Profile" Condition="!String.IsNullOrEmpty(Model.Account.ProfilePhotoPath)">@Html.Resizer().Image(Model.Account.ProfilePhotoPath, new ImageSharpCommand { Width = 100, Format = ImageSharpFormat.JPG, Quality = 100 })</heading>
                         <heading title="Last login" Condition="Model.Account.LastLoginDate.HasValue">@Model.Account.LastLoginDate.Value.ToTimezone().ToIsoDateTime()</heading>
@@ -63,9 +68,7 @@
                     <box>
                         <box-title title="Last activity" class="bg-gray-100">
                             <div class="ms-auto">
-                                <a mvc-action="@Mvc.Admin.User_Activity.AddRouteValues(new { UserId = Model.Account.Id })">
-                                    <i class="fa fa-external-link-alt"></i>
-                                </a>
+                                <a mvc-action="@Mvc.Admin.User_Activity.AddRouteValues(new { UserId = Model.Account.Id })"><i class="bi bi-box-arrow-in-up-right"></i></a>
                             </div>
                         </box-title>
                         <box-content>

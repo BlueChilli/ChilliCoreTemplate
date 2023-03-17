@@ -21,7 +21,7 @@
                         <button style="Primary" mvc-action="Mvc.Admin.Company_Edit" asp-route-id="@Model.Id">Edit</button>
                         @if (Model.HasAdmins)
                         {
-                            @Html.LinkPost(Mvc.Admin.Company_Impersonate, "Impersonate", new { Id = Model.Id }, linkClasses: "btn btn-neutral btn-sm")
+                            <buttonpost mvc-action="Mvc.Admin.Company_Impersonate" asp-route-id="@Model.Id">Impersonate</buttonpost>
                         }
                         <button mvc-modal="Mvc.Admin.Company_Delete" asp-route-id="@Model.Id">@archiveOrDelete</button>
                         @if (Model.IsDeleted)

@@ -1,14 +1,11 @@
-using ChilliSource.Core.Extensions;
+using ChilliCoreTemplate.Web;
 using ChilliSource.Cloud.Core;
-
+using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using ChilliSource.Cloud.Web.MVC;
-using Microsoft.AspNetCore.Html;
 using System.IO;
 
 namespace ChilliCoreTemplate.Web
@@ -20,9 +17,9 @@ namespace ChilliCoreTemplate.Web
         static EmailConstants()
         {
             EmailOptions = new DefaultEmailBuilderOptions();
-            EmailOptions.ButtonStyle.BackGroundColor = "#FF7043";
-            EmailOptions.ButtonStyle.BorderColor = "#FF7043";
-            EmailOptions.H1Style.TextColor = "#393D3F";
+            EmailOptions.ButtonStyle.BackGroundColor = "#B42533";
+            EmailOptions.ButtonStyle.BorderColor = "#B42533";
+            EmailOptions.H1Style.TextColor = "#FFF";
             EmailOptions.H2Style.TextColor = "#393D3F";
             EmailOptions.H3Style.TextColor = "#393D3F";
             EmailOptions.PStyle.TextColor = "#757575";
@@ -49,7 +46,6 @@ namespace ChilliCoreTemplate.Web
             this.H2Style = new TextStyle() { TextColor = "#8d9aa5" };
             this.H3Style = new TextStyle() { TextColor = "#384047" };
             this.H4Style = new TextStyle() { TextColor = "#8d9aa5" };
-
             this.PStyle = new TextStyle() { TextColor = "#8d9aa5" };
         }
 
@@ -103,13 +99,13 @@ namespace ChilliCoreTemplate.Web
     {
         private static readonly Dictionary<string, string> EmailTemplateValues = new Dictionary<string, string>()
         {
-            { "H1Begin", @"<h1 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:24px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-top:15px;margin-bottom:15px;margin-left:0;text-align:left;"">" },
+            { "H1Begin", @"<h1 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:24px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-top:0px;margin-bottom:15px;margin-left:0;text-align:center;"">" },
             { "H1End", "</h1>" },
-            { "H2Begin", @"<h2 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:normal;line-height:150%;letter-spacing:normal;margin-right:0;margin-top:15px;margin-bottom:6px;margin-left:0;text-align:left;"">" },
+            { "H2Begin", @"<h2 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:normal;line-height:150%;letter-spacing:normal;margin-right:0;margin-top:15px;margin-bottom:6px;margin-left:0;text-align:center;"">" },
             { "H2End", @"</h2>" },
-            { "H3Begin", @"<h3 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:15px;margin-bottom:5px;text-align:left;"">" },
+            { "H3Begin", @"<h3 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:18px;font-weight:bold;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:15px;margin-bottom:5px;text-align:center;"">" },
             { "H3End", @"</h3>" },
-            { "H4Begin", @"<h4 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:14px;font-weight:normal;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:2px;margin-bottom:15px;text-align:left;"">" },
+            { "H4Begin", @"<h4 style=""font-family:Open Sans,Helvetica,sans-serif;color:{0};display:block;font-size:14px;font-weight:normal;line-height:130%;letter-spacing:normal;margin-right:0;margin-left:0;margin-top:2px;margin-bottom:15px;text-align:center;"">" },
             { "H4End", @"</h4>" },
             { "PBegin", @"<p style=""font-family:Open Sans,Helvetica,sans-serif;line-height:150%;margin-top:15px;margin-bottom:15px;color:{0};"">" },
             { "PEnd", @"</p>" }

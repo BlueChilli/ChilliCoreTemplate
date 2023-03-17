@@ -7,6 +7,8 @@ namespace ChilliCoreTemplate.Web
         public TextAreaFieldTemplateOptions() : base() { }
         public TextAreaFieldTemplateOptions(FieldTemplateOptionsBase other) : base(other) { }
 
+        public int Rows { get; set; } = 4;
+
         public override string GetViewPath()
         {
             return "FieldTemplates/TextArea";

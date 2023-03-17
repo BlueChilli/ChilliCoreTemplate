@@ -34,7 +34,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     public class BoxTitleTagHelper : TagHelper
     {
         public string Title { get; set; }
-        public string Help { get; set; }
+        public string Description { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -42,7 +42,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
             output.Attributes.AppendAttribute("class", "card-header border-bottom d-flex align-items-center");
 
-            var help = String.IsNullOrEmpty(Help) ? "" : $"<span class=\"text-sm text-muted\">{Help}</span>";
+            var help = String.IsNullOrEmpty(Description) ? "" : $"<p class=\"text-sm text-muted\">{Description}</p>";
             if (String.IsNullOrEmpty(Title))
             {
                 output.PreContent.SetHtmlContent("<h5 class=\"me-auto\">");
@@ -50,7 +50,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             }
             else
             {
-                output.PreContent.SetHtmlContent($"<h5>{Title} {help}</h5>");
+                output.PreContent.SetHtmlContent($"<div class=\"me-auto\"><h5>{Title}</h5>{help}</div>");
             }
         }
     }

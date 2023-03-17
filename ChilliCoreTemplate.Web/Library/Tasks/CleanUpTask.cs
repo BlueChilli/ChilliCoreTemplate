@@ -38,6 +38,7 @@ namespace ChilliCoreTemplate.Web.Tasks
                     var svc = scope.ServiceProvider.GetRequiredService<AccountService>();
 
                     await svc.Error_CleanAsync(executionInfo);
+                    await svc.Anonymous_CleanAsync(executionInfo);
                 }
             });
 

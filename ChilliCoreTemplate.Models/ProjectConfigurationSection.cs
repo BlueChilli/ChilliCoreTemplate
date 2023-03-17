@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using ChilliCoreTemplate.Models.Stripe;
 using ChilliCoreTemplate.Models.Api.OAuth;
 using System.Text.RegularExpressions;
+using ChilliSource.Cloud.Core.Email;
 
 namespace ChilliCoreTemplate.Models
 {
@@ -411,10 +412,41 @@ namespace ChilliCoreTemplate.Models
 
         public bool EnableSsl => _section.GetValue<bool>("network:enableSsl");
 
-
-        public EmailData_Address RedirectTo => _redirecToAddressConfigiration?.EmailAddress;
+        public MailConfigurationQuarantine Quarantine => MailConfigurationQuarantine.FromSection(_section);
 
         public EmailData_Address Bcc => _bccAddressConfiguration?.EmailAddress;
+    }
+
+    public class MailConfigurationQuarantine
+    {
+        /// <summary>
+        /// example.com,test.com
+        /// </summary>
+        public IEnumerable<string> SafeDomains { get; set; }
+
+        /// <summary>
+        /// mailinator.com. Emails not in safe domains will be sent to originalemail@mailinator.com. Where original email will have non alpanumeric characters replaced.
+        /// </summary>
+        public string QuarantineDomain { get; set; }
+
+        internal static MailConfigurationQuarantine FromSection(IConfigurationSection section)
+        {
+            var safeDomains = section.GetString("quarantine:safeDomains");
+            return new MailConfigurationQuarantine { QuarantineDomain = section.GetString("quarantine:quarantineDomain"), SafeDomains = String.IsNullOrEmpty(safeDomains) ? new List<string>() : safeDomains.Split(',') };
+        }
+
+        public bool ShouldQuarantine(string email)
+        {
+            if (!SafeDomains.Any()) return false;
+            var domain = email.GetEmailAddressDomain();
+            return !SafeDomains.Contains(domain);
+        }
+
+        public string Quarantine(string email, bool noDomain = false)
+        {
+            var sanitised = $"{email.Replace('@', '-').Replace('.', '_')}";
+            return noDomain ? sanitised : $"{sanitised}@{QuarantineDomain}";
+        }
     }
 
     public enum SmsProvider
