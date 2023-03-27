@@ -32,6 +32,7 @@
     "cropit.jquery3": "0.1.2",
     "clockpicker": "0.0.7",
     "datatables.net-bs5": "1.12.1",
-    "datatables.net-responsive-bs5": "2.3.0"
+    "datatables.net-responsive-bs5": "2.3.0",
+    "chart.js": "4.2.1"
   }
 }

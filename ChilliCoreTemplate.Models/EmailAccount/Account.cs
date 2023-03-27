@@ -229,21 +229,19 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string Token { get; set; }
     }
 
-    public class ResetPasswordViewModel : ProcessResultsViewModel
+    public class ResetPasswordViewModel : TokenModel
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
 
-        [Required]
-        public string Email { get; set; }
-
-        [Required, DisplayName("Token")]
-        public string Token { get; set; }
+        public string Email { get { return Id.UrlSafeDecode<string>(); } set { Id = value.UrlSafeEncode(); } }
 
         [Required, DataType(DataType.Password), MinLength(6), MaxLength(50), Placeholder]
         public string NewPassword { get; set; }
 
         [Required, DataType(DataType.Password), System.ComponentModel.DataAnnotations.Compare("NewPassword"), MaxLength(50), Placeholder]
         public string ConfirmPassword { get; set; }
+
+        public bool Success { get; set; }
     }
 
     public class ProcessResultsViewModel

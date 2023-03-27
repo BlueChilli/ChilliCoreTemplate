@@ -53,11 +53,8 @@
                 </div>
                 <div class="col-sm-auto col-12 mt-4 mt-sm-0">
                     <div class="hstack gap-2 justify-content-sm-end">
-                        @if (Model.Partial != null)
-                        {
-                            @await Html.PartialAsync(Model.Partial)
-                        }
-                     </div>
+                        @FieldTemplateModel.InnerTemplateMarker
+                    </div>
                 </div>
             </div>
 

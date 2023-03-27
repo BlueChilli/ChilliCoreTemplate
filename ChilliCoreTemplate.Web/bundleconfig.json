@@ -64,7 +64,7 @@
       "wwwroot/Scripts/plugins/slimscroll/jquery.slimscroll.min.js",
       "wwwroot/Scripts/plugins/metisMenu/metisMenu.min.js",
       "wwwroot/Scripts/plugins/pace/pace.min.js",
-      "wwwroot/Scripts/plugins/chartJs/Chart.min.js",
+      "./node_modules/chart.js/dist/chart.umd.js",
       "wwwroot/Scripts/plugins/switchery/switchery.js",
       "./node_modules/chosen-js/chosen.jquery.js",
       "./node_modules/select2/dist/js/select2.full.min.js",

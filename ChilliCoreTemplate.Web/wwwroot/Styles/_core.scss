@@ -147,10 +147,16 @@ table.table-hover > tbody > tr:hover > * {
     box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 1%);
 }
 
+//common helpers
+.clickable {
+    cursor: pointer;
+}
+
 //Removed in Bootstrap4 for d-none
 .hide {
     display: none !important;
 }
+
 /* Previous core which may still be needed. Also lots from inspinia patch which probably needs to be in here
     
 //windows and mac make fonts same
@@ -213,11 +219,6 @@ body, html {
 
 ::placeholder {
     color: #999999 !important;
-}
-
-//common helpers
-.clickable {
-    cursor: pointer;
 }
 
 //disabled nav tabs not navigable

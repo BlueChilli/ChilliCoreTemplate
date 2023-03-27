@@ -75,7 +75,7 @@ namespace ChilliCoreTemplate.Web
             };
             var index = PathItems.IndexOf(x => x.Url == action.Url(urlHelper));
             if (index < 0) AddPath(item);
-            else _pathItems.Insert(index, item);
+            else _pathItems.Insert(index + (path == BreadCrumbPath.Before ? 0 : 1), item);
         }
 
         public void AlterPath(IUrlHelper urlHelper, IMvcActionDefinition action, string text, string url = null)

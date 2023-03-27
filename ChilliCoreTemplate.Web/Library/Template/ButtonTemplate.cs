@@ -90,4 +90,13 @@ namespace ChilliCoreTemplate.Web
         Large
     }
 
+    public enum IconType
+    {
+        [Data("Icon", "eye")]
+        View = 1,
+        [Data("Icon", "pencil")]
+        Edit,
+        [Data("Icon", "trash")]
+        Delete,
+    }
 }

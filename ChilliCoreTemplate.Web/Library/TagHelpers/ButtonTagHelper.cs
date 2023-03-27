@@ -5,49 +5,33 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
     [HtmlTargetElement("button", Attributes = ActionAttribute)]
-    public class ButtonTagHelper : TagHelper
+    public class ButtonTagHelper : ButtonBaseTagHelper
     {
         private const string ActionAttribute = "mvc-action";
-        private readonly IUrlHelperFactory _urlHelperFactory;
 
-        public ButtonTagHelper(IUrlHelperFactory urlHelperFactory)
+        public ButtonTagHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
         {
-            _urlHelperFactory = urlHelperFactory;
         }
-
-        [ViewContext, HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
 
         [HtmlAttributeName(ActionAttribute)]
         public IMvcActionDefinition Action { get; set; }
-
-        public ButtonStyle Style { get; set; }
-
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             if (Action == null)
                 return;
 
-            output.Attributes.SetAttribute("type", "button");
-            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm");
-
+            base.Process(context, output);
             output.Attributes.RemoveAll(ActionAttribute);
+
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
             var route = Action.GetRouteValueDictionary();
@@ -59,66 +43,44 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     }
 
     [HtmlTargetElement("button", Attributes = ActionAttribute)]
-    public class ButtonTagModalHelper : TagHelper
+    public class ButtonTagModalHelper : ButtonBaseTagHelper
     {
         private const string ActionAttribute = "mvc-modal";
 
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        public ButtonTagModalHelper(IUrlHelperFactory urlHelperFactory)
+        public ButtonTagModalHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
         {
-            _urlHelperFactory = urlHelperFactory;
         }
-
-        [ViewContext, HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
 
         [HtmlAttributeName(ActionAttribute)]
         public IMvcActionDefinition Action { get; set; }
-
-        public ButtonStyle Style { get; set; }
-
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             if (Action == null)
                 return;
 
+            base.Process(context, output);
             output.Attributes.RemoveAll(ActionAttribute);
-            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
+            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
             var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues });
             output.Attributes.SetAttribute("onclick", new HtmlString(url));
-
-            output.Attributes.SetAttribute("type", "button");
-            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm");
         }
     }
 
     [HtmlTargetElement("buttonpost", Attributes = ActionAttribute)]
-    public class ButtonPostTagHelper : TagHelper
+    public class ButtonPostTagHelper : ButtonBaseTagHelper
     {
         private const string ActionAttribute = "mvc-action";
-        private readonly IUrlHelperFactory _urlHelperFactory;
 
-        public ButtonPostTagHelper(IUrlHelperFactory urlHelperFactory)
+        public ButtonPostTagHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
         {
-            _urlHelperFactory = urlHelperFactory;
         }
-
-        [ViewContext, HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
 
         [HtmlAttributeName(ActionAttribute)]
         public IMvcActionDefinition Action { get; set; }
 
-        public ButtonStyle Style { get; set; }
-
         public string JsonData { get; set; }
-
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -126,9 +88,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
                 return;
 
             output.TagName = "button";
-            output.Attributes.SetAttribute("type", "button");
-            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm");
 
+            base.Process(context, output);
             output.Attributes.RemoveAll(ActionAttribute);
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
@@ -142,7 +103,42 @@ namespace ChilliCoreTemplate.Web.TagHelpers
                 target = output.Attributes["target"].Value.ToString();
                 output.Attributes.RemoveAll("target");
             }
-            output.Attributes.SetAttribute("onclick", $"debugger;$.doPost('{url}', '{target}', {JsonData ?? "null"});");
+            output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {JsonData ?? "null"});");
+        }
+    }
+
+    public abstract class ButtonBaseTagHelper : TagHelper
+    {
+        protected readonly IUrlHelperFactory _urlHelperFactory;
+
+        public ButtonBaseTagHelper(IUrlHelperFactory urlHelperFactory)
+        {
+            _urlHelperFactory = urlHelperFactory;
+        }
+
+        [ViewContext, HtmlAttributeNotBound]
+        public ViewContext ViewContext { get; set; }
+
+        public ButtonStyle Style { get; set; }
+
+        public IconType? Icon { get; set; }
+
+        public string ToolTip { get; set; }
+
+        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.Attributes.SetAttribute("type", "button");
+            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm {(Icon.HasValue ? "btn-square" : "")}");
+
+            if (Icon.HasValue)
+            {
+                output.Attributes.SetAttribute("data-bs-toggle", "tooltip");
+                output.Attributes.SetAttribute("data-bs-original-title", Icon.GetDescription());
+                output.PreContent.SetHtmlContent($"<i class=\"bi bi-{Icon.Value.GetData<string>("Icon")}\"></i>");
+            }
         }
     }
 }

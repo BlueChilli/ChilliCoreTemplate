@@ -12,10 +12,27 @@
     {
         Model.Value = null;
     }
-    var dateValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : DateTime.ParseExact((string)Model.Value, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("dd/MM/yyyy");
+
+    DateTime? parsedDateTime = null;
+    if (Model.Value != null)
+    {
+        if (Model.Value is DateTime)
+        {
+            parsedDateTime = (DateTime)Model.Value;
+        }
+        else
+        {
+            if (DateTime.TryParseExact((string)Model.Value, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var temp))
+            {
+                parsedDateTime = temp;
+            }
+        }
+    }
+    var dateValue = parsedDateTime == null ? "" : parsedDateTime.Value.ToString("dd/MM/yyyy");
     var timeAttributes = RouteValueDictionary.FromArray(templateAttributesCopy);
     timeAttributes.Remove("data-val-date");
-    var timeValue = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("HH:mm") : DateTime.ParseExact((string)Model.Value, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None).ToString("HH:mm");
+    var timeValue = parsedDateTime == null ? "" : parsedDateTime.Value.ToString("HH:mm");
+
     if (Model.Options.PreAddOn == null)
     {
         Model.Options.PreAddOn = FieldTemplateOptions.IconAddOn("calendar-fill");
