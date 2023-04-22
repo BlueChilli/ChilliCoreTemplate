@@ -1,5 +1,5 @@
 @model UserActivityModel
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions())) { }
 
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)

@@ -1,6 +1,6 @@
 @model UserDetailsModel
 
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Title = Model.Account.FullName })
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions { Title = Model.Account.FullName })) { }
 
 <page>
     <box>

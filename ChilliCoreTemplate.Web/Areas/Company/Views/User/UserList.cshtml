@@ -1,5 +1,11 @@
 @model UserListModel
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Partial = "_InviteUser" })
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions()))
+{
+    <div class="float-right m-t-lg">
+        <a class="btn btn-primary" mvc-action="@Mvc.Company.User_Invite">+ Invite user</a>
+        @*<a class="btn btn-neutral" mvc-action="@Mvc.Company.User_Import">+ Import users</a>*@
+    </div>
+}
 @{
     var roles = new List<Role> { Role.CompanyAdmin }.ToSelectList();
 }

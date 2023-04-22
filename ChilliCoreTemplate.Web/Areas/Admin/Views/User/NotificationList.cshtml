@@ -1,4 +1,4 @@
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions())) { }
 @await Html.TemplateAsync(TemplateTypes.PageMessage)
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">

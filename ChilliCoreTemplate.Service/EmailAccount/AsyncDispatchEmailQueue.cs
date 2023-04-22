@@ -179,6 +179,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                         email.DateSent = DateTime.UtcNow;
                         email.IsSent = true;
                         email.IsSending = false;
+                        email.Error = null;
                         await context.SaveChangesAsync();
 
                     }

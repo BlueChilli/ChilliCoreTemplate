@@ -1,4 +1,5 @@
 using ChilliCoreTemplate.Models.Api;
+using ChilliSource.Cloud.Core.EntityFramework;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,8 +24,10 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public string Message { get; set; }
 
+        [DateTimeKind]
         public DateTime CreatedOn { get; set; }
 
+        [DateTimeKind]
         public DateTime? OpenedOn { get; set; }
 
         public PushNotificationStatus Status { get; set; }

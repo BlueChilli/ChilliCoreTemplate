@@ -45,7 +45,7 @@ namespace ChilliCoreTemplate.Web
 
                 TemplateOptions.DefaultFieldTemplateLayout = () => FieldTemplateLayouts.StandardField;
                 TemplateOptions.DefaultFieldTemplateOptions = () => new FieldTemplateOptions();
-                ServiceCallerOptions.ViewNamingConvention = ViewNamingConvention.ControllerPrefix;
+                ServiceCallerOptions.ViewNamingConvention = ViewNamingConvention.ControllerPrefix;  //Allow to override this per controller
 
                 AutoMapperConfiguration.Configure();
                 LinqMappers.Configure(host.Services);

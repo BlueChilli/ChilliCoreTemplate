@@ -1,4 +1,4 @@
-﻿//Changes not directly realted to clever
+﻿//Changes not directly related to clever
 @import 'clever/themes/default';
 
 //Breadcrumb styling
@@ -155,6 +155,11 @@ table.table-hover > tbody > tr:hover > * {
 //Removed in Bootstrap4 for d-none
 .hide {
     display: none !important;
+}
+
+//bootstrap5 fix
+.navbar-light .navbar-nav .nav-link.active i {
+    color: $navbar-light-active-color;
 }
 
 /* Previous core which may still be needed. Also lots from inspinia patch which probably needs to be in here

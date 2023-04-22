@@ -1,5 +1,6 @@
 ﻿using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.EntityFramework;
 using ChilliSource.Core.Extensions;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,10 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public string Errors { get; set; }
 
+        [DateTimeKind]
         public DateTime? StartedOn { get; set; }
 
+        [DateTimeKind]
         public DateTime? FinishedOn { get; set; }
 
         public byte[] Data { get; set; }

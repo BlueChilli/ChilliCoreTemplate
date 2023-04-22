@@ -123,20 +123,14 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         [HttpPost, ActionName("ResetPassword")]
         public virtual ActionResult ResetPasswordPost(ResetPasswordViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = _accountService.Password_Reset(model, sendEmail: false);
-                if (result.Success)
+            return this.ServiceCall(() => _accountService.Password_Reset(model, sendEmail: false))
+                .OnSuccess(m =>
                 {
-                    model.Success = true;
-                    return PartialView(model);
-                }
-                else
-                {
-                    result.AddToModelState(this);
-                }
-            }
-            return ResetPassword(model.UserId);
+                    TempData[PageMessage.Key()] = PageMessage.Success($"Password was successfully reset.");
+                    return Mvc.Admin.User_Users_Details.Redirect(this, m);
+                })
+                .OnFailure(ResetPassword)
+                .Call();
         }
 
         public virtual ActionResult ChangeDetails(int id)

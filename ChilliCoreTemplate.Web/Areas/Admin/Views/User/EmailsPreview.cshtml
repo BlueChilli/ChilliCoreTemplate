@@ -8,7 +8,7 @@
     pageButtons.Buttons.Add(await Html.ButtonAsync(new Template_Button { Style = ButtonStyle.Primary, Type = ButtonType.Button, Text = "Preview", IsLaddaButton = false, HtmlAttributes = new { onclick = Html.ModalOpen(Mvc.Admin.User_EmailsPreviewShow, data: "{ id: $('#Id').val(), data: $('#Data').val() }") } }));
 }
 
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions())) { }
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
     @using (Html.BeginFormCustom(Mvc.Admin.User_EmailsPreview, htmlAttributes: new { enctype = "multipart/form-data" }))

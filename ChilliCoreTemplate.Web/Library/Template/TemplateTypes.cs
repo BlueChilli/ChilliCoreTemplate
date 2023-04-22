@@ -13,6 +13,7 @@ namespace ChilliCoreTemplate.Web
         public static readonly TemplateType PageContainerLeft = new TemplateType("Templates/PageContainerLeft");
         public static readonly TemplateType PageContainerTop = new TemplateType("Templates/PageContainerTop");
         public static readonly TemplateType PageMessage = new TemplateType("Templates/PageMessage");
+        public static readonly TemplateType PageHeader = new TemplateType("Templates/PageHeader");
         public static readonly TemplateType ValidationSummary = new TemplateType("Templates/ValidationSummary");
         public static readonly TemplateType GoogleAnalytics = new TemplateType("Templates/GoogleAnalytics");
     }

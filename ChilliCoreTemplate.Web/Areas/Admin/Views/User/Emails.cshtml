@@ -1,6 +1,10 @@
 @model EmailListModel
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Partial = "_Email" })
-
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions()))
+{
+    <div class="float-right">
+        <a class="btn btn-neutral btn-sm" mvc-action="@Mvc.Admin.User_EmailsPreview"><span class="pe-2"><i class="bi bi-eye"></i> </span><span>Preview</span></a>
+    </div>
+}
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
 

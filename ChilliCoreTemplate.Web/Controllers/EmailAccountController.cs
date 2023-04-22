@@ -315,12 +315,12 @@ namespace ChilliCoreTemplate.Web.Controllers
             return View("ConfirmInviteSuccess", model: email);
         }
 
-        public virtual ActionResult ForgotPassword()
+        public virtual ActionResult ForgotPassword(string email)
         {
-            return View();
+            return View(new ResetPasswordRequestModel { Email = email });
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("ForgotPassword")]
         [ValidateAntiForgeryToken]
         public virtual ActionResult ForgotPassword(ResetPasswordRequestModel model)
         {

@@ -1,5 +1,6 @@
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -25,6 +26,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [Required]
         public Guid Token { get; set; }
 
+        [DateTimeKind]
         public DateTime? Expiry { get; set; }
 
     }

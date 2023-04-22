@@ -49,6 +49,7 @@ namespace ChilliCoreTemplate.Data
             modelBuilder.Entity<Company>().HasIndex(c => c.StripeId).IsUnique();
             modelBuilder.Entity<Company>().HasIndex(c => c.ExternalIdHash);
 
+            modelBuilder.Entity<Email>().HasIndex(c => c.TrackingId);
             modelBuilder.Entity<Email>().HasIndex(c => c.TemplateIdHash);
             modelBuilder.Entity<Email>().HasIndex(c => c.DateQueued);
 

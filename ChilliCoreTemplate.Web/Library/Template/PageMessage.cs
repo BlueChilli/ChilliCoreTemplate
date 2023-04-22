@@ -42,6 +42,17 @@ namespace ChilliCoreTemplate.Web
             }.ToJson();
         }
 
+        public static string Error(string message, bool isHtml = false)
+        {
+            return new PageMessage
+            {
+                Message = message,
+                MessageClass = "danger",
+                IsHtml = isHtml,
+                IsStatic = true
+            }.ToJson();
+        }
+
         public string Message { get; set; }
         public string MessageClass { get; set; }
         public bool IsStatic { get; set; }

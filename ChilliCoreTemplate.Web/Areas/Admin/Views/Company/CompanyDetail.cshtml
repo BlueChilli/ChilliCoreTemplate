@@ -9,7 +9,7 @@
     };
     var archiveOrDelete = Model.IsDeleted ? "Unarchive" : Model.HasAdmins ? "Archive" : "Delete";
 }
-@await Html.PartialAsync("Layout/_PageHeader", breadcrumb)
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, breadcrumb)) { }
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
 

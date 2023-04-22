@@ -2,8 +2,9 @@
 @inject ProjectSettings config;
 @model UserDetailsModel
 
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Title = Model.Account.FullName })
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions { Title = Model.Account.FullName })) { }
 <page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
     <box>
         <box-title title="@Model.Account.FullName" help="(@Model.Account.Email)">
             <div class="btn-group ms-auto">

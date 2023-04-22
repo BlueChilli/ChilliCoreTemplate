@@ -19,6 +19,7 @@ namespace ChilliCoreTemplate.Service
             cfg.CreateMap<CompanyEditModel, Company>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.Condition(src => src.Id == 0))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
                 .ForMember(dest => dest.Guid, opt => opt.Condition(src => src.Id == 0))
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.LogoPath, opt => opt.Ignore())

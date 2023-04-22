@@ -10,7 +10,7 @@
         CancelMenuUrl = Mvc.Company.Company_Detail.Url(this.Url)
     };
 }
-@await Html.PartialAsync("Layout/_PageHeader", breadcrumb)
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, breadcrumb)) { }
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
     @using (Html.BeginFormCustom(Mvc.Company.Company_Edit, htmlAttributes: new { @class = "form-horizontal", enctype = "multipart/form-data", autocomplete = "off" }))

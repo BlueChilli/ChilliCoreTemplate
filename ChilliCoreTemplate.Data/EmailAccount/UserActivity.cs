@@ -1,4 +1,5 @@
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +31,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public int? TargetId { get; set; }
 
         [Required]
+        [DateTimeKind]
         public DateTime ActivityOn { get; set; }
 
         public string JsonData { get; set; }

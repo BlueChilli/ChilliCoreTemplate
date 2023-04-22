@@ -37,6 +37,12 @@ namespace ChilliCoreTemplate.Web
             return actionResult.Redirect(controller, routeValues: new { Id = id });
         }
 
+        public static ActionResult RedirectWithError(this IMvcActionDefinition actionResult, Controller controller, string error)
+        {
+            controller.TempData[PageMessage.Key()] = PageMessage.Error(error);
+            return Redirect(actionResult, controller);
+        }
+
         public static string Url(this IMvcActionDefinition actionResult, Controller controller, object routeValues = null, string protocol = null, string fragment = null, bool throwsNotFound = true)
         {
             return actionResult.Url(controller.Url, routeValues: routeValues, protocol: protocol, fragment: fragment, throwsNotFound: throwsNotFound);

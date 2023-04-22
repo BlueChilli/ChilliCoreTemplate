@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChilliSource.Cloud.Core.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -19,6 +20,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [MaxLength(128)]
         public string Level { get; set; }
 
+        [DateTimeKind]
         public DateTime TimeStamp { get; set; }
 
         public string ExceptionMessage { get; set; }

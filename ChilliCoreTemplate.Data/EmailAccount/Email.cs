@@ -1,5 +1,6 @@
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core.EntityFramework;
 using ChilliSource.Core.Extensions;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [StringLength(100)]
         public string Attachments { get; set; }
 
+        [DateTimeKind]
         public DateTime DateQueued { get; set; }
 
         public bool IsReady { get; set; }
@@ -50,22 +52,26 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public bool IsSending { get; set; }
 
+        [DateTimeKind]
         public DateTime? DateSent { get; set; }
 
         public bool IsOpened { get; set; }
 
+        [DateTimeKind]
         public DateTime? OpenDate { get; set; }
 
         public int OpenCount { get; set; }
 
         public bool IsClicked { get; set; }
 
+        [DateTimeKind]
         public DateTime? ClickDate { get; set; }
 
         public int ClickCount { get; set; }
 
         public bool IsUnsubscribed { get; set; }
 
+        [DateTimeKind]
         public DateTime? UnsubscribeDate { get; set; }
 
         public string Error { get; set; }

@@ -470,7 +470,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 if (!model.IsAnonymous)
                 {
-                    if (_config.UserConfirmationMethod == UserConfirmationMethod.Link) SendWelcomeEmail(account);
+                    if (_config.UserConfirmationMethod == UserConfirmationMethod.Link && sendEmail) SendWelcomeEmail(account);
 
                     if (model.MixpanelTempId != null)
                     {
@@ -557,15 +557,17 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var account = String.IsNullOrEmpty(model.Email) ? GetAccountByPhone(model.Phone, includeDeleted: true) : GetAccountByEmail(model.Email, includeDeleted: true);
 
-            var isInvited = account != null && account.UserRoles.Count == 1 && account.UserRoles.First().Status == RoleStatus.Invited;
-            if (account == null || isInvited || account.Status == UserStatus.Deleted || account.Status == UserStatus.Anonymous)
+            var isInvited = (account == null && model.UserRoles.Any(x => x.Status == RoleStatus.Invited)) || (account != null && account.UserRoles.Count == 1 && account.UserRoles.First().Status == RoleStatus.Invited);
+            var inviteCompanyRole = account != null && model.UserRoles.Any(x => x.Role.IsCompanyRole() && !account.UserRoles.Any(x => x.Role.IsIn(Role.Administrator, Role.CompanyAdmin, Role.CompanyUser)));
+            if (account == null || isInvited || inviteCompanyRole || account.Status == UserStatus.Deleted || account.Status == UserStatus.Anonymous)
             {
                 if (account == null)
                 {
                     account = Context.Users.Add(new User() { CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, UserRoles = new List<UserRole>() }).Entity;
                 }
 
-                Mapper.Map(model, account);
+                if (!inviteCompanyRole)
+                    Mapper.Map(model, account);
 
                 if (!String.IsNullOrEmpty(model.Password))
                 {
@@ -576,12 +578,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (!newRolesResponse.Success)
                     return ServiceResult<User>.CopyFrom(newRolesResponse);
 
-                MergeAccountRoles(account, newRolesResponse.Result, deleteUnmatched: true);
+                MergeAccountRoles(account, newRolesResponse.Result, deleteUnmatched: !inviteCompanyRole);
 
                 if (isInvited)
                 {
                     account.InvitedDate = DateTime.UtcNow;
                     Token_Add(account, UserTokenType.Invite, new TimeSpan(7, 0, 0, 0));
+                }
+                else if (inviteCompanyRole)
+                {
+                    Token_Add(account, UserTokenType.Invite, new TimeSpan(365, 0, 0, 0));
                 }
                 else if (model.Status == UserStatus.Registered)
                 {

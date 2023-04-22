@@ -116,7 +116,7 @@ namespace ChilliCoreTemplate.Models
         }
 
         /// <summary>
-        /// Gets  a value of base url for the project configuration.
+        /// Gets a value of base url for the project configuration.
         /// </summary>
         public string BaseUrl => _baseSection.GetRequiredString("BaseUrl");
 
@@ -425,6 +425,11 @@ namespace ChilliCoreTemplate.Models
         public IEnumerable<string> SafeDomains { get; set; }
 
         /// <summary>
+        /// jim@example.com,jane@test.com
+        /// </summary>
+        public IEnumerable<string> SafeEmails { get; set; }
+
+        /// <summary>
         /// mailinator.com. Emails not in safe domains will be sent to originalemail@mailinator.com. Where original email will have non alpanumeric characters replaced.
         /// </summary>
         public string QuarantineDomain { get; set; }
@@ -432,14 +437,20 @@ namespace ChilliCoreTemplate.Models
         internal static MailConfigurationQuarantine FromSection(IConfigurationSection section)
         {
             var safeDomains = section.GetString("quarantine:safeDomains");
-            return new MailConfigurationQuarantine { QuarantineDomain = section.GetString("quarantine:quarantineDomain"), SafeDomains = String.IsNullOrEmpty(safeDomains) ? new List<string>() : safeDomains.Split(',') };
+            var safeEmails = section.GetString("quarantine:safeEmails");
+            return new MailConfigurationQuarantine
+            {
+                QuarantineDomain = section.GetString("quarantine:quarantineDomain"),
+                SafeDomains = String.IsNullOrEmpty(safeDomains) ? new List<string>() : safeDomains.Split(','),
+                SafeEmails = String.IsNullOrEmpty(safeEmails) ? new List<string>() : safeEmails.Split(',')
+            };
         }
 
         public bool ShouldQuarantine(string email)
         {
             if (!SafeDomains.Any()) return false;
             var domain = email.GetEmailAddressDomain();
-            return !SafeDomains.Contains(domain);
+            return !SafeDomains.Any(x => x.Same(domain)) && !SafeEmails.Any(x => x.Same(email));
         }
 
         public string Quarantine(string email, bool noDomain = false)

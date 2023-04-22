@@ -6,6 +6,7 @@
     }
 
     var lastItem = Model.PathItems.Count > 0 ? Model.PathItems[Model.PathItems.Count - 1] : null;
+    var heading = Model.Heading.DefaultTo(Model.Title.DefaultTo(lastItem?.Text ?? ""));
 }
 
 @if (User.Identity.IsAuthenticated && User.UserData().Status == UserStatus.Registered)
@@ -23,7 +24,7 @@
             <div class="row align-items-center">
                 <div class="col-sm col-12">
                     <h1>
-                        @Model.Heading.DefaultTo(Model.Title.DefaultTo(lastItem?.Text ?? ""))
+                        @heading
                         @foreach (var status in Model.Status)
                         {
                             <span class="badge badge-@status.Value.GetDescription().ToLower() align-middle">@status.Key</span>
@@ -34,9 +35,12 @@
                         {
                             if (item == lastItem)
                             {
+                                if (Model.PathItems.Count > 1 || item.Text != heading)
+                                {
                                 <li class="breadcrumb-item active">
                                     <strong>@item.Text</strong>
-                                </li>
+                                </li>                                    
+                                }
                             }
                             else if (!String.IsNullOrEmpty(item.Url))
                             {

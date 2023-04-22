@@ -1,7 +1,11 @@
 @using Humanizer;
 @model CompanyListModel
-
-@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions { Partial = "_CreateCompany", Description = "This is a page description" })
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions { Description = "This is a page description" }))
+{
+    <div class="float-right">
+        <a class="btn btn-sm btn-primary" mvc-action="@Mvc.Admin.Company_Edit"><span class="pe-2"><i class="bi bi-plus-square-dotted"></i> </span><span>Create</span></a>
+    </div>
+}
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
 

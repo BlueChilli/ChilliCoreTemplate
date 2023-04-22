@@ -5,7 +5,7 @@
     Model.Subject = "Oh no, your payment failed";
     Model.EmailPreview = "please login and update your payment details";
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
-    var url = config.ResolveUrl(String.Format("~/account/login?email={0}", Model.Data.Email));
+    var url = config.ResolveAppUrl(String.Format("~/account/login?email={0}", Model.Data.Email));
 }
 
 @section Header

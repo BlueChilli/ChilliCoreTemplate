@@ -1,4 +1,5 @@
 using ChilliCoreTemplate.Models.Api;
+using ChilliSource.Cloud.Core.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,6 +28,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [StringLength(200)]
         public string PinHash { get; set; }
         public int PinRetries { get; set; }
+
+        [DateTimeKind]
         public DateTime? PinLastRetryDate { get; set; }
 
         #region Push

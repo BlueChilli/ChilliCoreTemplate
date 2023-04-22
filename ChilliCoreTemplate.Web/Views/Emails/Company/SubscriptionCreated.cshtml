@@ -5,7 +5,7 @@
     Model.Subject = $"You've signed up for the {Model.Data.Plan.GetDescription()} plan";
     Model.EmailPreview = "thanks for supporting us";
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
-    var url = config.ResolveUrl(String.Format("~/account/login?email={0}", Model.Email));
+    var url = config.ResolveAppUrl(String.Format("~/account/login?email={0}", Model.Email));
     var price = Model.Data.Plan.GetData<int>("Price").ToString("C");
 }
 
