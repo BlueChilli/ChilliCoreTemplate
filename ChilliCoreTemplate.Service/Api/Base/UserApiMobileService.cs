@@ -254,6 +254,7 @@ namespace ChilliCoreTemplate.Service.Api
 
             var notification = new SendNotificationModel
             {
+                AppId = device.PushAppId.Value,
                 PushTokenId = device.PushTokenId,
                 Provider = device.PushProvider.Value,
                 Type = PushNotificationType.Test,

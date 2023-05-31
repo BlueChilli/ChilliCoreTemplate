@@ -360,7 +360,14 @@ namespace ChilliCoreTemplate.Web
                 });
             }
 
-            UseRewriteOptions(app, useIndexHtmlPage: settings.UseIndexHtml);
+            app.UseWhen(context => context.Request.Host.Host != settings.Hosting.AdminHost, builder =>
+            {
+                UseRewriteOptions(builder, useIndexHtmlPage: settings.Hosting.UseIndexHtml);
+            });
+            app.UseWhen(context => context.Request.Host.Host == settings.Hosting.AdminHost, builder =>
+            {
+                UseRewriteOptions(builder, useIndexHtmlPage: false);
+            });
 
             app.UseWhen(context => !SVGRequest(context), builder =>
             {
@@ -443,7 +450,7 @@ namespace ChilliCoreTemplate.Web
                 app.UseSwaggerUI();
             }
 
-            if (settings.UseIndexHtml)
+            if (settings.Hosting.UseIndexHtml)
             {
                 //This needs to be the last middleware
                 //if we reached this point, no other middleware handled the request.

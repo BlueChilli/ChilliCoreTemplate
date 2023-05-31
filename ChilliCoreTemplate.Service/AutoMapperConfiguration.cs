@@ -25,6 +25,10 @@ namespace ChilliCoreTemplate.Service
                 .ForMember(dest => dest.LogoPath, opt => opt.Ignore())
                 .ForMember(dest => dest.Notes, opt => opt.Condition((src, dest, m1, m2, opts) => bool.Parse(opts.Items["IsAdmin"].ToString())));
             cfg.CreateMap<Company, CompanyViewModel>();
+
+            cfg.CreateMap<CompanySettingsModel, Company>()
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.LogoPath, opt => opt.Ignore());
         }
 
         public static void Configure()

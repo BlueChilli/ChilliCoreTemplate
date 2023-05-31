@@ -48,5 +48,6 @@
     @RenderSection("modal", required: false)
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.EmailAccount_ChangeDetails, Title = "Update profile" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.EmailAccount_ChangePassword, Title = "Change password" })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.Company_Settings, Title = "Change settings", Size = ModalSize.Large })
 </body>
 </html>

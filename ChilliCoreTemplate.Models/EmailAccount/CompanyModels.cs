@@ -146,6 +146,25 @@ namespace ChilliCoreTemplate.Models
         public bool IsDeleted { get; set; }
     }
 
+    public class CompanySettingsModel
+    {
+        [Required, MaxLength(100)]
+        public string Name { get; set; }
+
+        [MaxLength(100), Url(ErrorMessage = Constants.UrlErrorMessage)]
+        public string Website { get; set; }
+
+        [DisplayName("Logo")]
+        [FileMaxSize(8 * 1024 * 1024), FileMinSize]
+        [HttpPostedFileExtensions(allowedExtensions: Constants.AllowedGraphicExtensions)]
+        public IFormFile LogoFile { get; set; }
+        public string LogoPath { get; set; }
+
+        [Required, EmptyItem]
+        public string Timezone { get; set; }
+        public SelectList TimezoneList { get; set; }
+    }
+
     public class CompanySummaryModel
     {
         public int Id { get; set; }

@@ -14,7 +14,7 @@
                         : "";
 }
 <div class="js-image-preview-@jsId image-preview" style="width:@(command.Width)px;height:@(command.Height)px;background: @(!String.IsNullOrEmpty(backgroundUrl) ? $"url('{backgroundUrl}')" : "") center center no-repeat;background-size: @Model.Options.BackgroundSize;"></div>
-<div class="m-t-sm">
+<div class="mt-2">
     <label title="@buttonText" for="@Model.Id" class="btn btn-neutral ladda-button" data-style="expand-right" data-spinner-color="gray">
         <input id="@Model.Id" name="@Model.Name" type="file" @Model.HtmlAttributes.ToAttributeHtmlContent() value="">
         <span class="ladda-label">@buttonText</span>

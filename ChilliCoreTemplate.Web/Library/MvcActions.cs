@@ -123,6 +123,6 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_InviteUpload = MvcAction();
 
         public readonly IMvcActionDefinition Company_Detail = MvcAction();
-        public readonly IMvcActionDefinition Company_Edit = MvcAction();
+        public readonly IMvcActionDefinition Company_Settings = MvcAction();
     }
 }

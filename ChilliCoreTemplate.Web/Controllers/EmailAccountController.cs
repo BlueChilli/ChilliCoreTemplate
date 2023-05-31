@@ -197,6 +197,7 @@ namespace ChilliCoreTemplate.Web.Controllers
             ModelState.Clear();
             model.MixpanelTempId = Guid.NewGuid();
             model.Roles = _registrationRole;
+            model.OAuthUrls = OAuthUrls();
             Mixpanel.SendEventToMixpanel(model.MixpanelTempId.ToString(), "Signup form");
             return View(model);
         }

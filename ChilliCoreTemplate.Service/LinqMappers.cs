@@ -107,6 +107,10 @@ namespace ChilliCoreTemplate.Service
                 Name = x.FullName
             });
 
+            LinqMapper.CreateMap<User, AccountDetailsEditModel>(a => new AccountDetailsEditModel()
+            {
+            });
+
             LinqMapper.CreateMap<UserActivity, UserActivityViewModel>();
 
             LinqMapper.CreateMap<Company, CompanyEditModel>(c => new CompanyEditModel
@@ -124,6 +128,8 @@ namespace ChilliCoreTemplate.Service
             {
                 HasAdmins = c.UserRoles.Any(r => r.Role == Role.CompanyAdmin && r.User.Status != UserStatus.Deleted)
             });
+
+            LinqMapper.CreateMap<Company, CompanySettingsModel>();
 
             LinqMapper.CreateMap<UserRole, CompanyUserViewModel>(u => new CompanyUserViewModel
             {

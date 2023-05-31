@@ -5,7 +5,7 @@
         @Html.ValidationSummary()
         @Html.HiddenFor(m => m.Id)
         <div class="form-group">
-            @await Html.FieldTemplateForAsync(model => model.Status)
+            @await Html.FieldTemplateForAsync(model => model.Status, options: new TemplateOptions { Template = FieldTemplateLayouts.ModalField }, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.StatusList })
         </div>
 
     </div>
@@ -15,5 +15,5 @@
     </div>
 }
 <script>
-    $('#@Mvc.Admin.User_ChangeStatus.GetFormId()').ajaxForm({ target: '#@Mvc.Admin.User_ChangeStatus.GetModalId()_content' });        
+    $('#@Mvc.Admin.User_ChangeStatus.GetFormId()').ajaxForm({ target: '#@Mvc.Admin.User_ChangeStatus.GetModalId()_content' });
 </script>

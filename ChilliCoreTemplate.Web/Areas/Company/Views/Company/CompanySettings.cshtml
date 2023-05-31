@@ -1,0 +1,23 @@
+@model CompanySettingsModel
+@using (Html.BeginFormCustom(Mvc.Company.Company_Settings, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+    <div class="modal-body">
+        @Html.ValidationSummary()
+        @await Html.FieldTemplateForAsync(m => m.LogoFile, options: new TemplateOptions { FieldSize = FieldTemplateSize.Large }, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.LogoPath, new ImageSharpCommand { Width = 150, Height = 50 }) { ButtonText = "Upload", HasRemoveButton = false, BackgroundSize = "contain" })
+        @await Html.FieldTemplateForAsync(m => m.Name, options: new TemplateOptions { FieldSize = FieldTemplateSize.Large })
+        @await Html.FieldTemplateForAsync(m => m.Website, options: new TemplateOptions { FieldSize = FieldTemplateSize.Large })
+        @await Html.FieldTemplateForAsync(m => m.Timezone, options: new TemplateOptions { FieldSize = FieldTemplateSize.Large }, fieldOptions: new SelectFieldTemplateOptions() { SelectList = TimezoneHelper.GetSelectTimezones(Model.Timezone) })
+    </div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync("Update")
+        @await Html.ButtonAsync(FieldTemplateHelper.ButtonModalDismissOptions)
+    </div>
+}
+@Html.RenderCustomSection("scripts")
+<script>
+    $('#@Mvc.Company.Company_Settings.GetFormId()').ajaxForm({ target: '#@Mvc.Company.Company_Settings.GetModalId()_content' });
+
+    $('#Timezone').chosen({
+        width: "100%"
+    });
+</script>

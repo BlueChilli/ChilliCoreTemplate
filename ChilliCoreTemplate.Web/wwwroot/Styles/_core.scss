@@ -95,6 +95,16 @@ div.table-responsive div.dataTables_wrapper div.dataTables_paginate {
     margin-top: 0.5rem;
 }
 
+//form field fixes
+.form-floating > .form-select {
+    width: 100%;
+}
+
+.form-select {
+    width: auto;
+    max-width: 100%;
+}
+
 //buttons
 button.close {
     padding: 0;

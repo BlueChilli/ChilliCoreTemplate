@@ -198,9 +198,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
             }
 
-            Mixpanel.SendAccountToMixpanel(account, "Login");
-            Activity_Add(Context, new UserActivity { UserId = account.Id, ActivityType = ActivityType.Create, EntityId = account.Id, EntityType = EntityType.Session });
-
             result.Success = true;
             result.Error = string.Empty;
 
@@ -313,6 +310,14 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
 
             return device;
+        }
+
+        internal List<PushNotificationDevice> UserDevice_List(List<int> userIds)
+        {
+            return Context.UserDevices
+                .Where(x => userIds.Contains(x.UserId) && x.PushTokenId != null && x.User.Status != UserStatus.Deleted)
+                .Select(x => new PushNotificationDevice { UserId = x.Id, TokenId = x.PushTokenId, Provider = x.PushProvider.Value })
+                .ToList();
         }
 
         internal UserDataPrincipal CreateImpersonationTicket(User account, Action<UserDataPrincipal> loginAction)
@@ -524,26 +529,29 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult.AsError("Not found or access denied.");
             }
 
-            var role = account.GetLatestUserRole();
-            if (role == null)
-            {
-                role = new UserRole();
-                account.UserRoles.Add(role);
-            }
-            role.Role = model.Role.Value;
+            var companyId = account.UserRoles.Where(x => x.CompanyId.HasValue).Select(x => x.CompanyId).FirstOrDefault();
 
-            if (role.Role.IsCompanyRole())
+            var updated = false;
+            foreach (var role in model.Roles)
             {
-                if (model.CompanyId == null) return ServiceResult.AsError("Company must be selected for a company role");
-                role.CompanyId = model.CompanyId;
+                if (account.UserRoles.Any(x => x.Role == role)) continue;
+                if (role.IsCompanyRole() && companyId == null) return ServiceResult.AsError("User must be invited to clinic role");
+
+                updated = true;
+                account.UserRoles.Add(new UserRole { Role = role, CompanyId = role.IsCompanyRole() ? companyId : null, CreatedAt = DateTime.UtcNow });
             }
-            else
+            var rolesToRemove = account.UserRoles.Where(x => !model.Roles.Contains(x.Role)).ToList();
+            if (rolesToRemove.Any())
             {
-                role.CompanyId = null;
+                updated = true;
+                Context.UserRoles.RemoveRange(rolesToRemove);
             }
 
-            account.UpdatedDate = DateTime.UtcNow;
-            Context.SaveChanges();
+            if (updated)
+            {
+                account.UpdatedDate = DateTime.UtcNow;
+                Context.SaveChanges();
+            }
 
             return ServiceResult.AsSuccess();
         }

@@ -60,9 +60,9 @@ $.validator.setDefaults({
             }
             $.ajax(options)
                 .then(function (result, status, xhr) {
-                    if (xhr.getResponseHeader('X-Ajax-Redirect') != null)
-                        location.href = xhr.getResponseHeader('X-Ajax-Redirect');
-                    else {
+                    if (xhr.getResponseHeader('X-Ajax-Redirect') != null) { 
+                        window.location.href = xhr.getResponseHeader('X-Ajax-Redirect');
+                    } else {
                         var render = $('#' + containerId).html(result);
                         $.validator.unobtrusive.parse(render);
                         if (typeof (_gaq) != "undefined") _gaq.push(['_trackPageview', url]);

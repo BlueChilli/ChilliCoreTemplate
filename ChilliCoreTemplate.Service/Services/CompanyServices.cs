@@ -105,6 +105,31 @@ namespace ChilliCoreTemplate.Service
             return ServiceResult<CompanyEditModel>.AsSuccess(model);
         }
 
+        public ServiceResult Company_SaveSettings(CompanySettingsModel model)
+        {
+            var record = Company_Authorised()
+                .Where(x => x.Id == CompanyId.Value)
+                .FirstOrDefault();
+
+            if (record == null) return ServiceResult.AsError("Company not found");
+
+            model.Name = model.Name.Trim();
+            var hasDuplicate = Context.Companies.Where(c => c.Name == model.Name && c.Id != CompanyId.Value && !c.IsDeleted).Any();
+            if (hasDuplicate)
+                return ServiceResult.AsError($"Company '{model.Name}' already exists.");
+
+            Mapper.Map(model, record, opts => opts.Items["IsAdmin"] = IsAdmin);
+
+            if (model.LogoFile != null)
+                record.LogoPath = this._fileStorage.Save(new StorageCommand() { Folder = "Company" }.SetHttpPostedFileSource(model.LogoFile));
+
+            Context.SaveChanges();
+
+            _accountService.Session_Clear(User.Session()?.Id);
+
+            return ServiceResult.AsSuccess();
+        }
+
         private ServiceResult<Stripe.Customer> Company_AddStripe(Company company, string token = null)
         {
             var adminEmail = Context.UserRoles.Where(x => x.CompanyId == company.Id && x.Role == Role.CompanyAdmin && x.User.Status != UserStatus.Deleted).Select(x => x.User.Email).FirstOrDefault();
@@ -124,7 +149,7 @@ namespace ChilliCoreTemplate.Service
             return customerRequest;
         }
 
-        public ServiceResult<CompanyEditModel> Company_GetForEdit(int? id = null)
+        public ServiceResult<CompanyEditModel> Company_GetForEdit(int? id = null, string name = null)
         {
             if (id == null) id = User.UserData().IsMasterCompany ? 0 : CompanyId ?? 0;
             var model = Company_Authorised(id.Value)
@@ -133,11 +158,24 @@ namespace ChilliCoreTemplate.Service
 
             if (model == null && id.GetValueOrDefault(0) != 0) return ServiceResult<CompanyEditModel>.AsError("Company not found");
 
-            if (model == null) model = new CompanyEditModel { ApiKey = Guid.NewGuid(), Timezone = "Australia/Sydney" };
+            if (model == null) model = new CompanyEditModel { ApiKey = Guid.NewGuid(), Timezone = "Australia/Sydney", Name = name };
 
             model.TimezoneList = CommonLibrary.TimeZones().ToSelectList(v => v.ZoneId, t => $"{t.CountryName} {(String.IsNullOrEmpty(t.Comment) ? "" : " - " + t.Comment)}");
 
             return ServiceResult<CompanyEditModel>.AsSuccess(model);
+        }
+
+        public ServiceResult<CompanySettingsModel> Company_GetSettings()
+        {
+            var model = Company_Authorised(CompanyId.Value)
+                .Materialize<Company, CompanySettingsModel>()
+                .FirstOrDefault();
+
+            if (model == null) return ServiceResult<CompanySettingsModel>.AsError("Company not found");
+
+            model.TimezoneList = CommonLibrary.TimeZones().ToSelectList(v => v.ZoneId, t => $"{t.CountryName} {(String.IsNullOrEmpty(t.Comment) ? "" : " - " + t.Comment)}");
+
+            return ServiceResult<CompanySettingsModel>.AsSuccess(model);
         }
 
         public PagedList<CompanySummaryModel> Company_List(IDataTablesRequest model)
@@ -226,7 +264,8 @@ namespace ChilliCoreTemplate.Service
 
             if (data != null)
             {
-                if (data.IsDeleted || data.UserRoles.Count > 0)
+                var inUse = data.UserRoles.Count > 0;
+                if (data.IsDeleted || inUse)
                 {
                     data.IsDeleted = !data.IsDeleted;
                     if (data.IsDeleted)
@@ -243,7 +282,6 @@ namespace ChilliCoreTemplate.Service
                 }
                 else
                 {
-                    data.IsDeleted = true;
                     Context.Companies.Remove(data);
                 }
                 Context.SaveChanges();

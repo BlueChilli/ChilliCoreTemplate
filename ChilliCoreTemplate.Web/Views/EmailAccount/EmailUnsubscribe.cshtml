@@ -1,45 +1,43 @@
-@*@model EmailUnsubscribeModel
+@inject ProjectSettings config
+@model EmailUnsubscribeModel
 
 @if (Model == null)
 {
-    <h3 class="m-t-md m-b-xl">The email you tried to unsubscribe from was not found</h3>
+    <h2 class="mb-10">The email you tried to unsubscribe from was not found</h2>
 }
 else
 {
-    <h3 class="m-t-md m-b-xl">Unsubscribe to @Model.TemplateId.SplitByUppercase() email</h3>
+    var heading = Model.CompanyName == null ? $"Unsubscribe me from {config.ProjectDisplayName} reminders" : $"Unsubscribe me from {Model.CompanyName} referrals to {config.ProjectDisplayName}";
+    <h2 class="mb-10">@heading</h2>
 
-    if (TempData.ContainsKey(Template_PageMessage.Success))
+    if (TempData.Any(x => ((string)x.Value).FromJson<PageMessage>().MessageClass == "success"))
     {
-        @Html.Template(TemplateType.PageMessage)
+        @await Html.TemplateAsync(TemplateTypes.PageMessage)
 
-        <a class="btn btn-primary btn-lg full-width m-b" href="@Menu.Public.Url()">Continue</a>
+        <a class="btn btn-primary btn-lg mt-10" href="@Mvc.Root.Entry_Index.Url(Url)">Continue</a>
     }
     else
     {
-        using (Html.BeginForm(Menu.EmailAccount_EmailUnsubscribe))
+        using (Html.BeginFormCustom(Mvc.Root.EmailAccount_EmailUnsubscribe))
         {
             @Html.ValidationSummary()
             @Html.HiddenFor(m => m.Id)
-            @Html.HiddenFor(m => m.TemplateId)
-            <div class="form-group">
-                @Html.FieldTemplateInnerFor(m => m.Recipient, htmlAttributes: new { @class = "input-lg", placeholder = "Email" })
-            </div>
-            <div class="form-group">
-                @Html.FieldTemplateInnerFor(m => m.Reason, htmlAttributes: new { @class = "input-lg" })
-            </div>
+            @await Html.FieldTemplateForAsync(m => m.Recipient, new TemplateOptions { FieldSize = FieldTemplateSize.ExtraLarge })
+            @await Html.FieldTemplateForAsync(m => m.Reason, FieldTemplateLayouts.FloatingField)
             <div class="form-group js-reason-other" style="@Html.When(Html.GetModelStateValue(m => m.Reason) != EmailUnsubscribeReason.Other, "display:none")">
-                @Html.FieldTemplateInnerFor(m => m.ReasonOther, htmlAttributes: new { @class = "input-lg" })
+                @await Html.FieldTemplateForAsync(m => m.ReasonOther, FieldTemplateLayouts.FloatingField)
             </div>
-            <button type="submit" class="btn btn-danger btn-lg full-width m-b">Unsubscribe</button>
 
-            <a href="@Menu.Public.Url()">Don't want to unsubscribe? Click here</a>
+            <div class="d-grid mb-5">
+                <button type="submit" class="btn btn-danger">Unsubscribe</button>
+            </div>
         }
+        <br />
+        <a mvc-action="@Mvc.Root.Entry_Index">Don't want to unsubscribe? Click here</a>
     }
 }
-
-
 @section scripts
-{
+    {
     <script>
         $(function () {
 
@@ -54,4 +52,4 @@ else
 
         });
     </script>
-}*@
+}

@@ -92,6 +92,10 @@
                         <div class="dropdown-divider"></div>
                             <a class="dropdown-item" mvc-action="Mvc.Root.Entry_Index"><i class="bi bi-house me-3"></i>Home</a>
                             <a class="dropdown-item" mvc-modal="Mvc.Root.EmailAccount_ChangeDetails"><i class="bi bi-pencil me-3"></i>Profile</a>
+                            @if (userData.IsInRole(Role.CompanyAdmin))
+                            {
+                                <a class="dropdown-item" mvc-modal="Mvc.Company.Company_Settings"><i class="bi bi-gear me-3"></i>Settings</a>
+                            }
                             <a class="dropdown-item" mvc-modal="Mvc.Root.EmailAccount_ChangePassword"><i class="bi bi-lock me-3"></i>Password</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">

@@ -1,4 +1,5 @@
 ﻿using ChilliCoreTemplate.Data.EmailAccount;
+using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.LinqMapper;
@@ -17,8 +18,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 new PushNotificationSummaryModel
                 {
                     Recipient = x.UserId == null ? null : x.User.FullName,
-                    _Type = x.Type,
-                    Status = x.Status.ToString()
+                    _Type = x.Type
                 });
             Materializer.RegisterAfterMap<PushNotificationSummaryModel>(x =>
             {
@@ -32,8 +32,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             dateFrom = dateFrom.FromUserTimezone();
             dateTo = dateTo.FromUserTimezone().Add(new TimeSpan(23, 59, 59));
-            //var templateQuery = model.Columns.First(c => c.Data == "Type").Search.Value;
-            //var templateQueryHash = String.IsNullOrEmpty(templateQuery) ? 0 : templateQuery.GetIndependentHashCode();
+            var typeValue = model.Columns.First(c => c.Field == "type").Search.Value;
+            PushNotificationType? type = String.IsNullOrEmpty(typeValue) ? null : EnumHelper.Parse<PushNotificationType>(typeValue);
             var isOpenedValue = model.Columns.First(c => c.Field == "isOpened").Search.Value;
             bool? isOpened = String.IsNullOrEmpty(isOpenedValue) ? null : bool.Parse(isOpenedValue).ToNullable<bool>();
             var isSentdValue = model.Columns.First(c => c.Field == "isSent").Search.Value;
@@ -44,8 +44,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (!String.IsNullOrEmpty(model.Search.Value)) query = query.Where(x => x.User.FullName.Contains(model.Search.Value));
 
-            if (isSent.HasValue) query = query.Where(x => x.IsSent == isSent.Value);
-            if (isOpened.HasValue) query = query.Where(x => x.IsOpened == isOpened.Value);
+            if (type.HasValue) query = query.Where(x => x.Type == type.Value);
+            if (isSent.HasValue) query = isSent.Value ? query.Where(x => x.Status == PushNotificationStatus.Sent) : query.Where(x => x.Status != PushNotificationStatus.Sent);
+            if (isOpened.HasValue) query = isOpened.Value ? query.Where(x => x.OpenedOn.HasValue) : query.Where(x => x.OpenedOn == null);
 
             return query
                 .OrderByDescending(x => x.Id)

@@ -30,24 +30,21 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
                 .Call();
         }
 
-        public ActionResult Edit()
+        public ActionResult Settings()
         {
-            return this.ServiceCall(() => _services.Company_GetForEdit())
-                .Always(m => { return View("CompanyEdit", m); })
-                .Call();
+            return this.ServiceCall(() => _services.Company_GetSettings()).Call();
         }
 
         [HttpPost]
-        public ActionResult Edit([FromForm]CompanyEditModel model)
+        public ActionResult Settings([FromForm] CompanySettingsModel model)
         {
-            model.MasterCompanyId = User.UserData().CompanyId;
-            return this.ServiceCall(() => _services.Company_Edit(model))
+            return this.ServiceCall(() => _services.Company_SaveSettings(model))
                 .OnSuccess(m =>
                 {
-                    TempData[PageMessage.Key()] = PageMessage.Success("Company {0} has been successfully {1}.".FormatWith(m.Name, model.Id == 0 ? "created" : "saved"));
-                    return Mvc.Company.Company_Detail.Redirect(this);
+                    TempData[PageMessage.Key()] = PageMessage.Success("Settings has been successfully saved");
+                    return Mvc.Company.Default.Redirect(this);
                 })
-                .OnFailure(() => Edit())
+                .OnFailure(() => Settings())
                 .Call();
         }
 

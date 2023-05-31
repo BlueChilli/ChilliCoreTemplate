@@ -23,27 +23,31 @@
         <button type="submit" class="btn btn-primary">Join</button>
     </div>
 }
-<div class="py-5 text-center">
-    <span class="text-xs text-uppercase font-semibold">or</span>
-</div>
-<div class="row g-3">
-    <div class="col-sm-6">
-        <a href="#" class="btn btn-neutral w-full oauth" data-provider="@ChilliCoreTemplate.Models.Api.OAuth.OAuthProvider.Google">
-            <span class="icon icon-sm pe-2">
-                <i class="bi bi-google"></i>
-            </span>
-            <span>Continue with Google</span>
-        </a>
+@if (Model.OAuthUrls.Any(x => x.Value != null))
+{
+
+    <div class="py-5 text-center">
+        <span class="text-xs text-uppercase font-semibold">or</span>
     </div>
-    <div class="col-sm-6">
-        <a href="#" class="btn btn-neutral w-full oauth" data-provider="@ChilliCoreTemplate.Models.Api.OAuth.OAuthProvider.Apple">
-            <span class="icon icon-sm pe-2">
-                <i class="bi bi-apple"></i>
-            </span>
-            <span>Continue with Apple</span>
-        </a>
+    <div class="row g-3">
+        <div class="col-sm-6">
+            <a href="#" class="btn btn-neutral w-full oauth" data-provider="@Model.OAuthUrls[ChilliCoreTemplate.Models.Api.OAuth.OAuthProvider.Google]">
+                <span class="icon icon-sm pe-2">
+                    <i class="bi bi-google"></i>
+                </span>
+                <span>Continue with Google</span>
+            </a>
+        </div>
+        <div class="col-sm-6">
+            <a href="#" class="btn btn-neutral w-full oauth" data-provider="@Model.OAuthUrls[ChilliCoreTemplate.Models.Api.OAuth.OAuthProvider.Apple]">
+                <span class="icon icon-sm pe-2">
+                    <i class="bi bi-apple"></i>
+                </span>
+                <span>Continue with Apple</span>
+            </a>
+        </div>
     </div>
-</div>
+}
 <br>
 <a mvc-action="@Mvc.Root.EmailAccount_Login">Already have an account?</a>
 @section scripts
@@ -51,7 +55,7 @@
     <script>
         $('.oauth').click(function (e) {
             e.preventDefault();
-            $.doPost('@Mvc.Root.EmailAccount_RegistrationOAuth.Url(this.Url)', { Provider: $(this).data('provider'), CompanyName: $('#CompanyName').val() });
+            $.doPost('@Mvc.Root.EmailAccount_RegistrationOAuth.Url(this.Url)', '', { Provider: $(this).data('provider'), CompanyName: $('#CompanyName').val() });
         });
     </script>
 

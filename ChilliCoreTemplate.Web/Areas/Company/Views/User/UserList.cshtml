@@ -47,7 +47,7 @@
             $('.js-users-table').on('click', '.js-resend', function (e) {
                 e.preventDefault();
                 userId = $(this).data('id');
-                @Html.ModalOpen(Mvc.Company.User_InviteResend, data: "{ userId: userId }");
+                @Html.ModalOpen(Mvc.Company.User_InviteResend, data: "{ id: userId }");
             });
 
             table = $('.js-users-table').dataTable({

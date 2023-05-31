@@ -1,6 +1,10 @@
+using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace ChilliCoreTemplate.Models.Admin
 {
@@ -9,13 +13,10 @@ namespace ChilliCoreTemplate.Models.Admin
         [Required]
         public int Id { get; set; }
 
-        [Required]
-        public Role? Role { get; set; }
+        [Required, DisplayName("Role")]
+        public List<Role> Roles { get; set; }
 
         public SelectList RoleList { get; set; }
-
-        [DisplayName("Company")]
-        public int? CompanyId { get; set; }
     }
 
     public class ChangeUserStatusModel
@@ -25,6 +26,8 @@ namespace ChilliCoreTemplate.Models.Admin
 
         [Required]
         public UserStatus Status { get; set; }
+
+        public SelectList StatusList { get; set; } = EnumHelper.GetValues<UserStatus>().Where(x => x != UserStatus.Anonymous).ToSelectList(v => v, t => t.GetDescription());
     }
 
 }

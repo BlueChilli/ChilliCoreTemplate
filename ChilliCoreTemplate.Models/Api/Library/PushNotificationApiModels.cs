@@ -61,10 +61,10 @@ namespace ChilliCoreTemplate.Models.Api
 
     public enum PushNotificationStatus
     {
-        Error = 0,
-        Initialising,
+        Initialising = 1,
         Queued,
-        Sent
+        Sent,
+        Error
     }
 
 }

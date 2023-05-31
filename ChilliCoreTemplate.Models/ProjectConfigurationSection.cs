@@ -168,11 +168,6 @@ namespace ChilliCoreTemplate.Models
         /// </summary>
         public int SessionLengthDevice => _baseSection.GetValue<int>("SessionLengthDevice");
 
-        /// <summary>
-        /// Whether to redirect requests to the index.html page (for react projects)
-        /// </summary>
-        public bool UseIndexHtml => _baseSection.GetValue<bool>("UseIndexHtml");
-
         public bool UnbundledFiles => _baseSection.GetValue<bool?>("UnbundledFiles") ?? false;
 
         public bool PurgeOldAnonymousAccounts => _baseSection.GetValue<bool?>("PurgeOldAnonymousAccounts") ?? false;
@@ -562,6 +557,16 @@ namespace ChilliCoreTemplate.Models
         /// https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.forwardedheadersoptions.allowedhosts
         /// </summary>
         public string[] AllowedHosts => (_section.GetString("AllowedHosts") ?? "*").Split(',');
+
+        /// <summary>
+        /// Whether to redirect requests to the index.html page (for react projects)
+        /// </summary>
+        public bool UseIndexHtml => _section.GetValue<bool>("UseIndexHtml");
+
+        /// <summary>
+        /// Traffic from this host overrides setting of UseIndexHtml
+        /// </summary>
+        public string AdminHost => _section.GetString("AdminHost");
 
         /// <summary>
         /// Gets the bucket name

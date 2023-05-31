@@ -3,9 +3,11 @@ using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.LinqMapper;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using DataTables.AspNet.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -201,32 +203,37 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<EmailUnsubscribeModel> Email_GetForUnsubscribe(Guid trackingId)
         {
-            var email = Context.Emails.FirstOrDefault(e => e.TrackingId == trackingId);
+            var record = Context.Emails
+                .Where(e => e.TrackingId == trackingId)
+                .Materialize<Email, EmailUnsubscribeModel>()
+                .FirstOrDefault();
 
-            if (email == null || String.IsNullOrEmpty(email.Model)) return ServiceResult<EmailUnsubscribeModel>.AsError("Email not found");
+            if (record == null) return ServiceResult<EmailUnsubscribeModel>.AsError("Email not found");
 
-            return ServiceResult<EmailUnsubscribeModel>.AsSuccess(Mapper.Map<EmailUnsubscribeModel>(email));
+            return ServiceResult<EmailUnsubscribeModel>.AsSuccess(record);
         }
 
         public ServiceResult<EmailUnsubscribeModel> Email_Unsubscribe(EmailUnsubscribeModel model)
         {
-            var email = Context.Emails.FirstOrDefault(e => e.Id == model.Id && e.Recipient == model.Recipient);
-            if (!email.IsUnsubscribed)
+            var record = Context.Emails
+                .FirstOrDefault(e => e.TrackingId == model.Id.Guid);
+
+            if (record != null && !record.IsUnsubscribed)
             {
-                email.IsUnsubscribed = true;
-                email.UnsubscribeDate = DateTime.UtcNow;
+                record.IsUnsubscribed = true;
+                record.UnsubscribeDate = DateTime.UtcNow;
                 Context.SaveChanges();
 
-                var user = GetAccountByEmail(email.Recipient);
-                if (user != null)
+                if (record.UserId.HasValue)
                 {
-                    if (!Context.EmailUsers.Any(x => x.UserId == user.Id && x.TemplateIdHash == email.TemplateIdHash && x.TemplateId == email.TemplateId && x.IsUnsubscribed))
+                    if (!Context.EmailUsers.Any(x => x.UserId == record.UserId && x.TemplateIdHash == record.TemplateIdHash && x.TemplateId == record.TemplateId && x.IsUnsubscribed))
                     {
                         Context.EmailUsers.Add(new EmailUser
                         {
-                            UserId = user.Id,
-                            TemplateId = email.TemplateId,
-                            TemplateIdHash = email.TemplateIdHash,
+                            UserId = record.UserId.Value,
+                            //CompanyId = record.CampaignStage?.Campaign?.PartnerId,
+                            TemplateId = record.TemplateId,
+                            TemplateIdHash = record.TemplateIdHash,
                             IsUnsubscribed = true,
                             UnsubscribeDate = DateTime.UtcNow,
                             Reason = model.Reason,

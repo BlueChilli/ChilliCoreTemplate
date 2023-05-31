@@ -1,4 +1,5 @@
-﻿using ChilliCoreTemplate.Models.EmailAccount;
+﻿using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Hosting;
@@ -63,7 +64,10 @@ namespace ChilliCoreTemplate.Web.Api
             var hasTextMedia = accept?.Any(a => a.MediaType.StartsWith("text/", StringComparison.OrdinalIgnoreCase)) ?? false;
             var hasImageVideoMedia = accept?.Any(a => a.MediaType.StartsWith("image/", StringComparison.OrdinalIgnoreCase) || a.MediaType.StartsWith("video/", StringComparison.OrdinalIgnoreCase)) ?? false;
 
-            if (!hasTextMedia && hasImageVideoMedia)
+            var extension = Path.GetExtension(httpContext.Request.Path).TrimStart('.').ToLower();
+            var isImageMedia = hasImageVideoMedia && Constants.AllowedGraphicExtensions.Split(", ").Contains(extension);
+
+            if ((!hasTextMedia && hasImageVideoMedia) || isImageMedia)
             {
                 httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
                 await httpContext.Response.Body.FlushAsync();

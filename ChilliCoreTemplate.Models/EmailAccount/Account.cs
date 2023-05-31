@@ -43,8 +43,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string ProfilePhotoPath { get; set; }
 
-        public List<UserRoleModel> UserRoles { get; set; }
+        public List<UserRoleModel> UserRoles { get; set; } = new List<UserRoleModel>();
         public bool HasRole(Role role) => UserRoles.Any(r => (r.Role & role) > 0);
+        public List<DataLinkModel> Companies => UserRoles.Where(r => r.CompanyId.HasValue).Select(x => new DataLinkModel { Id = x.CompanyId.Value, Name = x.CompanyName }).DistinctBy(x => x.Id).ToList();
 
         public DateTime CreatedDate { get; set; }
 
@@ -71,7 +72,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public RoleStatus? Status { get; set; }
     }
 
-    public class RegistrationViewModel : ProcessResultsViewModel, IValidatableObject
+    public class RegistrationViewModel : IValidatableObject
     {
         public RegistrationViewModel()
         {
@@ -120,6 +121,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [MaxLength(100)]
         public string ExternalId { get; set; }
+
+        public Dictionary<OAuthProvider, string> OAuthUrls { get; set; } = new Dictionary<OAuthProvider, string>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -241,11 +244,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [Required, DataType(DataType.Password), System.ComponentModel.DataAnnotations.Compare("NewPassword"), MaxLength(50), Placeholder]
         public string ConfirmPassword { get; set; }
 
-        public bool Success { get; set; }
-    }
-
-    public class ProcessResultsViewModel
-    {
         public bool Success { get; set; }
     }
 

@@ -19,9 +19,14 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public void QueueCompanyMail(int? companyId, RazorTemplate template, string to, IEmailTemplateDataModel model, List<IEmailAttachment> attachments = null, EmailData_Address from = null, EmailData_Address bcc = null)
         {
-            if (companyId.HasValue)
+            var company = companyId.HasValue ? Context.Companies.First(c => c.Id == companyId.Value) : null;
+            QueueCompanyMail(company, template, to, model, attachments, from, bcc);
+        }
+
+        public void QueueCompanyMail(Company company, RazorTemplate template, string to, IEmailTemplateDataModel model, List<IEmailAttachment> attachments = null, EmailData_Address from = null, EmailData_Address bcc = null)
+        {
+            if (company != null)
             {
-                var company = Context.Companies.First(c => c.Id == companyId.Value);
                 model.CompanyId = company.Id;
                 model.CompanyName = company.Name;
                 model.Logo = String.IsNullOrEmpty(company.LogoPath) ? null : _fileStoragePath.GetImagePath(company.LogoPath, fullPath: true) + "?h=75";
@@ -29,7 +34,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 model.Email = _config.EmailTemplate.Email;
                 if (from == null) from = new EmailData_Address(model.Email, $"{company.Name} via {_config.ProjectDisplayName}");
 
-                var companyAdmin = GetCompanyAdmin(companyId.Value);
+                var companyAdmin = GetCompanyAdmin(company.Id);
                 model.CompanyEmail = companyAdmin.Email;
             }
             if (String.IsNullOrEmpty(model.CompanyName)) model.CompanyName = _config.ProjectDisplayName;

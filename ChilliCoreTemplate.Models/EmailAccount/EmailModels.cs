@@ -698,14 +698,22 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     }
 
-    public class EmailUnsubscribeModel : EmailViewModel
+    public class EmailUnsubscribeModel
     {
-        [Required, EmptyItem("Unsubscribe reason")]
+        public ShortGuid Id { get; set; }
+
+        public string EmailName { get; set; }
+
+        public string CompanyName { get; set; }
+
+        [ReadOnly(true), DisplayName("Email")]
+        public string Recipient { get; set; }
+
+        [Required, EmptyItem]
         public EmailUnsubscribeReason? Reason { get; set; }
 
         [MaxLength(200), Placeholder("Reason")] //RequiredIf("Reason", EmailUnsubscribeReason.Other, ErrorMessage = "If reason is Other then a description of the reason is required")
         public string ReasonOther { get; set; }
-
     }
 
     public enum EmailUnsubscribeReason
@@ -719,7 +727,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class EmailPreviewModel
     {
-        [DisplayName("Email"), EmptyItem]
+        [Required, DisplayName("Email"), EmptyItem]
         public int? Id { get; set; }
 
         [DataType(DataType.MultilineText), MaxLength(5000)]

@@ -23,7 +23,7 @@
         <box>
             <box-title>Company details</box-title>
             <box-content>
-                @await Html.FieldTemplateForAsync(m => m.LogoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.LogoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 150, Height = 50, Quality = 80, Mode = ResizeMode.Max }) { ButtonText = "Upload", HasRemoveButton = false, BackgroundSize = "contain" })
+                @await Html.FieldTemplateForAsync(m => m.LogoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.LogoPath, new ImageSharpCommand { Width = 150, Height = 50, Mode = ResizeMode.Max }) { ButtonText = "Upload", HasRemoveButton = false, BackgroundSize = "contain" })
                 @await Html.FieldTemplateForAsync(m => m.Name)
                 @using (await Html.FieldTemplateOuterForAsync(m => m.StripeId))
                 {

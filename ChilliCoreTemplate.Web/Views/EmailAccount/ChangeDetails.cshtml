@@ -7,7 +7,7 @@
     @await Html.FieldTemplateForAsync(m => m.FirstName, FieldTemplateLayouts.ModalField)
     @await Html.FieldTemplateForAsync(m => m.LastName, FieldTemplateLayouts.ModalField)
     @await Html.FieldTemplateForAsync(m => m.Phone, FieldTemplateLayouts.ModalField)
-    @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, new TemplateOptions { Template = FieldTemplateLayouts.ModalField, FieldSize = FieldTemplateSize.Large, IsMandatory = true },
+    @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, new TemplateOptions { Template = FieldTemplateLayouts.ModalField, FieldSize = FieldTemplateSize.Large },
         fieldOptions: new FieldImageUploadWithPreviewOptions(Model.ProfilePhotoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 100, Height = 100, Quality = 70, Mode = ResizeMode.Pad }) { AlternativeImage = "~/Images/generic/default-profile-image.jpg" })
 </div>
 <div class="modal-footer">

@@ -39,6 +39,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var account = createAccountRequest.Result;
                 model.Token = account.GetToken(UserTokenType.Invite);
                 model.Inviter = User.Identity.Name;
+                var role = model.InviteRole;
+                if (role.CompanyId.HasValue && role.CompanyName == null)
+                {
+                    role.CompanyName = Context.Companies.Where(x => x.Id == role.CompanyId.Value).Select(x => x.Name).FirstOrDefault();
+                }
 
                 if (sendEmail)
                 {
@@ -46,8 +51,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     QueueMail(RazorTemplates.InviteUser, account.Email, new RazorTemplateDataModel<InviteEditModel> { Data = model });
                 }
 
-                var company = Context.Companies.FirstOrDefault(c => c.Id == model.InviteRole.CompanyId);
-                Mixpanel.SendAccountToMixpanel(account, "Invite", data: new Dictionary<string, object> { { "Company", company?.Name } });
+                Mixpanel.SendAccountToMixpanel(account, "Invite", data: new Dictionary<string, object> { { "Company", role.CompanyName } });
 
                 return ServiceResult<AccountViewModel>.AsSuccess(GetSingle<AccountViewModel, User>(account));
             }

@@ -64,9 +64,9 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .Call();
         }
 
-        public ActionResult Edit(int? id = null)
+        public ActionResult Edit(int? id = null, string name = null)
         {
-            return this.ServiceCall(() => _services.Company_GetForEdit(id))
+            return this.ServiceCall(() => _services.Company_GetForEdit(id, name))
                 .Always(m => { return View("CompanyEdit", m); })
                 .Call();
         }

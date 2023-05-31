@@ -96,8 +96,14 @@
 
             $('#@Html.IdFor(m => m.InviteRole.CompanyId)').chosen({
                 width: "100%",
-                allow_single_deselect: true
+                allow_single_deselect: true,
+                no_results_text: '<a class="js-chosen-add" href="#">Add Company</a>'
             })
+
+            $('form').on('click', '.js-chosen-add', function () {
+                var name = $('.no-results').find('span').text();
+                window.location = '@Mvc.Admin.Company_Edit.Url(Url)?name={0}'.format(name);
+            });
         });
     </script>
 }

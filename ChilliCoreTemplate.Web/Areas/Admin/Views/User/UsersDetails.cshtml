@@ -46,10 +46,10 @@
                 <div class="col-lg-6">
                     <headings title="Account information" class="bg-gray-100">
                         <heading title="Role">@String.Join(", ", Model.Account.UserRoles.Select(r => r.Role.GetDescription()))</heading>
-                        <heading title="Company" Condition="Model.Account.UserRoles.Any(r => r.CompanyId.HasValue)">
-                            @foreach (var role in Model.Account.UserRoles.Where(r => r.CompanyId.HasValue))
+                        <heading title="Company" Condition="Model.Account.Companies.Any()">
+                            @foreach (var company in Model.Account.Companies)
                             {
-                                <a mvc-action="Mvc.Admin.Company_Detail" asp-route-id="@role.CompanyId.Value">@role.CompanyName</a>
+                                <a mvc-action="Mvc.Admin.Company_Detail" asp-route-id="@company.Id">@company.Name</a>
                             }
                         </heading>
                         <heading title="Status">@(Model.Account.StatusDescription)</heading>

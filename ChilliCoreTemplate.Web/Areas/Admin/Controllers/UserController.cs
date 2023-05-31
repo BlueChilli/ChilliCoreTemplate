@@ -157,7 +157,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var model = new ChangeAccountRoleModel
             {
                 Id = id,
-                Role = user.UserRoles.FirstOrDefault()?.Role,
+                Roles = user.UserRoles.Select(x => x.Role).ToList(),
                 RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription())
             };
 
@@ -165,11 +165,12 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         }
 
         [HttpPost, ActionName("ChangeRole")]
-        public virtual ActionResult ChangeRolePost(ChangeAccountRoleModel model)
+        public virtual ActionResult ChangeRolePost([FromForm] ChangeAccountRoleModel model)
         {
             return this.ServiceCall(() => _accountService.ChangeAccountRoles(model))
                 .OnSuccess(m =>
                 {
+                    TempData[PageMessage.Key()] = PageMessage.Success($"Roles successfully updated.");
                     return Mvc.Admin.User_Users_Details.Redirect(this, new { model.Id });
                 })
                 .OnFailure(m => { return ChangeRole(model.Id); })
@@ -282,16 +283,21 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .Call();
         }
 
-        [HttpPost]
-        public virtual ActionResult InviteResend(int id)
+        public ActionResult InviteResend(int id)
+        {
+            return this.ServiceCall(() => _services.Company_Admin_Get(User.UserData().CompanyId.Value, id)).Call();
+        }
+
+        [HttpPost, ActionName("InviteResend")]
+        public virtual ActionResult InviteResendPost(int id)
         {
             return this.ServiceCall(() => _accountService.Reinvite(id))
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success($"{m.FirstName} has been successfully re-invited.");
-                    return Mvc.Admin.User_Invite.Redirect(this);
+                    return Mvc.Company.User_Invite.Redirect(this);
                 })
-                .OnFailure(() => Invite())
+                .OnFailure(() => InviteResend(id))
                 .Call();
         }
 
@@ -401,10 +407,11 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         public ActionResult EmailsPreviewShow(EmailPreviewModel model)
         {
             return this.ServiceCall(() => _accountService.Email_Preview(model))
-                .Always(m =>
+                .OnSuccess(m =>
                 {
                     return View("EmailsDetail", m);
                 })
+                .OnFailure(() => Mvc.Admin.User_EmailsPreview.Redirect(this))
                 .Call();
         }
         #endregion
@@ -467,7 +474,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         #region Notifications
         public ViewResult NotificationList()
         {
-            return View("NotificationList");
+            return View("NotificationList", new PushNotificationListModel());
         }
 
         public IActionResult NotificationQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo)

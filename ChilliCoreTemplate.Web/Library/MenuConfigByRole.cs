@@ -59,7 +59,7 @@ namespace ChilliCoreTemplate.Web
             {
                 cfg.AddRoot(Mvc.Company.Company_Detail, title: "Company", icon: "building").SetChildren(
                         cfg.CreateBreadcrumb(Mvc.Company.Company_Detail),
-                        cfg.CreateBreadcrumb(Mvc.Company.Company_Edit)
+                        cfg.CreateBreadcrumb(Mvc.Company.Company_Settings)
                     );
 
                 cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "people").SetChildren(

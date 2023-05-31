@@ -111,20 +111,14 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         [HttpPost, ActionName("ResetPassword")]
         public virtual ActionResult ResetPasswordPost(ResetPasswordViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = _accountService.Password_Reset(model, sendEmail: false);
-                if (result.Success)
+            return this.ServiceCall(() => _accountService.Password_Reset(model, sendEmail: false))
+                .OnSuccess(m =>
                 {
-                    model.Success = true;
-                    return PartialView(model);
-                }
-                else
-                {
-                    result.AddToModelState(this);
-                }
-            }
-            return ResetPassword(model.UserId);
+                    TempData[PageMessage.Key()] = PageMessage.Success($"Password was successfully reset.");
+                    return Mvc.Admin.User_Users_Details.Redirect(this, m);
+                })
+                .OnFailure(ResetPassword)
+                .Call();
         }
 
         public virtual ActionResult ChangeDetails(int id)
@@ -151,7 +145,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
             var model = new ChangeAccountRoleModel
             {
                 Id = id,
-                Role = user.UserRoles.FirstOrDefault()?.Role,
+                Roles = user.UserRoles.Select(x => x.Role).ToList(),
                 RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription())
             };
 
@@ -159,14 +153,16 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         }
 
         [HttpPost, ActionName("ChangeRole")]
-        public virtual ActionResult ChangeRolePost(ChangeAccountRoleModel model)
+        public virtual ActionResult ChangeRolePost([FromForm] ChangeAccountRoleModel model)
         {
-            if (ModelState.IsValid)
-            {
-                _accountService.ChangeAccountRoles(model);
-                return Mvc.Company.User_Detail.Redirect(this, new { id = model.Id });
-            }
-            return ChangeRole(model.Id);
+            return this.ServiceCall(() => _accountService.ChangeAccountRoles(model))
+                .OnSuccess(m =>
+                {
+                    TempData[PageMessage.Key()] = PageMessage.Success($"Roles successfully updated.");
+                    return Mvc.Company.User_Detail.Redirect(this, new { model.Id });
+                })
+                .OnFailure(m => { return ChangeRole(model.Id); })
+                .Call();
         }
 
         public virtual ActionResult ChangeStatus(ChangeUserStatusModel model)

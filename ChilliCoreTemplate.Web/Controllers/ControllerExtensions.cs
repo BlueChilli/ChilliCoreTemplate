@@ -68,7 +68,7 @@ namespace ChilliCoreTemplate.Web.Controllers
                 //else if (user.UserData().CurrentRoles.Any(r => RoleHelper.IsCompanyRole(r.Role)))
                 //    return Mvc.Company.User_List.Redirect(c);
             }
-            if (_settings.UseIndexHtml)
+            if (_settings.Hosting.UseIndexHtml)
                 return c.Redirect(c.Url.Content("~/index.html"));
             else
                 return Mvc.Root.EmailAccount_Login.Redirect(c);
