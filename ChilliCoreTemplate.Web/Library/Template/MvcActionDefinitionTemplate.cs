@@ -33,6 +33,12 @@ namespace ChilliCoreTemplate.Web
             return ButtonAsync(htmlHelper, options);
         }
 
+        public static Task<IHtmlContent> ButtonAsync(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, long id, Template_Button options = null)
+        {
+            options = PopulateOptions(htmlHelper, actionResult, new MenuUrlValues(id), options);
+            return ButtonAsync(htmlHelper, options);
+        }
+
         public static Task<IHtmlContent> LinkAsync(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, long id, Template_Button options = null)
         {
             options = PopulateOptions(htmlHelper, actionResult, new MenuUrlValues(id), options);

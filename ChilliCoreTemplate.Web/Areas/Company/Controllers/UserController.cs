@@ -100,11 +100,11 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
             return View("UserDetail", model);
         }
 
-        public virtual ActionResult ResetPassword(int id)
+        public virtual ActionResult ResetPassword(int userId)
         {
-            var user = _accountService.Get(id, visibleOnly: true);
+            var user = _accountService.Get(userId, visibleOnly: true);
             var result = _accountService.Password_SetRequestToken(user.Id);
-            var model = new ResetPasswordViewModel { UserId = id, Email = user.Email, Token = result.Result.ToShortGuid().ToString() };
+            var model = new ResetPasswordViewModel { UserId = userId, Email = user.Email, Token = result.Result.ToShortGuid().ToString() };
             return PartialView(model);
         }
 

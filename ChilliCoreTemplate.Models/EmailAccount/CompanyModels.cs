@@ -52,6 +52,8 @@ namespace ChilliCoreTemplate.Models
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
 
+        public bool CanDelete { get; set; }
+
         public bool HasAdmins { get; set; }
 
         public bool CanImpersonate() => HasAdmins && !IsDeleted;

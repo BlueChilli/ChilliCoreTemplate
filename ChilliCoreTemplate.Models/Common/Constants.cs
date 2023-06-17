@@ -17,4 +17,10 @@ namespace ChilliCoreTemplate.Models
         public const string AllowedGraphicExtensions = "jpg, jpeg, png, gif";
 
     }
+
+    public static class Descriptions
+    {
+        public const string Company = "Company";
+    }
+
 }

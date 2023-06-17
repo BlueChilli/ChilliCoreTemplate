@@ -1,8 +1,16 @@
 @model Template_PageButtons
+@{
+    var buttonCount = Model.Buttons.Count;
+    if (!String.IsNullOrEmpty(Model.SaveMenuText)) buttonCount++;
+    if (!String.IsNullOrEmpty(Model.CancelMenuUrl)) buttonCount++;
+}
 <div class="row mb-4">
     <div class="col-12">
         <div class="float-end">
-            <div class="btn-group">
+            @if(buttonCount > 1)
+            {
+                @:<div class="btn-group">
+            }
             @if (Model.ShowButtons.GetValueOrDefault(true))
             {
                 <button type="submit" disabled style="display: none" aria-hidden="true"></button> @*Disable enter key submitting form*@
@@ -19,7 +27,10 @@
                     <button type="button" class="btn btn-sm btn-neutral" onclick="window.location='@Model.CancelMenuUrl'">Cancel</button>
                 }
             }
-            </div>
+            @if(buttonCount > 1)
+            {
+                @:</div>
+            }
         </div>
     </div>
 </div>

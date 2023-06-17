@@ -48,8 +48,8 @@
   <ItemGroup>
     <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0142" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
-    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0113" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0008" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0117" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0013" />
     <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="HybridModelBinding" Version="0.18.0" />
     <PackageReference Include="LazyCache" Version="2.4.0" />

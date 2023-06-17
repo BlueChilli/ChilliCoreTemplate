@@ -1,16 +1,5 @@
-using ChilliSource.Core.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Routing;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
@@ -20,16 +9,11 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public string Id { get; set; }
         public string Class { get; set; }
 
-        //<div class="table-responsive">
-        //    <table class="table table-striped table-bordered table-hover js-company-table">
-        //    </table>
-        //</div>
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            output.TagName = "div";
-            output.PreContent.SetHtmlContent($"<table id=\"{Id}\" class=\"table table-hover {Class}\" width=\"100%\">");
-            output.PostContent.SetHtmlContent("</table>");
+            output.TagName = "table";
+            output.Attributes.SetAttribute("class", $"table table-hover {Class}");
+            output.Attributes.SetAttribute("width", "100%");
         }
     }
-
 }

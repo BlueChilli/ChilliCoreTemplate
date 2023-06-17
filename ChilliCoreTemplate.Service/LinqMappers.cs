@@ -119,8 +119,14 @@ namespace ChilliCoreTemplate.Service
             LinqMapper.CreateMap<Company, CompanyViewModel>(c => new CompanyViewModel
             {
                 MasterCompany = c.MasterCompanyId == null ? null : c.MasterCompany.Name,
-                HasAdmins = c.UserRoles.Any(r => r.Role == Role.CompanyAdmin && r.User.Status != UserStatus.Deleted)
+                HasAdmins = c.UserRoles.Any(r => r.Role == Role.CompanyAdmin && r.User.Status != UserStatus.Deleted),
+                CanDelete = true
             });
+            Materializer.RegisterAfterMap<CompanyViewModel>((x) =>
+            {
+                if (x.HasAdmins) x.CanDelete = false;
+            });
+
             LinqMapper.CreateMap<Company, CompanyDetailViewModel>(c => new CompanyDetailViewModel()
             {
             }).IncludeBase<Company, CompanyViewModel>();

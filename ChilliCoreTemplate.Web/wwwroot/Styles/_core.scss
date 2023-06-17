@@ -20,13 +20,13 @@
 }
 
 //Datatables
-div.table-responsive div.dataTables_wrapper div.dataTables_info {
+div.dataTables_wrapper div.dataTables_info {
     float: left;
     margin-left: 1.5rem;
     font-size: .8125rem;
 }
 
-div.table-responsive div.dataTables_wrapper div.dataTables_paginate {
+div.dataTables_wrapper div.dataTables_paginate {
     float: right;
     margin-right: 1.5rem;
     margin-top: 0.5rem;
@@ -127,6 +127,10 @@ button.close {
     border-color: lighten($primary-btn-bg, 20%);
 }
 
+.btn-xs {
+    @include button-size($btn-padding-y-xs, $btn-padding-x-xs, $font-size-xs, $border-radius);
+}
+
 //Align icons to center of button
 .btn-square.btn-sm {
     padding: 0.5rem;
@@ -155,6 +159,10 @@ table.table-hover > tbody > tr:hover > * {
     background: $table-hover-color;
     color: $table-text-color;
     box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 1%);
+}
+
+table > caption {
+    caption-side: top;
 }
 
 //common helpers

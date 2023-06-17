@@ -24,11 +24,7 @@ namespace ChilliCoreTemplate.Service
             }
             catch (Exception ex)
             {
-                return new ServiceResult<Subscription>()
-                {
-                    Success = false,
-                    Error = ex.Message
-                };
+                return ServiceResult<Subscription>.AsError(ex.Message);
             }
         }
 
@@ -43,11 +39,7 @@ namespace ChilliCoreTemplate.Service
             }
             catch (Exception ex)
             {
-                return new ServiceResult<Subscription>()
-                {
-                    Success = false,
-                    Error = ex.Message
-                };
+                return ServiceResult<Subscription>.AsError(ex.Message);
             }
         }
 

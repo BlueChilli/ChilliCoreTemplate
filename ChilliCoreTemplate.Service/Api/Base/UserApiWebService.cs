@@ -269,7 +269,7 @@ namespace ChilliCoreTemplate.Service.Api
 
             int userId = userRequest.Result.Id;
 
-            if (!String.IsNullOrEmpty(model.FirstName) || !String.IsNullOrEmpty(model.LastName))
+            if (model.SetProperties().Any(x => x.IsIn(nameof(model.FirstName), nameof(model.LastName), nameof(model.Phone))))
             {
                 var editRequest = _accountService.GetForEdit(userId);
                 if (!editRequest.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(editRequest);
@@ -282,7 +282,7 @@ namespace ChilliCoreTemplate.Service.Api
                 if (!updateResponse.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(updateResponse);
             }
 
-            if (!String.IsNullOrEmpty(model.Password))
+            if (model.IsSetProperty(nameof(model.Password)))
             {
                 _accountService.Password_Set(userRequest.Result, model.Password);
             }

@@ -17,16 +17,6 @@ namespace ChilliCoreTemplate.Web
 
         private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
 
-        public static bool IsAjaxRequest(this HttpRequest request)
-        {
-            if (request == null)
-                throw new ArgumentNullException("request");
-
-            if (request.Headers != null)
-                return request.Headers["X-Requested-With"] == "XMLHttpRequest";
-            return false;
-        }        
-
         public static IUrlHelper GetUrlHelper(this HttpContext httpContext)
         {
             var urlHelper = httpContext.RequestServices.GetRequiredService<IUrlHelper>();

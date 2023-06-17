@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0142" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0008" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0013" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="6.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.11">

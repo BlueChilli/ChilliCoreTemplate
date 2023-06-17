@@ -387,8 +387,11 @@ namespace ChilliCoreTemplate.Web
                 //if version check file was not found as a static file, just return 404.
                 builder.Use(async (context, next) =>
                 {
-                    context.Response.StatusCode = StatusCodes.Status404NotFound;
-                    await context.Response.Body.FlushAsync();
+                    if (!context.Response.HasStarted)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        await context.Response.Body.FlushAsync();
+                    }
                     await next();
                 });
             });

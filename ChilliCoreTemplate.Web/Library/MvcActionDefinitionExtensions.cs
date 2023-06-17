@@ -142,6 +142,11 @@ namespace ChilliCoreTemplate.Web
             return await htmlHelper.LinkAsync(actionResult, new MenuUrlValues() { RouteValues = routeValues }, new Template_Button { Text = text, HtmlAttributes = htmlAttributes });
         }
 
+        public static async Task<IHtmlContent> ButtonAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id, Template_Button options)
+        {
+            return await htmlHelper.ButtonAsync(actionResult, id, options);
+        }
+
         public static IHtmlContent ButtonPost<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id, string text, object routeValues = null, object htmlAttributes = null, string buttonClasses = "")
         {
             var routeData = actionResult.GetRouteValueDictionary();

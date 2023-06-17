@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;

@@ -72,6 +72,11 @@
                 table.draw();
             });
 
+            $('#Search').on('keyup', function () {
+                table.search($('#Search').val());
+                table.draw();
+            });
+
             var table = $('.js-table').DataTable({
                 "processing": true,
                 "serverSide": true,

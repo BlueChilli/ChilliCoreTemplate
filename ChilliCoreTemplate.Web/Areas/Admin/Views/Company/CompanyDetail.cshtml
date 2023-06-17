@@ -7,7 +7,7 @@
         Title = "Details",
         Tabs = new List<string> { "Details", "Admins" }
     };
-    var archiveOrDelete = Model.IsDeleted ? "Unarchive" : Model.HasAdmins ? "Archive" : "Delete";
+    var archiveOrDelete = Model.IsDeleted ? "Unarchive" : Model.CanDelete ? "Delete" : "Archive";
 }
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, breadcrumb)) { }
 <page>
@@ -19,7 +19,7 @@
                 <box-title title="@Model.Name">
                     <div class="btn-group ms-auto">
                         <button style="Primary" mvc-action="Mvc.Admin.Company_Edit" asp-route-id="@Model.Id">Edit</button>
-                        @if (Model.HasAdmins)
+                        @if (Model.CanImpersonate())
                         {
                             <buttonpost mvc-action="Mvc.Admin.Company_Impersonate" asp-route-id="@Model.Id">Impersonate</buttonpost>
                         }

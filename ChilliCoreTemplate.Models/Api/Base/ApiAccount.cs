@@ -238,16 +238,29 @@ namespace ChilliCoreTemplate.Models.Api
     }
 
     [HybridBindClass(defaultBindingOrder: new[] { Source.Route, Source.Body, Source.Form })]
-    public class PatchAccountTokenApiModel : UserTokenModel
+    public class PatchAccountTokenApiModel : UserTokenModel, IPatchable
     {
         [MaxLength(25)]
-        public virtual string FirstName { get; set; }
+        public string FirstName { get => _firstName; set { _firstName = value; _setProperties.Add(nameof(FirstName)); } }
+        private string _firstName;
 
         [MaxLength(25)]
-        public virtual string LastName { get; set; }
+        public string LastName { get => _lastName; set { _lastName = value; _setProperties.Add(nameof(LastName)); } }
+        private string _lastName;
+
+        [MaxLength(20)]
+        public string Phone { get => _phone; set { _phone = value; _setProperties.Add(nameof(Phone)); } }
+        private string _phone;
 
         [DataType(DataType.Password), MinLength(6), MaxLength(50)]
-        public virtual string Password { get; set; }
+        public string Password { get => _password; set { _password = value; _setProperties.Add(nameof(Password)); } }
+        private string _password;
+
+        private readonly HashSet<string> _setProperties = new HashSet<string>();
+        public HashSet<string> SetProperties()
+        {
+            return new HashSet<string>(_setProperties);
+        }
     }
 
     public class PersistUserAccountApiModel

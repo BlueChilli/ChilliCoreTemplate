@@ -26,6 +26,7 @@ namespace ChilliCoreTemplate.Web.Serilog
                 .Filter.ByExcluding("RequestPath like '%/swagger/%'")   //Bug with imagesharp config try to process virtual image => The image '"https://xxxxx/swagger/favicon-32x32.png"' could not be resolved
                 .Filter.ByExcluding("SourceContext = 'Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer'") //Bug in Microsoft.AspNetCore.Server.IIS.Core.IISHttpContext.GetOriginalPath() during warm up
                 .Filter.ByExcluding(x => x.Exception?.Message == "Could not obtain database time information") //Common nuisance error when connecting with low spec azure databases (Scheduled tasks)
+                .Filter.ByExcluding(x => x.Exception?.Message == "The antiforgery token could not be decrypted.") //Encryption changes after a release
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails(new DestructuringOptionsBuilder().WithDefaultDestructurers().WithDestructurers(new[] { new DbUpdateExceptionDestructurer() }))
                 .Enrich.WithExceptionMessage()
