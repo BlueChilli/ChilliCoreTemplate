@@ -6,7 +6,7 @@
 <page>
     @await Html.TemplateAsync(TemplateTypes.PageMessage)
     <box>
-        <box-title title="@Model.Account.FullName" help="(@Model.Account.Email)">
+        <box-title title="@Model.Account.FullName" description="(@Model.Account.Email)">
             <div class="btn-group ms-auto">
                 <div class="dropdown">
                   <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">

@@ -47,7 +47,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public enum BulkImportType
     {
-        MyFirstBulkImport = 1
+        EmailUser = 1
     }
 
 }

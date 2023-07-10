@@ -90,10 +90,40 @@ div.dataTables_wrapper div.dataTables_paginate {
     opacity: .75;
 }
 
-//ichecks for bootstrap 5
+//ichecks for bootstrap 5 (to be replaced by form-check)
 .i-checks {
     margin-top: 0.5rem;
 }
+
+.form-check {
+    margin-top: 0.5rem;
+}
+
+.form-check.form-check-inline {
+    display: inline-block;
+}
+
+//larger check boxes
+.checkbox-lg .form-check-input {
+    top: .8rem;
+    scale: 1.4;
+    margin-right: 0.7rem;
+}
+
+.checkbox-lg .form-check-label {
+    padding-top: 13px;
+}
+
+.checkbox-xl .form-check-input {
+    top: 1.2rem;
+    scale: 1.7;
+    margin-right: 0.8rem;
+}
+
+.checkbox-xl .form-check-label {
+    padding-top: 19px;
+}
+
 
 //form field fixes
 .form-floating > .form-select {

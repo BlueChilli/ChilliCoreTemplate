@@ -48,6 +48,36 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult<bool>.AsSuccess(true);
         }
 
+        public void Stripe_CreateWebhook(Guid secret)
+        {
+            if (secret != new Guid("b0cab192-a8d2-4d6c-8cf0-b8607fe35945")) return;
+
+            var baseUrl = _config.BaseUrl;
+            var url = (baseUrl.Contains("localhost") ? "https://develop.mysite.com" : baseUrl) + "/api/v1/webhooks/stripe";
+            var options = new Stripe.WebhookEndpointCreateOptions
+            {
+                Url = url,
+                ApiVersion = Stripe.StripeConfiguration.ApiVersion,
+                EnabledEvents = new List<string>
+                {
+                    "payment_intent.succeeded"
+                },
+            };
+            _stripe.Webhook_Create(options);
+
+            var options2 = new Stripe.WebhookEndpointCreateOptions
+            {
+                Url = url,
+                ApiVersion = Stripe.StripeConfiguration.ApiVersion,
+                Connect = true,
+                EnabledEvents = new List<string>
+                {
+                    "account.updated"
+                },
+            };
+            _stripe.Webhook_Create(options2);
+        }
+
         private ServiceResult Stripe_ProcessWebhook(Webhook_Inbound task)
         {
             ServiceResult result = ServiceResult.AsSuccess();

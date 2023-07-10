@@ -164,6 +164,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (!email.IsOpened)
                 {
                     email.IsOpened = true;
+                    email.Error = null;
                     email.OpenDate = DateTime.UtcNow;
                 }
                 Context.SaveChanges();

@@ -338,7 +338,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (userData == null) return ServiceResult<UserDataPrincipal>.AsError("Not found or access denied.");
             if (accountId == userData.UserId) return ServiceResult<UserDataPrincipal>.AsError("You cannot impersonate yourself.");
 
-            var account = this.Get(accountId, visibleOnly: true);
+            var account = this.Get<AccountViewModel>(accountId, visibleOnly: true);
             if (account == null || !userData.CanImpersonate(account))
                 return ServiceResult<UserDataPrincipal>.AsError("Not found or access denied.");
 
@@ -509,7 +509,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 userId = createRequest.Result.UserId;
             }
 
-            return ServiceResult<AccountViewModel>.AsSuccess(Get(userId.Value, false));
+            return ServiceResult<AccountViewModel>.AsSuccess(Get<AccountViewModel>(userId.Value, false));
         }
 
         public ServiceResult ChangeAccountRoles(ChangeAccountRoleModel model)
@@ -747,12 +747,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult.AsSuccess();
         }
 
-        public AccountViewModel Get(int id, bool visibleOnly)
+        public T Get<T>(int id, bool visibleOnly) where T : class, new()
         {
             var query = visibleOnly ? this.VisibleUsers() : Context.Users;
 
             return query.Where(a => a.Id == id)
-                        .Materialize<User, AccountViewModel>()
+                        .Materialize<User, T>()
                         .FirstOrDefault();
         }
 
@@ -871,8 +871,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             if (String.IsNullOrEmpty(email)) return false;
             var hash = CommonLibrary.CalculateHash(email);
-            var query = Context.Users.Where(a => a.EmailHash == hash && a.Email == email && a.Status != UserStatus.Deleted);
+            var query = Context.Users.Where(a => a.EmailHash == hash && a.Email == email);
             if (accountId.HasValue) query = query.Where(a => a.Id != accountId);
+            else query = query.Where(a => a.Status != UserStatus.Deleted);
             return query.Any();
         }
 

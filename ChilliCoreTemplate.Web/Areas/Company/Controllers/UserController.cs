@@ -93,7 +93,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult Detail(int id)
         {
-            var model = new UserDetailsModel { Account = _accountService.Get(id, visibleOnly: true) };
+            var model = new UserDetailsModel { Account = _accountService.Get<AccountViewModel>(id, visibleOnly: true) };
 
             //model.LastActivities = _accountService.Activity_Last(id, 7);
 
@@ -102,7 +102,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult ResetPassword(int userId)
         {
-            var user = _accountService.Get(userId, visibleOnly: true);
+            var user = _accountService.Get<AccountViewModel>(userId, visibleOnly: true);
             var result = _accountService.Password_SetRequestToken(user.Id);
             var model = new ResetPasswordViewModel { UserId = userId, Email = user.Email, Token = result.Result.ToShortGuid().ToString() };
             return PartialView(model);
@@ -141,7 +141,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult ChangeRole(int id)
         {
-            var user = _accountService.Get(id, visibleOnly: true);
+            var user = _accountService.Get<AccountViewModel>(id, visibleOnly: true);
             var model = new ChangeAccountRoleModel
             {
                 Id = id,
@@ -167,7 +167,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult ChangeStatus(ChangeUserStatusModel model)
         {
-            var user = _accountService.Get(model.Id, visibleOnly: true);
+            var user = _accountService.Get<AccountViewModel>(model.Id, visibleOnly: true);
             model.Status = user.Status;
             return PartialView(model);
         }

@@ -1,19 +1,29 @@
-﻿using ChilliCoreTemplate.Data;
+using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.EmailAccount;
 using AutoMapper;
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.Distributed;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
-    public class BulkImportService
+    public class BulkImportService : IService
     {
+        private readonly DataContext Context;
+        private readonly IServiceScopeFactory _scopeFactory;
+
+        public BulkImportService(DataContext context, IServiceScopeFactory scopeFactory) 
+        {
+            Context = context;
+            _scopeFactory = scopeFactory;
+        }
 
         internal static void AutoMapper(IMapperConfigurationExpression cfg)
         {
@@ -32,5 +42,70 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 .ToList(), opt => opt.Items["Timezone"] = timezone);
         }
 
+        public async Task Execute(ITaskExecutionInfo executionInfo)
+        {
+            try
+            {
+                var next = await Context.BulkImports
+                    .Where(x => x.StartedOn == null)
+                    .OrderBy(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+                if (next != null)
+                {
+                    next.StartedOn = DateTime.UtcNow;
+                    await Context.SaveChangesAsync();
+
+                    if (executionInfo != null)
+                    {
+                        executionInfo.SendAliveSignal();
+                        if (executionInfo.IsCancellationRequested)
+                            return;
+                    }
+
+                    if (next.Type == BulkImportType.EmailUser)
+                    {
+                        //using (var scope = _scopeFactory.CreateScope())
+                        //{
+                        //    var scopedService = scope.ServiceProvider.GetRequiredService<AccountService>();
+                        //    await scopedService.Email_Unsubscribe_ImportTask(next, executionInfo);
+                        //}
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.LogException();
+            }
+        }
+
+        public async Task CleanUp(ITaskExecutionInfo executionInfo)
+        {
+            try
+            {
+                var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
+                var oneHourAgo = DateTime.UtcNow.AddHours(-1);
+                var old = await Context.BulkImports
+                    .Where(x => x.StartedOn < thirtyDaysAgo || (x.FinishedOn == null && x.StartedOn < oneHourAgo))
+                    .Take(200)
+                    .ToListAsync();
+
+                if (executionInfo != null)
+                {
+                    executionInfo.SendAliveSignal();
+                    if (executionInfo.IsCancellationRequested)
+                        return;
+                }
+
+                Context.BulkImports.RemoveRange(old);
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ex.LogException();
+            }
+        }
+
     }
 }
+

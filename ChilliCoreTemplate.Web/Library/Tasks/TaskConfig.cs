@@ -23,6 +23,7 @@ namespace ChilliCoreTemplate.Web
         public static Guid SmsTask_Id { get { return new Guid("2d2bbe82-51c9-45d0-8e89-4767cd22166a"); } }
         public static Guid CleanUpTask_Id { get { return new Guid("781569FE-A731-4995-8F38-44C52C396C14"); } }
         public static Guid WebhookTask_Id { get { return new Guid("8AE66995-49DD-45E9-B861-777A10D3ACA9"); } }
+        public static Guid BulkImportTask_Id { get { return new Guid("766b842e-977d-4baf-a340-2300e04ccfdd"); } }
     }
 
     public class TaskConfig

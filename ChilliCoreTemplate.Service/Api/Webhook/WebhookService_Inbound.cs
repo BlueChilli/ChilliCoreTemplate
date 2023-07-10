@@ -166,24 +166,6 @@ namespace ChilliCoreTemplate.Service.Api
             }
         }
 
-        public void CreateWebhook(Guid secret)
-        {
-            if (secret != new Guid("b0cab192-a8d2-4d6c-8cf0-b8607fe35945")) return;
-
-            var baseUrl = _config.BaseUrl;
-            var url = (baseUrl.Contains("localhost") ? "https://develop.mysite.com" : baseUrl) + "/api/v1/webhooks/stripe";
-            var options = new Stripe.WebhookEndpointCreateOptions
-            {
-                Url = url,
-                ApiVersion = Stripe.StripeConfiguration.ApiVersion,
-                EnabledEvents = new List<string>
-                {
-                    "payment_intent.succeeded"
-                },
-            };
-            _stripe.Webhook_Create(options);
-        }
-
         public async Task CleanWebhooks(ITaskExecutionInfo executionInfo)
         {
             executionInfo.SendAliveSignal();

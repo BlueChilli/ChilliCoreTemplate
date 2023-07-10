@@ -11,6 +11,31 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
+    public class HeadingsCardTagHelper : TagHelper
+    {
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "div";
+            output.Attributes.AppendAttribute("class", "card");
+        }
+    }
+
+    public class HeadingsTitleTagHelper : TagHelper
+    {
+        public string Title { get; set; }
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "div";
+            output.Attributes.AppendAttribute("class", "card-header d-flex align-items-center");
+
+            output.PreContent.SetHtmlContent(Title);
+        }
+    }
+
+    /// <summary>
+    /// Will create card wrapper if title passed in (shortcut instead of using headings-card and headings-title)
+    /// </summary>
     public class HeadingsTagHelper : TagHelper
     {
         public string Title { get; set; }

@@ -16,6 +16,7 @@ $gray-700: #525F7F !default; // Text content
 $gray-800: #2D3748 !default; // Text content old(44444e)
 $gray-900: #16192C !default; // Text content
 $black: #000 !default;
+$green: #00CC88 !default;
 
 // Need additional variables? Simply create it here and make sure you follow the naming formula explained at the top of this file.
 
@@ -38,3 +39,9 @@ $navbar-light-active-color: #16192C;
 
 $surface-colors: () !default;
 $surface-colors: map-merge(( "primary": $white, "secondary": $secondary, "tertiary": $gray-50, "light": $gray-200, "dark": shade-color($dark, 7%) ), $surface-colors);
+
+$accordion-bg: $white;
+
+$form-check-input-checked-color: $white;
+$form-check-input-checked-bg-color: $green;
+$form-check-radio-checked-bg-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{$form-check-input-checked-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/></svg>");

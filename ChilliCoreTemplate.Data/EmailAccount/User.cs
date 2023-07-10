@@ -27,6 +27,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public virtual List<UserActivity> Activities { get; set; }
 
+        public virtual List<EmailUser> EmailUsers { get; set; }
+
         public virtual List<UserOAuth> OAuths { get; set; }
 
         [MaxLength(100)]

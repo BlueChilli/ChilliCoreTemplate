@@ -1,5 +1,5 @@
 @model AccountDetailsEditModel
-@using (Html.BeginFormCustom(Mvc.Company.User_ChangeDetails, htmlAttributes: new { enctype = "multipart/form-data" }))
+@using (Html.BeginFormCustom(Mvc.Company.User_ChangeDetails, htmlAttributes: new { enctype = "multipart/form-data", autocomplete = "off" }))
 {
 <div class="modal-body">
     @Html.ValidationSummary()

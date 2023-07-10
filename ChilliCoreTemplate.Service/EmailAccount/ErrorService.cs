@@ -9,11 +9,9 @@ using DataTables.AspNet.Core;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
@@ -150,7 +148,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (executionInfo.IsCancellationRequested)
                 return;
 
-            await Context.Database.ExecuteSqlRawAsync($"DELETE FROM[dbo].[ErrorLogs] WHERE ID IN(SELECT TOP(50) Id FROM [dbo].[ErrorLogs]) AND [Timestamp] < DATEADD(day, -30, SYSUTCDATETIME())");
+            await Context.Database.ExecuteSqlRawAsync($"DELETE FROM[dbo].[ErrorLogs] WHERE Id IN(SELECT TOP(50) Id FROM [dbo].[ErrorLogs] ORDER BY Id) AND [Timestamp] < DATEADD(day, -30, SYSUTCDATETIME())");
         }
 
         public ServiceResult Error_Test(string test)

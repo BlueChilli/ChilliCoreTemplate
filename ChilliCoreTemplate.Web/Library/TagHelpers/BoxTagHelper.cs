@@ -1,33 +1,15 @@
-using ChilliSource.Core.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Routing;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
     public class BoxTagHelper : TagHelper
     {
-        //
-        //<div class="ibox float-e-margins"> TODO what does float-e-margins do?
-        //    <div class="ibox-title">
-        //        <h5>title</h5>
-        //    </div>
-        //    <div class="ibox-content">
-        //    </div>
-        //</div>
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.Attributes.SetAttribute("class", $"card mb-10");
+            output.Attributes.AppendAttribute("class", $"card mb-10");
         }
     }
 
@@ -42,7 +24,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
             output.Attributes.AppendAttribute("class", "card-header border-bottom d-flex align-items-center");
 
-            var help = String.IsNullOrEmpty(Description) ? "" : $"<p class=\"text-sm text-muted\">{Description}</p>";
+            var help = String.IsNullOrEmpty(Description) ? "" : $"<span class=\"d-inline text-sm text-muted\">{Description}</p>";
             if (String.IsNullOrEmpty(Title))
             {
                 output.PreContent.SetHtmlContent("<h5 class=\"me-auto\">");
@@ -50,7 +32,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             }
             else
             {
-                output.PreContent.SetHtmlContent($"<div class=\"me-auto\"><h5>{Title}</h5>{help}</div>");
+                output.PreContent.SetHtmlContent($"<h5 class=\"me-auto\">{Title} {help}</h5>");
             }
         }
     }

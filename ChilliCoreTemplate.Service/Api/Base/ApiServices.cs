@@ -1,17 +1,13 @@
 using ChilliCoreTemplate.Data;
+using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Distributed;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ChilliCoreTemplate.Models;
-using System.Security.Principal;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.Api
 {
@@ -48,7 +44,7 @@ namespace ChilliCoreTemplate.Service.Api
             if (executionInfo.IsCancellationRequested)
                 return;
 
-            await Context.Database.ExecuteSqlRawAsync($"DELETE FROM[dbo].[ApiLogEntries] WHERE ID IN(SELECT TOP(50) Id FROM [dbo].[ApiLogEntries]) AND [RequestTimestamp] < DATEADD(day, -14, SYSUTCDATETIME())");
+            await Context.Database.ExecuteSqlRawAsync($"DELETE FROM[dbo].[ApiLogEntries] WHERE Id IN (SELECT TOP(50) Id FROM [dbo].[ApiLogEntries] ORDER BY Id) AND [RequestTimestamp] < DATEADD(day, -14, SYSUTCDATETIME())");
         }
     }
 }

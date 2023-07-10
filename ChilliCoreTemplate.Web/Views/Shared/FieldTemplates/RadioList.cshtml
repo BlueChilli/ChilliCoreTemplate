@@ -11,10 +11,9 @@
 {
     if (!String.IsNullOrEmpty(option.Text))
     {
-        <div class="@Html.When(options.Inline, "checkbox-inline") i-checks m-b-xs"><label><input type="radio" value="@option.Value" name="@Model.Name" id="@(Model.Id)_@option.Value" @if (option.Selected) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @option.Text</label></div>
+        <div class="@Html.When(options.Inline, "form-check-inline") form-check">
+            <input class="form-check-input" type="radio" name="@Model.Name" id="@(Model.Id)_@option.Value" value="@option.Value" @Html.When(option.Selected, "checked=\"checked\"") @Model.HtmlAttributes.ToAttributeHtmlContent()>
+            <label class="form-check-label" for="@(Model.Id)_@option.Value">@option.Text</label>
+        </div>
     }
-}
-@if (Model.Options.AutoWireUpJavascript)
-{
-    <partial name="FieldTemplates/_RegisterICheckScript" />
 }

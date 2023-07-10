@@ -22,7 +22,7 @@ namespace ChilliCoreTemplate.Web.Api
         [Route("stripecreate")]
         public IActionResult Webhook(Guid secret)
         {
-            _service.CreateWebhook(secret);
+            _service.Stripe_CreateWebhook(secret);
             return Ok();
         }
 
