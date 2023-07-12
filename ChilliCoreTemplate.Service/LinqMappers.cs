@@ -104,7 +104,7 @@ namespace ChilliCoreTemplate.Service
             });
             LinqMapper.CreateMap<User, DataLinkModel>(x => new DataLinkModel
             {
-                Name = x.FullName
+                Name = x.FullName == null ? x.Email : x.FirstName
             });
 
             LinqMapper.CreateMap<User, AccountDetailsEditModel>(a => new AccountDetailsEditModel()

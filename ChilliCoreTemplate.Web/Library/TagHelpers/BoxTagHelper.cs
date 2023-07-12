@@ -24,7 +24,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
             output.Attributes.AppendAttribute("class", "card-header border-bottom d-flex align-items-center");
 
-            var help = String.IsNullOrEmpty(Description) ? "" : $"<span class=\"d-inline text-sm text-muted\">{Description}</p>";
+            var help = String.IsNullOrEmpty(Description) ? "" : Description.Length < 50 ? $"<span class=\"text-sm text-muted\">{Description}</span>" : $"<p class=\"text-sm text-muted\">{Description}</p>";
             if (String.IsNullOrEmpty(Title))
             {
                 output.PreContent.SetHtmlContent("<h5 class=\"me-auto\">");
