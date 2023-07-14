@@ -142,10 +142,11 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         public virtual ActionResult ChangeRole(int id)
         {
             var user = _accountService.Get<AccountViewModel>(id, visibleOnly: true);
+            var role = user.UserRoles.FirstOrDefault();
             var model = new ChangeAccountRoleModel
             {
                 Id = id,
-                Roles = user.UserRoles.Select(x => x.Role).ToList(),
+                Role = role?.Role,
                 RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription())
             };
 

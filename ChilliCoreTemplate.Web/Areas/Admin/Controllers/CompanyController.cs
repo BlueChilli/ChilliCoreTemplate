@@ -50,13 +50,6 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             return Json(new { Data = companies.ToSelectList(v => v.Id, t => t.Name) });
         }
 
-        public JsonResult Select2Query(string searchTerm, ApiPaging paging, int? id = null)
-        {
-            var companies = _services.Company_List(searchTerm, paging, id);
-
-            return Json(new Select2QueryModel<DataLinkModel, object>(companies, x => new { id = x.Id, text = x.Name }));
-        }
-
         public ActionResult Detail(int id)
         {
             return this.ServiceCall(() => _services.Company_Get(id))

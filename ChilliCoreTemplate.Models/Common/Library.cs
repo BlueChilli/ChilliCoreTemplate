@@ -1,6 +1,8 @@
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Phone;
+using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using NodaTime;
 using NodaTime.TimeZones;
@@ -88,5 +90,9 @@ namespace ChilliCoreTemplate.Models
             return result;
         }
 
+        public static SelectList ToSelectList(this List<DataLinkModel> list)
+        {
+            return list.ToSelectList(v => v.Id, t => t.Name);
+        }
     }
 }

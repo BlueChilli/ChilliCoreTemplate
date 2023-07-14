@@ -14,9 +14,12 @@ namespace ChilliCoreTemplate.Models.Admin
         public int Id { get; set; }
 
         [Required, DisplayName("Role")]
-        public List<Role> Roles { get; set; }
-
+        public Role? Role { get; set; }
         public SelectList RoleList { get; set; }
+
+        [DisplayName("Company")]
+        public int? CompanyId { get; set; }
+        public SelectList CompanyList { get; set; }
     }
 
     public class ChangeUserStatusModel

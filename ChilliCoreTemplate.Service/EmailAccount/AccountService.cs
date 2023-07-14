@@ -529,29 +529,25 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult.AsError("Not found or access denied.");
             }
 
-            var companyId = account.UserRoles.Where(x => x.CompanyId.HasValue).Select(x => x.CompanyId).FirstOrDefault();
-
-            var updated = false;
-            foreach (var role in model.Roles)
+            var role = account.GetLatestUserRole();
+            if (role == null)
             {
-                if (account.UserRoles.Any(x => x.Role == role)) continue;
-                if (role.IsCompanyRole() && companyId == null) return ServiceResult.AsError("User must be invited to clinic role");
+                role = new UserRole();
+                account.UserRoles.Add(role);
+            }
+            role.Role = model.Role.Value;
 
-                updated = true;
-                account.UserRoles.Add(new UserRole { Role = role, CompanyId = role.IsCompanyRole() ? companyId : null, CreatedAt = DateTime.UtcNow });
-            }
-            var rolesToRemove = account.UserRoles.Where(x => !model.Roles.Contains(x.Role)).ToList();
-            if (rolesToRemove.Any())
+            if (role.Role.IsCompanyRole())
             {
-                updated = true;
-                Context.UserRoles.RemoveRange(rolesToRemove);
+                if (model.CompanyId == null) return ServiceResult.AsError("Company must be selected for a company role");
+                role.CompanyId = model.CompanyId;
+            }
+            else
+            {
+                role.CompanyId = null;
             }
 
-            if (updated)
-            {
-                account.UpdatedDate = DateTime.UtcNow;
-                Context.SaveChanges();
-            }
+            account.UpdatedDate = DateTime.UtcNow;
 
             return ServiceResult.AsSuccess();
         }

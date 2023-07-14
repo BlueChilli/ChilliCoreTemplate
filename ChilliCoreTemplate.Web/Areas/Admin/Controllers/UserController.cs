@@ -154,13 +154,18 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         public virtual ActionResult ChangeRole(int id)
         {
             var user = _accountService.Get<AccountViewModel>(id, visibleOnly: true);
+            var role = user.UserRoles.FirstOrDefault();
             var model = new ChangeAccountRoleModel
             {
                 Id = id,
-                Roles = user.UserRoles.Select(x => x.Role).ToList(),
-                RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription())
+                Role = role?.Role,
+                RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription()),
+                CompanyId = role?.CompanyId
             };
-
+            if (model.CompanyId.HasValue)
+            {
+                model.CompanyList = new List<DataLinkModel> { new DataLinkModel { Id = model.CompanyId.Value, Name = role.CompanyName } }.ToSelectList();
+            }
             return PartialView(model);
         }
 

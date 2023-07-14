@@ -5,7 +5,7 @@
         @Html.ValidationSummary()
         @Html.HiddenFor(m => m.Id)
         <div class="form-group">
-            @await Html.FieldTemplateForAsync(model => model.Roles, options: new TemplateOptions { Template = FieldTemplateLayouts.ModalField }, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.RoleList })
+            @await Html.FieldTemplateForAsync(model => model.Role, options: new TemplateOptions { Template = FieldTemplateLayouts.ModalField }, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.RoleList })
         </div>
 
     </div>
