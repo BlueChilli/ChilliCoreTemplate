@@ -109,7 +109,7 @@ namespace ChilliCoreTemplate.Service
                     .ForMember(dest => dest.Token, opt => opt.MapFrom(src => src.GetToken(UserTokenType.Invite)));
 
                 cfg.CreateMap<InviteEditApiModel, InviteEditModel>()
-                    .ForMember(dest => dest.InviteRole, opt => opt.MapFrom(src => new InviteRoleViewModel { Role = Role.User }));
+                    .ForMember(dest => dest.InviteRole, opt => opt.MapFrom((src, dest, param, ctx) => new InviteRoleViewModel { Role = src.Role, CompanyId = (int)ctx.Items["CompanyId"] }));
 
                 cfg.CreateMap<InviteUploadItemModel, InviteEditModel>();
 

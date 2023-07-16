@@ -141,8 +141,7 @@ namespace ChilliCoreTemplate.Service.Api
 
         public ServiceResult<UserAccountApiModel> Invite(InviteEditApiModel model)
         {
-            var inviteModel = Mapper.Map<InviteEditModel>(model);
-            inviteModel.InviteRole = new InviteRoleViewModel { CompanyId = CompanyId, Role = Role.CompanyAdmin };
+            var inviteModel = Mapper.Map<InviteEditModel>(model, opts => opts.Items["CompanyId"] = CompanyId);
 
             var response = _accountService.Invite(inviteModel, true);
             if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);

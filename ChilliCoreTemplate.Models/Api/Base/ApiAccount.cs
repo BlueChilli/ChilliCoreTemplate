@@ -182,7 +182,7 @@ namespace ChilliCoreTemplate.Models.Api
         public UserTokenType? Type { get; set; }
     }
 
-    public class InviteEditApiModel
+    public class InviteEditApiModel : IValidatableObject
     {
         [MaxLength(25)]
         public string FirstName { get; set; }
@@ -195,6 +195,13 @@ namespace ChilliCoreTemplate.Models.Api
         [Required, MaxLength(100), EmailAddressWeb, DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
+        [Required]
+        public Role? Role { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!Role.Value.IsCompanyRole()) yield return new ValidationResult("Role must be a company role");
+        }
     }
 
     public class UserAccountApiModel : IInterceptApiModel

@@ -40,8 +40,9 @@ namespace ChilliCoreTemplate.Models.Api
 
         public UserStatus Status { get; set; }
 
-        public DateTime? LastLoginOn { get; set; }
+        public Role Role { get; set; }
 
+        public DateTime? LastLoginOn { get; set; }
     }
 
     public class CompanyUserEditApiModel

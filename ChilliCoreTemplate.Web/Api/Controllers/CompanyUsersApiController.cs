@@ -35,7 +35,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(typeof(List<CompanyUserApiModel>), StatusCodes.Status200OK)]
         public virtual IActionResult List()
         {
-            return this.ApiServiceCall(() => _services.Company_Admin_List())
+            return this.ApiServiceCall(_services.Company_Admin_List)
                 .Call();
         }
 

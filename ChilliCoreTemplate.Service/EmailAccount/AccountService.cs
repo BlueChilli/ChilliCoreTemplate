@@ -142,7 +142,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var request = Password_ResetRequest(account);
                 if (request.Success)
                 {
-                    result.Error = "We sent have you an forgot password email so you can reactive your account.";
+                    result.Error = "We sent have you an forgot password email so you can reactivate your account.";
                 }
                 return result;
             }

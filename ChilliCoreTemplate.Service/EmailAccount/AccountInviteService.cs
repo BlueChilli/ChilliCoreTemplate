@@ -79,15 +79,19 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         private void Invite_Confirm(User user)
         {
-            if (user.UserRoles.Count == 1 && user.UserRoles[0].Status == RoleStatus.Invited)
+            var invitedRoles = user.UserRoles.Where(x => x.Status == RoleStatus.Invited).ToList();
+            if (invitedRoles.Any())
             {
-                user.UserRoles[0].Status = null;
-                user.Status = UserStatus.Activated;
-                user.ActivatedDate = DateTime.UtcNow;
-            }
+                invitedRoles.ForEach(x => x.Status = null);
+                if (user.Status == UserStatus.Registered)
+                {
+                    user.Status = UserStatus.Activated;
+                    user.ActivatedDate = DateTime.UtcNow;
+                }
 
-            Mixpanel.SendAccountToMixpanel(user, "Invite confirmed");
-            Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
+                Mixpanel.SendAccountToMixpanel(user, "Invite confirmed");
+                Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
+            }
         }
 
         public ServiceResult<int> Invite_Upload(InviteUploadModel model)

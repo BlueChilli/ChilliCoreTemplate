@@ -109,7 +109,7 @@ namespace ChilliCoreTemplate.Service.Api
         #region CompanyAdmin
         private IQueryable<UserRole> CompanyAdmin_Authorised()
         {
-            return Context.UserRoles.Where(x => x.CompanyId == CompanyId && x.Role == Role.CompanyAdmin);
+            return Context.UserRoles.Where(x => x.CompanyId == CompanyId && (x.Role == Role.CompanyAdmin || x.Role == Role.CompanyUser));
         }
         private IQueryable<UserRole> CompanyAdmin_Authorised(int userId)
         {
