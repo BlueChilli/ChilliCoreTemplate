@@ -155,6 +155,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string CompanyName { get; set; }
 
+        public bool? CompanyIsDeleted { get; set; }
+
         public RoleStatus? Status { get; set; }
 
         public bool CanImpersonate(UserRoleModel other)
@@ -164,7 +166,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
                 return (this.CompanyId == other.CompanyId || this.CompanyId == other.MasterCompanyId) && this.Role == Role.CompanyAdmin;
             }
 
-            return this.Role == Role.Administrator && other.Role != Role.Administrator;
+            return this.Role == Role.Administrator && other.Role != Role.Administrator && (other.CompanyIsDeleted == null || !other.CompanyIsDeleted.Value);
         }
 
         public override bool Equals(object obj)

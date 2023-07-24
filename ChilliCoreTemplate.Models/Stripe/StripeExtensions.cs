@@ -38,5 +38,11 @@ namespace ChilliCoreTemplate.Models.Stripe
             return false;
         }
 
+        public static bool IsValid(this PaymentMethodCard card)
+        {
+            var cvcCheck = card.Checks?.CvcCheck;
+
+            return (String.IsNullOrEmpty(cvcCheck) || cvcCheck == "unavailable" || cvcCheck == "pass") && new DateTime((int)card.ExpYear, (int)card.ExpMonth, 1).AddMonths(1) > DateTime.UtcNow;
+        }
     }
 }

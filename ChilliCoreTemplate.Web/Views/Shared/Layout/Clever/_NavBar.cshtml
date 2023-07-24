@@ -1,3 +1,4 @@
+@inject IHostEnvironment env
 @{
     var userData = this.User.UserData();
 }
@@ -5,7 +6,7 @@
     <div class="container-fluid">
         @if (userData != null)
         {
-            <p>@(userData.CompanyId.HasValue ? userData.CompanyName : "Super admin")</p>
+            <p>@(userData.CompanyId.HasValue ? userData.CompanyName : "Super admin")@Html.When(!env.IsProduction(), $" ({env.EnvironmentName})")</p>
             if (userData.Impersonator != null)
             {
                 <a mvc-action="(userData.CompanyId.HasValue ? Mvc.Company.User_UndoImpersonate : Mvc.Admin.User_UndoImpersonate)"><span class="text-muted"> Impersonating as <b> @userData.Email</b></span> Undo</a>

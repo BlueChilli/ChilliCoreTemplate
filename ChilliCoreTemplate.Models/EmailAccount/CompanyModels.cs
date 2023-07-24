@@ -79,7 +79,7 @@ namespace ChilliCoreTemplate.Models
     public class CompanyListModel
     {
         [EmptyItem("Any status")]
-        public bool? Status { get; set; } = true;
+        public bool? Status { get; set; }
         public SelectList StatusList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Active"), new KeyValuePair<bool, string>(false, "Inactive") }.ToSelectList(v => v.Key, t => t.Value, true);
 
         [Placeholder]

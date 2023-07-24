@@ -31,7 +31,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult List()
         {
-            return View("CompanyList", new CompanyListModel());
+            return View("CompanyList", new CompanyListModel { Status = true });
         }
 
         [HttpPost]

@@ -1,8 +1,8 @@
 @model SessionEditModel
-
+@inject IHostEnvironment env
 @inject ProjectSettings config
 
-<h2 class="mb-10">Welcome to @config.ProjectDisplayName</h2>
+<h2 class="mb-10">Welcome to @config.ProjectDisplayName@Html.When(!env.IsProduction(), $" ({env.EnvironmentName})")</h2>
 
 @using (Html.BeginFormCustom(Mvc.Root.EmailAccount_Login))
 {

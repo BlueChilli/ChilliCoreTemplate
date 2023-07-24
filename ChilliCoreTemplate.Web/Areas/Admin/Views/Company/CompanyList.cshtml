@@ -63,7 +63,7 @@
                     {
                         "data": null, orderable: false, className: 'text-end', render: function (data, type, row) {
                             var view = '<a href="@Mvc.Admin.Company_Detail.Url(this.Url)/{0}" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="View"><i class="bi bi-eye"></i></a>';
-                            var impersonate = row.hasAdmins ? '<a href="#" class="js-impersonate btn btn-sm btn-square btn-neutral" data-id="{0}" data-bs-toggle="tooltip" data-bs-original-title="Impersonate"><i class="bi bi-person-bounding-box"></i> </a>' : '';
+                            var impersonate = row.hasAdmins && !row.isDeleted ? '<a href="#" class="js-impersonate btn btn-sm btn-square btn-neutral" data-id="{0}" data-bs-toggle="tooltip" data-bs-original-title="Impersonate"><i class="bi bi-person-bounding-box"></i> </a>' : '';
                             return view.format(data.id) + impersonate.format(data.id);
                         }
                     }

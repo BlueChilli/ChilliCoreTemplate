@@ -148,5 +148,27 @@ namespace ChilliCoreTemplate.Service
                 return ServiceResult<Customer>.AsError(ex.Message);
             }
         }
+
+        public ServiceResult<List<PaymentMethod>> Customer_PaymentMethods(string id)
+        {
+            try
+            {
+                var service = new CustomerService(_client);
+                var options = new CustomerListPaymentMethodsOptions
+                {
+                    Type = "card",
+                };
+                var paymentMethods = service.ListPaymentMethods(id, options);
+                return ServiceResult<List<PaymentMethod>>.AsSuccess(paymentMethods.Data);
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is StripeException))
+                {
+                    ex.LogException();
+                }
+                return ServiceResult<List<PaymentMethod>>.AsError(ex.Message);
+            }
+        }
     }
 }
