@@ -14,12 +14,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="dark light">
     <title>@Html.GetCurrentMenu().Title | @config.ProjectDisplayName</title>
-    @if (config.GoogleAnalytics.Enabled == true)
+    @if (config.GoogleTagManager.Enabled)
     {
-        @using (await Html.ContainerTemplateAsync(TemplateTypes.GoogleAnalytics))
-        {
-            @:ga('send', 'pageview');
-        }
+        @await Html.TemplateAsync(TemplateTypes.GoogleTagManager)
     }
     <link rel="stylesheet" href="~/bundles/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/bundles/stylebundle.min.css" asp-append-version="true" />

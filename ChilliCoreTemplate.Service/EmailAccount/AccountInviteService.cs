@@ -22,7 +22,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     {
         public List<AccountViewModel> GetPendingInvites()
         {
-            var users = VisibleUsers().Where(a => a.UserRoles.Any(r => r.Status == RoleStatus.Invited))
+            var users = VisibleUsers()
+                .Where(a => a.UserRoles.Any(r => r.Status == RoleStatus.Invited && r.User.Status != UserStatus.Deleted))
                 .OrderBy(a => a.InvitedDate)
                 .Include(a => a.UserRoles);
 

@@ -43,6 +43,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string ProfilePhotoPath { get; set; }
 
+        public string StripeId { get; set; }
+
         public List<UserRoleModel> UserRoles { get; set; } = new List<UserRoleModel>();
         public bool HasRole(Role role) => UserRoles.Any(r => (r.Role & role) > 0);
         public List<DataLinkModel> Companies => UserRoles.Where(r => r.CompanyId.HasValue).Select(x => new DataLinkModel { Id = x.CompanyId.Value, Name = x.CompanyName }).DistinctBy(x => x.Id).ToList();

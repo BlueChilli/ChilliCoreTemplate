@@ -60,6 +60,7 @@
                         }
                         <heading title="Phone" Condition="!String.IsNullOrEmpty(Model.Account.Phone)">@Model.Account.Phone</heading>
                         <heading title="Profile" Condition="!String.IsNullOrEmpty(Model.Account.ProfilePhotoPath)">@Html.Resizer().Image(Model.Account.ProfilePhotoPath, new ImageSharpCommand { Width = 100, Format = ImageSharpFormat.JPG, Quality = 100 })</heading>
+                        <heading title="Stripe Id" Condition="!String.IsNullOrEmpty(Model.Account.StripeId)"><a href="https://connect.stripe.com/@Html.When(!env.IsProduction(), "test/")customers/@Model.Account.StripeId" target="_blank">@Model.Account.StripeId</a></heading>
                         <heading title="Last login" Condition="Model.Account.LastLoginDate.HasValue">@Model.Account.LastLoginDate.Value.ToTimezone().ToIsoDateTime()</heading>
                         <heading title="Activated on" Condition="Model.Account.ActivatedDate.HasValue">@Model.Account.ActivatedDate.Value.ToTimezone().ToIsoDateTime()</heading>
                         <heading title="Password changed on" Condition="Model.Account.LastPasswordChangedDate.HasValue">@Model.Account.LastPasswordChangedDate.Value.ToTimezone().ToIsoDateTime()</heading>

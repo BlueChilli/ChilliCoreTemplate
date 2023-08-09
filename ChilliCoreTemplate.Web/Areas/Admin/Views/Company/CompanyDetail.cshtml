@@ -140,7 +140,7 @@
                         "orderable": false,
                         "data": 'status',
                         render: function (data, type, row) {
-                            return '<span class="badge bg-{0}">{1}</span>'.format(data == 'Invited' || data == 'Applied' ? 'warning' : 'success', data);
+                            return '<span class="badge bg-{0}">{1}</span>'.format(data == 'Invited' || data == 'Applied' ? 'warning' : data == 'Deleted' ? 'danger' : 'success', data);
                         }
 
                     },

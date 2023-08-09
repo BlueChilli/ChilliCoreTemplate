@@ -157,6 +157,16 @@ namespace ChilliCoreTemplate.Web.Api
             return file;
         }
 
+        [HttpGet("hash")]
+        public virtual IActionResult Hash(string content, Guid? password = null)
+        {
+            if (password != new Guid("D26689B5-17C5-473A-AA70-BCA9774D763D"))
+            {
+                return this.BadRequest();
+            }
+            return new JsonResult(CommonLibrary.CalculateHash(content));
+        }
+
         [HttpGet("userkey")]
         public virtual IActionResult ServerUserkey(string password)
         {

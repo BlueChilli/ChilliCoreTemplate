@@ -16,6 +16,10 @@
         </div>
         <div class="panel-body">
             @Html.ValidationSummary()
+            @foreach (var attachment in Model.Attachments)
+            {
+                <p>@attachment.Key <a href="@attachment.Value" target="_blank"><icon type="download"></icon></a></p>
+            }
             @if (!String.IsNullOrEmpty(Model.Data.MessageHtml))
             {
                 @Html.Raw(Model.Data.MessageHtml.Replace("EmailOpen", "EmailDummyOpen").Replace("EmailRedirect", "EmailRedirectDummy"))

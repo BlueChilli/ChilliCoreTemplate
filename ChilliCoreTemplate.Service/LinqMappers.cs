@@ -141,7 +141,7 @@ namespace ChilliCoreTemplate.Service
             {
                 Email = u.User.Email,
                 Name = u.User.FullName,
-                Status = u.Status != null ? u.Status.ToString() : u.User.Status.ToString()
+                Status = u.Status != null && u.User.Status != UserStatus.Deleted ? u.Status.ToString() : u.User.Status.ToString()
             });
 
             LinqMapper.CreateMap<Company, DataLinkModel>(c => new DataLinkModel

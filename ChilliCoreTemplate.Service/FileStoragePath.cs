@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +55,24 @@ namespace ChilliCoreTemplate.Service
         public string GetDefaultPath(bool fullPath = false)
         {
             return GetImagePath(" ", fullPath);
+        }
+
+        public string GetPreSignedUrl(string filename)
+        {
+            return GetPreSignedUrl(filename, TimeSpan.FromHours(1));
+        }
+
+        public string GetPreSignedUrl(string filename, TimeSpan expiresIn)
+        {
+            var storage = _storageHelper.CreateFileStorage();
+            var url = storage.GetPreSignedUrl(filename, expiresIn);
+
+            if (_storageHelper.CreateRemoteStorage() is ChilliSource.Cloud.Core.LocalStorageProvider)
+            {
+                return _urlHelper.Content(Path.Combine(_storageHelper.GetImagePrefix(), url));
+            }
+
+            return url;
         }
     }
 }

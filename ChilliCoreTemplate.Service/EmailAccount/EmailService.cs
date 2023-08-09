@@ -7,12 +7,10 @@ using ChilliSource.Cloud.Core.LinqMapper;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using DataTables.AspNet.Core;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
@@ -99,6 +97,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var email = Context.Emails.FirstOrDefault(e => e.Id == id);
             var model = GetSingle<EmailViewModel, Email>(email);
             model.Data = this._fileStorage.GetContent(email.Model).ReadToByteArray().To<EmailData>();
+            model.Data.Attachments.ForEach(x => model.Attachments.Add(x.FileName, _fileStoragePath.GetPreSignedUrl(x.Path)));
 
             return ServiceResult<EmailViewModel>.AsSuccess(model);
         }

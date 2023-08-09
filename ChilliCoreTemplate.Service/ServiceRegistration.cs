@@ -61,6 +61,8 @@ namespace ChilliCoreTemplate.Service
                     .CommandTimeout(180)
                     .EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)
                     .UseNetTopologySuite());
+
+            builder.EnableSensitiveDataLogging();
         }
 
         public void ConfigureServices(IServiceCollection services)

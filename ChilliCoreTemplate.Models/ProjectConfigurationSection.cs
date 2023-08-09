@@ -75,7 +75,7 @@ namespace ChilliCoreTemplate.Models
             _hostingSection = new HostingSection(configuration.GetSection("ProjectSettings:Hosting"));
             OAuthsSettings = new OAuthsConfigurationSection(configuration.GetSection("ProjectSettings:OAuth"));
             _googleApisSection = new GoogleApisSection(configuration.GetSection("ProjectSettings:GoogleApis"));
-            GoogleAnalytics = new GoogleAnalyticsSection(configuration.GetSection("ProjectSettings:GoogleAnalytics"));
+            GoogleTagManager = new GoogleTagManagerSection(configuration.GetSection("ProjectSettings:GoogleTagManager"));
             StripeSettings = new StripeConfigurationSection(configuration.GetSection("ProjectSettings:Stripe"));
             ErrorLogSettings = new ErrorLogConfigurationSection(configuration.GetSection("ErrorLog"));
             SlackSettings = new SlackConfigurationSection(configuration.GetSection("Slack"));
@@ -212,7 +212,7 @@ namespace ChilliCoreTemplate.Models
 
         public GoogleApisSection GoogleApis => _googleApisSection;
 
-        public GoogleAnalyticsSection GoogleAnalytics;
+        public GoogleTagManagerSection GoogleTagManager;
 
         public StripeConfigurationSection StripeSettings { get; }
 
@@ -655,11 +655,11 @@ namespace ChilliCoreTemplate.Models
 
     }
 
-    public class GoogleAnalyticsSection
+    public class GoogleTagManagerSection
     {
         private readonly IConfigurationSection _section;
 
-        public GoogleAnalyticsSection(IConfigurationSection section)
+        public GoogleTagManagerSection(IConfigurationSection section)
         {
             _section = section;
         }
@@ -670,9 +670,9 @@ namespace ChilliCoreTemplate.Models
         public bool Enabled => _section.GetValue<bool>("Enabled");
 
         /// <summary>
-        /// Gets the api key value.
+        /// Gets the tag id value.
         /// </summary>
-        public string ApiKey => _section.GetString("ApiKey");
+        public string TagId => _section.GetString("TagId");
 
     }
 
