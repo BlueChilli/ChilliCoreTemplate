@@ -25,9 +25,9 @@ namespace ChilliCoreTemplate.Web.Tasks
             {
                 using (var scope = ScopeContextFactory.Instance.CreateScope())
                 {
-                    var svc = scope.ServiceProvider.GetRequiredService<ApiServices>();
+                    var svc = scope.ServiceProvider.GetRequiredService<ApiLogService>();
 
-                    await svc.Api_Log_Clean(executionInfo);
+                    await svc.Clean(executionInfo);
                 }
             });
 

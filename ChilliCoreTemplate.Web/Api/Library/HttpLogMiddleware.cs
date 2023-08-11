@@ -138,8 +138,8 @@ namespace ChilliCoreTemplate.Web.Api
         {
             using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<ApiServices>();
-                await service.Api_Log_SaveAsync(apiLogEntry);
+                var service = scope.ServiceProvider.GetRequiredService<ApiLogService>();
+                await service.SaveAsync(apiLogEntry);
             }
         }
 
