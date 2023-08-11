@@ -1,21 +1,33 @@
+using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.LinqMapper;
 using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 
 namespace ChilliCoreTemplate.Service.Api
 {
-    public partial class ApiServices
+    public class CompanyApiService : BaseApiService
     {
-        internal static void Company_LinqMapper(FileStoragePath _storagePath)
+        private AccountService _accountService;
+
+        public CompanyApiService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, AccountService accountService) 
+            : base(user, context, config, fileStorage, environment)
+        {
+            _accountService = accountService;
+        }
+
+        internal static void LinqMapper_Config(FileStoragePath _storagePath)
         {
             LinqMapper.CreateMap<Company, CompanyApiModel>(x => new CompanyApiModel
             {
@@ -40,14 +52,14 @@ namespace ChilliCoreTemplate.Service.Api
 
         }
 
-        private IQueryable<Company> Company_Authorised()
+        private IQueryable<Company> Authorised()
         {
             var query = Context.Companies;
 
             return query.Where(x => x.Id == CompanyId && !x.IsDeleted);
         }
 
-        public ServiceResult<List<CompanyApiModel>> Company_List(CompanyFilterApiModel model)
+        public ServiceResult<List<CompanyApiModel>> List(CompanyFilterApiModel model)
         {
             var query = Context.Companies.Where(x => !x.IsDeleted);
 
@@ -62,7 +74,7 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult<List<CompanyApiModel>>.AsSuccess(records);
         }
 
-        public ServiceResult Company_Create(CompanyEditApiModel model)
+        public ServiceResult Create(CompanyEditApiModel model)
         {
             var company = Company.CreateNew(model.Name);
 
@@ -83,7 +95,7 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.AsSuccess();
         }
 
-        public ServiceResult Company_Update(CompanyEditApiModel model)
+        public ServiceResult Update(CompanyEditApiModel model)
         {
             var company = Context.Companies.Where(x => x.Id == CompanyId).FirstOrDefault();
             if (company == null) return ServiceResult.AsError("Compnay not found");
@@ -99,35 +111,35 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.AsSuccess();
         }
 
-        public ServiceResult<CompanyApiModel> Company_Get()
+        public ServiceResult<CompanyApiModel> Get()
         {
-            var company = Company_Authorised().Materialize<Company, CompanyApiModel>().FirstOrDefault();
+            var company = Authorised().Materialize<Company, CompanyApiModel>().FirstOrDefault();
             if (company == null) return ServiceResult<CompanyApiModel>.AsError("Company not found");
             return ServiceResult<CompanyApiModel>.AsSuccess(company);
         }
 
         #region CompanyAdmin
-        private IQueryable<UserRole> CompanyAdmin_Authorised()
+        private IQueryable<UserRole> Admin_Authorised()
         {
             return Context.UserRoles.Where(x => x.CompanyId == CompanyId && (x.Role == Role.CompanyAdmin || x.Role == Role.CompanyUser));
         }
-        private IQueryable<UserRole> CompanyAdmin_Authorised(int userId)
+        private IQueryable<UserRole> Admin_Authorised(int userId)
         {
-            return CompanyAdmin_Authorised().Where(x => x.UserId == userId);
+            return Admin_Authorised().Where(x => x.UserId == userId);
         }
 
-        public List<CompanyUserApiModel> Company_Admin_List()
+        public List<CompanyUserApiModel> Admin_List()
         {
-            var users = CompanyAdmin_Authorised()
+            var users = Admin_Authorised()
                 .Materialize<UserRole, CompanyUserApiModel>()
                 .ToList();
 
             return users;
         }
 
-        public ServiceResult<CompanyUserApiModel> Company_Admin_Get(int id)
+        public ServiceResult<CompanyUserApiModel> Admin_Get(int id)
         {
-            var user = CompanyAdmin_Authorised(id)
+            var user = Admin_Authorised(id)
                 .Materialize<UserRole, CompanyUserApiModel>()
                 .FirstOrDefault();
 
@@ -136,9 +148,9 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult<CompanyUserApiModel>.AsSuccess(user);
         }
 
-        public ServiceResult Company_Admin_Update(CompanyUserEditApiModel model)
+        public ServiceResult Admin_Update(CompanyUserEditApiModel model)
         {
-            var userRole = CompanyAdmin_Authorised(model.Id)
+            var userRole = Admin_Authorised(model.Id)
                 .Include(x => x.User)
                 .FirstOrDefault();
 
@@ -159,7 +171,7 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.AsSuccess();
         }
 
-        public ServiceResult Company_Admin_Delete(int userId)
+        public ServiceResult Admin_Delete(int userId)
         {
             var usersRoles = Context.UserRoles
                 .Where(x => x.UserId == userId)

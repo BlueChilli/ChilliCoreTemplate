@@ -27,8 +27,6 @@ namespace ChilliCoreTemplate.Web.Api
     [ProducesResponseType(typeof(ErrorResult), StatusCodes.Status500InternalServerError)]
     public class ServerController : ControllerBase
     {
-        ApiServices _apiServices;
-        Services _services;
         ProjectSettings _config;
         UserKeyHelper _keyHelper;
         ITemplateViewRenderer _templateViewRenderer;
@@ -37,10 +35,8 @@ namespace ChilliCoreTemplate.Web.Api
         PushNotificationConfiguration _push;
         SlackApiService _slack;
 
-        public ServerController(Services services, ApiServices apiServices, ProjectSettings config, UserKeyHelper keyHelper, ITemplateViewRenderer templateViewRenderer, IBackgroundTaskQueue taskQueue, IOptions<FormOptions> formOptions, PushNotificationConfiguration push, SlackApiService slack)
+        public ServerController(ProjectSettings config, UserKeyHelper keyHelper, ITemplateViewRenderer templateViewRenderer, IBackgroundTaskQueue taskQueue, IOptions<FormOptions> formOptions, PushNotificationConfiguration push, SlackApiService slack)
         {
-            _services = services;
-            _apiServices = apiServices;
             _config = config;
             _keyHelper = keyHelper;
             _templateViewRenderer = templateViewRenderer;
@@ -230,14 +226,14 @@ namespace ChilliCoreTemplate.Web.Api
             return new JsonResult(new { message = "Ok" });
         }
 
-        [HttpPost("dbexception")]
-        public virtual IActionResult ServerDBException()
-        {
-            var svc = this.HttpContext.RequestServices.GetRequiredService<CompanyService>();
-            svc.TestDBException();
+        //[HttpPost("dbexception")]
+        //public virtual IActionResult ServerDBException()
+        //{
+        //    var svc = this.HttpContext.RequestServices.GetRequiredService<CompanyService>();
+        //    svc.TestDBException();
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         [HttpPost("scalability")]
         public async Task<IActionResult> Scalability(int delay)

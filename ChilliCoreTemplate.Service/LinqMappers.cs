@@ -23,7 +23,7 @@ namespace ChilliCoreTemplate.Service
 
             LinqMapper.AllowNullPropertyProjection(p => !IsComplexType(p.PropertyType));
 
-            ApiServices.Company_LinqMapper(_storagePath);
+            CompanyApiService.LinqMapper_Config(_storagePath);
             ConfigureViewModels();
             AdminService.Sms_LinqMapper();
             AccountService.PushNotification_LinqMapper();

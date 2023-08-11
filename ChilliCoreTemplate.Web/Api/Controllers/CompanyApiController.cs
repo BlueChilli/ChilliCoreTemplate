@@ -3,6 +3,7 @@ using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.Api;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Web.MVC;
 using Microsoft.AspNetCore.Http;
@@ -16,14 +17,14 @@ namespace ChilliCoreTemplate.Web.Api
     [ProducesResponseType(typeof(ErrorResult), StatusCodes.Status500InternalServerError)]
     public class CompaniesController : ControllerBase
     {
-        ApiServices _service;
-        Services _services;
+        CompanyApiService _service;
+        CompanyService _companyService;
         UserApiWebService _webService;
 
-        public CompaniesController(ApiServices service, Services services, UserApiWebService webService)
+        public CompaniesController(CompanyApiService service, CompanyService companyService, UserApiWebService webService)
         {
             _service = service;
-            _services = services;
+            _companyService = companyService;
             _webService = webService;
         }
 
@@ -35,7 +36,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual IActionResult Create(CompanyEditApiModel model)
         {
-            return this.ApiServiceCall(() => _service.Company_Create(model)).Call();
+            return this.ApiServiceCall(() => _service.Create(model)).Call();
         }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(typeof(CompanyApiModel), StatusCodes.Status200OK)]
         public virtual IActionResult Current()
         {
-            return this.ApiServiceCall(() => _service.Company_Get()).Call();
+            return this.ApiServiceCall(() => _service.Get()).Call();
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual IActionResult Update(CompanyEditApiModel model)
         {
-            return this.ApiServiceCall(() => _service.Company_Update(model)).Call();
+            return this.ApiServiceCall(() => _service.Update(model)).Call();
         }
 
         [HttpPost]
@@ -65,7 +66,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
         public virtual IActionResult Impersonate(int id)
         {
-            return this.ApiServiceCall(() => _services.Company_Impersonate(id, this.LoginWithPrincipal))
+            return this.ApiServiceCall(() => _companyService.Company_Impersonate(id, this.LoginWithPrincipal))
                 .OnSuccess(x => { return Ok(_webService.GetSessionSummary(x.Result, includeUserKey: true)); })
                 .Call();
         }

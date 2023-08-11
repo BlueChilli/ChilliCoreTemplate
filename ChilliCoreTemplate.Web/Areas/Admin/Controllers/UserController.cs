@@ -1,26 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-using ChilliSource.Cloud.Web.MVC;
-using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Models;
-using ChilliCoreTemplate.Service.Admin;
-using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Models.Admin;
-using Microsoft.AspNetCore.Authorization;
-using DataTables.AspNet.Core;
+using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
-using DataTables.AspNet.AspNetCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using ChilliSource.Core.Extensions;
-using Newtonsoft.Json;
+using ChilliCoreTemplate.Service.Admin;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Core;
-using ChilliCoreTemplate.Models.Api;
+using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
+using DataTables.AspNet.AspNetCore;
+using DataTables.AspNet.Core;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 {
@@ -31,13 +26,11 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         private AdminService _service;
         private CompanyService _companyService;
         private AccountService _accountService;
-        private Services _services;
         private ProjectSettings _config;
 
-        public UserController(AdminService service, AccountService accountService, Services services, CompanyService companyService, ProjectSettings config)
+        public UserController(AdminService service, AccountService accountService, CompanyService companyService, ProjectSettings config)
         {
             _service = service;
-            _services = services;
             _accountService = accountService;
             _companyService = companyService;
             _config = config;
@@ -263,7 +256,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             {
                 //Change the default invite role if needed
                 Role = Role.Administrator,
-                CompanyList = _companyService.GetAll<CompanyViewModel>(includeDeleted: false).OrderBy(x => x.Name).ToList().ToSelectList(v => v.Id, t => t.Name)
+                CompanyList = _companyService.List<CompanyViewModel>(includeDeleted: false).OrderBy(x => x.Name).ToList().ToSelectList(v => v.Id, t => t.Name)
             };
 
             model.RoleSelectionOptions = new List<SelectListItem>()
@@ -291,7 +284,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult InviteResend(int id)
         {
-            return this.ServiceCall(() => _services.Company_Admin_Get(User.UserData().CompanyId.Value, id)).Call();
+            return this.ServiceCall(() => _companyService.Company_Admin_Get(User.UserData().CompanyId.Value, id)).Call();
         }
 
         [HttpPost, ActionName("InviteResend")]
@@ -329,7 +322,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         {
             var model = new UserImportModel
             {
-                CompanyList = _companyService.GetAll<CompanyViewModel>().ToSelectList(v => v.Id, t => t.Name)
+                CompanyList = _companyService.List<CompanyViewModel>().ToSelectList(v => v.Id, t => t.Name)
             };
             return View("UsersImport", model);
         }

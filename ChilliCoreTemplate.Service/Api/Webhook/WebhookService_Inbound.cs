@@ -21,16 +21,14 @@ namespace ChilliCoreTemplate.Service.Api
 {
     public partial class WebhookService : Service<DataContext>
     {
-        private readonly Services _services;
         private readonly IWebHostEnvironment _env;
         private readonly IFileStorage _fileStorage;
         private readonly ProjectSettings _config;
         private readonly AccountService _accountService;
 
-        public WebhookService(BackgroundTaskPrincipal user, DataContext context, Services services, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config) : base(user, context)
+        public WebhookService(BackgroundTaskPrincipal user, DataContext context, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config) : base(user, context)
         {
             _accountService = accountService;
-            _services = services;
             _stripe = stripe;
             _env = env;
             _fileStorage = fileStorage;

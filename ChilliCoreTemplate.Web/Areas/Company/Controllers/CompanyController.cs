@@ -1,5 +1,6 @@
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Service;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Web.MVC;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,11 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
     [CustomAuthorize(Roles = AccountCommon.CompanyAdmin)]
     public class CompanyController : Controller
     {
-        private Services _services;
+        private CompanyService _service;
 
-        public CompanyController(Services services)
+        public CompanyController(CompanyService service)
         {
-            _services = services;
+            _service = service;
         }
 
         public ActionResult Index()
@@ -25,20 +26,20 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public ActionResult Detail()
         {
-            return this.ServiceCall(() => _services.Company_Get())
+            return this.ServiceCall(() => _service.Get())
                 .Always(m => { return View("CompanyDetail", m); })
                 .Call();
         }
 
         public ActionResult Settings()
         {
-            return this.ServiceCall(() => _services.Company_GetSettings()).Call();
+            return this.ServiceCall(() => _service.GetSettings()).Call();
         }
 
         [HttpPost]
         public ActionResult Settings([FromForm] CompanySettingsModel model)
         {
-            return this.ServiceCall(() => _services.Company_SaveSettings(model))
+            return this.ServiceCall(() => _service.SaveSettings(model))
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success("Settings has been successfully saved");

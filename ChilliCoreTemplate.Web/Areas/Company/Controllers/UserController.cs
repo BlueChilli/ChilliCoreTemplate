@@ -25,13 +25,11 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         private AdminService _service;
         private CompanyService _companyService;
         private AccountService _accountService;
-        private Services _services;
         private ProjectSettings _config;
 
-        public UserController(AdminService service, AccountService accountService, Services services, CompanyService companyService, ProjectSettings config)
+        public UserController(AdminService service, AccountService accountService, CompanyService companyService, ProjectSettings config)
         {
             _service = service;
-            _services = services;
             _accountService = accountService;
             _companyService = companyService;
             _config = config;

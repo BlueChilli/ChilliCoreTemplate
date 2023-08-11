@@ -1,13 +1,8 @@
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
-using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service.Api;
-using ChilliCoreTemplate.Service.EmailAccount;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using ChilliCoreTemplate.Web.Api;
 using System.Collections.Generic;
 
 namespace ChilliCoreTemplate.Web.Api
@@ -19,13 +14,13 @@ namespace ChilliCoreTemplate.Web.Api
     [CustomAuthorize(Roles = AccountCommon.CompanyAdmin)]
     public class CompanyUsersController : ControllerBase
     {
-        ApiServices _services;
+        CompanyApiService _service;
         UserApiWebService _webApiService;
 
-        public CompanyUsersController(ApiServices services, UserApiWebService webApiService)
+        public CompanyUsersController(CompanyApiService service, UserApiWebService webApiService)
         {
             this._webApiService = webApiService;
-            this._services = services;
+            this._service = service;
         }
 
         /// <summary>
@@ -35,7 +30,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(typeof(List<CompanyUserApiModel>), StatusCodes.Status200OK)]
         public virtual IActionResult List()
         {
-            return this.ApiServiceCall(_services.Company_Admin_List)
+            return this.ApiServiceCall(_service.Admin_List)
                 .Call();
         }
 
@@ -46,7 +41,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(typeof(CompanyUserApiModel), StatusCodes.Status200OK)]
         public virtual IActionResult Get(int id)
         {
-            return this.ApiServiceCall(() => _services.Company_Admin_Get(id))
+            return this.ApiServiceCall(() => _service.Admin_Get(id))
                 .Call();
         }
 
@@ -69,7 +64,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual IActionResult Update(CompanyUserEditApiModel model)
         {
-            return this.ApiServiceCall(() => _services.Company_Admin_Update(model))
+            return this.ApiServiceCall(() => _service.Admin_Update(model))
                 .Call();
         }
 
@@ -80,7 +75,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual IActionResult Delete(int id)
         {
-            return this.ApiServiceCall(() => _services.Company_Admin_Delete(id))
+            return this.ApiServiceCall(() => _service.Admin_Delete(id))
                 .Call();
         }
 
