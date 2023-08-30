@@ -74,6 +74,8 @@ namespace ChilliCoreTemplate.Models
         }
 
         public InviteEditModel Admin { get; set; }
+
+        public List<CompanyViewModel> SubCompanies { get; set; }
     }
 
     public class CompanyListModel

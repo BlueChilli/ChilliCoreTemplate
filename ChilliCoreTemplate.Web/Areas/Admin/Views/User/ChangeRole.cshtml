@@ -7,7 +7,7 @@
         <div class="form-group">
             @await Html.FieldTemplateForAsync(model => model.Role, options: new TemplateOptions { Template = FieldTemplateLayouts.ModalField }, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.RoleList })
 
-            <div id="CompanyDetails" class="@Html.When(!RoleHelper.IsCompanyRole(Model.Role.Value), "hide")">
+            <div id="CompanyDetails" class="@Html.When(!RoleHelper.IsCompanyRole(Model.Role), "hide")">
                 @await Html.FieldTemplateForAsync(m => m.CompanyId, new TemplateOptions { Template = FieldTemplateLayouts.ModalField, IsMandatory = true }, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.CompanyList })
             </div>
         </div>

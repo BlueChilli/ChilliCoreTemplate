@@ -8,6 +8,10 @@
         Tabs = new List<string> { "Details", "Admins" }
     };
     var archiveOrDelete = Model.IsDeleted ? "Unarchive" : Model.CanDelete ? "Delete" : "Archive";
+    if (Model.SubCompanies.Any())
+    {
+        breadcrumb.Tabs.Add("Clinics");
+    }
 }
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, breadcrumb)) { }
 <page>
@@ -81,8 +85,45 @@
                 </box-content>
             </box>
         </tab-pane>
-    </tab-content>
+        @if (Model.SubCompanies.Any())
+        {
+            <tab-pane id="3">
+                <box>
+                    <box-title title="Clinics">
+                    </box-title>
+                    <box-content>
+                        <div class="row">
+                            <div class="col-12">
+                                <table-default class="js-company-table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th style="width: 150px;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var company in Model.SubCompanies)
+                                        {
+                                            <tr>
+                                                <td>@company.Name</td>
+                                                <td><label type="@company.IsDeleted ? LabelType.Warning : LabelType.Success">@(company.IsDeleted ? "Archived" : "Active")</label></td>
+                                                <td>
+                                                    <button mvc-action="Mvc.Admin.Company_Detail" asp-route-id="@company.Id" icon="View"></button>
+                                                    <buttonpost mvc-action="Mvc.Admin.Company_Impersonate" Condition="company.CanImpersonate()" asp-route-id="@company.Id" icon="Impersonate"></buttonpost>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table-default>
+                            </div>
+                        </div>
+                    </box-content>
+                </box>
+            </tab-pane>
 
+        }
+    </tab-content>
 </page>
 @section scripts
 {

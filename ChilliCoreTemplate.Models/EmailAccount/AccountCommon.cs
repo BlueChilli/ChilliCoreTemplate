@@ -36,6 +36,12 @@ namespace ChilliCoreTemplate.Models
 
     public static class RoleHelper
     {
+        public static bool IsCompanyRole(this Role? role)
+        {
+            if (role == null) return false;
+            return IsCompanyRole(role.Value);
+        }
+
         public static bool IsCompanyRole(this Role role)
         {
             return role == Role.CompanyAdmin || role == Role.CompanyUser;

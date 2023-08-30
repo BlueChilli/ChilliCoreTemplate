@@ -173,6 +173,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (model == null) model = new CompanyEditModel { ApiKey = Guid.NewGuid(), Timezone = "Australia/Sydney", Name = name };
 
+            model.CompanyList = Context.Companies.Where(x => x.Id != id && x.MasterCompanyId == null && !x.IsDeleted).Select(x => new { x.Id, x.Name }).OrderBy(x => x.Name).ToSelectList(v => v.Id, t => t.Name);
             model.TimezoneList = CommonLibrary.TimeZones().ToSelectList(v => v.ZoneId, t => $"{t.CountryName} {(String.IsNullOrEmpty(t.Comment) ? "" : " - " + t.Comment)}");
 
             return ServiceResult<CompanyEditModel>.AsSuccess(model);

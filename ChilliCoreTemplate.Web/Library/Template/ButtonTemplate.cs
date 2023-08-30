@@ -93,11 +93,23 @@ namespace ChilliCoreTemplate.Web
 
     public enum IconType
     {
+        None,
         [Data("Icon", "eye")]
-        View = 1,
+        View,
         [Data("Icon", "pencil")]
         Edit,
         [Data("Icon", "trash")]
         Delete,
+        [Data("Icon", "plus-square")]
+        Create,
+        [Data("Icon", "person-bounding-box")]
+        Impersonate
+    }
+
+    public enum IconPlacement
+    {
+        None,
+        Left,
+        Right
     }
 }

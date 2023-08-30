@@ -1,4 +1,7 @@
 using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Web.TagHelpers;
+using ChilliCoreTemplate.Web;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;
@@ -121,7 +124,10 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
         public ButtonStyle Style { get; set; }
 
-        public IconType? Icon { get; set; }
+        public IconType Icon { get; set; }
+
+        [HtmlAttributeName("icon-placement")]
+        public IconPlacement IconPlacement { get; set; }
 
         public string ToolTip { get; set; }
 
@@ -131,14 +137,25 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.Attributes.SetAttribute("type", "button");
-            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm {(Icon.HasValue ? "btn-square" : "")}");
 
-            if (Icon.HasValue)
+            var iconStyle = String.Empty;
+            if (Icon != IconType.None)
             {
+                iconStyle = IconPlacement == IconPlacement.None ? "btn-square" : "";
                 output.Attributes.SetAttribute("data-bs-toggle", "tooltip");
                 output.Attributes.SetAttribute("data-bs-original-title", Icon.GetDescription());
-                output.PreContent.SetHtmlContent($"<i class=\"bi bi-{Icon.Value.GetData<string>("Icon")}\"></i>");
+                var icon = $"<i class=\"bi bi-{Icon.GetData<string>("Icon")}\"></i>";
+                if (IconPlacement == IconPlacement.None)
+                    output.Content.SetHtmlContent(icon);
+                else if (IconPlacement == IconPlacement.Left)
+                {
+                    output.PreContent.SetHtmlContent($"<span class=\"pe-3\">{icon}</span>");
+                }
+                else
+                    output.PostContent.SetHtmlContent(icon);
             }
+
+            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm {iconStyle}");
         }
     }
 }
