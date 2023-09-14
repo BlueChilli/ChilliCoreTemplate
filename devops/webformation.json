@@ -5,19 +5,19 @@
     "EnvMappings": {
       "Develop": {
         "Suffix": "dev",
-        "EC2InstanceType": "t2.small",
+        "EC2InstanceType": "t2.micro",
         "Arch": "64",
         "SGInstanceToSql": "SGInstanceToSqldev"
       },
       "Staging": {
         "Suffix": "stg",
-        "EC2InstanceType": "t2.small",
+        "EC2InstanceType": "t2.micro",
         "Arch": "64",
         "SGInstanceToSql": "SGInstanceToSqlstg"
       },
       "Production": {
         "Suffix": "prod",
-        "EC2InstanceType": "t2.medium",
+        "EC2InstanceType": "t2.small",
         "Arch": "64",
         "SGInstanceToSql": "SGInstanceToSqlprod"
       }

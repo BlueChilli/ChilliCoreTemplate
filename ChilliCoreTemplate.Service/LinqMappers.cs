@@ -104,7 +104,7 @@ namespace ChilliCoreTemplate.Service
             });
             LinqMapper.CreateMap<User, DataLinkModel>(x => new DataLinkModel
             {
-                Name = x.FullName == null ? x.Email : x.FirstName
+                Name = (x.FullName == null ? x.Email : x.FirstName) + x.UserRoles.Where(r => r.CompanyId != null).Select(r => " (" + r.Company.Name + ")").FirstOrDefault()
             });
 
             LinqMapper.CreateMap<User, AccountDetailsEditModel>(a => new AccountDetailsEditModel()

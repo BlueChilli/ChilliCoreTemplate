@@ -32,11 +32,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 .ForMember(dest => dest.FinishedOn, opt => opt.MapFrom((src, dest, destMember, ctx) => src.FinishedOn == null ? null : src.FinishedOn.Value.ToTimezone((string)ctx.Items["Timezone"]).ToNullable<DateTime>()));
         }
 
-
-        public static List<BulkImportViewModel> BulkImport_List(DataContext context, BulkImportType type, string timezone = Constants.DefaultTimezone)
+        public static List<BulkImportViewModel> BulkImport_List(DataContext context, BulkImportType type, int? companyId = null, string timezone = Constants.DefaultTimezone)
         {
             var oneWeekAgo = DateTime.UtcNow.AddDays(-7);
-            return Mapper.Map<List<BulkImportViewModel>>(context.BulkImports
+
+            var query = context.BulkImports
+                .Where(x => x.Type == type && (x.StartedOn == null || x.StartedOn > oneWeekAgo));
+
+            if (companyId.HasValue) query = query.Where(x => x.CompanyId == companyId.Value);
+
+            return Mapper.Map<List<BulkImportViewModel>>(query
                 .Where(x => x.Type == type && (x.StartedOn == null || x.StartedOn > oneWeekAgo))
                 .OrderByDescending(x => x.StartedOn == null ? DateTime.MaxValue : x.StartedOn)
                 .ToList(), opt => opt.Items["Timezone"] = timezone);

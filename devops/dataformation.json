@@ -20,7 +20,7 @@
       "Production": {
         "Suffix": "prod",
         "DBAllocatedStorage": "20",
-        "DBInstanceClass": "db.t2.medium",
+        "DBInstanceClass": "db.t2.small",
         "BackupRetentionPeriod": 7,
         "SGInstanceToSql": "SGInstanceToSqlprod"
       }

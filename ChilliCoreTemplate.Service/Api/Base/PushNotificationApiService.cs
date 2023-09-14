@@ -4,6 +4,7 @@ using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Service.Api.FireBase;
+using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
@@ -116,6 +117,25 @@ namespace ChilliCoreTemplate.Service.Api
             }
         }
 
+        internal async Task SendToAccountIds(List<int> accountIds, AccountService accountSvc, string message, Dictionary<string, string> data = null)
+        {
+            var devices = accountSvc.UserDevice_List(accountIds);
+
+            foreach (var device in devices)
+            {
+                var model = new SendNotificationModel
+                {
+                    UserId = device.UserId,
+                    PushTokenId = device.TokenId,
+                    Provider = device.Provider,
+                    Type = PushNotificationType.Test,
+                    Title = null,
+                    Message = message,
+                    Data = data
+                };
+                await SendPushNotification(model);
+            }
+        }
     }
 
     internal class AWSPushNotification : PushNotificationApiService
