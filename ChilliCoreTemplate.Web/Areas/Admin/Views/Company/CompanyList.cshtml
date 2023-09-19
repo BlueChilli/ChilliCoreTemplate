@@ -3,7 +3,8 @@
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions { Description = "This is a page description" }))
 {
     <div class="float-right">
-        <a class="btn btn-sm btn-primary" mvc-action="@Mvc.Admin.Company_Edit"><span class="pe-2"><i class="bi bi-plus-square-dotted"></i> </span><span>Create</span></a>
+        <button mvc-action="@Mvc.Admin.Company_Edit" style="Primary" icon="Create" icon-placement="Left">Create</button>
+        <button mvc-action="@Mvc.Admin.Company_Export" icon="Download" icon-placement="Left">Export</button>
     </div>
 }
 <page>

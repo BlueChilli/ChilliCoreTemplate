@@ -752,5 +752,11 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         /// Email name will default to template name, use this to override.
         /// </summary>
         public string EmailName { get; set; }
+
+        public int? CompanyId { get; set; }
+
+        public string CompanyName { get; set; }
+
+        public string CompanyLogo { get; set; }
     }
 }

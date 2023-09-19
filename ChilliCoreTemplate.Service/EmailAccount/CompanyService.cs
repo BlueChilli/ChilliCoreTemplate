@@ -30,6 +30,24 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             _stripe = stripeService;
         }
 
+        internal static void LinqMapperConfigure(FileStoragePath storagePath)
+        {
+            LinqMapper.CreateMap<UserRole, CompanyExportModel>(x => new CompanyExportModel
+            {
+                Name = x.Company.Name,
+                LogoUrl = x.Company.LogoPath,
+                Address = x.Company.Address,
+                UserFullName = x.User.FullName,
+                UserEmail = x.User.Email,
+            });
+            Materializer.RegisterAfterMap<CompanyExportModel>((x) =>
+            {
+                if (!String.IsNullOrEmpty(x.LogoUrl))
+                {
+                    x.LogoUrl = storagePath.GetImagePath(x.LogoUrl, fullPath: true);
+                }
+            });
+        }
 
         internal IQueryable<Company> Authorised()
         {
@@ -356,7 +374,17 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (adminAccount == null) return ServiceResult<UserDataPrincipal>.AsError("Company does not have administrator account that can be impersonated");
 
             return _accountService.ImpersonateAccount(adminAccount.UserId, loginAction);
+        }
 
+        public ServiceResult<string> CsvFileForExport()
+        {
+            var records = Context.UserRoles
+                .Where(x => x.CompanyId != null && x.User.Status != UserStatus.Deleted && !x.Company.IsDeleted)
+                .OrderBy(x => x.Company.Name)
+                .Materialize<UserRole, CompanyExportModel>()
+                .ToList();
+
+            return ServiceResult<string>.AsSuccess(records.ToCsvFile());
         }
 
         public ServiceResult<CompanyDetailViewModel> Company_Admin_Add(int id, InviteEditModel model)

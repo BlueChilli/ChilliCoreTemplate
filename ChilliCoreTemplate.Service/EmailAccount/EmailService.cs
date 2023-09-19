@@ -347,6 +347,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var templateModel = new RazorTemplateDataModel<T>(email.Data as T);
             templateModel.TemplateId = email.Id;
             templateModel.TrackingId = FakeTrackingId.ToShortGuid();
+            templateModel.CompanyId = email.CompanyId;
+            templateModel.CompanyName = email.CompanyName;
+            templateModel.Logo = email.CompanyLogo;
             EmailServiceHelpers.SetConfigProperties(templateModel, _config, _config.AdminEmail);
 
             var html = TaskHelper.GetResultSafeSync(() => _templateViewRenderer.RenderAsync(email.Template.TemplateName, templateModel));

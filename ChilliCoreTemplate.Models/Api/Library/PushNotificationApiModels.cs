@@ -14,6 +14,7 @@ namespace ChilliCoreTemplate.Models.Api
         public PushNotificationProvider Provider { get; set; }
         public PushNotificationAppId AppId { get; set; }
         public int? UserId { get; set; }
+        public int? UserDeviceId { get; set; }
     }
 
     public class SendNotificationApiModel
@@ -64,7 +65,8 @@ namespace ChilliCoreTemplate.Models.Api
         Initialising = 1,
         Queued,
         Sent,
-        Error
+        Error,
+        QueuedInternally
     }
 
 }

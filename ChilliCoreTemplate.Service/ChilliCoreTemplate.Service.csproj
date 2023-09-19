@@ -30,6 +30,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
     <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
+    <PackageReference Include="Mjml.Net" Version="3.0.0" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="108.0.1" />
     <PackageReference Include="Stripe.net" Version="39.120.0" />
     <PackageReference Include="Twilio" Version="5.75.3" />

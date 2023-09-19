@@ -6,9 +6,11 @@ using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Service.Api.FireBase;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.Distributed;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.Azure.NotificationHubs;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -49,6 +51,12 @@ namespace ChilliCoreTemplate.Service.Api
             var service = GetService(model.AppId);
             return await service.SendPushNotification(model);
         }
+
+        public async Task<ServiceResult> QueuePushNotification(SendNotificationModel model)
+        {
+            var service = GetService(model.AppId);
+            return await service.QueuePushNotification(model);
+        }
     }
 
     public abstract class PushNotificationApiService
@@ -75,6 +83,13 @@ namespace ChilliCoreTemplate.Service.Api
         /// <param name="data">additonal data</param>
         /// <returns>Asynchronous Task</returns>
         public abstract Task<ServiceResult> SendPushNotification(SendNotificationModel model);
+
+        /// <summary>
+        /// queue push notification via SNS
+        /// </summary>
+        public abstract Task<ServiceResult> QueuePushNotification(SendNotificationModel model);
+
+        public abstract Task QueuePushNotificationTask(ITaskExecutionInfo executionInfo);
 
         /// <summary>
         /// check whether apple push notification server is sandbox server
@@ -238,6 +253,16 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.AsSuccess();
         }
 
+        public async override Task<ServiceResult> QueuePushNotification(SendNotificationModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task QueuePushNotificationTask(ITaskExecutionInfo executionInfo)
+        {
+            throw new NotImplementedException();
+        }
+
         public override async Task<ServiceResult<string>> RegisterPushTokenToSNSAsync(string pushToken, PushNotificationProvider provider)
         {
             var snsClient = CreateSNSClient();
@@ -342,61 +367,7 @@ namespace ChilliCoreTemplate.Service.Api
                 _context.PushNotifications.Add(record);
                 await _context.SaveChangesAsync();
 
-                NotificationOutcome outcome = null;
-                var hubClient = NotificationHubClient.CreateClientFromConnectionString(_config.ConnectionString, _config.HubName, enableTestSend: false);
-
-                if (record.Provider == PushNotificationProvider.Google)
-                {
-                    outcome = await hubClient.SendFcmNativeNotificationAsync(record.Message, model.PushTokenId);
-                }
-                else
-                {
-                    outcome = await hubClient.SendAppleNativeNotificationAsync(record.Message, model.PushTokenId);
-                }
-                var state = outcome.State;
-
-                //Doesn't work on free tier
-                if (String.IsNullOrEmpty(outcome.NotificationId))
-                {
-                    state = NotificationOutcomeState.Completed;
-                }
-                else
-                {
-                    //TODO move this to a background task
-                    var feedbackUri = string.Empty;
-                    var retryCount = 0;
-                    while (retryCount++ < 6)
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(10));
-                        var result = await hubClient.GetNotificationOutcomeDetailsAsync(outcome.NotificationId);
-                        if (result.State != NotificationOutcomeState.Enqueued && result.State != NotificationOutcomeState.Processing)
-                        {
-                            feedbackUri = result.PnsErrorDetailsUri;
-                            state = result.State;
-                            break;
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(feedbackUri))
-                    {
-                        //Console.WriteLine("feedbackBlobUri: {0}", feedbackUri); var feedbackFromBlob = ReadFeedbackFromBlob(new Uri(feedbackUri)); Console.WriteLine("Feedback from blob: {0}", feedbackFromBlob);
-                    }
-                }
-
-                record.Status = PushNotificationStatus.Queued;
-                if (state == NotificationOutcomeState.Completed)
-                {
-                    record.Status = PushNotificationStatus.Sent;
-                }
-                else if (outcome.Failure > 0 || state == NotificationOutcomeState.NoTargetFound)
-                {
-                    record.Status = PushNotificationStatus.Error;
-                    if (state == NotificationOutcomeState.NoTargetFound) record.Error = "Target not found";
-                    else if (outcome.Results.Any()) record.Error = outcome.Results.First().Outcome;
-                    await _context.SaveChangesAsync();
-                    return ServiceResult.AsError("Failed to send");
-
-                }
-                await _context.SaveChangesAsync();
+                return await SendPushNotification(record, model.PushTokenId);
             }
             catch (Exception ex)
             {
@@ -406,7 +377,91 @@ namespace ChilliCoreTemplate.Service.Api
                 await _context.SaveChangesAsync();
                 return ServiceResult.AsError(ex.Message);
             }
+        }
+
+        private async Task<ServiceResult> SendPushNotification(PushNotification record, string pushTokenId)
+        {
+            NotificationOutcome outcome = null;
+            var hubClient = NotificationHubClient.CreateClientFromConnectionString(_config.ConnectionString, _config.HubName, enableTestSend: false);
+
+            if (record.Provider == PushNotificationProvider.Google)
+            {
+                outcome = await hubClient.SendFcmNativeNotificationAsync(record.Message, pushTokenId);
+            }
+            else
+            {
+                outcome = await hubClient.SendAppleNativeNotificationAsync(record.Message, pushTokenId);
+            }
+            var state = outcome.State;
+
+            //Doesn't work on free tier
+            if (String.IsNullOrEmpty(outcome.NotificationId))
+            {
+                state = NotificationOutcomeState.Completed;
+            }
+            else
+            {
+                //TODO move this to a background task
+                var feedbackUri = string.Empty;
+                var retryCount = 0;
+                while (retryCount++ < 6)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    var result = await hubClient.GetNotificationOutcomeDetailsAsync(outcome.NotificationId);
+                    if (result.State != NotificationOutcomeState.Enqueued && result.State != NotificationOutcomeState.Processing)
+                    {
+                        feedbackUri = result.PnsErrorDetailsUri;
+                        state = result.State;
+                        break;
+                    }
+                }
+                if (!string.IsNullOrEmpty(feedbackUri))
+                {
+                    //Console.WriteLine("feedbackBlobUri: {0}", feedbackUri); var feedbackFromBlob = ReadFeedbackFromBlob(new Uri(feedbackUri)); Console.WriteLine("Feedback from blob: {0}", feedbackFromBlob);
+                }
+            }
+
+            record.Status = PushNotificationStatus.Queued;
+            if (state == NotificationOutcomeState.Completed)
+            {
+                record.Status = PushNotificationStatus.Sent;
+            }
+            else if (outcome.Failure > 0 || state == NotificationOutcomeState.NoTargetFound)
+            {
+                record.Status = PushNotificationStatus.Error;
+                if (state == NotificationOutcomeState.NoTargetFound) record.Error = "Target not found";
+                else if (outcome.Results.Any()) record.Error = outcome.Results.First().Outcome;
+                await _context.SaveChangesAsync();
+                return ServiceResult.AsError("Failed to send");
+
+            }
+            await _context.SaveChangesAsync();
             return ServiceResult.AsSuccess();
+        }
+
+        public async override Task<ServiceResult> QueuePushNotification(SendNotificationModel model)
+        {
+            var record = PushNotification.CreateFrom(model);
+            record.Status = PushNotificationStatus.QueuedInternally;
+            var nativeMsg = CreateNativeMessage(model, record.Provider);
+            record.Message = JsonConvert.SerializeObject(nativeMsg, Formatting.None);
+            _context.PushNotifications.Add(record);
+            await _context.SaveChangesAsync();
+            return ServiceResult.AsSuccess();
+        }
+
+        public async override Task QueuePushNotificationTask(ITaskExecutionInfo executionInfo)
+        {
+            var record = await _context.PushNotifications
+                .Include(x => x.UserDevice)
+                .Where(x => x.Status == PushNotificationStatus.QueuedInternally)
+                .OrderBy(x => x.Id)
+                .FirstOrDefaultAsync();
+            if (record == null) return;
+            record.Status = PushNotificationStatus.Initialising;
+            await _context.SaveChangesAsync();
+
+            await SendPushNotification(record, record.UserDevice.PushTokenId);
         }
 
         protected override bool IsSandBox()
@@ -486,6 +541,17 @@ namespace ChilliCoreTemplate.Service.Api.FireBase
             }
             return ServiceResult.AsSuccess();
         }
+
+        public async override Task<ServiceResult> QueuePushNotification(SendNotificationModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task QueuePushNotificationTask(ITaskExecutionInfo executionInfo)
+        {
+            throw new NotImplementedException();
+        }
+
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public override async Task<ServiceResult<string>> RegisterPushTokenToSNSAsync(string pushToken, PushNotificationProvider provider)

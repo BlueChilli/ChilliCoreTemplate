@@ -214,10 +214,15 @@ namespace ChilliCoreTemplate.Web
         {
             if (buttonStyle == null) buttonStyle = Options.ButtonStyle;
 
-            var urlHelper = this.HtmlHelper.GetUrlHelper();
-            url = Mvc.Root.EmailAccount_EmailRedirect.Url(urlHelper, routeValues: new { EmailId = emailId, Url = url, utm_medium = "Email", utm_source = templateId }, protocol: "https");
+            url = UrlTrack(emailId, templateId, url);
 
             return Button(url, title, buttonStyle);
+        }
+
+        public string UrlTrack(ShortGuid emailId, string templateId, string url)
+        {
+            var urlHelper = this.HtmlHelper.GetUrlHelper();
+            return Mvc.Root.EmailAccount_EmailRedirect.Url(urlHelper, routeValues: new { EmailId = emailId, Url = url, utm_medium = "Email", utm_source = templateId }, protocol: "https");
         }
 
         public IHtmlContent ImageRow(string imageUrl, string url, string alt = null)

@@ -102,6 +102,10 @@ namespace ChilliCoreTemplate.Web
         Delete,
         [Data("Icon", "plus-square")]
         Create,
+        [Data("Icon", "upload")]
+        Upload,
+        [Data("Icon", "download")]
+        Download,
         [Data("Icon", "person-bounding-box")]
         Impersonate
     }

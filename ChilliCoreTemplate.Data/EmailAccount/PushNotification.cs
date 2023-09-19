@@ -15,6 +15,9 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public int? UserId { get; set; }
         public User User { get; set; }
 
+        public int? UserDeviceId { get; set; }
+        public UserDevice UserDevice { get; set; }
+
         public PushNotificationType Type { get; set; }
 
         public PushNotificationProvider Provider { get; set; }
@@ -46,6 +49,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
             return new PushNotification
             {
                 UserId = model.UserId,
+                UserDeviceId = model.UserDeviceId,
                 CreatedOn = DateTime.UtcNow,
                 Status = PushNotificationStatus.Initialising,
                 TrackingId = Guid.NewGuid(),

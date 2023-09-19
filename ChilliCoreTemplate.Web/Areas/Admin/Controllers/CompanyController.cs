@@ -5,10 +5,12 @@ using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
 using DataTables.AspNet.AspNetCore;
 using DataTables.AspNet.Core;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 
 namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
@@ -121,6 +123,19 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                     return Mvc.Admin.Company_List.Redirect(this);
                 })
                 .OnFailure(() => Delete(id))
+                .Call();
+        }
+
+        public ActionResult Export()
+        {
+            return this.ServiceCall(_service.CsvFileForExport)
+                .OnSuccess(m =>
+                {
+                    return new FileContentResult(m.ToByteArray(), MyMediaTypeNames.Text.Csv)
+                    {
+                        FileDownloadName = $"CompanyExport_{DateTime.UtcNow.ToTimezone().ToIsoDate()}.csv"
+                    };
+                })
                 .Call();
         }
 

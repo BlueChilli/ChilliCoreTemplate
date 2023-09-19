@@ -203,6 +203,23 @@ namespace ChilliCoreTemplate.Models
 
     }
 
+    public class CompanyExportModel
+    {
+        public string Name { get; set; }
+
+        public string LogoUrl { get; set; }
+
+        public string TPB { get; set; }
+
+        public string Address { get; set; }
+
+        public string HasCommission { get; set; }
+
+        public string UserFullName { get; set; }
+
+        public string UserEmail { get; set; }
+    }
+
     public static class TimezoneHelper
     {
         public static IEnumerable<SelectListItem> GetSelectTimezones(string selected)
