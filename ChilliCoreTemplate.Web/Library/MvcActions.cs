@@ -87,6 +87,7 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_InviteUpload = MvcAction();
         public readonly IMvcActionDefinition User_Import = MvcAction();
         public readonly IMvcActionDefinition User_ImportResult = MvcAction();
+        public readonly IMvcActionDefinition User_Export = MvcAction();
         public readonly IMvcActionDefinition User_Emails = MvcAction();
         public readonly IMvcActionDefinition User_EmailsQuery = MvcAction();
         public readonly IMvcActionDefinition User_EmailsDetail = MvcAction();

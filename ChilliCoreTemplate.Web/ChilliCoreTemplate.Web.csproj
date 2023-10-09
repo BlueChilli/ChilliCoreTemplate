@@ -34,6 +34,8 @@
     <Compile Remove="logs\**" />
     <Compile Remove="node_modules\**" />
     <Compile Remove="wwwroot\is-cache\**" />
+	<None Remove="logs\**" />
+	<Content Remove="wwwroot\is-cache\**" />
   </ItemGroup>
 
   <ItemGroup>

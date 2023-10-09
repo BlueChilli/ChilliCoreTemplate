@@ -1,2 +1,18 @@
 @model IFieldInnerTemplateModel<ReadonlyFieldTemplateOptions>
-<input type="text" readonly class="form-control-plaintext" id="@Model.Id" value="@Model.Value">
+@if (Model.Options.PreAddOn != null || Model.Options.PostAddOn != null)
+{
+    @:<div class="input-group">
+}
+@if (Model.Options.PreAddOn != null)
+{
+    @Model.Options.PreAddOn
+}
+<input type="text" readonly class="form-control form-control-readonly" id="@Model.Id" value="@Model.Value">
+@if (Model.Options.PostAddOn != null)
+{
+    @Model.Options.PostAddOn
+}
+@if (Model.Options.PreAddOn != null || Model.Options.PostAddOn != null)
+{
+    @:</div>
+}

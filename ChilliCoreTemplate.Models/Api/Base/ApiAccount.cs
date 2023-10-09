@@ -210,7 +210,7 @@ namespace ChilliCoreTemplate.Models.Api
         public virtual string FirstName { get; set; }
         public virtual string LastName { get; set; }
 
-        public virtual string FullName { get { return String.Concat(FirstName, " ", LastName).Trim(); } }
+        public virtual string FullName { get; set; }
 
         public virtual string Email { get; set; }
 

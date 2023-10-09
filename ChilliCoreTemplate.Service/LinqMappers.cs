@@ -85,6 +85,18 @@ namespace ChilliCoreTemplate.Service
             {
                 MasterCompanyId = x.Company.MasterCompanyId
             });
+            LinqMapper.CreateMap<UserRole, UserExportModel>(x => new UserExportModel
+            {
+                Id = x.UserId,
+                MasterCompany = x.Company.MasterCompany.Name,
+                Company = x.Company.Name,
+                Email = x.User.Email,
+                FirstName = x.User.FirstName,
+                LastName = x.User.LastName,
+                LastLoginOn = x.User.LastLoginDate,
+                Role = x.Role.ToString(),
+                Status = x.Status.HasValue ? x.Status.Value.ToString() : x.User.Status.ToString()
+            });
 
             LinqMapper.CreateMap<User, AccountViewModel>();
             LinqMapper.CreateMap<User, UserBasicModel>(x => new UserBasicModel { Name = x.FullName });

@@ -2,7 +2,7 @@
 @model CompanyListModel
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions { Description = "This is a page description" }))
 {
-    <div class="float-right">
+    <div class="ms-auto">
         <button mvc-action="@Mvc.Admin.Company_Edit" style="Primary" icon="Create" icon-placement="Left">Create</button>
         <button mvc-action="@Mvc.Admin.Company_Export" icon="Download" icon-placement="Left">Export</button>
     </div>

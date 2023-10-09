@@ -159,6 +159,36 @@ namespace ChilliCoreTemplate.Service.Admin
                 .ToPagedList(paging);
         }
 
+        public ServiceResult<string> Users_Export(UsersExportModel model)
+        {
+            var query = Context.UserRoles.AsQueryable();
+
+            if (model.Roles.Any())
+            {
+                query = query.Where(x => model.Roles.Contains(x.Role));
+            }
+
+            var records = query
+                .OrderBy(x => x.Company.MasterCompany.Name)
+                .ThenBy(x => x.Company.Name)
+                .Materialize<UserRole, UserExportModel>()
+                .ToList();
+
+            for (var i = records.Count - 1; i >= 0; i--)
+            {
+                var record = records[i];
+                var matching = records.Where(x => x.Id == record.Id && x != record).ToList();
+                foreach (var match in matching)
+                {
+                    record.Role = new List<string> { match.Role }.Union(record.Role.Split(',')).ToDelimitedString();
+                    records.Remove(match);
+                    i--;
+                }
+            }
+
+            return ServiceResult<string>.AsSuccess(records.ToCsvFile());
+        }
+
         public StatisticsModel GetUsersStatistics()
         {
             var model = new StatisticsModel { StatisticsRow1 = new List<StatisticModel>(), StatisticsRow2 = new List<StatisticModel>() };

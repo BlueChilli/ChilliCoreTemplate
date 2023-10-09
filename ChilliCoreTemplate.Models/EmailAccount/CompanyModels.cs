@@ -209,8 +209,6 @@ namespace ChilliCoreTemplate.Models
 
         public string LogoUrl { get; set; }
 
-        public string TPB { get; set; }
-
         public string Address { get; set; }
 
         public string HasCommission { get; set; }

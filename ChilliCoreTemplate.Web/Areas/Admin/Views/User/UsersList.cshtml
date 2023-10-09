@@ -1,9 +1,9 @@
 @model UserListModel
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions()))
 {
-    <div class="float-right">
-        <a class="btn btn-primary btn-sm" mvc-action="@Mvc.Admin.User_Invite"><span class="pe-2"><i class="bi bi-plus-square-dotted"></i> </span><span>Invite</span></a>
-        @*    <a class="btn btn-neutral btn-sm" mvc-action="@Mvc.Admin.User_Import"><span class="pe-2"><i class="bi bi-plus-square-dotted"></i> </span><span>Import</span></a>*@
+    <div class="ms-auto">
+        <button style="Primary" mvc-action="Mvc.Admin.User_Invite" icon="Create" icon-placement="Left">Invite</button>
+        <button style="Neutral" mvc-modal="Mvc.Admin.User_Export" icon="Download" icon-placement="Left">Export</button>
     </div>
 }
 <page>
@@ -55,7 +55,8 @@
 <form id="impersonate" target="_self" method="post" action="@Mvc.Admin.User_Impersonate.Url(this.Url)">
     <input type="hidden" name="id" id="impersonate-id" value="" />
 </form>
-@section Scripts {
+@section Scripts 
+{
     <script>
         var table;
         $(function () {
@@ -214,4 +215,8 @@
 
         });
     </script>
+}
+@section modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_Export, Title = "Export users", Size = ModalSize.Medium })
 }

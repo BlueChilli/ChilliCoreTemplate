@@ -110,9 +110,9 @@ div.dataTables_wrapper div.dataTables_paginate {
     margin-right: 0.7rem;
 }
 
-.checkbox-lg .form-check-label {
-    padding-top: 13px;
-}
+//.checkbox-lg .form-check-label {
+//    padding-top: 13px;
+//}
 
 .checkbox-xl .form-check-input {
     top: 1.2rem;
@@ -133,6 +133,14 @@ div.dataTables_wrapper div.dataTables_paginate {
 .form-select {
     width: auto;
     max-width: 100%;
+}
+
+.col-form-label small {
+    font-weight: 200;
+}
+
+.form-control.form-control-readonly {
+    background-color: $gray-100;
 }
 
 //buttons

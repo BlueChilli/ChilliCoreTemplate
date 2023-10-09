@@ -100,7 +100,7 @@ namespace ChilliCoreTemplate.Web
         Edit,
         [Data("Icon", "trash")]
         Delete,
-        [Data("Icon", "plus-square")]
+        [Data("Icon", "plus-square-dotted")]
         Create,
         [Data("Icon", "upload")]
         Upload,

@@ -219,6 +219,31 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .Call();
         }
 
+        public virtual ActionResult Export()
+        {
+            var model = new UsersExportModel
+            {
+                RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription())
+            };
+
+            return PartialView("UsersExport", model);
+        }
+
+        [HttpPost, ActionName("Export")]
+        public virtual ActionResult ExportPost(UsersExportModel model)
+        {
+            return this.ServiceCall(() => _service.Users_Export(model))
+                .OnSuccess(m =>
+                {
+                    return new FileContentResult(m.ToByteArray(), MyMediaTypeNames.Text.Csv)
+                    {
+                        FileDownloadName = $"UserExport_{DateTime.UtcNow.ToTimezone().ToIsoDate()}.csv"
+                    };
+                })
+                .OnFailure(m => { return Export(); })
+                .Call();
+        }
+
         #region Activity
 
         public virtual ActionResult Activity()

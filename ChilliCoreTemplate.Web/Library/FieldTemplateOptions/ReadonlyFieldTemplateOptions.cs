@@ -1,4 +1,5 @@
 using ChilliSource.Cloud.Web.MVC;
+using Microsoft.AspNetCore.Html;
 using System;
 
 namespace ChilliCoreTemplate.Web
@@ -7,6 +8,10 @@ namespace ChilliCoreTemplate.Web
     {
         public ReadonlyFieldTemplateOptions() : base() { }
         public ReadonlyFieldTemplateOptions(FieldTemplateOptionsBase other) : base(other) { }
+
+        public IHtmlContent PreAddOn { get; set; }
+
+        public IHtmlContent PostAddOn { get; set; }
 
         public override string GetViewPath()
         {

@@ -57,4 +57,31 @@ namespace ChilliCoreTemplate.Models.Admin
         public List<UserRoleModel> UserRoles { get; set; }
         public string LastLoginOn { get; set; }
     }
+
+    public class UsersExportModel
+    {
+        public List<Role> Roles { get; set; } = new List<Role>();
+        public SelectList RoleList { get; set; }
+    }
+
+    public class UserExportModel
+    {
+        public int Id { get; set; }
+
+        public string Company { get; set; }
+
+        public string MasterCompany { get; set; }
+
+        public string Email { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Role { get; set; }
+
+        public string Status { get; set; }
+
+        public DateTime? LastLoginOn { get; set; }
+    }
 }

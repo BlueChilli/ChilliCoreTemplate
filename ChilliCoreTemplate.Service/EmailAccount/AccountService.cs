@@ -662,7 +662,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 Mixpanel.SendAccountToMixpanel(user, "Account activated");
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
 
-                if (!onBehalfOf && User.Identity.IsAuthenticated)
+                if (onBehalfOf || !User.Identity.IsAuthenticated)
+                {
+                    var sessions = Context.UserSessions.Where(x => x.UserId == user.Id).ToList();
+                    foreach (var session in sessions) _session.ClearSessionCache(session.SessionId.ToString());
+                }
+                else
                 {
                     _session.ClearSessionCache(User.Session()?.Id);
                 }

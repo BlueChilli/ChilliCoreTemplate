@@ -89,7 +89,8 @@ namespace ChilliCoreTemplate.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                model.OAuthUrls = OAuthUrls();
+                return View(model);
             }
 
             var loginResult = _accountService.Login(model, this.LoginWithPrincipal);

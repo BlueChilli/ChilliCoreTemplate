@@ -132,7 +132,7 @@ namespace ChilliCoreTemplate.Service.Api
             }
         }
 
-        internal async Task SendToAccountIds(List<int> accountIds, AccountService accountSvc, string message, Dictionary<string, string> data = null)
+        internal async Task BulkQueuePushNotification(List<int> accountIds, AccountService accountSvc, string message, Dictionary<string, string> data = null)
         {
             var devices = accountSvc.UserDevice_List(accountIds);
 
@@ -141,14 +141,14 @@ namespace ChilliCoreTemplate.Service.Api
                 var model = new SendNotificationModel
                 {
                     UserId = device.UserId,
-                    PushTokenId = device.TokenId,
+                    UserDeviceId = device.UserDeviceId,
                     Provider = device.Provider,
                     Type = PushNotificationType.Test,
                     Title = null,
                     Message = message,
                     Data = data
                 };
-                await SendPushNotification(model);
+                await QueuePushNotification(model);
             }
         }
     }

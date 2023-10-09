@@ -70,6 +70,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
     {
         public int UserId { get; set; }
 
+        public int UserDeviceId { get; set; }
+
         public string TokenId { get; set; }
 
         public PushNotificationProvider Provider { get; set; }
