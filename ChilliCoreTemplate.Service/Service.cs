@@ -44,7 +44,7 @@ namespace ChilliCoreTemplate.Service
 
         protected bool IsCompanyAdmin { get { return User.IsInRole(AccountCommon.CompanyAdmin); } }
 
-        internal void SetUser(IPrincipal user)
+        internal virtual void SetUser(IPrincipal user)
         {
             User = user;
         }

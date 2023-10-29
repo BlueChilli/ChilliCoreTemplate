@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 {
@@ -252,16 +253,23 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
                 .Call();
         }
 
-        [HttpPost]
-        public virtual ActionResult InviteResend(int id)
+        public ActionResult InviteResend(int id)
         {
+            return this.ServiceCall(() => _companyService.Company_Admin_Get(User.UserData().CompanyId.Value, id))
+                .Call();
+        }
+
+        [HttpPost, ActionName("InviteResend")]
+        public async Task<ActionResult> InviteResendPost(int id)
+        {
+            var referrer = await Mvc.Company.User_Invite.IsRefererAsync(HttpContext) ? Mvc.Company.User_Invite : Mvc.Company.User_List;
             return this.ServiceCall(() => _accountService.Reinvite(id))
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success($"{m.FirstName} has been successfully re-invited.");
-                    return Mvc.Company.User_Invite.Redirect(this);
+                    return referrer.Redirect(this);
                 })
-                .OnFailure(() => Invite())
+                .OnFailure(() => InviteResend(id))
                 .Call();
         }
 

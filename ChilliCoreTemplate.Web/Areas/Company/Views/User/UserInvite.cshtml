@@ -62,7 +62,7 @@
                                 }
                             </td>
                             <td>
-                                @Html.LinkPost(Mvc.Company.User_InviteResend, "Resend", new { id = invite.Id }, linkClasses: "m-r-sm")
+                                <a mvc-modal="Mvc.Company.User_InviteResend" asp-route-id="@invite.Id">Resend</a>
                             </td>
                         </tr>
                     }
@@ -78,7 +78,8 @@
         });
     </script>
 }
-    @section modal
-    {
+@section modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_InviteResend, Title = "Resend invite", Size = ModalSize.Medium })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_InviteUpload, Title = "Upload invitations" })
 }

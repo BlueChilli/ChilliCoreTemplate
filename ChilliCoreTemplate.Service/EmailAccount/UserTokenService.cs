@@ -17,6 +17,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         /// </summary>
         internal Guid Token_Add(User user, UserTokenType type, TimeSpan? expiry = null)
         {
+            return Token_Add(user, type, expiry, out _);
+        }
+
+        internal Guid Token_Add(User user, UserTokenType type, TimeSpan? expiry, out bool wasExpired)
+        {
             if (user.Tokens == null) user.Tokens = new List<UserToken>();
 
             var token = user.Tokens.FirstOrDefault(t => t.Type == type);
@@ -28,7 +33,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 };
             }
 
-            if (token.Expiry == null || token.Expiry < DateTime.UtcNow) token.Token = Guid.NewGuid();
+            wasExpired = false;
+            if (token.Expiry == null || token.Expiry < DateTime.UtcNow.AddMinutes(2))
+            {
+                token.Token = Guid.NewGuid();
+                wasExpired = true;
+            }
             token.Expiry = DateTime.UtcNow.AddTicks(expiry.GetValueOrDefault(new TimeSpan()).Ticks == 0 ? new TimeSpan(1, 0, 0).Ticks : expiry.Value.Ticks);
 
             if (token.Id == 0) user.Tokens.Add(token);
@@ -45,7 +55,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var token = user.Tokens.FirstOrDefault(t => t.Token == tokenKey && t.Expiry > DateTime.UtcNow);
                 if (token != null)
                 {
-                    token.Expiry = DateTime.UtcNow.AddMinutes(5);   //Expire the token (if saved) in a few minutes to not cause errors when users double click activation links
+                    token.Expiry = DateTime.UtcNow.AddMinutes(2);   //Expire the token (if saved) in a few minutes to not cause errors when users double click activation links
                     Context.SaveChanges();
                     return ServiceResult<User>.AsSuccess(user);
                 }

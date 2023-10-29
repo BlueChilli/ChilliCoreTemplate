@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,32 +22,68 @@ namespace ChilliCoreTemplate.Models
 
         public void PatchTo(object record)
         {
-            foreach (var propertyName in SetProperties())
-            {
-                var fromType = this.GetType().GetProperty(propertyName).PropertyType;
+            PatchTo(this, record, SetProperties());
+        }
 
-                var toProperty = record.GetType().GetProperty(propertyName);
+        private static void PatchTo(object from, object to, HashSet<string> setProperties, bool isChild = false)
+        {
+            foreach (var propertyName in setProperties)
+            {
+                var fromProperty = from.GetType().GetProperty(propertyName);
+                var fromType = fromProperty.PropertyType;
+
+                var toPropertyName = propertyName;
+
+                var command = fromProperty.GetCustomAttribute<PatchAttribute>();
+                if (command != null && !isChild)
+                {
+                    switch (command.Target)
+                    {
+                        case PatchTarget.Root:
+                            Copy(fromProperty.GetValue(from), to);
+                            continue;
+                        case PatchTarget.Current:
+                            toPropertyName = command.Value;
+                            break;
+                        case PatchTarget.Child:
+                            var targetProperty = to.GetType().GetProperty(command.Value);
+                            if (targetProperty != null)
+                            {
+                                var target = GetOrCreateValue(targetProperty, to);
+                                PatchTo(from, target, new HashSet<string> { propertyName }, isChild: true);
+                            }
+                            continue;
+                    }
+                }
+
+                var toProperty = to.GetType().GetProperty(toPropertyName);
                 if (toProperty == null) continue;
 
                 var toType = toProperty.PropertyType;
                 var objectType = typeof(Object);
 
-                var fromValue = this.GetType().GetProperty(propertyName).GetValue(this);
-                if (fromType != toType && fromType.BaseType == objectType && toType.BaseType == objectType)
+                var fromValue = fromProperty.GetValue(from);
+                if (fromValue != null && fromType != toType && fromType.BaseType == objectType && toType.BaseType == objectType)
                 {
-                    var toValue = toProperty.GetValue(record);
-                    if (toValue == null)
-                    {
-                        toValue = Activator.CreateInstance(toType);
-                        toProperty.SetValue(record, toValue);
-                    }
+                    var toValue = GetOrCreateValue(toProperty, to);
                     Copy(fromValue, toValue);
                 }
                 else
                 {
-                    toProperty.SetValue(record, fromValue);
+                    toProperty.SetValue(to, fromValue);
                 }
             }
+        }
+
+        private static object GetOrCreateValue(PropertyInfo property, object model)
+        {
+            var result = property.GetValue(model);
+            if (result == null)
+            {
+                result = Activator.CreateInstance(property.PropertyType);
+                property.SetValue(model, result);
+            }
+            return result;
         }
 
         private static void Copy(object from, object to)
@@ -79,6 +116,27 @@ namespace ChilliCoreTemplate.Models
         {
             return instance.SetProperties().Contains(property);
         }
+    }
+
+    [AttributeUsage(validOn: AttributeTargets.Property)]
+    public class PatchAttribute : Attribute
+    {
+        private PatchTarget _target;
+        public PatchTarget Target => _target;
+
+        public string Value { get; set; }
+
+        public PatchAttribute(PatchTarget target)
+        {
+            _target = target;
+        }
+    }
+
+    public enum PatchTarget
+    {
+        Root,
+        Current,
+        Child
     }
 
 }

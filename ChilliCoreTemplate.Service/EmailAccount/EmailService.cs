@@ -30,6 +30,22 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
     public partial class AccountService
     {
+        public void QueueUserMail(RazorTemplate template, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, EmailData_Address replyTo = null, EmailData_Address from = null, List<EmailData_Address> bcc = null)
+        {
+            if (from == null) from = new EmailData_Address(_config.EmailTemplate.Email, $"{User.UserData().Name} via {_config.ProjectDisplayName}");
+            if (replyTo == null) replyTo = new EmailData_Address(User.UserData().Email);
+
+            QueueMail(template, email, model, attachments, replyTo, from, bcc);
+        }
+
+        public void QueueUserMail(RazorTemplate template, string userName, string userEmail, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, List<EmailData_Address> bcc = null)
+        {
+            var from = new EmailData_Address(_config.EmailTemplate.Email, $"{userName} via {_config.ProjectDisplayName}");
+            var replyTo = new EmailData_Address(userEmail);
+
+            QueueMail(template, email, model, attachments, replyTo, from, bcc);
+        }
+
         public void QueueMail(RazorTemplate template, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, EmailData_Address replyTo = null, EmailData_Address from = null, List<EmailData_Address> bcc = null)
         {
             EmailServiceHelpers.SetConfigProperties(model, _config, email);

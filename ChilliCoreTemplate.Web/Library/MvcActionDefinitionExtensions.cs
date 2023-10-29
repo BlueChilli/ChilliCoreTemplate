@@ -132,6 +132,11 @@ namespace ChilliCoreTemplate.Web
             return htmlHelper.ModalOpen(actionResult, new MenuUrlValues { RouteValues = routeValues }, data);
         }
 
+        public static IHtmlContent OffCanvasOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, object routeValues = null, string data = "null")
+        {
+            return htmlHelper.OffCanvasOpen(actionResult, new MenuUrlValues { RouteValues = routeValues }, data);
+        }
+
         public static async Task<IHtmlContent> LinkAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id, string text, object routeValues = null, object htmlAttributes = null)
         {
             return await htmlHelper.LinkAsync(actionResult, new MenuUrlValues(id) { RouteValues = routeValues }, new Template_Button { Text = text, HtmlAttributes = htmlAttributes });

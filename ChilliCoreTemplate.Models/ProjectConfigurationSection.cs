@@ -521,6 +521,10 @@ namespace ChilliCoreTemplate.Models
         /// </summary>
         public bool LogApiCalls => _section.GetValue<bool?>("LogApiCalls") ?? false;
 
+        /// <summary>
+        /// Filter out status codes not interested in for saving space / logging burden (eg 200)
+        /// </summary>
+        public int[] LogApiIgnore => _section.GetSection("LogApiIgnore").Get<int[]>() ?? Array.Empty<int>();
     }
 
     public class EmailTemplateSection

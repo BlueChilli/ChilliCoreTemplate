@@ -219,9 +219,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [JsonIgnore]
         public string Email { get { return Id.UrlSafeDecode<string>(); } set { Id = value.UrlSafeEncode(); } }
 
-        public TokenModel ToTokenModel()
+        public TokenModel ToTokenModel(bool isApi = false)
         {
-            return new TokenModel { Id = Id, Token = Token };
+            return new TokenModel { Id = Id, Token = Token, IsApi = isApi };
         }
     }
 
@@ -232,6 +232,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [Required]
         public string Token { get; set; }
+
+        public bool IsApi { get; set; }
     }
 
     public class ResetPasswordViewModel : TokenModel

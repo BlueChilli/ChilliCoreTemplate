@@ -68,12 +68,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         private ServiceResult Password_ResetRequest(User account)
         {
-            var request = Password_SetRequestToken(account);
+            var request = Password_SetRequestToken(account, null, out bool wasExpired);
 
             if (request.Success)
             {
                 var emailModel = new ResetPasswordRequestModel { Email = account.Email, Token = request.Result };
-                QueueMail_Distinct(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel }, new TimeSpan(0, 15, 0));
+
+                if (wasExpired)
+                    QueueMail(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel });
+                else
+                    QueueMail_Distinct(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel }, new TimeSpan(0, 15, 0));
             }
 
             return ServiceResult.AsSuccess();
@@ -82,21 +86,22 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public ServiceResult<Guid> Password_SetRequestToken(int userId, TimeSpan? expiryTime = null)
         {
             var account = GetAccount(userId);
-            var result = Password_SetRequestToken(account, expiryTime);
+            var result = Password_SetRequestToken(account, expiryTime, out _);
 
             return result;
         }
 
-        private ServiceResult<Guid> Password_SetRequestToken(User account, TimeSpan? expiryTime = null)
+        private ServiceResult<Guid> Password_SetRequestToken(User account, TimeSpan? expiryTime, out bool wasExpired)
         {
             if (account == null)
             {
+                wasExpired = false;
                 return ServiceResult<Guid>.AsError("Email address not registered.");
             }
 
             if (expiryTime == null) expiryTime = TimeSpan.FromMinutes(60);
 
-            var result = Token_Add(account, UserTokenType.Password, expiryTime);
+            var result = Token_Add(account, UserTokenType.Password, expiryTime, out wasExpired);
             Context.SaveChanges();
 
             return ServiceResult<Guid>.AsSuccess(result);

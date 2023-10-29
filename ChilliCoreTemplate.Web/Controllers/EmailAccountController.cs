@@ -343,38 +343,37 @@ namespace ChilliCoreTemplate.Web.Controllers
             return View(model);
         }
 
-        public virtual ActionResult ResetPassword(string token, string email)
+        public virtual ActionResult ResetPassword(ResetPasswordViewModel model)
         {
-            ResetPasswordViewModel viewModel = new ResetPasswordViewModel { Token = token, Email = email };
-
-            return View(viewModel);
+            ModelState.Clear();
+            return View(model);
         }
 
-        [HttpPost]
-        public virtual ActionResult ResetPassword(ResetPasswordViewModel viewModel)
+        [HttpPost, ActionName("ResetPassword")]
+        public virtual ActionResult ResetPasswordPost(ResetPasswordViewModel model)
         {
-            viewModel.Success = false;
+            model.Success = false;
 
             if (!ModelState.IsValid)
             {
-                return View(viewModel);
+                return View(model);
             }
 
-            var result = _accountService.Password_Reset(viewModel);
+            var result = _accountService.Password_Reset(model);
 
             if (!result.Success)
             {
                 ModelState.AddModelError("Update failed", result.Error);
 
-                return View(viewModel);
+                return View(model);
             }
 
-            return Mvc.Root.EmailAccount_ResetPasswordSuccess.Redirect(this, routeValues: new { Email = viewModel.Email });
+            return Mvc.Root.EmailAccount_ResetPasswordSuccess.Redirect(this, routeValues: new { Email = model.Email, IsApi = model.IsApi });
         }
 
-        public virtual ActionResult ResetPasswordSuccess(string email)
+        public virtual ActionResult ResetPasswordSuccess(ResetPasswordViewModel model)
         {
-            return View("ResetPasswordSuccess", model: email);
+            return View("ResetPasswordSuccess", model);
         }
 
         [CustomAuthorize]

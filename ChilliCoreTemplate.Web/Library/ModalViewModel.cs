@@ -47,4 +47,17 @@ namespace ChilliCoreTemplate.Web
         [Data("Css", "xl")]
         ExtraLarge
     }
+
+    public class OffCanvasViewModel
+    {
+        /// <summary>
+        /// Menu item.
+        /// </summary>
+        public IMvcActionDefinition Menu { get; set; }
+
+        /// <summary>
+        /// Change the size of the offcanvas from default to either offcanvas-lg or offcanvas-sm
+        /// </summary>
+        public ModalSize Size { get; set; } = ModalSize.Medium;
+    }
 }

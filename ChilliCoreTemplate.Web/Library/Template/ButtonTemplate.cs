@@ -19,6 +19,8 @@ namespace ChilliCoreTemplate.Web
 
         public static Template_Button ButtonModalDismissOptions => new Template_Button { Text = "Cancel", IsLaddaButton = false, HtmlAttributes = new { data_bs_dismiss = "modal" } };
 
+        public static Template_Button ButtonOffCanvasDismissOptions => new Template_Button { Text = "Cancel", IsLaddaButton = false, HtmlAttributes = new { data_bs_dismiss = "offcanvas" } };
+
         public static Task<IHtmlContent> ButtonSubmitAsync(this IHtmlHelper htmlHelper, string text)
         {
             return htmlHelper.ButtonSubmitAsync(new Template_Button { Text = text });

@@ -218,6 +218,23 @@ table > caption {
     color: $navbar-light-active-color;
 }
 
+//offcanvas sizing
+.offcanvas-size-xl {
+    width: min(95vw, 900px);
+}
+
+.offcanvas-size-lg {
+    width: min(95vw, 700px);
+}
+
+.offcanvas-size-md {
+    width: min(95vw, 500px);
+}
+
+.offcanvas-size-sm {
+    width: min(95vw, 400px);
+}
+
 /* Previous core which may still be needed. Also lots from inspinia patch which probably needs to be in here
     
 //windows and mac make fonts same

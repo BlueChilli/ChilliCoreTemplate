@@ -69,6 +69,12 @@ namespace ChilliCoreTemplate.Web
             return MvcHtmlStringCompatibility.Create(command);
         }
 
+        public static IHtmlContent OffCanvasOpen(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
+        {
+            var command = htmlHelper.OffCanvasOpenCommand(actionResult, urlValues, data);
+            return MvcHtmlStringCompatibility.Create(command);
+        }
+
         private static string GetUrl(IUrlHelper urlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues)
         {
             urlValues = urlValues ?? new MenuUrlValues();
@@ -118,6 +124,18 @@ namespace ChilliCoreTemplate.Web
             options.Url = htmlHelper.ModalOpenCommand(actionResult, urlValues, data);
 
             return htmlHelper.LinkAsync(options);
+        }
+
+        public static string OffCanvasOpenCommand(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
+        {
+            return OffCanvasOpenCommand(htmlHelper.GetUrlHelper(), actionResult, urlValues, data);
+        }
+
+        public static string OffCanvasOpenCommand(this IUrlHelper urlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
+        {
+            var url = GetUrl(urlHelper, actionResult, urlValues);
+            var id = actionResult.GetModalId();
+            return $"$('#{id}').ajaxLoad({{url: '{url}', data: {data}}}).done(function() {{ $('#{id}').offcanvas('show'); }});";
         }
     }
 }

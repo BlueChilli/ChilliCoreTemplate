@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.Api;
@@ -79,11 +80,19 @@ namespace ChilliCoreTemplate.Web.Api
 
                 // Update the API log entry with response info
                 apiLogEntry.ResponseStatusCode = wasException ? 500 : response.StatusCode;
-                apiLogEntry.ResponseTimestamp = DateTime.UtcNow;
-                apiLogEntry.ResponseContentType = response.ContentType;
-                apiLogEntry.ResponseHeaders = SerializeHeaders(response.Headers);
 
-                taskQueue.QueueBackgroundWorkItem((ct) => SaveEntry(apiLogEntry));
+                using (var scope = ScopeContextFactory.Instance.CreateScope())
+                {
+                    var config = scope.ServiceProvider.GetRequiredService<ProjectSettings>();
+                    if (!config.ApiSettings.LogApiIgnore.Contains(apiLogEntry.ResponseStatusCode.GetValueOrDefault()))
+                    {
+                        apiLogEntry.ResponseTimestamp = DateTime.UtcNow;
+                        apiLogEntry.ResponseContentType = response.ContentType;
+                        apiLogEntry.ResponseHeaders = SerializeHeaders(response.Headers);
+
+                        taskQueue.QueueBackgroundWorkItem((ct) => SaveEntry(apiLogEntry));
+                    }
+                }
             }
         }
 
