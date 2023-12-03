@@ -109,11 +109,11 @@ namespace ChilliCoreTemplate.Web
             return ModelOpenCommand(htmlHelper.GetUrlHelper(), actionResult, urlValues, data);
         }
 
-        public static string ModelOpenCommand(this IUrlHelper urlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
+        public static string ModelOpenCommand(this IUrlHelper urlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null", string type = "modal")
         {
             var url = GetUrl(urlHelper, actionResult, urlValues);
             var id = actionResult.GetModalId();
-            return $"$('#{id}_content').ajaxLoad({{url: '{url}', data: {data}}}).done(function() {{ $('#{id}').modal('show'); }});";
+            return $"$('#{id}_content').ajaxLoad({{url: '{url}', data: {data}}}).done(function() {{ $('#{id}').{type}('show'); }});";
         }
 
         public static Task<IHtmlContent> ModalOpenJSAsync(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, Template_Button options = null, MenuUrlValues urlValues = null, string data = "null")
@@ -128,14 +128,7 @@ namespace ChilliCoreTemplate.Web
 
         public static string OffCanvasOpenCommand(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
         {
-            return OffCanvasOpenCommand(htmlHelper.GetUrlHelper(), actionResult, urlValues, data);
-        }
-
-        public static string OffCanvasOpenCommand(this IUrlHelper urlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")
-        {
-            var url = GetUrl(urlHelper, actionResult, urlValues);
-            var id = actionResult.GetModalId();
-            return $"$('#{id}').ajaxLoad({{url: '{url}', data: {data}}}).done(function() {{ $('#{id}').offcanvas('show'); }});";
+            return ModelOpenCommand(htmlHelper.GetUrlHelper(), actionResult, urlValues, data, "offcanvas");
         }
     }
 }

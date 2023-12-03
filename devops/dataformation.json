@@ -6,21 +6,21 @@
       "Develop": {
         "Suffix": "dev",
         "DBAllocatedStorage": "20",
-        "DBInstanceClass": "db.t2.small",
+        "DBInstanceClass": "db.t3.small",
         "BackupRetentionPeriod": 0,
         "SGInstanceToSql": "SGInstanceToSqldev"
       },
       "Staging": {
         "Suffix": "stg",
         "DBAllocatedStorage": "20",
-        "DBInstanceClass": "db.t2.small",
+        "DBInstanceClass": "db.t3.small",
         "BackupRetentionPeriod": 0,
         "SGInstanceToSql": "SGInstanceToSqlstg"
       },
       "Production": {
         "Suffix": "prod",
         "DBAllocatedStorage": "20",
-        "DBInstanceClass": "db.t2.small",
+        "DBInstanceClass": "db.t3.small",
         "BackupRetentionPeriod": 7,
         "SGInstanceToSql": "SGInstanceToSqlprod"
       }
@@ -162,7 +162,7 @@
           "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "DBInstanceClass"]
         },
         "Engine": "sqlserver-ex",
-        "EngineVersion": "14.00.3356.20.v1",
+        "EngineVersion": "14.00.3465.1.v1",
         "MasterUsername": "sql",
         "MasterUserPassword": {
           "Fn::Join": [

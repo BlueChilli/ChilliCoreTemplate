@@ -32,7 +32,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 .ForMember(dest => dest.FinishedOn, opt => opt.MapFrom((src, dest, destMember, ctx) => src.FinishedOn == null ? null : src.FinishedOn.Value.ToTimezone((string)ctx.Items["Timezone"]).ToNullable<DateTime>()));
         }
 
-        public static List<BulkImportViewModel> BulkImport_List(DataContext context, BulkImportType type, int? companyId = null, string timezone = Constants.DefaultTimezone)
+        public static List<BulkImportViewModel> List(DataContext context, BulkImportType type, int? companyId = null, string timezone = Constants.DefaultTimezone)
         {
             var oneWeekAgo = DateTime.UtcNow.AddDays(-7);
 

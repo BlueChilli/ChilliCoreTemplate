@@ -13,6 +13,7 @@ namespace ChilliCoreTemplate.Service
 
         public static string GetError(this RestResponse response)
         {
+            if (response.StatusCode == HttpStatusCode.GatewayTimeout) return "Gateway timeout. External service failed to return a response. Please try again later.";
             if (!String.IsNullOrEmpty(response.ErrorMessage)) return response.ErrorMessage;
             return response.StatusDescription;
         }

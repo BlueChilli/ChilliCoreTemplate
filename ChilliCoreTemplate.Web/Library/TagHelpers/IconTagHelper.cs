@@ -10,18 +10,22 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     {
         public string Type { get; set; }
 
+        public IconType? Icon { get; set; }
+
         public LabelType? Style { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "i";
             output.AddClass("bi", NullHtmlEncoder.Default);
-            output.AddClass($"bi-{Type}", NullHtmlEncoder.Default);
+
+            var type = Icon.HasValue ? Icon.Value.GetData<string>("Icon") : Type;
+
+            output.AddClass($"bi-{type}", NullHtmlEncoder.Default);
             if (Style.HasValue)
             {
                 output.AddClass($"text-{Style.Value.GetDescription()}", NullHtmlEncoder.Default);
             }
         }
     }
-
 }

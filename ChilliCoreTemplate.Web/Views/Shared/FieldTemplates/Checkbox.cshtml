@@ -5,16 +5,10 @@
 }
 @if (isAlternative)
 {
-    <input id="@Model.Id" name="@Model.Name" value="true" @Model.HtmlAttributes.ToAttributeHtmlContent()><input name="@Model.Name" type="hidden" value="false" />
-    if (Model.Options.AutoWireUpJavascript)
-    {
-        @Html.RegisterCustomSection("scripts",
-                            @<script>
-            $(function () {
-                new Switchery($('#@Model.Id')[0], { color: '#1AB394' });
-            });
-                            </script>)
-    }
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" name="@Model.Name" id="@Model.Id" value="true" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+        <label class="form-check-label" for="@Model.Id">@options.CheckBoxAttribute?.Label</label>
+    </div>
 }
 else
 {

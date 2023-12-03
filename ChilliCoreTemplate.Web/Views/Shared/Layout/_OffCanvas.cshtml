@@ -1,3 +1,4 @@
 @model OffCanvasViewModel
 <div class="offcanvas offcanvas-end offcanvas-size-@(Model.Size.GetData<string>("Css"))" tabindex="-1" id="@Model.Menu.GetModalId()">
+    <div id="@Model.Menu.GetModalId()_content"></div>
 </div>

@@ -25,6 +25,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public void QueueCompanyMail(Company company, RazorTemplate template, string to, IEmailTemplateDataModel model, List<IEmailAttachment> attachments = null, EmailData_Address from = null, EmailData_Address bcc = null)
         {
+            EmailData_Address replyTo = null;
             if (company != null)
             {
                 model.CompanyId = company.Id;
@@ -36,11 +37,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 var companyAdmin = GetCompanyAdmin(company.Id);
                 model.CompanyEmail = companyAdmin.Email;
+                //replyTo = new EmailData_Address(_config.EmailTemplate.Email, _config.ProjectDisplayName);
             }
             if (String.IsNullOrEmpty(model.CompanyName)) model.CompanyName = _config.ProjectDisplayName;
             if (String.IsNullOrEmpty(model.PublicUrl)) model.PublicUrl = _config.PublicUrl;
-            QueueMail(template, to, model, attachments, null, from, new List<EmailData_Address> { bcc });
-
+            QueueMail(template, to, model, attachments, replyTo, from, bcc == null ? null : new List<EmailData_Address> { bcc });
         }
 
         public void QueueCompanyWideMail(int companyId, RazorTemplate template, IEmailTemplateDataModel model)

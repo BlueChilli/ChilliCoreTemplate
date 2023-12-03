@@ -540,3 +540,19 @@ jQuery.fn.extend({
         toggleBody.show();
     }
 });
+
+//$('#Type').hideOrShow(); if selected value is 'MyValue1' then element '.js-myvalue1' is shown otherwise is hidden
+jQuery.fn.extend({
+    hideOrShow: function () {
+        return this.each(function () {
+            $(this).change(function () {
+                for (var i = 0; i < this.length; i++) {
+                    if (this[i].value == '') continue;
+                    var id = '.js-' + this[i].value.toLowerCase();
+                    if (this[i].selected) $(id).removeClass('hide');
+                    else $(id).addClass('hide');
+                }
+            });
+        });
+    }
+});

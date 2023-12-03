@@ -27,6 +27,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         [HtmlAttributeName(ActionAttribute)]
         public IMvcActionDefinition Action { get; set; }
 
+        public ButtonWindow Window { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             if (Action == null)
@@ -41,8 +43,17 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             route = route.AddRouteValues(RouteValues);
 
             var url = urlHelper.RouteUrl(route);
-            output.Attributes.SetAttribute("onclick", $"window.location='{url}';");
+            if (Window == ButtonWindow.Current)
+                output.Attributes.SetAttribute("onclick", $"window.location='{url}';");
+            else
+                output.Attributes.SetAttribute("onclick", $"window.open('{url}');");
         }
+    }
+
+    public enum ButtonWindow
+    {
+        Current,
+        New
     }
 
     [HtmlTargetElement("button", Attributes = ActionAttribute)]
