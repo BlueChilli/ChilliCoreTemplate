@@ -24,7 +24,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         private readonly StripeService _stripe;
 
         public CompanyService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment,
-            AccountService accountService, StripeService stripeService) : base(user, context, config, fileStorage, environment)
+            AccountService accountService, StripeService stripeService, IMapper mapper) : base(user, context, config, fileStorage, environment, mapper)
         {
             _accountService = accountService;
             _stripe = stripeService;
@@ -116,7 +116,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult<CompanyEditModel>.AsError($"Company '{model.Name}' already exists.");
 
             var isNew = record.Id == 0;
-            Mapper.Map(model, record, opts => opts.Items["IsAdmin"] = IsAdmin);
+            _mapper.Map(model, record, opts => opts.Items["IsAdmin"] = IsAdmin);
 
             if (model.LogoFile != null)
                 record.LogoPath = this._fileStorage.Save(new StorageCommand() { Folder = "Company" }.SetHttpPostedFileSource(model.LogoFile));
@@ -149,7 +149,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (hasDuplicate)
                 return ServiceResult.AsError($"Company '{model.Name}' already exists.");
 
-            Mapper.Map(model, record, opts => opts.Items["IsAdmin"] = IsAdmin);
+            _mapper.Map(model, record, opts => opts.Items["IsAdmin"] = IsAdmin);
 
             if (model.LogoFile != null)
                 record.LogoPath = this._fileStorage.Save(new StorageCommand() { Folder = "Company" }.SetHttpPostedFileSource(model.LogoFile));
@@ -327,7 +327,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
                 Context.SaveChanges();
 
-                return ServiceResult<CompanyViewModel>.AsSuccess(Mapper.Map<CompanyViewModel>(data));
+                return ServiceResult<CompanyViewModel>.AsSuccess(_mapper.Map<CompanyViewModel>(data));
             }
 
             return ServiceResult<CompanyViewModel>.AsError("Company not found");
@@ -361,7 +361,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 if (!String.IsNullOrEmpty(company.StripeId)) _stripe.Customer_Delete(company.StripeId);
 
-                return ServiceResult<CompanyViewModel>.AsSuccess(Mapper.Map<CompanyViewModel>(company));
+                return ServiceResult<CompanyViewModel>.AsSuccess(_mapper.Map<CompanyViewModel>(company));
             }
 
             return ServiceResult<CompanyViewModel>.AsError("Company not found");

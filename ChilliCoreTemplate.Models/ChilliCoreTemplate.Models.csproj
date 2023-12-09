@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;Staging;Develop</Configurations>
   </PropertyGroup>
 
@@ -16,13 +16,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0142" />
-    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0117" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0013" />
-    <PackageReference Include="FoolProof.Core" Version="1.1.35" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="HybridModelBinding" Version="0.18.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Stripe.net" Version="39.120.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0152" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0119" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0016" />
+    <PackageReference Include="FoolProof.Core" Version="1.2.1" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
+    <PackageReference Include="HybridModelBinding" Version="0.18.1-alpha.5" />
+    <PackageReference Include="Stripe.net" Version="43.5.0" />
   </ItemGroup>
 </Project>

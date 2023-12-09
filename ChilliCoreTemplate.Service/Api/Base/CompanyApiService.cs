@@ -1,3 +1,4 @@
+using AutoMapper;
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
@@ -21,8 +22,8 @@ namespace ChilliCoreTemplate.Service.Api
     {
         private AccountService _accountService;
 
-        public CompanyApiService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, AccountService accountService) 
-            : base(user, context, config, fileStorage, environment)
+        public CompanyApiService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, AccountService accountService, IMapper mapper) 
+            : base(user, context, config, fileStorage, environment, mapper)
         {
             _accountService = accountService;
         }

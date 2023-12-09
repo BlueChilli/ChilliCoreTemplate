@@ -65,6 +65,7 @@ namespace ChilliCoreTemplate.Web
             services.AddHttpContextAccessor();
             services.AddTransient<IPrincipal>(provider => provider.GetService<IHttpContextAccessor>()?.HttpContext?.User);
             services.AddScoped<BackgroundTaskPrincipal>();
+            services.AddAutoMapper(typeof(AutoMapperConfiguration));
 
             //services.Configure<CookiePolicyOptions>(options =>
             //{

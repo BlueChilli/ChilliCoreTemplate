@@ -70,7 +70,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (!accountResult.Success) return ServiceResult<AccountViewModel>.AsError(accountResult.Error);
 
-            return ServiceResult<AccountViewModel>.AsSuccess(GetSingle<AccountViewModel, User>(accountResult.Result));
+            return ServiceResult<AccountViewModel>.AsSuccess(_mapper.Map<AccountViewModel>(accountResult.Result));
         }
 
         internal ServiceResult<User> User_GetAccountByEmailToken(UserTokenModel model, bool includeDeleted = false)

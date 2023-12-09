@@ -111,8 +111,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public ServiceResult<EmailViewModel> Email_Get(int id)
         {
             var email = Context.Emails.FirstOrDefault(e => e.Id == id);
-            var model = GetSingle<EmailViewModel, Email>(email);
-            model.Data = this._fileStorage.GetContent(email.Model).ReadToByteArray().To<EmailData>();
+            var model = _mapper.Map<EmailViewModel>(email);
+            model.Data = this._fileStorage.GetContent(email.Model).DeserializeTo<EmailData>();
             model.Data.Attachments.ForEach(x => model.Attachments.Add(x.FileName, _fileStoragePath.GetPreSignedUrl(x.Path)));
 
             return ServiceResult<EmailViewModel>.AsSuccess(model);
@@ -161,7 +161,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
             }
 
-            return GetPagedList<EmailSummaryModel, Email>(queryOrdered, model.Start / model.Length + 1, model.Length);
+            return queryOrdered
+                .Materialize<Email, EmailSummaryModel>()
+                .ToPagedList(model.Start / model.Length + 1, model.Length);
         }
 
         public int Email_Count()
@@ -214,7 +216,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             email.IsClicked = false;
             Context.SaveChanges();
 
-            return ServiceResult<EmailViewModel>.AsSuccess(GetSingle<EmailViewModel, Email>(email));
+            return ServiceResult<EmailViewModel>.AsSuccess(_mapper.Map<EmailViewModel>(email));
         }
 
         public ServiceResult<EmailUnsubscribeModel> Email_GetForUnsubscribe(Guid trackingId)

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Configurations>Debug;Release;Staging;Develop</Configurations>
   </PropertyGroup>
 
@@ -10,30 +10,29 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AppleAuth.NET" Version="1.0.5" />
+    <PackageReference Include="AppleAuth.NET" Version="1.0.6" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.80" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0142" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0152" />
     <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0015" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0029" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
-    <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0042" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0013" />
-    <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
+    <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0043" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0016" />
+    <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />    
-    <PackageReference Include="DataTables.AspNet.AspNetCore" Version="2.0.2" />    
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="DataTables.AspNet.AspNetCore" Version="2.0.2" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="6.0.11" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
-    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
-    <PackageReference Include="Mjml.Net" Version="3.0.0" />
-    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="108.0.1" />
-    <PackageReference Include="Stripe.net" Version="39.120.0" />
-    <PackageReference Include="Twilio" Version="5.75.3" />
+    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
+    <PackageReference Include="Mjml.Net" Version="3.4.0" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="110.2.0" />
+    <PackageReference Include="Stripe.net" Version="43.5.0" />
+    <PackageReference Include="Twilio" Version="6.15.1" />
   </ItemGroup>
 
 

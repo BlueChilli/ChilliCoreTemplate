@@ -18,25 +18,24 @@ using ChilliSource.Cloud.Core.LinqMapper;
 using System.Security.Principal;
 using ChilliSource.Cloud.Web;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ChilliCoreTemplate.Service.Api
 {
-    public class UserApiMobileService : Service<DataContext>
+    public class UserApiMobileService : BaseApiService
     {
         AccountService _accountService;
         UserSessionService _session;        
         UserKeyHelper _userKeyHelper;
-        IFileStorage _fileStorage;
         PushNotificationConfiguration _push;
 
-        public UserApiMobileService(IPrincipal user, DataContext context, AccountService accountService, UserSessionService session, UserKeyHelper userKeyHelper, IFileStorage fileStorage, PushNotificationConfiguration push)
-            : base(user, context)
+        public UserApiMobileService(IPrincipal user, DataContext context, AccountService accountService, UserSessionService session, UserKeyHelper userKeyHelper, IFileStorage fileStorage, PushNotificationConfiguration push, IMapper mapper, IWebHostEnvironment environment, ProjectSettings config)
+            : base(user, context, config, fileStorage, environment, mapper)
         {
             _accountService = accountService;
             _accountService.IsApi = true;
             _session = session;
             _userKeyHelper = userKeyHelper;
-            _fileStorage = fileStorage;
             _push = push;
         }
 
@@ -48,7 +47,7 @@ namespace ChilliCoreTemplate.Service.Api
 
         public ServiceResult<UserAccountApiModel> Create(PhoneRegistrationApiModel model)
         {
-            var registrationModel = Mapper.Map<RegistrationViewModel>(model);
+            var registrationModel = _mapper.Map<RegistrationViewModel>(model);
             registrationModel.Roles = Role.User;
             var response = _accountService.Create(registrationModel);
             if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);

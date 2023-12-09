@@ -1,4 +1,5 @@
 
+using AutoMapper;
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
@@ -24,15 +25,17 @@ namespace ChilliCoreTemplate.Service.Api
         private readonly IWebHostEnvironment _env;
         private readonly IFileStorage _fileStorage;
         private readonly ProjectSettings _config;
+        private readonly IMapper _mapper;
         private readonly AccountService _accountService;
 
-        public WebhookService(BackgroundTaskPrincipal user, DataContext context, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config) : base(user, context)
+        public WebhookService(BackgroundTaskPrincipal user, DataContext context, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config, IMapper mapper) : base(user, context)
         {
             _accountService = accountService;
             _stripe = stripe;
             _env = env;
             _fileStorage = fileStorage;
             _config = config;
+            _mapper = mapper;
         }
 
         public ServiceResult QueueWebhook(WebhookType type, string json)

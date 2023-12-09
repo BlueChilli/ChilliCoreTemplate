@@ -1,4 +1,5 @@
-﻿using ChilliCoreTemplate.Service;
+﻿using AutoMapper;
+using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Web.Serilog;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web;
@@ -47,7 +48,6 @@ namespace ChilliCoreTemplate.Web
                 TemplateOptions.DefaultFieldTemplateOptions = () => new FieldTemplateOptions();
                 ServiceCallerOptions.ViewNamingConvention = ViewNamingConvention.ControllerPrefix;  //Allow to override this per controller
 
-                AutoMapperConfiguration.Configure();
                 LinqMappers.Configure(host.Services);
                 DatabaseInitialization.Initialize(host.Services);
 

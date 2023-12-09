@@ -23,15 +23,17 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     {
         private readonly IAppCache _cache;
         private readonly UserKeyHelper _userKeyHelper;
+        private readonly IMapper _mapper;
         private readonly DataContext Context;
         private readonly ProjectSettings _config;
 
-        public UserSessionService(DataContext context, IAppCache cache, ProjectSettings config, UserKeyHelper userKeyHelper)
+        public UserSessionService(DataContext context, IAppCache cache, ProjectSettings config, UserKeyHelper userKeyHelper, IMapper mapper)
         {
             Context = context;
             _cache = cache;
             _config = config;
             _userKeyHelper = userKeyHelper;
+            _mapper = mapper;
         }
 
         private void SetUserSession(UserSession session, UserData userData, DateTime expiresOn)
@@ -57,7 +59,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         internal UserData MapUserData(User user, int? userDeviceId)
         {
-            var userData = Mapper.Map<UserData>(user, opts => opts.Items["DataContext"] = Context);
+            var userData = _mapper.Map<UserData>(user, opts => opts.Items["DataContext"] = Context);
             userData.UserDeviceId = userDeviceId;
             return userData;
         }
@@ -210,7 +212,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     var impersonation = isAsync ? await impersonationQuery.FirstOrDefaultAsync(cancellationToken)
                                                 : impersonationQuery.FirstOrDefault();
 
-                    var impersonationData = Mapper.Map<UserData>(impersonation);
+                    var impersonationData = _mapper.Map<UserData>(impersonation);
                     impersonationPointer.ImpersonatedBy(impersonationData);
                     impersonationPointer = impersonationData;
                 }

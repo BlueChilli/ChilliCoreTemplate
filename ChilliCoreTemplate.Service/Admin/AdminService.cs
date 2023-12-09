@@ -12,6 +12,7 @@ using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using DataTables.AspNet.Core;
 using LinqKit;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -46,9 +47,11 @@ namespace ChilliCoreTemplate.Service.Admin
 
         public List<AccountViewModel> GetUsers()
         {
-            return GetList<AccountViewModel, User>(AccountService.VisibleUsers(this)
-                                                    .Where(a => a.Status != UserStatus.Deleted)
-                                                    .Include(a => a.UserRoles));
+            return AccountService.VisibleUsers(this)
+                .Where(a => a.Status != UserStatus.Deleted)
+                .Include(a => a.UserRoles)
+                .Materialize<User, AccountViewModel>()
+                .ToList();
         }
         public ServiceResult<UserListModel> User_List(UserListModel model)
         {
@@ -388,7 +391,9 @@ namespace ChilliCoreTemplate.Service.Admin
                             .OrderByDescending(aa => aa.ActivityOn)
                             .Include(aa => aa.User);
 
-            return GetPagedList<UserActivityViewModel, UserActivity>(query, model.Start / model.Length + 1, model.Length);
+            return query
+                .Materialize<UserActivity, UserActivityViewModel>()
+                .ToPagedList(model.Start / model.Length + 1, model.Length);
         }
 
         public int GetActivityTotal()
@@ -398,23 +403,23 @@ namespace ChilliCoreTemplate.Service.Admin
 
         public UserActivityViewModel GetActivity(int id)
         {
-            var activity = Context.UserActivities.First(a => a.Id == id);
+            var record = Context.UserActivities.Where(a => a.Id == id)
+                .Materialize<UserActivity, UserActivityViewModel>()
+                .FirstOrDefault();
 
-            var model = GetSingle<UserActivityViewModel, UserActivity>(activity);
-
-            switch (model.EntityType)
+            switch (record.EntityType)
             {
                 case EntityType.User:
                 case EntityType.Session:
                 case EntityType.Password:
-                    model.EntityDescription = Context.Users.First(x => x.Id == model.EntityId).FullName;
+                    record.EntityDescription = Context.Users.First(x => x.Id == record.EntityId).FullName;
                     break;
                 case EntityType.Company:
-                    model.EntityDescription = Context.Companies.First(x => x.Id == model.EntityId).Name;
+                    record.EntityDescription = Context.Companies.First(x => x.Id == record.EntityId).Name;
                     break;
             }
 
-            if (model.TargetId.HasValue)
+            if (record.TargetId.HasValue)
             {
                 //if (model.ActivityType == ActivityType.Repost)
                 //{
@@ -428,11 +433,11 @@ namespace ChilliCoreTemplate.Service.Admin
                 //}
                 //else
                 {
-                    model.TargetDescription = Context.Users.First(x => x.Id == model.TargetId.Value).FullName;
+                    record.TargetDescription = Context.Users.First(x => x.Id == record.TargetId.Value).FullName;
                 }
             }
 
-            return model;
+            return record;
         }
 
     }

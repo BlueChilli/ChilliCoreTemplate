@@ -56,7 +56,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Update, EntityId = user.Id, EntityType = EntityType.Password });
 
-                if (sendEmail && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = GetSingle<AccountViewModel, User>(user) });
+                if (sendEmail && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = _mapper.Map<AccountViewModel>(user) });
             }
         }
 

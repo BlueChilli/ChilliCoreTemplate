@@ -1,6 +1,7 @@
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core.LinqMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     {
         public List<UserActivityViewModel> Activity_Last(int accountId, int count)
         {
-            return GetList<UserActivityViewModel, UserActivity>(
-                Context.UserActivities
-                    .Where(ua => ua.UserId == accountId)
-                    .OrderByDescending(ua => ua.ActivityOn)
-                    .Take(count));
+            return Context.UserActivities
+                .Where(ua => ua.UserId == accountId)
+                .OrderByDescending(ua => ua.ActivityOn)
+                .Take(count)
+                .Materialize<UserActivity, UserActivityViewModel>()
+                .ToList();
         }
 
         internal void Activity_Add(UserActivity activity)

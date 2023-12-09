@@ -61,18 +61,18 @@ namespace ChilliCoreTemplate.Service
             this.User = user;
         }
 
-        /// <summary>
-        /// Transform T (usually data model) into TX (usually view model) using AutoMapper
-        /// </summary>
-        /// <typeparam name="TViewModel">Destination Type</typeparam>
-        /// <typeparam name="TEntity">Source Type</typeparam>
-        /// <param name="entity">Source object</param>
-        protected TViewModel GetSingle<TViewModel, TEntity>(TEntity entity)
-        {
-            TViewModel viewModel = Activator.CreateInstance<TViewModel>();
-            Mapper.Map(entity, viewModel);
-            return viewModel;
-        }
+        ///// <summary>
+        ///// Transform T (usually data model) into TX (usually view model) using AutoMapper
+        ///// </summary>
+        ///// <typeparam name="TViewModel">Destination Type</typeparam>
+        ///// <typeparam name="TEntity">Source Type</typeparam>
+        ///// <param name="entity">Source object</param>
+        //protected TViewModel GetSingle<TViewModel, TEntity>(TEntity entity)
+        //{
+        //    TViewModel viewModel = Activator.CreateInstance<TViewModel>();
+        //    _mapper.Map(entity, viewModel);
+        //    return viewModel;
+        //}
 
         ///// <summary>
         ///// Using EF, save (insert or update) a view model mapped to a data model to the database
@@ -138,96 +138,96 @@ namespace ChilliCoreTemplate.Service
         //    return Context.SaveAsync<TViewModel, TDbSet, TEntity>(viewModel, entity);
         //}
 
-        /// <summary>
-        /// Transform a list of T (usually data model) into a list of TX (usually view model) using AutoMapper
-        /// </summary>
-        /// <typeparam name="TViewModel">Destination Type</typeparam>
-        /// <typeparam name="TEntity">Source Type</typeparam>
-        /// <param name="entity">Source list</param>
-        /// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
-        protected List<TViewModel> GetList<TViewModel, TEntity>(IQueryable<TEntity> query, bool readOnly = false)
-            where TEntity : class
-        {
-            return query.GetList<TEntity, TViewModel>(readOnly);
-        }
+        ///// <summary>
+        ///// Transform a list of T (usually data model) into a list of TX (usually view model) using AutoMapper
+        ///// </summary>
+        ///// <typeparam name="TViewModel">Destination Type</typeparam>
+        ///// <typeparam name="TEntity">Source Type</typeparam>
+        ///// <param name="entity">Source list</param>
+        ///// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
+        //protected List<TViewModel> GetList<TViewModel, TEntity>(IQueryable<TEntity> query, bool readOnly = false)
+        //    where TEntity : class
+        //{
+        //    return query.GetList<TEntity, TViewModel>(readOnly);
+        //}
 
-        /// <summary>
-        /// Transform a list of T (usually data model) into a list of TX (usually view model) using AutoMapper
-        /// </summary>
-        /// <typeparam name="TViewModel">Destination Type</typeparam>
-        /// <typeparam name="TEntity">Source Type</typeparam>
-        /// <param name="entity">Source list</param>
-        /// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
-        protected async Task<List<TViewModel>> GetListAsync<TViewModel, TEntity>(IQueryable<TEntity> query, bool readOnly = false)
-            where TEntity : class
-        {
-            return await query.GetListAsync<TEntity, TViewModel>(readOnly);
-        }
+        ///// <summary>
+        ///// Transform a list of T (usually data model) into a list of TX (usually view model) using AutoMapper
+        ///// </summary>
+        ///// <typeparam name="TViewModel">Destination Type</typeparam>
+        ///// <typeparam name="TEntity">Source Type</typeparam>
+        ///// <param name="entity">Source list</param>
+        ///// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
+        //protected async Task<List<TViewModel>> GetListAsync<TViewModel, TEntity>(IQueryable<TEntity> query, bool readOnly = false)
+        //    where TEntity : class
+        //{
+        //    return await query.GetListAsync<TEntity, TViewModel>(readOnly);
+        //}
 
-        /// <summary>
-        /// Transform a list of T (usually data model) into a paged list of TX (usually view model) using AutoMapper
-        /// </summary>
-        /// <typeparam name="TViewModel">Destination Type</typeparam>
-        /// <typeparam name="TEntity">Source Type</typeparam>
-        /// <param name="set">Source list</param>
-        /// <param name="page">Page to return</param>
-        /// <param name="pageSize">Size of each page</param>
-        /// <param name="sortBy">Not used</param>
-        /// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
-        /// <param name="readOnly">Specifies whether data entities will be used for read-only operations. If true, entities will not be added to the current Data Context.</param>
-        protected PagedList<TViewModel> GetPagedList<TViewModel, TEntity>(IQueryable<TEntity> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
-            where TEntity : class
-        {
-            return query.GetPagedList<TEntity, TViewModel>(page, pageSize, previousPageIfEmpty, readOnly);
-        }
+        ///// <summary>
+        ///// Transform a list of T (usually data model) into a paged list of TX (usually view model) using AutoMapper
+        ///// </summary>
+        ///// <typeparam name="TViewModel">Destination Type</typeparam>
+        ///// <typeparam name="TEntity">Source Type</typeparam>
+        ///// <param name="set">Source list</param>
+        ///// <param name="page">Page to return</param>
+        ///// <param name="pageSize">Size of each page</param>
+        ///// <param name="sortBy">Not used</param>
+        ///// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
+        ///// <param name="readOnly">Specifies whether data entities will be used for read-only operations. If true, entities will not be added to the current Data Context.</param>
+        //protected PagedList<TViewModel> GetPagedList<TViewModel, TEntity>(IQueryable<TEntity> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
+        //    where TEntity : class
+        //{
+        //    return query.GetPagedList<TEntity, TViewModel>(page, pageSize, previousPageIfEmpty, readOnly);
+        //}
 
-        /// <summary>
-        /// Transform a list of T (usually data model) into a paged list of TX (usually view model) using AutoMapper
-        /// </summary>
-        /// <typeparam name="TViewModel">Destination Type</typeparam>
-        /// <typeparam name="TEntity">Source Type</typeparam>
-        /// <param name="set">Source list</param>
-        /// <param name="page">Page to return</param>
-        /// <param name="pageSize">Size of each page</param>
-        /// <param name="sortBy">Not used</param>
-        /// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
-        /// <param name="readOnly">Specifies whether data entities will be used for read-only operations. If true, entities will not be added to the current Data Context.</param>
-        protected async Task<PagedList<TViewModel>> GetPagedListAsync<TViewModel, TEntity>(IQueryable<TEntity> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
-            where TEntity : class
-        {
-            return await query.GetPagedListAsync<TEntity, TViewModel>(page, pageSize, previousPageIfEmpty, readOnly);
-        }
+        ///// <summary>
+        ///// Transform a list of T (usually data model) into a paged list of TX (usually view model) using AutoMapper
+        ///// </summary>
+        ///// <typeparam name="TViewModel">Destination Type</typeparam>
+        ///// <typeparam name="TEntity">Source Type</typeparam>
+        ///// <param name="set">Source list</param>
+        ///// <param name="page">Page to return</param>
+        ///// <param name="pageSize">Size of each page</param>
+        ///// <param name="sortBy">Not used</param>
+        ///// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
+        ///// <param name="readOnly">Specifies whether data entities will be used for read-only operations. If true, entities will not be added to the current Data Context.</param>
+        //protected async Task<PagedList<TViewModel>> GetPagedListAsync<TViewModel, TEntity>(IQueryable<TEntity> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
+        //    where TEntity : class
+        //{
+        //    return await query.GetPagedListAsync<TEntity, TViewModel>(page, pageSize, previousPageIfEmpty, readOnly);
+        //}
 
-        /// <summary>
-        /// Pagination on a set of elements.
-        /// </summary>
-        /// <typeparam name="T">Type of element</typeparam>
-        /// <param name="set">Source list</param>
-        /// <param name="page">Page to return</param>
-        /// <param name="pageSize">Size of each page</param>
-        /// <param name="sortBy">Not used</param>
-        /// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
-        /// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
-        protected PagedList<T> GetPagedList<T>(IQueryable<T> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
-            where T : class
-        {
-            return query.GetPagedList(page, pageSize, previousPageIfEmpty, readOnly);
-        }
+        ///// <summary>
+        ///// Pagination on a set of elements.
+        ///// </summary>
+        ///// <typeparam name="T">Type of element</typeparam>
+        ///// <param name="set">Source list</param>
+        ///// <param name="page">Page to return</param>
+        ///// <param name="pageSize">Size of each page</param>
+        ///// <param name="sortBy">Not used</param>
+        ///// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
+        ///// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
+        //protected PagedList<T> GetPagedList<T>(IQueryable<T> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
+        //    where T : class
+        //{
+        //    return query.GetPagedList(page, pageSize, previousPageIfEmpty, readOnly);
+        //}
 
-        /// <summary>
-        /// Pagination on a set of elements.
-        /// </summary>
-        /// <typeparam name="T">Type of element</typeparam>
-        /// <param name="set">Source list</param>
-        /// <param name="page">Page to return</param>
-        /// <param name="pageSize">Size of each page</param>
-        /// <param name="sortBy">Not used</param>
-        /// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
-        /// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
-        protected Task<PagedList<T>> GetPagedListAsync<T>(IQueryable<T> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
-            where T : class
-        {
-            return query.GetPagedListAsync(page, pageSize, previousPageIfEmpty, readOnly);
-        }
+        ///// <summary>
+        ///// Pagination on a set of elements.
+        ///// </summary>
+        ///// <typeparam name="T">Type of element</typeparam>
+        ///// <param name="set">Source list</param>
+        ///// <param name="page">Page to return</param>
+        ///// <param name="pageSize">Size of each page</param>
+        ///// <param name="sortBy">Not used</param>
+        ///// <param name="previousPageIfEmpty">If page is out of bounds, return last page</param>
+        ///// <param name="readOnly">Specifies whether the result will be used for read-only operations.If true, entities will not be added to the current Data Context.</param>
+        //protected Task<PagedList<T>> GetPagedListAsync<T>(IQueryable<T> query, int page = 1, int pageSize = 10, string sortBy = null, bool previousPageIfEmpty = false, bool readOnly = false)
+        //    where T : class
+        //{
+        //    return query.GetPagedListAsync(page, pageSize, previousPageIfEmpty, readOnly);
+        //}
     }
 }

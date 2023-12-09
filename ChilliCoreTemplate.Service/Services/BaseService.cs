@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Models;
 using System.Security.Principal;
+using AutoMapper;
 
 namespace ChilliCoreTemplate.Service
 {
@@ -11,6 +12,7 @@ namespace ChilliCoreTemplate.Service
         protected readonly IFileStorage _fileStorage;
         protected readonly ProjectSettings _config;
         protected readonly IWebHostEnvironment _environment;
+        protected readonly IMapper _mapper;
 
         protected int? UserId { get { return User.UserData() == null ? null : (int?)User.UserData().UserId; } }
 
@@ -18,11 +20,12 @@ namespace ChilliCoreTemplate.Service
 
         protected bool IsInRole(Role role) => User.UserData() != null && User.UserData().IsInRole(role);
 
-        public BaseService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment) : base(user, context)
+        public BaseService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, IMapper mapper) : base(user, context)
         {
             _config = config;
             _fileStorage = fileStorage;
             _environment = environment;
+            _mapper = mapper;
         }
     }
 

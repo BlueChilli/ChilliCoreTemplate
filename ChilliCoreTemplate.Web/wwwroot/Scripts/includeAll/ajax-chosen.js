@@ -23,6 +23,7 @@
     this.chosen(chosenOptions ? chosenOptions : {});
     return this.each(function() {
       return $(this).next('.chosen-container').find("input").bind('keyup', function() {
+        if (event.which === 13) return true;
         var field, msg, success, untrimmed_val, val;
         untrimmed_val = $(this).val();
         val = $.trim($(this).val());

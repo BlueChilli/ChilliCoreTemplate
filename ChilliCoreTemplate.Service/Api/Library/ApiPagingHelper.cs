@@ -13,34 +13,34 @@ namespace ChilliCoreTemplate.Service.Api
 {
     public class PagingHelper<T> : ApiPagedList<T> where T : class
     {
-        public static ApiPagedList<T> Create(IQueryable<T> query, Expression<Func<T, int>> idSelector, ApiPaging paging)
-        {
-            return Create(query, idSelector, (q) => q, paging);
-        }
+        //public static ApiPagedList<T> Create(IQueryable<T> query, Expression<Func<T, int>> idSelector, ApiPaging paging)
+        //{
+        //    return Create(query, idSelector, (q) => q, paging);
+        //}
 
-        public static ApiPagedList<T> Create<TEntity>(IQueryable<TEntity> query, Expression<Func<TEntity, int>> idSelector, ApiPaging paging)
-            where TEntity : class
-        {
-            return Create<TEntity>(query, idSelector, CreateMapper<TEntity>(), paging);
-        }
+        //public static ApiPagedList<T> Create<TEntity>(IQueryable<TEntity> query, Expression<Func<TEntity, int>> idSelector, ApiPaging paging, IMapper mapper)
+        //    where TEntity : class
+        //{
+        //    return Create<TEntity>(query, idSelector, CreateMapper<TEntity>(mapper), paging);
+        //}
 
-        private static Func<IQueryable<TEntity>, IEnumerable<T>> CreateMapper<TEntity>()
-            where TEntity : class
-        {
-            if (typeof(T).IsAssignableFrom(typeof(TEntity)))
-                return (IQueryable<TEntity> q) => q.Cast<T>();
+        //private static Func<IQueryable<TEntity>, IEnumerable<T>> CreateMapper<TEntity>(IMapper mapper)
+        //    where TEntity : class
+        //{
+        //    if (typeof(T).IsAssignableFrom(typeof(TEntity)))
+        //        return (IQueryable<TEntity> q) => q.Cast<T>();
 
-            return defaultMapper<TEntity>;
-        }
+        //    return defaultMapper<TEntity>;
+        //}
 
-        private static IEnumerable<T> defaultMapper<TEntity>(IQueryable<TEntity> query)
-            where TEntity : class
-        {
-            foreach (var item in query)
-            {
-                yield return Mapper.Map<TEntity, T>(item);
-            }
-        }
+        //private static IEnumerable<T> defaultMapper<TEntity>(IQueryable<TEntity> query)
+        //    where TEntity : class
+        //{
+        //    foreach (var item in query)
+        //    {
+        //        yield return mapper.Map<TEntity, T>(item);
+        //    }
+        //}
 
         public static ApiPagedList<T> Create<TEntity>(IQueryable<TEntity> query, Expression<Func<TEntity, int>> idSelector, Func<IQueryable<TEntity>, IEnumerable<T>> mapper, ApiPaging paging)
             where TEntity : class
@@ -73,9 +73,9 @@ namespace ChilliCoreTemplate.Service.Api
             };
         }
 
-        public static ApiPagedList<T> CreateFrom<T2>(ChilliSource.Cloud.Core.PagedList<T2> from)
+        public static ApiPagedList<T> CreateFrom<T2>(ChilliSource.Cloud.Core.PagedList<T2> from, IMapper mapper)
         {
-            var data = Mapper.Map<List<T>>(from);
+            var data = mapper.Map<List<T>>(from);
             var result = new ApiPagedList<T> { Data = data, CurrentPage = from.CurrentPage, PageCount = from.PageCount, PageSize = from.PageSize, TotalCount = from.TotalCount };
             return result;
         }

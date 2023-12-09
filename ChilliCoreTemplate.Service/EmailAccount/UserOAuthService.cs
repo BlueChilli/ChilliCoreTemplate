@@ -125,7 +125,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (existingUser == null)
                 {
                     if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Login) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is not registered.", key: "ACCOUNT_NOTREGISTERED_ERROR");
-                    var registerModel = Mapper.Map<RegistrationViewModel>(oAuthUser);
+                    var registerModel = _mapper.Map<RegistrationViewModel>(oAuthUser);
                     registerModel.Roles = role;
                     registerModel.CompanyName = companyName;
                     var newUserRequest = Create(registerModel, sendEmail: !oAuthUser.EmailIsVerified);
@@ -201,8 +201,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         private async Task<ServiceResult<OAuthUserModel>> OAuth_Code_Google(string token, string code, OAuthsConfigurationElement oAuthConfig)
         {
-            var client = new RestClient();
-            client.UseNewtonsoftJson();
+            var client = new RestClient(configureSerialization: s => s.UseNewtonsoftJson());
             if (token == null)
             {
                 var request = new RestRequest("https://oauth2.googleapis.com/token", Method.Post);
@@ -224,7 +223,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var userResult = await client.ExecuteAsync<OAuthGoogleUserModel>(userRequest);
             if (!userResult.IsSuccessful) return ServiceResult<OAuthUserModel>.AsError(userResult.GetError());
 
-            var user = Mapper.Map<OAuthUserModel>(userResult.Data);
+            var user = _mapper.Map<OAuthUserModel>(userResult.Data);
             user.Token = token;
             return ServiceResult<OAuthUserModel>.AsSuccess(user);
         }
@@ -260,7 +259,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 _ = client.ExecuteAsync(deleteRequest);
             }
 
-            var user = Mapper.Map<OAuthUserModel>(userResult.Data);
+            var user = _mapper.Map<OAuthUserModel>(userResult.Data);
             user.Token = token;
             return ServiceResult<OAuthUserModel>.AsSuccess(user);
         }
@@ -272,13 +271,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var provider = new AppleAuthProvider(platform == Platform.IOS ? oAuthConfig.AppBundleId : oAuthConfig.ClientId, oAuthConfig.ClientJWT.Issuer, oAuthConfig.ClientJWT.KeyId, OAuth_Url_Redirect, null);
                 var result = await provider.GetAuthorizationToken(code, oAuthConfig.ClientJWT.Key);
 
-                var user = Mapper.Map<OAuthUserModel>(result.UserInformation);
+                var user = _mapper.Map<OAuthUserModel>(result.UserInformation);
                 user.Token = result.RefreshToken;
 
                 if (!String.IsNullOrEmpty(userInfo))
                 {
                     var info = userInfo.FromJson<OAuthAppleUserModel>();
-                    Mapper.Map(info, user);
+                    _mapper.Map(info, user);
                 }
                 return ServiceResult<OAuthUserModel>.AsSuccess(user);
             }

@@ -86,12 +86,12 @@ namespace ChilliCoreTemplate.Models.EmailAccount
                 this.Impersonator = currentUser.Clone();
         }
 
-        public void RemoveImpersonation()
+        public void RemoveImpersonation(IMapper mapper)
         {
             var impersonator = this.Impersonator;
             if (impersonator == null)
                 return;
-            Mapper.Map<UserData, UserData>(impersonator.Clone(), this);
+            mapper.Map<UserData, UserData>(impersonator.Clone(), this);
         }
 
         public bool CanImpersonate(AccountViewModel target)

@@ -326,7 +326,7 @@ namespace ChilliCoreTemplate.Service.Api
             if (company == null) return ServiceResult.AsError($"Company not found for {model.CustomerId}: {stripeEvent.Id}");
 
             var admin = _accountService.GetCompanyAdmin(company.Id);
-            var emailModel = Mapper.Map<AccountViewModel>(admin);
+            var emailModel = _mapper.Map<AccountViewModel>(admin);
 
             var bcc = _env.IsProduction() ? new EmailData_Address(_config.AdminEmail) : null;
             _accountService.QueueMail(

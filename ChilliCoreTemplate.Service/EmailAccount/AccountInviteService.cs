@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using ChilliSource.Cloud.Web;
 using System.Globalization;
+using ChilliSource.Cloud.Core.LinqMapper;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
@@ -22,17 +23,17 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     {
         public List<AccountViewModel> GetPendingInvites()
         {
-            var users = VisibleUsers()
+            return VisibleUsers()
                 .Where(a => a.UserRoles.Any(r => r.Status == RoleStatus.Invited && r.User.Status != UserStatus.Deleted))
                 .OrderBy(a => a.InvitedDate)
-                .Include(a => a.UserRoles);
-
-            return GetList<AccountViewModel, User>(users);
+                .Include(a => a.UserRoles)
+                .Materialize<User, AccountViewModel>()
+                .ToList();
         }
 
         public ServiceResult<AccountViewModel> Invite(InviteEditModel model, bool sendEmail)
         {
-            var createModel = Mapper.Map<UserCreateModel>(model);
+            var createModel = _mapper.Map<UserCreateModel>(model);
 
             var createAccountRequest = Create(createModel);
             if (createAccountRequest.Success)
@@ -54,7 +55,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 Mixpanel.SendAccountToMixpanel(account, "Invite", data: new Dictionary<string, object> { { "Company", role.CompanyName } });
 
-                return ServiceResult<AccountViewModel>.AsSuccess(GetSingle<AccountViewModel, User>(account));
+                return ServiceResult<AccountViewModel>.AsSuccess(_mapper.Map<AccountViewModel>(account));
             }
             else
             {
@@ -65,7 +66,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public ServiceResult<AccountViewModel> Reinvite(int id)
         {
             var account = GetAccount(id);
-            var model = Mapper.Map<InviteEditModel>(account);
+            var model = _mapper.Map<InviteEditModel>(account);
             return Invite(model, sendEmail: true);
         }
 
@@ -109,7 +110,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     {
                         if (user.Role == Role.Administrator) continue;
 
-                        var inviteModel = Mapper.Map<InviteEditModel>(user);
+                        var inviteModel = _mapper.Map<InviteEditModel>(user);
                         //inviteModel.CompanyId = Context.Companies.FirstOrDefault(c => c.Name == user.CompanyName)?.Id;
                         //if (inviteModel.CompanyId == null) continue;
 
@@ -131,112 +132,112 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
         }
 
-        public ServiceResult<UserImportResultModel> ImportUsers(UserImportModel model)
-        {
-            var errors = new List<string>();
-            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true, TrimOptions = TrimOptions.Trim };
-            var users = new List<UserCreateModel>();
-            int rowCount = 0;
-            var imported = new List<UserImportedModel>();
+        //public ServiceResult<UserImportResultModel> ImportUsers(UserImportModel model)
+        //{
+        //    var errors = new List<string>();
+        //    var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true, TrimOptions = TrimOptions.Trim };
+        //    var users = new List<UserCreateModel>();
+        //    int rowCount = 0;
+        //    var imported = new List<UserImportedModel>();
 
-            try
-            {
-                using (var inputStream = model.CsvFile.OpenReadStream())
-                using (var reader = new CsvReader(new StreamReader(inputStream), csvConfig))
-                {
-                    reader.Read();
-                    reader.ReadHeader();
-                    var headerRow = reader.Context.Reader.HeaderRecord;
-                    while (reader.Read())
-                    {
-                        var user = new UserCreateModel();
-                        rowCount++;
-                        var columns = reader.Context.Reader.ColumnCount;
-                        if (columns != headerRow.Count())
-                        {
-                            return ServiceResult<UserImportResultModel>.AsError(error: $"Error in row {rowCount}. Each row must contain the same number of columns as the header row. Found {columns}, expected {headerRow.Count()}.");
-                        }
+        //    try
+        //    {
+        //        using (var inputStream = model.CsvFile.OpenReadStream())
+        //        using (var reader = new CsvReader(new StreamReader(inputStream), csvConfig))
+        //        {
+        //            reader.Read();
+        //            reader.ReadHeader();
+        //            var headerRow = reader.Context.Reader.HeaderRecord;
+        //            while (reader.Read())
+        //            {
+        //                var user = new UserCreateModel();
+        //                rowCount++;
+        //                var columns = reader.Context.Reader.ColumnCount;
+        //                if (columns != headerRow.Count())
+        //                {
+        //                    return ServiceResult<UserImportResultModel>.AsError(error: $"Error in row {rowCount}. Each row must contain the same number of columns as the header row. Found {columns}, expected {headerRow.Count()}.");
+        //                }
 
-                        for (int i = 0; i < columns; i++)
-                        {
-                            var data = reader.GetField(i);
-                            if (!Enum.TryParse<ColumnNameEnum>(headerRow[i].RemoveSpaces(), true, out var header))
-                            {
-                                return ServiceResult<UserImportResultModel>.AsError(error: $"Error parsing header row found {headerRow[i].RemoveSpaces()} expecting Email, FirstName, LastName, or Role.");
-                            }
-                            switch (header)
-                            {
-                                case ColumnNameEnum.LastName:
-                                    user.LastName = ValidateField(errors, rowCount, data, header, 25);
-                                    break;
-                                case ColumnNameEnum.FirstName:
-                                    user.FirstName = ValidateField(errors, rowCount, data, header, 25);
-                                    break;
-                                case ColumnNameEnum.Email:
-                                    user.Email = ValidateEmail(errors, rowCount, data, header, 100);
-                                    break;
-                            }
-                        }
-                        if (errors.Count > 0) return ServiceResult<UserImportResultModel>.AsError(error: String.Join("<br>", errors));
-                        users.Add(user);
-                    }
-                }
-                foreach (var user in users)
-                {
-                    user.Status = model.Status.Value;
-                    if (model.Roles != null)
-                    {
-                        user.UserRoles.Add(new RoleSelectionViewModel()
-                        {
-                            Role = model.Roles.Value,
-                            CompanyId = model.CompanyId
-                        });
-                    }
+        //                for (int i = 0; i < columns; i++)
+        //                {
+        //                    var data = reader.GetField(i);
+        //                    if (!Enum.TryParse<ColumnNameEnum>(headerRow[i].RemoveSpaces(), true, out var header))
+        //                    {
+        //                        return ServiceResult<UserImportResultModel>.AsError(error: $"Error parsing header row found {headerRow[i].RemoveSpaces()} expecting Email, FirstName, LastName, or Role.");
+        //                    }
+        //                    switch (header)
+        //                    {
+        //                        case ColumnNameEnum.LastName:
+        //                            user.LastName = ValidateField(errors, rowCount, data, header, 25);
+        //                            break;
+        //                        case ColumnNameEnum.FirstName:
+        //                            user.FirstName = ValidateField(errors, rowCount, data, header, 25);
+        //                            break;
+        //                        case ColumnNameEnum.Email:
+        //                            user.Email = ValidateEmail(errors, rowCount, data, header, 100);
+        //                            break;
+        //                    }
+        //                }
+        //                if (errors.Count > 0) return ServiceResult<UserImportResultModel>.AsError(error: String.Join("<br>", errors));
+        //                users.Add(user);
+        //            }
+        //        }
+        //        foreach (var user in users)
+        //        {
+        //            user.Status = model.Status.Value;
+        //            if (model.Roles != null)
+        //            {
+        //                user.UserRoles.Add(new RoleSelectionViewModel()
+        //                {
+        //                    Role = model.Roles.Value,
+        //                    CompanyId = model.CompanyId
+        //                });
+        //            }
 
-                    var createAccountRequest = Create(user);
-                    if (createAccountRequest.Success)
-                    {
-                        var account = createAccountRequest.Result;
-                        imported.Add(new UserImportedModel
-                        {
-                            Email = account.Email,
-                            FirstName = account.FirstName,
-                            LastName = account.LastName,
-                            //InviteUrl = model.Status.Value == UserStatus.Invited ? _config.ResolveUrl("~/EmailAccount/ConfirmInvite", new UserTokenModel
-                            //{
-                            //    Token = account.GetToken(UserTokenType.Invite),
-                            //    Email = account.Email
-                            //}) : ""
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ex.LogException();
-                return ServiceResult<UserImportResultModel>.AsError(error: ex.Message);
-            }
+        //            var createAccountRequest = Create(user);
+        //            if (createAccountRequest.Success)
+        //            {
+        //                var account = createAccountRequest.Result;
+        //                imported.Add(new UserImportedModel
+        //                {
+        //                    Email = account.Email,
+        //                    FirstName = account.FirstName,
+        //                    LastName = account.LastName,
+        //                    //InviteUrl = model.Status.Value == UserStatus.Invited ? _config.ResolveUrl("~/EmailAccount/ConfirmInvite", new UserTokenModel
+        //                    //{
+        //                    //    Token = account.GetToken(UserTokenType.Invite),
+        //                    //    Email = account.Email
+        //                    //}) : ""
+        //                });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ex.LogException();
+        //        return ServiceResult<UserImportResultModel>.AsError(error: ex.Message);
+        //    }
 
-            var path = _fileStorage.Save(new StorageCommand { Extension = ".csv", Folder = "Temp" }.SetByteArraySource(Encoding.UTF8.GetBytes(imported.ToCsvFile())));
-            var result = new UserImportResultModel
-            {
-                Processed = rowCount,
-                Invited = imported.Count(),
-                Path = path
-            };
-            return ServiceResult<UserImportResultModel>.AsSuccess(result);
-        }
+        //    var path = _fileStorage.Save(new StorageCommand { Extension = ".csv", Folder = "Temp" }.SetByteArraySource(Encoding.UTF8.GetBytes(imported.ToCsvFile())));
+        //    var result = new UserImportResultModel
+        //    {
+        //        Processed = rowCount,
+        //        Invited = imported.Count(),
+        //        Path = path
+        //    };
+        //    return ServiceResult<UserImportResultModel>.AsSuccess(result);
+        //}
 
-        public byte[] ImportUsersResult(string path)
-        {
-            if (_fileStorage.Exists(path))
-            {
-                var data = _fileStorage.GetContent(path);
-                _fileStorage.Delete(path);
-                return data.ReadToByteArray();
-            }
-            return null;
-        }
+        //public byte[] ImportUsersResult(string path)
+        //{
+        //    if (_fileStorage.Exists(path))
+        //    {
+        //        var data = _fileStorage.GetContent(path);
+        //        _fileStorage.Delete(path);
+        //        return data.ReadToByteArray();
+        //    }
+        //    return null;
+        //}
 
         private string ValidateField(List<string> errors, int rowCount, string data, ColumnNameEnum header, int maxLength, bool isRequired = true)
         {

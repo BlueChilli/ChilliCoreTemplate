@@ -31,6 +31,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly UserSessionService _session;
         private readonly FileStoragePath _fileStoragePath;
+        private readonly IMapper _mapper;
         private readonly SmsService _sms;
 
         public AccountService(IPrincipal user,
@@ -42,7 +43,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             ITemplateViewRenderer templateViewRenderer,
             ProjectSettings config,
             IBackgroundTaskQueue backgroundTaskQueue,
-            FileStoragePath fileStoragePath)
+            FileStoragePath fileStoragePath,
+            IMapper mapper)
             : base(user, context)
         {
             _session = session;
@@ -53,6 +55,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             _sms = sms;
             _backgroundTaskQueue = backgroundTaskQueue;
             _fileStoragePath = fileStoragePath;
+            _mapper = mapper;
         }
 
         public const string ProfilePhotoFolder = "Profile";
@@ -154,7 +157,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 Token_Add(account, UserTokenType.Invite, new TimeSpan(7, 0, 0, 0));
                 Context.SaveChanges();
 
-                var inviteModel = Mapper.Map<InviteEditModel>(account);
+                var inviteModel = _mapper.Map<InviteEditModel>(account);
                 QueueMail(RazorTemplates.InviteUser, inviteModel.Email, new RazorTemplateDataModel<InviteEditModel> { Data = inviteModel });
 
                 return result;
@@ -358,7 +361,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult<UserDataPrincipal>.AsError("Error, account is not impersonated");
 
             userData = userData.Clone();
-            userData.RemoveImpersonation();
+            userData.RemoveImpersonation(_mapper);
 
             var principal = new UserDataPrincipal(userData);
             loginAction(principal);
@@ -467,7 +470,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<UserData> Create(RegistrationViewModel model, bool sendEmail = true)
         {
-            var createModel = Mapper.Map<UserCreateModel>(model);
+            var createModel = _mapper.Map<UserCreateModel>(model);
 
             var createAccountRequest = Create(createModel);
             var account = createAccountRequest.Result;
@@ -571,7 +574,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
 
                 if (!inviteCompanyRole)
-                    Mapper.Map(model, account);
+                    _mapper.Map(model, account);
 
                 if (!String.IsNullOrEmpty(model.Password))
                 {
@@ -806,7 +809,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 model.ProfilePhotoPath = _fileStorage.Save(new StorageCommand { Folder = ProfilePhotoFolder }.SetHttpPostedFileSource(model.ProfilePhotoFile));
             }
 
-            user = Mapper.Map(model, user);
+            user = _mapper.Map(model, user);
             Context.SaveChanges();
             Mixpanel.SendAccountToMixpanel(user);
 

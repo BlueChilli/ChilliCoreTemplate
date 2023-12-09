@@ -343,35 +343,35 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .Call();
         }
 
-        public virtual ActionResult Import()
-        {
-            var model = new UserImportModel
-            {
-                CompanyList = _companyService.List<CompanyViewModel>().ToSelectList(v => v.Id, t => t.Name)
-            };
-            return View("UsersImport", model);
-        }
+        //public virtual ActionResult Import()
+        //{
+        //    var model = new UserImportModel
+        //    {
+        //        CompanyList = _companyService.List<CompanyViewModel>().ToSelectList(v => v.Id, t => t.Name)
+        //    };
+        //    return View("UsersImport", model);
+        //}
 
-        [HttpPost, ActionName("Import")]
-        public virtual ActionResult ImportPost(UserImportModel model)
-        {
-            return this.ServiceCall(() => _accountService.ImportUsers(model))
-                .OnSuccess(m =>
-                {
-                    TempData[PageMessage.Key()] = PageMessage.Success($"{m.Invited} users have been successfully imported out of {m.Processed} rows");
-                    TempData["UserImportResult"] = m.Path;
-                    return Import();
-                })
-                .OnFailure(() => Import())
-                .Call();
-        }
+        //[HttpPost, ActionName("Import")]
+        //public virtual ActionResult ImportPost(UserImportModel model)
+        //{
+        //    return this.ServiceCall(() => _accountService.ImportUsers(model))
+        //        .OnSuccess(m =>
+        //        {
+        //            TempData[PageMessage.Key()] = PageMessage.Success($"{m.Invited} users have been successfully imported out of {m.Processed} rows");
+        //            TempData["UserImportResult"] = m.Path;
+        //            return Import();
+        //        })
+        //        .OnFailure(() => Import())
+        //        .Call();
+        //}
 
-        public virtual ActionResult ImportResult()
-        {
-            var path = TempData["UserImportResult"].ToString();
-            var data = _accountService.ImportUsersResult(path);
-            return File(data, "text/csv", $"{_config.ProjectDisplayName} users import result.csv".ToFilename());
-        }
+        //public virtual ActionResult ImportResult()
+        //{
+        //    var path = TempData["UserImportResult"].ToString();
+        //    var data = _accountService.ImportUsersResult(path);
+        //    return File(data, "text/csv", $"{_config.ProjectDisplayName} users import result.csv".ToFilename());
+        //}
 
         #endregion
 

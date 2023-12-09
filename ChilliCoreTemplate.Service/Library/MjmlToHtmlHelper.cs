@@ -14,7 +14,7 @@ namespace ChilliCoreTemplate.Service
                 var options = new MjmlOptions
                 {
                     Beautify = false,
-                    FileLoader = new DiskFileLoader()
+                    FileLoader = () => new DiskFileLoader()
                 };
                 var result = mjmlRenderer.Render(html, options);
                 html = result.Html;

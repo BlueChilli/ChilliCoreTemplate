@@ -21,7 +21,7 @@ namespace ChilliCoreTemplate.Service
         private readonly ChilliCoreTemplate.Service.EmailAccount.AccountService _accountService;
         private readonly StripeService _stripe;
 
-        public StripeHelperService(ChilliCoreTemplate.Service.EmailAccount.AccountService accountService, StripeService stripe, IPrincipal user, DataContext context, ProjectSettings config, IFileStorage storage, IWebHostEnvironment environment) : base(user, context, config, storage, environment)
+        public StripeHelperService(ChilliCoreTemplate.Service.EmailAccount.AccountService accountService, StripeService stripe, IPrincipal user, DataContext context, ProjectSettings config, IFileStorage storage, IWebHostEnvironment environment, IMapper mapper) : base(user, context, config, storage, environment, mapper)
         {
             _accountService = accountService;
             _stripe = stripe;
@@ -105,7 +105,7 @@ namespace ChilliCoreTemplate.Service
 
         private ServiceResult<Customer> Stripe_UpdateOrCreate(User user, string token = null, string coupon = null, string accountId = null)
         {
-            var model = Mapper.Map<StripeCustomerEditModel>(user);
+            var model = _mapper.Map<StripeCustomerEditModel>(user);
             model.Token = token;
             var customerRequest = _stripe.Customer_AddOrUpdate(model, accountId);
             if (!customerRequest.Success) return ServiceResult<Customer>.CopyFrom(customerRequest);

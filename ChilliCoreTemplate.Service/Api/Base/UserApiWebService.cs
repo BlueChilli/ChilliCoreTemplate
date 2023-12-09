@@ -14,29 +14,26 @@ using System.Threading.Tasks;
 using ChilliSource.Cloud.Core.LinqMapper;
 using System.Security.Principal;
 using ChilliCoreTemplate.Models.Api.OAuth;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ChilliCoreTemplate.Service.Api
 {
-    public class UserApiWebService : Service<DataContext>
+    public class UserApiWebService : BaseApiService
     {
         private readonly AccountService _accountService;
         private readonly UserKeyHelper _userKeyHelper;
         private readonly FileStoragePath _fileStoragePath;
         private readonly UserSessionService _session;
-        private readonly ProjectSettings _config;
 
-        private int? CompanyId => User?.UserData()?.CompanyId;
-        private int? UserId => User?.UserData()?.UserId;
-
-        public UserApiWebService(IPrincipal user, DataContext context, AccountService accountSvc, UserKeyHelper userKeyHelper, FileStoragePath fileStoragePath, UserSessionService session, ProjectSettings config)
-            : base(user, context)
+        public UserApiWebService(IPrincipal user, DataContext context, AccountService accountSvc, UserKeyHelper userKeyHelper, FileStoragePath fileStoragePath, UserSessionService session, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, IMapper mapper)
+            : base(user, context, config, fileStorage, environment, mapper)
         {
             _accountService = accountSvc;
             _accountService.IsApi = true;
             _userKeyHelper = userKeyHelper;
             _fileStoragePath = fileStoragePath;
             _session = session;
-            _config = config;
         }
 
         public IQueryable<User> VisibleAccounts()
@@ -123,7 +120,7 @@ namespace ChilliCoreTemplate.Service.Api
         }
         public ServiceResult<UserAccountApiModel> Create(RegistrationApiModel model)
         {
-            var registrationModel = Mapper.Map<RegistrationViewModel>(model);
+            var registrationModel = _mapper.Map<RegistrationViewModel>(model);
             registrationModel.Roles = model.GetRole();
             var response = _accountService.Create(registrationModel);
             if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);
@@ -141,7 +138,7 @@ namespace ChilliCoreTemplate.Service.Api
 
         public ServiceResult<UserAccountApiModel> Invite(InviteEditApiModel model)
         {
-            var inviteModel = Mapper.Map<InviteEditModel>(model, opts => opts.Items["CompanyId"] = CompanyId);
+            var inviteModel = _mapper.Map<InviteEditModel>(model, opts => opts.Items["CompanyId"] = CompanyId);
 
             var response = _accountService.Invite(inviteModel, true);
             if (!response.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(response);
