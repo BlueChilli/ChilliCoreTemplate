@@ -1714,8 +1714,8 @@
       },
       "Stripe.net": {
         "type": "Transitive",
-        "resolved": "43.5.0",
-        "contentHash": "UhejbQcNMeKBmOGo38f9VYjIELipFJbSgGIO3wvTH0CjUxv5iLzSaScRFeD3jrsXtOpcLhwDQJ+oN6xNEty9LQ==",
+        "resolved": "43.6.0",
+        "contentHash": "nSMRhCFL++/66LOfSaE5oItX6sBZZyJ8KKkpY5UIA5AFvgvKHYW5PXxC48zSlkYdrDpXUfnx6s46MpCyH5sATQ==",
         "dependencies": {
           "Newtonsoft.Json": "12.0.3",
           "System.Configuration.ConfigurationManager": "6.0.0"
@@ -2451,8 +2451,8 @@
       },
       "Twilio": {
         "type": "Transitive",
-        "resolved": "6.15.1",
-        "contentHash": "89aqWTRfHk4F2Cm//+PyxJ3n25oN4o/9ilIjeLiCarvkSAP4TJGhbr4jzQiC4Q0/FWwEVs7fLVhYYbn43icRbw==",
+        "resolved": "6.15.2",
+        "contentHash": "5z0e8Pgf9ADegG1OQhVk5rwUyCJy+7msEK3ypmkCI2rfr/oQ8EFLkJeP1kEj4Hr1DQWimVxC+SiI1Fn/gGZs5w==",
         "dependencies": {
           "Microsoft.IdentityModel.Tokens": "6.19.0",
           "Newtonsoft.Json": "13.0.1",
@@ -2482,7 +2482,7 @@
           "FoolProof.Core": "[1.2.1, )",
           "HtmlAgilityPack": "[1.11.54, )",
           "HybridModelBinding": "[0.18.1-alpha.5, )",
-          "Stripe.net": "[43.5.0, )"
+          "Stripe.net": "[43.6.0, )"
         }
       },
       "chillicoretemplate.service": {
@@ -2511,8 +2511,8 @@
           "MiniProfiler.AspNetCore.Mvc": "[4.3.8, )",
           "Mjml.Net": "[3.4.0, )",
           "RestSharp.Serializers.NewtonsoftJson": "[110.2.0, )",
-          "Stripe.net": "[43.5.0, )",
-          "Twilio": "[6.15.1, )"
+          "Stripe.net": "[43.6.0, )",
+          "Twilio": "[6.15.2, )"
         }
       }
     }

@@ -356,7 +356,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         {
             if (Stream != null)
             {
-                var fileContent = Stream.ReadToByteArray();
+                var fileContent = Stream.ToByteArray();
                 return new EmailAttachment(fileContent, FileName, MimeType);
             }
 
