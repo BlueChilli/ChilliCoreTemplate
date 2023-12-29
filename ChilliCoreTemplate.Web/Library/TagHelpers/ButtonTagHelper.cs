@@ -44,9 +44,9 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
             var url = urlHelper.RouteUrl(route);
             if (Window == ButtonWindow.Current)
-                output.Attributes.SetAttribute("onclick", $"window.location='{url}';");
+                output.Attributes.SetAttribute("onclick", new HtmlString($"window.location='{url}';"));
             else
-                output.Attributes.SetAttribute("onclick", $"window.open('{url}');");
+                output.Attributes.SetAttribute("onclick", new HtmlString($"window.open('{url}');"));
         }
     }
 
@@ -117,7 +117,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
                 target = output.Attributes["target"].Value.ToString();
                 output.Attributes.RemoveAll("target");
             }
-            output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {JsonData ?? "null"});");
+            output.Attributes.SetAttribute("onclick", new HtmlString($"$.doPost('{url}', '{target}', {JsonData ?? "null"});"));
         }
     }
 

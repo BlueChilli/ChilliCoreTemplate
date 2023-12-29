@@ -30,5 +30,18 @@ namespace ChilliCoreTemplate.Web.Serilog
             return enrichmentConfiguration.With(new ExceptioMessageEnricher());
         }
 
+        public static LoggerConfiguration WithHttpRequestUrl(
+            this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        {
+            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
+            return enrichmentConfiguration.With(new HttpRequestUrlEnricher());
+        }
+
+        public static LoggerConfiguration WithHttpRequestForm(
+            this LoggerEnrichmentConfiguration enrichmentConfiguration)
+        {
+            if (enrichmentConfiguration == null) throw new ArgumentNullException(nameof(enrichmentConfiguration));
+            return enrichmentConfiguration.With(new HttpRequestFormEnricher());
+        }
     }
 }

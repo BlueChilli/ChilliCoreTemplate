@@ -191,6 +191,10 @@ a {
     a {
         color: $table-link-color;
     }
+
+    button.btn-neutral.btn-square {
+        color: $table-link-color;
+    }
 }
 
 table.table-hover > tbody > tr:hover > * {
@@ -201,6 +205,14 @@ table.table-hover > tbody > tr:hover > * {
 
 table > caption {
     caption-side: top;
+}
+
+td.text-end > .btn {
+    margin-left: 5px;
+}
+
+td.text-end > .btn:first-child {
+    margin-left: 0;
 }
 
 //common helpers
