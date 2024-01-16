@@ -234,7 +234,8 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
             model.RoleSelectionOptions = new List<SelectListItem>()
             {
-                new SelectListItem() { Text = "Company admin", Value = Role.CompanyAdmin.ToString() }
+                new SelectListItem() { Text = Role.CompanyAdmin.GetDescription(), Value = Role.CompanyAdmin.ToString() },
+                //new SelectListItem() { Text = Role.CompanyUser.GetDescription(), Value = Role.CompanyUser.ToString() },
             };
 
             return View("UserInvite", model);
@@ -255,7 +256,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public ActionResult InviteResend(int id)
         {
-            return this.ServiceCall(() => _companyService.Company_Admin_Get(User.UserData().CompanyId.Value, id))
+            return this.ServiceCall(() => _companyService.Company_Admin_Get(id))
                 .Call();
         }
 

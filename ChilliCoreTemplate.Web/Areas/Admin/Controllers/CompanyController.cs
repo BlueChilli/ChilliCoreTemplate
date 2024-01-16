@@ -168,7 +168,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult AdminRemove(int id, int userId)
         {
-            return this.ServiceCall(() => _service.Company_Admin_Get(id, userId))
+            return this.ServiceCall(() => _service.Company_Admin_Get(userId))
                 .Always(m =>
                 {
                     return PartialView("CompanyAdminDelete", m);

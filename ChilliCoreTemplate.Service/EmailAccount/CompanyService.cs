@@ -51,20 +51,33 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         internal IQueryable<Company> Authorised()
         {
-            var query = Context.Companies;
-
-            if (IsAdmin) return query;
-
-            return query.Where(x => !x.IsDeleted);
+            return Authorised(this);
         }
 
         internal IQueryable<Company> Authorised(int id)
         {
-            var query = Context.Companies.Where(x => x.Id == id);
+            return Authorised().Where(x => x.Id == id);
+        }
 
-            if (IsAdmin) return query;
+        public static IQueryable<Company> Authorised(Service<DataContext> svc)
+        {
+            var query = svc.Context.Companies.AsQueryable();
+
+            if (svc.IsAdmin) return query;
+
+            if (svc.User.UserData().IsMasterCompany) return query.Where(x => x.Id == svc.CompanyId.Value || x.MasterCompanyId == svc.CompanyId.Value);
+
+            if (svc.CompanyId.HasValue) query = query.Where(x => x.Id == svc.CompanyId.Value);
 
             return query.Where(x => !x.IsDeleted);
+        }
+
+        public List<T> GetAll<T>() where T : class, ICompanyViewModel, new()
+        {
+            return Authorised()
+                .OrderBy(o => o.Name)
+                .Materialize<Company, T>()
+                .ToList();
         }
 
         public ServiceResult<CompanyDetailViewModel> Get(int? id = null)
@@ -367,6 +380,19 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<CompanyViewModel>.AsError("Company not found");
         }
 
+        private IQueryable<UserRole> UserRole_Authorised(int userId)
+        {
+            var query = Context.UserRoles.Where(x => x.UserId == userId);
+
+            if (IsAdmin) return query;
+
+            if (User.UserData().IsMasterCompany) return query.Where(x => x.CompanyId == CompanyId.Value || x.Company.MasterCompanyId == CompanyId.Value);
+
+            if (CompanyId.HasValue) query = query.Where(x => x.CompanyId == CompanyId.Value);
+
+            return query.Where(x => false);
+        }
+
         public ServiceResult<UserDataPrincipal> Company_Impersonate(int companyId, Action<UserDataPrincipal> loginAction)
         {
             var adminAccount = Context.UserRoles.FirstOrDefault(a => a.CompanyId == companyId && a.User.Status != UserStatus.Deleted && a.Role.HasFlag(Role.CompanyAdmin));
@@ -458,10 +484,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return query.Count();
         }
 
-        public ServiceResult<CompanyUserViewModel> Company_Admin_Get(int id, int userId)
+        public ServiceResult<CompanyUserViewModel> Company_Admin_Get(int userId)
         {
-            var user = Context.UserRoles
-                .Where(x => x.CompanyId == id && x.UserId == userId)
+            var user = UserRole_Authorised(userId)
                 .Materialize<UserRole, CompanyUserViewModel>()
                 .FirstOrDefault();
 

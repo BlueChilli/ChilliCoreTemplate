@@ -38,7 +38,7 @@ namespace ChilliCoreTemplate.Service
 
         protected int? UserId { get { return User.UserData() == null ? null : (int?)User.UserData().UserId; } }
 
-        protected int? CompanyId { get { return User.UserData() == null ? null : (int?)User.UserData().CompanyId; } }
+        internal int? CompanyId { get { return User.UserData() == null ? null : (int?)User.UserData().CompanyId; } }
 
         internal bool IsAdmin { get { return User.IsInRole(AccountCommon.Administrator); } }
 

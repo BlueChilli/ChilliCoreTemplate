@@ -146,6 +146,7 @@ namespace ChilliCoreTemplate.Service
             }).IncludeBase<Company, CompanyViewModel>();
             LinqMapper.CreateMap<Company, CompanySummaryModel>(c => new CompanySummaryModel
             {
+                MasterCompany = c.MasterCompanyId == null ? null : c.MasterCompany.Name,
                 HasAdmins = c.UserRoles.Any(r => r.Role == Role.CompanyAdmin && r.User.Status != UserStatus.Deleted)
             });
 

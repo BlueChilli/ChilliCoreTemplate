@@ -14,10 +14,11 @@
       },
       "ChilliSource.Cloud.Core": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0152, )",
-        "resolved": "2.0.0-alpha0152",
-        "contentHash": "Q2NWJTCIS9LDvyzqMXC7M5c7Vj5qF6IcwhEIlwwQ+14Ww29uB7Lg+ieagL8R5sK1hQc7F9JPmg8pXS6B58BEiQ==",
+        "requested": "[2.0.0-alpha0154, )",
+        "resolved": "2.0.0-alpha0154",
+        "contentHash": "7W584AmyBV96+SoYjUqJ/bguZCMdr9eVenkJtHbI0WyyCx5FBFYf/d43CRLtjWZ6PAHpp3upbnUedtZvx4CSrA==",
         "dependencies": {
+          "AutoMapper": "12.0.1",
           "ChilliSource.Core.Extensions": "2.0.4-alpha0016",
           "CsvHelper": "30.0.1",
           "DataTables.AspNet.Core": "2.0.2",
@@ -51,9 +52,9 @@
       },
       "ChilliSource.Cloud.Web.MVC": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0119, )",
-        "resolved": "2.0.0-alpha0119",
-        "contentHash": "wLCU/HItuq1n2EgGE3wG4XUmmSJPnE6rGZ4a3xgMrKgmL7DqJWlRG9/I97jHp0xdAgg+uVDakf/hZuYQiy8teA==",
+        "requested": "[2.0.0-alpha0120, )",
+        "resolved": "2.0.0-alpha0120",
+        "contentHash": "I/1ZU/hSJFqsTdZ3iRTjNZ9NAEYEOCxMqQMSDTkzlhm/aBD118xMgdWMCPXfjQ/mbJgVSYuT5cNE+zOumwgw3A==",
         "dependencies": {
           "ChilliSource.Cloud.Core": "2.0.0-alpha0139",
           "ChilliSource.Cloud.Web": "2.0.0-alpha0042",
@@ -2464,7 +2465,7 @@
         "type": "Project",
         "dependencies": {
           "ChilliCoreTemplate.Models": "[1.0.0, )",
-          "ChilliSource.Cloud.Core": "[2.0.0-alpha0152, )",
+          "ChilliSource.Cloud.Core": "[2.0.0-alpha0154, )",
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0016, )",
           "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore": "[8.0.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.0, )",
@@ -2476,8 +2477,8 @@
         "type": "Project",
         "dependencies": {
           "AutoMapper": "[12.0.1, )",
-          "ChilliSource.Cloud.Core": "[2.0.0-alpha0152, )",
-          "ChilliSource.Cloud.Web.MVC": "[2.0.0-alpha0119, )",
+          "ChilliSource.Cloud.Core": "[2.0.0-alpha0154, )",
+          "ChilliSource.Cloud.Web.MVC": "[2.0.0-alpha0120, )",
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0016, )",
           "FoolProof.Core": "[1.2.1, )",
           "HtmlAgilityPack": "[1.11.54, )",
@@ -2496,7 +2497,7 @@
           "ChilliCoreTemplate.Models": "[1.0.0, )",
           "ChilliSource.Cloud.AWS": "[2.0.0-alpha0015, )",
           "ChilliSource.Cloud.Azure": "[2.0.0-alpha0029, )",
-          "ChilliSource.Cloud.Core": "[2.0.0-alpha0152, )",
+          "ChilliSource.Cloud.Core": "[2.0.0-alpha0154, )",
           "ChilliSource.Cloud.ImageSharp": "[2.0.0-alpha0006, )",
           "ChilliSource.Cloud.Web": "[2.0.0-alpha0043, )",
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0016, )",

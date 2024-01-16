@@ -58,19 +58,14 @@ namespace ChilliCoreTemplate.Service
                         dest.CompanyLogoPath = company.LogoPath;
                         dest.CompanyName = company.Name;
                         dest.Timezone = company.Timezone;
-                        //TODO add check that mastercompany flag is turned on
-                        if (ctx.Items.ContainsKey("DataContext"))
-                        {
-                            var context = ctx.Items["DataContext"] as DataContext;
-                            var isMasterCompany = context.Companies.Any(x => x.MasterCompanyId == company.Id);
-                            if (isMasterCompany) dest.IsMasterCompany = true;
-                        }
+                        dest.IsMasterCompany = company.IsMasterCompany;
                     }
                 });
 
             CreateMap<UserData, UserData>();
 
             CreateMap<User, AccountViewModel>().ReverseMap();
+            CreateMap<User, UserBasicModel>();
 
             CreateMap<AccountDetailsEditModel, User>()
                 .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))

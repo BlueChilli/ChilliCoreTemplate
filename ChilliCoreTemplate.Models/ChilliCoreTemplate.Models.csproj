@@ -17,8 +17,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0152" />
-    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0119" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0154" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0120" />
     <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0016" />
     <PackageReference Include="FoolProof.Core" Version="1.2.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />

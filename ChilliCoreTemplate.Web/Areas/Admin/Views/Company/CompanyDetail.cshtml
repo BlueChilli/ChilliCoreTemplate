@@ -10,7 +10,7 @@
     var archiveOrDelete = Model.IsDeleted ? "Unarchive" : Model.CanDelete ? "Delete" : "Archive";
     if (Model.SubCompanies.Any())
     {
-        breadcrumb.Tabs.Add("Clinics");
+        breadcrumb.Tabs.Add("Sub company");
     }
 }
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, breadcrumb)) { }
@@ -39,6 +39,7 @@
                         <div class="col-lg-6">
                             <headings>
                                 <heading title="Master company" Condition="!String.IsNullOrEmpty(Model.MasterCompany)">@Model.MasterCompany</heading>
+                                <heading title="Master company" Condition="Model.IsMasterCompany"><label type="Success">Yes</label></heading>
                                 <heading title="Description" Condition="!String.IsNullOrEmpty(Model.Description)">@Model.Description</heading>
                                 <heading title="Website" Condition="!String.IsNullOrEmpty(Model.Website)">@Model.Website</heading>
                                 <heading title="Notes" Condition="!String.IsNullOrEmpty(Model.Notes)">@Model.Notes</heading>

@@ -1,0 +1,73 @@
+@model CompanyListModel
+@{
+}
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions()))
+{
+    <div class="float-right">
+        <a class="btn btn-sm btn-primary" mvc-action="@Mvc.Company.Company_Edit"><span class="pe-2"><i class="bi bi-plus-square-dotted"></i> </span><span>Add new clinic</span></a>
+    </div>
+}
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+    <box>
+        <box-content>
+            <table-default class="js-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var record in Model.List)
+                    {
+                        <tr>
+                            <td>@record.Name</td>
+                            <td><span class="badge bg-@(record.IsDeleted ? "warning" : "success")">@(record.IsDeleted ? "Inactive" : "Active")</span></td>
+                            <td>
+                                @if (record.IsDeleted)
+                                {
+                                    @Html.LinkPost(Mvc.Company.Company_Delete, "", new { Id = record.Id }, linkClasses: "btn btn-sm btn-square btn-neutral", iconClasses: "bi bi-recycle")
+                                }
+                                else
+                                {
+                                    <a mvc-action="Mvc.Company.Company_Edit" asp-route-id="@record.Id" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="Edit"><i class="bi bi-pencil"></i></a>
+                                    <a mvc-modal="Mvc.Company.Company_Delete" asp-route-id="@record.Id" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="Remove"><i class="bi bi-trash"></i></a>
+                                    if (record.HasAdmins)
+                                    {
+                                        <a href="@Mvc.Company.Company_Impersonate.Url(Url, record.Id)" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="Impersonate"><i class="bi bi-person-bounding-box"></i></a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table-default>
+
+        </box-content>
+    </box>
+</page>
+
+
+@section Scripts {
+    <script>
+        $(function () {
+
+            var table = $('.js-table').dataTable({
+                "processing": true,
+                "serverSide": false,
+                "dom": 'fTgtip',
+                "iDisplayLength": 50,
+                "columnDefs": [
+                    { "orderable": false, "targets": [1,2] }
+                ],
+            });
+        });
+    </script>
+}
+@section Modal
+    {
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.Company_Delete, Title = "Delete clinic", Size = ModalSize.Medium })
+}

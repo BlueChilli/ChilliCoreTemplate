@@ -188,7 +188,7 @@ a {
 .table {
     color: $table-text-color;
 
-    a {
+    a:not(.dropdown-item) {
         color: $table-link-color;
     }
 

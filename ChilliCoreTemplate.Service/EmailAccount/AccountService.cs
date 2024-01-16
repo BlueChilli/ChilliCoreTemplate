@@ -67,7 +67,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return VisibleUsers(this);
         }
 
-        internal static IQueryable<User> VisibleUsers(Service<DataContext> svc)
+        internal static IQueryable<User> VisibleUsers(Service<DataContext> svc, bool ignoreMasterCompany = false)
         {
             var userData = svc.User.UserData();
 
@@ -82,7 +82,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (userData.IsInRole(Role.CompanyAdmin))
             {
                 var companyId = userData.CompanyId;
-                return svc.Context.Users.Where(u => u.UserRoles.Any(r => r.CompanyId == companyId || r.Company.MasterCompanyId == companyId));
+                if (ignoreMasterCompany)
+                    return svc.Context.Users.Where(u => u.UserRoles.Any(r => r.CompanyId == companyId));
+                else
+                    return svc.Context.Users.Where(u => u.UserRoles.Any(r => r.CompanyId == companyId || r.Company.MasterCompanyId == companyId));
             }
 
             return svc.Context.Users.Where(u => u.Id == userData.UserId);

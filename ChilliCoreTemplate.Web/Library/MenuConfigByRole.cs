@@ -57,15 +57,24 @@ namespace ChilliCoreTemplate.Web
 
             MenuConfigByRole.Config(Role.CompanyAdmin, cfg =>
             {
-                cfg.AddRoot(Mvc.Company.Company_Detail, title: "Company", icon: "building").SetChildren(
-                        cfg.CreateBreadcrumb(Mvc.Company.Company_Detail),
-                        cfg.CreateBreadcrumb(Mvc.Company.Company_Settings)
+                if (cfg.UserData.IsMasterCompany)
+                {
+                    cfg.AddRoot(Mvc.Company.Company_List, title: "Sub-companies", icon: "hospital").SetChildren(
+                        cfg.CreateBreadcrumb(Mvc.Company.Company_Edit)
                     );
 
-                cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "people").SetChildren(
-                        cfg.CreateBreadcrumb(Mvc.Company.User_Detail),
-                        cfg.CreateBreadcrumb(Mvc.Company.User_Invite)                       
-                    );
+                    cfg.AddRoot(Mvc.Company.User_List, title: "Staff", icon: "person-badge").SetChildren(
+                            cfg.CreateBreadcrumb(Mvc.Company.User_Detail),
+                            cfg.CreateBreadcrumb(Mvc.Company.User_Invite)
+                        );
+                }
+                else
+                {
+                    cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "people").SetChildren(
+                            cfg.CreateBreadcrumb(Mvc.Company.User_Detail),
+                            cfg.CreateBreadcrumb(Mvc.Company.User_Invite)
+                        );
+                }
             });
         }
 

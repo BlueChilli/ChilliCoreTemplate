@@ -37,6 +37,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [Required, StringLength(100)]
         public string Name { get; set; }
 
+        public bool IsMasterCompany { get; set; }
+
         [StringLength(100)]
         public string LogoPath { get; set; }
 

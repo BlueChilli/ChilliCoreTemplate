@@ -1,0 +1,193 @@
+@model CompanyEditModel
+@{
+    var breadcrumb = new PageHeaderOptions
+    {
+        Heading = Model.Name,
+        Title = Model.Name,
+        Tabs = new List<string> { "Details", "Admins" }
+    };
+    var pageButtons = new Template_PageButtons
+    {
+        CancelMenuUrl = Mvc.Company.Company_List.Url(this.Url)
+    };
+}
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, breadcrumb)) { }
+<page>
+
+    <tab-content>
+        <tab-pane id="1" is-active="true">
+            @await Html.TemplateAsync(TemplateTypes.PageMessage)
+            @using (Html.BeginFormCustom(Mvc.Company.Company_Edit, htmlAttributes: new { @class = "form-horizontal", enctype = "multipart/form-data", autocomplete = "off" }))
+            {
+                @Html.ValidationSummary()
+                @await Html.TemplateAsync(TemplateTypes.PageButtons, pageButtons)
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.ApiKey)
+
+                <box>
+                    <box-title>Clinic details</box-title>
+                    <box-content>
+                        @await Html.FieldTemplateForAsync(m => m.LogoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.LogoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Width = 150, Height = 50, Quality = 80, Mode = ResizeMode.Max }) { ButtonText = "Upload", HasRemoveButton = false, BackgroundSize = "contain" })
+                        @await Html.FieldTemplateForAsync(m => m.Name)
+                        @await Html.FieldTemplateForAsync(m => m.Website)
+                        @await Html.FieldTemplateForAsync(m => m.Timezone, fieldOptions: new SelectFieldTemplateOptions() { SelectList = TimezoneHelper.GetSelectTimezones(Model.Timezone) })
+                    </box-content>
+                </box>
+            }
+        </tab-pane>
+        <tab-pane id="2">
+            <box>
+                <box-title title="@Model.Name admins">
+                    <button type="button" class="btn btn-primary btn-sm js-user-add ms-auto">Invite</button>
+                </box-title>
+                <box-content>
+                    <div class="d-none js-user-new">
+                        @await Html.PartialAsync("CompanyAdminAdd")
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <table-default class="js-user-table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>IsNew</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th style="width: 150px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table-default>
+                        </div>
+                    </div>
+                </box-content>
+            </box>
+        </tab-pane>
+    </tab-content>
+</page>
+@section scripts
+{
+    var userTable;
+    <script>
+        $(function () {
+
+            $('#Timezone').chosen({
+                width: "100%"
+            });
+
+            $('.js-user-add').click(function () {
+                $('.js-user-add').hide();
+                $('.js-user-new').removeClass('d-none');
+                $('#@Html.IdFor(m => m.Admin.Email)').focus();
+            });
+
+            $('.js-user-table').on('click', '.js-resend', function (e) {
+                e.preventDefault();
+                userId = $(this).data('id');
+                @Html.ModalOpen(Mvc.Company.User_InviteResend, data: "{ id: userId }");
+            });
+
+            SetupUserForm();
+
+            $('.js-user-table').on('click', '.js-remove', function (e) {
+                e.preventDefault();
+                userId = $(this).data('id');
+                @Html.ModalOpen(Mvc.Company.Company_Admin_Remove, new MenuUrlValues(Model.Id), "{ userId: userId }");
+            });
+
+            userTable = $('.js-user-table').dataTable({
+                dom: 'Tgtip',
+                "iDisplayLength": 100,
+                "order": [[1, "asc"]],
+                "serverSide": true,
+                "processing": true,
+                "serverMethod": "POST",
+                "autoWidth": false,
+                "ajax": {
+                    "url": "@Mvc.Company.Company_Admin_List.Url(this.Url, Model.Id)",
+                },
+                "columns": [
+                    {
+                        "orderable": false,
+                        "visible": false,
+                        "data": 'isNew'
+                    },
+                    {
+                        "orderable": true,
+                        "data": "name",
+                    },
+                    {
+                        "orderable": false,
+                        "data": 'email'
+                    },
+                    {
+                        "orderable": false,
+                        "data": 'status',
+                        render: function (data, type, row) {
+                            return '<span class="badge bg-{0}">{1}</span>'.format(data == 'Invited' || data == 'Applied' ? 'warning' : 'success', data);
+                        }
+
+                    },
+                    {
+                        "orderable": false,
+                        "data": null,
+                        render: function (data, type, row) {
+                            var view = '<a href="@Mvc.Company.User_Detail.Url(this.Url)/' + data.userId + '" class="btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="View"><i class="bi bi-eye"></i></a>';
+                            var remove = '<a class="js-remove btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="Remove" href="#" data-id="' + data.userId + '"><i class="bi bi-trash"></i></a>';
+                            if (data.status == 'Invited') {
+                                view += '<a class="js-resend btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="Resend" href="#" data-id="' + data.userId + '"><i class="bi bi-arrow-repeat"></i></a>';
+                            }
+                            return view += remove;
+                        }
+                    },
+                ],
+                createdRow: function (row, data, dataIndex, cells) {
+                    if (data.isNew) {
+                        $(row).css('background-color', '#fcf8e3');
+                    }
+                },
+                initComplete: function () {
+                    var footer = $(this).parents('div.card').children('div.card-footer');
+                    $(this).siblings('.dataTables_info').appendTo(footer.children('.js-table-showing'));
+                    $(this).siblings('.dataTables_paginate').appendTo(footer.children('.js-table-paginate'));
+                },
+                drawCallback: function (settings) {
+                    initTooltips();
+                }
+            });
+
+        });
+
+        function SearchTable(table) {
+            var api = table.api();
+
+            api.search($('#Search').val());
+
+            api.draw();
+        }
+
+        function SetupUserForm() {
+            $('#@Mvc.Company.Company_Admin_Add.GetFormId()').ajaxForm({ target: '.js-user-new' });
+            $('.js-user-new #@Html.IdFor(m => m.Admin.Email)').change(function () {
+                $.getJSON('@Mvc.Company.Company_Admin_Detail.Url(this.Url)', { id: @Model.Id, email: $(this).val() }, function (data) {
+                    if (data.id != 0) {
+                        $('.js-user-new #@Html.IdFor(m => m.Admin.Email)').val(data.email);
+                        $('.js-user-new #@Html.IdFor(m => m.Admin.FirstName)').val(data.firstName);
+                        $('.js-user-new #@Html.IdFor(m => m.Admin.LastName)').val(data.lastName);
+                    }
+                });
+            });
+            $('.js-user-cancel').click(function () {
+                $('.js-user-add').show();
+                $('.js-user-new').addClass('d-none');
+            });
+        }
+
+    </script>
+}
+@section Modal
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.Company_Admin_Remove, Title = "Remove admin", Size = ModalSize.Medium })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_InviteResend, Title = "Resend invite", Size = ModalSize.Medium })
+}

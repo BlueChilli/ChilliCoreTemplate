@@ -8,37 +8,14 @@
     <box>
         <box-title title="@Model.Account.FullName" description="(@Model.Account.Email)">
             <div class="btn-group ms-auto">
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Manage
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ResetPassword" asp-route-userid="@Model.Account.Id">Reset password</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ChangeDetails" asp-route-id="@Model.Account.Id">Change account details</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ChangeRole" asp-route-id="@Model.Account.Id">Change account role</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_ChangeStatus" asp-route-id="@Model.Account.Id">Change account status</a>
-                    </li>
-                    @if(Model.Account.Status == UserStatus.Deleted)
-                    {
-                    <li>
-                        <a class="dropdown-item" mvc-modal="Mvc.Admin.User_Purge" asp-route-id="@Model.Account.Id">Purge account</a>
-                    </li>                                
-                    }
-                    @if (User.UserData().CanImpersonate(Model.Account))
-                    {
-                        <li>
-                            <a href="#" class="dropdown-item js-impersonate">Impersonate</a>
-                        </li>
-                    }
-                  </ul>
-                </div>
+                <button-dropdown title="Manage">
+                    <item mvc-modal="Mvc.Admin.User_ResetPassword" asp-route-userid="@Model.Account.Id">Reset password</item>
+                    <item mvc-modal="Mvc.Admin.User_ChangeDetails" asp-route-id="@Model.Account.Id">Change account details</item>
+                    <item mvc-modal="Mvc.Admin.User_ChangeRole" asp-route-id="@Model.Account.Id">Change account role</item>
+                    <item mvc-modal="Mvc.Admin.User_ChangeStatus" asp-route-id="@Model.Account.Id">Change account status</item>
+                    <item mvc-modal="Mvc.Admin.User_Purge" asp-route-id="@Model.Account.Id" Condition="Model.Account.Status == UserStatus.Deleted">Purge account</item>
+                    <itempost mvc-action="Mvc.Admin.User_Impersonate" asp-route-id="@Model.Account.Id" Condition="User.UserData().CanImpersonate(Model.Account)">Impersonate</itempost>
+                </button-dropdown>
             </div>
         </box-title>
         <box-content>
@@ -101,16 +78,9 @@
     </box>
 
 </page>
-<form id="impersonate" target="_self" method="post" action="@Mvc.Admin.User_Impersonate.Url(this.Url)">
-    <input type="hidden" name="id" id="impersonate-id" value="@Model.Account.Id" />
-</form>
 @section Scripts {
     <script>
         $(function () {
-            $('a.js-impersonate').click(function (e) {
-                e.preventDefault();
-                $('#impersonate').submit();
-            });
         });
     </script>
 }

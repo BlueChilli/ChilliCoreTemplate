@@ -28,7 +28,15 @@
                 @await Html.FieldTemplateForAsync(m => m.Name)
                 @if (config.HasMasterCompany)
                 {
-                    @await Html.FieldTemplateForAsync(m => m.MasterCompanyId, options: new TemplateOptions{ FieldSize = FieldTemplateSize.Large }, fieldOptions: new SelectFieldTemplateOptions{ SelectList = Model.CompanyList })
+                    @using (await Html.FieldTemplateOuterForAsync(m => m.MasterCompanyId, options: new TemplateOptions { FieldSize = FieldTemplateSize.Large }))
+                    {
+                        <div class="js-group-child @Html.When(Model.IsMasterCompany, "hide")">
+                            @await Html.FieldTemplateInnerForAsync(m => m.MasterCompanyId, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.CompanyList })
+                        </div>
+                        <div class="js-group-parent @Html.When(Model.MasterCompanyId.HasValue, "hide")">
+                            @await Html.FieldTemplateInnerForAsync(m => m.IsMasterCompany)
+                        </div>
+                    }
                 }
                 @using (await Html.FieldTemplateOuterForAsync(m => m.StripeId))
                 {
@@ -53,6 +61,22 @@
 {
     <script>
         $(function () {
+
+            $('#MasterCompanyId').change(function () {
+                if ($(this).val() == '') {
+                    $('.js-group-parent').removeClass('hide');
+                } else {
+                    $('.js-group-parent').addClass('hide');
+                }
+            });
+
+            $('#IsMasterCompany').change(function () {
+                if ($(this).is(':checked')) {
+                    $('.js-group-child').addClass('hide');
+                } else {
+                    $('.js-group-child').removeClass('hide');
+                }
+            });
 
             $('#Timezone').chosen({
                 width: "100%"

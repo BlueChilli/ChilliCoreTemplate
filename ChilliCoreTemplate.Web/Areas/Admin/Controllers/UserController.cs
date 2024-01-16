@@ -309,7 +309,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult InviteResend(int id)
         {
-            return this.ServiceCall(() => _companyService.Company_Admin_Get(User.UserData().CompanyId.Value, id)).Call();
+            return this.ServiceCall(() => _companyService.Company_Admin_Get(id)).Call();
         }
 
         [HttpPost, ActionName("InviteResend")]

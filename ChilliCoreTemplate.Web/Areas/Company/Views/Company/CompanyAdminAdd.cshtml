@@ -1,0 +1,21 @@
+@model CompanyEditModel
+@using (Html.BeginFormCustom(Mvc.Company.Company_Admin_Add, htmlAttributes: new { @class = "form-horizontal", enctype = "multipart/form-data", autocomplete = "off" }))
+{
+    @Html.ValidationSummary()
+    @Html.HiddenFor(m => m.Id)
+    @await Html.FieldTemplateForAsync(m => m.Admin.Email)
+    @await Html.FieldTemplateForAsync(m => m.Admin.FirstName)
+    @await Html.FieldTemplateForAsync(m => m.Admin.LastName)
+    using (await Html.FieldTemplateOuterForAsync(m => m.Id, options: new TemplateOptions { Label = "" }))
+    {
+        @await Html.ButtonSubmitAsync("Invite")
+        <button type="button" class="btn btn-neutral js-user-cancel">Cancel</button>
+    }
+}
+@if (Context.Request.IsAjaxRequest())
+{
+    <script>
+        SetupUserForm();
+        SearchTable(userTable);
+    </script>
+}

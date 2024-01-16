@@ -28,6 +28,8 @@ namespace ChilliCoreTemplate.Models
 
         public string MasterCompany { get; set; }
 
+        public bool IsMasterCompany { get; set; }
+
         public string Name { get; set; }
 
         public Guid Guid { get; set; }
@@ -86,6 +88,8 @@ namespace ChilliCoreTemplate.Models
 
         [Placeholder]
         public string Search { get; set; }
+
+        public List<CompanyDetailViewModel> List { get; set; }
     }
 
     public class CompanyEditModel
@@ -94,6 +98,9 @@ namespace ChilliCoreTemplate.Models
 
         [Required, MaxLength(100)]
         public string Name { get; set; }
+
+        [CheckBox]
+        public bool IsMasterCompany { get; set; }
 
         [DisplayName("Master company"), EmptyItem]
         public int? MasterCompanyId { get; set; }
@@ -148,6 +155,8 @@ namespace ChilliCoreTemplate.Models
 
         [CheckBox, Label("Archived")]
         public bool IsDeleted { get; set; }
+
+        public InviteEditModel Admin { get; set; }
     }
 
     public class CompanySettingsModel
@@ -174,6 +183,8 @@ namespace ChilliCoreTemplate.Models
         public int Id { get; set; }
 
         public string Name { get; set; }
+
+        public string MasterCompany { get; set; }
 
         [JsonIgnore]
         public DateTime CreatedAt { get; set; }
@@ -216,6 +227,15 @@ namespace ChilliCoreTemplate.Models
         public string UserFullName { get; set; }
 
         public string UserEmail { get; set; }
+    }
+
+    public class CompanyAdminAddModel
+    {
+        public int Id { get; set; }
+
+        [Required]
+        public InviteEditModel Admin { get; set; }
+
     }
 
     public static class TimezoneHelper

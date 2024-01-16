@@ -86,7 +86,7 @@ namespace ChilliCoreTemplate.Service.Admin
                 }
             }
 
-            var query = AccountService.VisibleUsers(this)
+            var query = AccountService.VisibleUsers(this, ignoreMasterCompany: true)
                 .Where(filter);
 
             IOrderedQueryable<User> queryOrdered = null;

@@ -16,7 +16,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     [HtmlTargetElement("a", Attributes = ActionAttribute)]
     public class AnchorTagHelper : TagHelper
     {
-        private const string ActionAttribute = "mvc-action";
+        protected const string ActionAttribute = "mvc-action";
 
         private readonly IUrlHelperFactory _urlHelperFactory;
         public AnchorTagHelper(IUrlHelperFactory urlHelperFactory)
@@ -52,7 +52,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     [HtmlTargetElement("a", Attributes = ActionAttribute)]
     public class AnchorTagModalHelper : TagHelper
     {
-        private const string ActionAttribute = "mvc-modal";
+        protected const string ActionAttribute = "mvc-modal";
 
         private readonly IUrlHelperFactory _urlHelperFactory;
         public AnchorTagModalHelper(IUrlHelperFactory urlHelperFactory)

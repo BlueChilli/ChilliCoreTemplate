@@ -21,7 +21,7 @@ $green: #00CC88 !default;
 // Need additional variables? Simply create it here and make sure you follow the naming formula explained at the top of this file.
 
 $primary: #172850;
-$secondary: #FAFCFE;
+$secondary: #6C757D;
 $dark: $gray-900 !default;
 
 $headings-color: #1A294D !default;
@@ -38,7 +38,7 @@ $table-hover-color: #ECF2F8;
 $navbar-light-active-color: #16192C;
 
 $surface-colors: () !default;
-$surface-colors: map-merge(( "primary": $white, "secondary": $secondary, "tertiary": $gray-50, "light": $gray-200, "dark": shade-color($dark, 7%) ), $surface-colors);
+$surface-colors: map-merge(( "primary": $white, "secondary": $gray-50, "tertiary": $gray-50, "light": $gray-200, "dark": shade-color($dark, 7%) ), $surface-colors);
 
 $accordion-bg: $white;
 

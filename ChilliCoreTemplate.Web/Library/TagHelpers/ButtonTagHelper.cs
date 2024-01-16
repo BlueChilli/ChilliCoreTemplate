@@ -140,7 +140,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         [HtmlAttributeName("icon-placement")]
         public IconPlacement IconPlacement { get; set; }
 
-        public string ToolTip { get; set; }
+        public string Tooltip { get; set; }
 
         [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
         public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -154,7 +154,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             {
                 iconStyle = IconPlacement == IconPlacement.None ? "btn-square" : "";
                 output.Attributes.SetAttribute("data-bs-toggle", "tooltip");
-                output.Attributes.SetAttribute("data-bs-original-title", Icon.GetDescription());
+                output.Attributes.SetAttribute("data-bs-original-title", Tooltip ?? Icon.GetDescription());
                 var icon = $"<i class=\"bi bi-{Icon.GetData<string>("Icon")}\"></i>";
                 if (IconPlacement == IconPlacement.None)
                     output.Content.SetHtmlContent(icon);
