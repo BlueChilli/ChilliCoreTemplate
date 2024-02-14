@@ -77,6 +77,27 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
                 .Call();
         }
 
+        public ActionResult Delete(int id)
+        {
+            return this.ServiceCall(() => _service.Get<CompanyViewModel>(id))
+                .Always(m =>
+                {
+                    return PartialView("CompanyDelete", m);
+                })
+                .Call();
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public ActionResult DeletePost(int id)
+        {
+            return this.ServiceCall(() => _service.Delete(id))
+                   .OnSuccess(() => Mvc.Company.Company_List.Redirect(this))
+                   .OnFailure(() =>
+                   {
+                       return Delete(id);
+                   })
+                   .Call();
+        }
         [HttpPost]
         public IActionResult AdminList(IDataTablesRequest model, int id)
         {

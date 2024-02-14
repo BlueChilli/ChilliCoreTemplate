@@ -412,10 +412,10 @@ namespace ChilliCoreTemplate.Service.Admin
                 case EntityType.User:
                 case EntityType.Session:
                 case EntityType.Password:
-                    record.EntityDescription = Context.Users.First(x => x.Id == record.EntityId).FullName;
+                    record.EntityDescription = Context.Users.Where(x => x.Id == record.EntityId).Select(x => x.FullName).FirstOrDefault() ?? "Deleted";
                     break;
                 case EntityType.Company:
-                    record.EntityDescription = Context.Companies.First(x => x.Id == record.EntityId).Name;
+                    record.EntityDescription = Context.Companies.Where(x => x.Id == record.EntityId).Select(x => x.Name).FirstOrDefault() ?? "Deleted";
                     break;
             }
 

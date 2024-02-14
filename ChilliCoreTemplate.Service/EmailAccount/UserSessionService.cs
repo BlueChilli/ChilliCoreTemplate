@@ -45,6 +45,22 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             session.ImpersonationChain = userData.ImpersonationChain().ToJson();
         }
 
+        public async Task<UserData> GetCompanySession(Guid guid)
+        {
+            var admin = await Context.Users
+                .Include(a => a.UserRoles)
+                .ThenInclude((UserRole r) => r.Company)
+                .Where(x => x.Status != UserStatus.Deleted && x.UserRoles.Any(r => r.Role == Role.CompanyAdmin && r.Company.ApiKey == guid && !r.Company.IsDeleted))
+                .FirstOrDefaultAsync();
+
+            if (admin != null)
+            {
+                return _mapper.Map<UserData>(admin);
+            }
+
+            return null;
+        }
+
         public async Task<string> CreateAsync(UserData userData, DateTime expiresOn)
         {
             var session = Context.UserSessions.Add(new UserSession { SessionId = Guid.NewGuid() }).Entity;

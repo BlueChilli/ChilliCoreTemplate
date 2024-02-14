@@ -29,6 +29,7 @@ namespace ChilliCoreTemplate.Service
             AdminService.Sms_LinqMapper();
             AccountService.PushNotification_LinqMapper();
             CompanyService.LinqMapperConfigure(_storagePath);
+            EmailServiceHelpers.LinqMapperConfigure();
 
             //Basic mapping of class
             //LinqMapper.CreateMap<Example, ExampleApiModel>();

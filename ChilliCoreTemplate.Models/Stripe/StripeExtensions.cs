@@ -1,5 +1,6 @@
 ﻿using Stripe;
 using System;
+using System.Collections.Generic;
 
 namespace ChilliCoreTemplate.Models.Stripe
 {
@@ -25,14 +26,14 @@ namespace ChilliCoreTemplate.Models.Stripe
             if (customer.DefaultSource is Card)
             {
                 var card = customer.DefaultSource as Card;
-                return (String.IsNullOrEmpty(card.CvcCheck) || card.CvcCheck == "unavailable" || card.CvcCheck == "pass") && !(card.Deleted ?? false) && new DateTime((int)card.ExpYear, (int)card.ExpMonth, 1).AddMonths(1) > DateTime.UtcNow;
+                return (String.IsNullOrEmpty(card.CvcCheck) || ValidCvcCheckStatus.Contains(card.CvcCheck)) && !(card.Deleted ?? false) && new DateTime((int)card.ExpYear, (int)card.ExpMonth, 1).AddMonths(1) > DateTime.UtcNow;
             }
             else if (customer.DefaultSource is Source)
             {
                 var card = (customer.DefaultSource as Source)?.Card;
                 if (card != null)
                 {
-                    return (String.IsNullOrEmpty(card.CvcCheck) || card.CvcCheck == "unavailable" || card.CvcCheck == "pass") && new DateTime((int)card.ExpYear, (int)card.ExpMonth, 1).AddMonths(1) > DateTime.UtcNow;
+                    return (String.IsNullOrEmpty(card.CvcCheck) || ValidCvcCheckStatus.Contains(card.CvcCheck)) && new DateTime((int)card.ExpYear, (int)card.ExpMonth, 1).AddMonths(1) > DateTime.UtcNow;
                 }
             }
             return false;
@@ -42,7 +43,9 @@ namespace ChilliCoreTemplate.Models.Stripe
         {
             var cvcCheck = card.Checks?.CvcCheck;
 
-            return (String.IsNullOrEmpty(cvcCheck) || cvcCheck == "unavailable" || cvcCheck == "pass") && new DateTime((int)card.ExpYear, (int)card.ExpMonth, 1).AddMonths(1) > DateTime.UtcNow;
+            return (String.IsNullOrEmpty(cvcCheck) || ValidCvcCheckStatus.Contains(cvcCheck)) && new DateTime((int)card.ExpYear, (int)card.ExpMonth, 1).AddMonths(1) > DateTime.UtcNow;
         }
+
+        private static List<string> ValidCvcCheckStatus = ["unavailable", "unchecked", "pass"];
     }
 }

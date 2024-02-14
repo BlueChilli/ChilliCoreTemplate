@@ -409,6 +409,7 @@ namespace ChilliCoreTemplate.Web
             app.UseWhen(context => context.Request.IsApiRequest(), builder =>
             {
                 builder.UseMiddleware<UserKeyMiddleware>();
+                builder.UseMiddleware<CompanyKeyMiddleware>();
             });
 
             //Logs requests after Auth middleware.

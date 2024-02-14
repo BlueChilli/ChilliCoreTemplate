@@ -1,5 +1,5 @@
 @model AccountDetailsEditModel
-@using (Html.BeginFormCustom(Mvc.Company.User_ChangeDetails, htmlAttributes: new { enctype = "multipart/form-data", autocomplete = "off" }))
+@using (Html.BeginFormCustom(Mvc.Company.User_Update, htmlAttributes: new { enctype = "multipart/form-data", autocomplete = "off" }))
 {
 <div class="modal-body">
     @Html.ValidationSummary()
@@ -18,5 +18,5 @@
 }
 @Html.RenderCustomSection("scripts")
 <script>
-    $('#@Mvc.Company.User_ChangeDetails.GetFormId()').ajaxForm({ target: '#@Mvc.Company.User_ChangeDetails.GetModalId()_content' });
+    $('#@Mvc.Company.User_Update.GetFormId()').ajaxForm({ target: '#@Mvc.Company.User_Update.GetModalId()_content' });
 </script>

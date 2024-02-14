@@ -117,7 +117,7 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_Impersonate = MvcAction();
         public readonly IMvcActionDefinition User_UndoImpersonate = MvcAction();
         public readonly IMvcActionDefinition User_ResetPassword = MvcAction();
-        public readonly IMvcActionDefinition User_ChangeDetails = MvcAction();
+        public readonly IMvcActionDefinition User_Update = MvcAction();
         public readonly IMvcActionDefinition User_ChangeStatus = MvcAction();
         public readonly IMvcActionDefinition User_ChangeRole = MvcAction();
         public readonly IMvcActionDefinition User_Invite = MvcAction();

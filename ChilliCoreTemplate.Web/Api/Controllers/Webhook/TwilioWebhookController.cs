@@ -17,6 +17,7 @@ namespace ChilliCoreTemplate.Web.Api
 {
     public partial class WebhooksController
     {
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ApiKeyIgnore]
         [HttpPost]
         [Route("twilio/status")]

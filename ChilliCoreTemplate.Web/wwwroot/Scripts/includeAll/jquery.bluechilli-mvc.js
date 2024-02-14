@@ -413,6 +413,8 @@ $(function () {
             settings.contentType = false;
         }
 
+        if (typeof (settings.data) == 'function') settings.data = settings.data();
+
         $.ajax(settings)
             .done(function (result, status, xhr) {
                 if (xhr.getResponseHeader('X-Ajax-Redirect') != null) {

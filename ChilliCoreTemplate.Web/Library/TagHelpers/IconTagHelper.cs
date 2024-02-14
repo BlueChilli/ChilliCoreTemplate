@@ -14,6 +14,10 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
         public LabelType? Style { get; set; }
 
+        public bool ShowTooltip { get; set; }
+
+        public string Tooltip { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "i";
@@ -25,6 +29,12 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             if (Style.HasValue)
             {
                 output.AddClass($"text-{Style.Value.GetDescription()}", NullHtmlEncoder.Default);
+            }
+
+            if (ShowTooltip)
+            {
+                output.Attributes.SetAttribute("data-bs-toggle", "tooltip");
+                output.Attributes.SetAttribute("data-bs-original-title", Tooltip ?? Icon.GetDescription());
             }
         }
     }

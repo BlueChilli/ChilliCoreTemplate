@@ -4,8 +4,22 @@
         <td>Entity:</td>
         <td>@Model.EntityDescription</td>
     </tr>
-    <tr>
-        <td>Target:</td>
-        <td>@Model.TargetDescription</td>
-    </tr> 
+    @if (Model.TargetId.HasValue)
+    {
+        <tr>
+            <td>Target:</td>
+            <td>@Model.TargetDescription</td>
+        </tr>
+    }
+    @if (Model.JsonData != null)
+    {
+        var items = Model.JsonData.FromJson<Dictionary<string, string>>();
+        foreach (var item in items)
+        {
+            <tr>
+                <td>@item.Key:</td>
+                <td>@item.Value</td>
+            </tr>
+        }
+    }
 </table>

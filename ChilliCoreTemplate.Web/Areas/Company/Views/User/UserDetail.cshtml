@@ -6,22 +6,12 @@
     <box>
         <box-title title="@Model.Account.FullName" description="(@Model.Account.Email)">
             <div class="btn-group ms-auto">
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        Manage
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" mvc-modal="Mvc.Company.User_ResetPassword" asp-route-userid="@Model.Account.Id">Reset password</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" mvc-modal="Mvc.Company.User_ChangeDetails" asp-route-id="@Model.Account.Id">Change account details</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" mvc-modal="Mvc.Company.User_ChangeStatus" asp-route-id="@Model.Account.Id">Delete (needs discussion)</a>
-                        </li>
-                    </ul>
-                </div>
+                <button-dropdown title="Manage">
+                    <item mvc-modal="Mvc.Company.User_ResetPassword" asp-route-userid="@Model.Account.Id">Reset password</item>
+                    <item mvc-modal="Mvc.Company.User_Update" asp-route-id="@Model.Account.Id">Change account details</item>
+                    <item mvc-modal="Mvc.Company.User_ChangeStatus" asp-route-id="@Model.Account.Id">Delete (needs discussion)</item>
+                    <itempost mvc-action="Mvc.Company.User_Impersonate" asp-route-id="@Model.Account.Id" Condition="User.UserData().CanImpersonate(Model.Account)">Impersonate</itempost>
+                </button-dropdown>
             </div>
         </box-title>
         <box-content>
@@ -42,23 +32,16 @@
         </box-content>
     </box>
 </page>
-<form id="impersonate" target="_self" method="post" action="@Mvc.Company.User_Impersonate.Url(this.Url)">
-    <input type="hidden" name="id" id="impersonate-id" value="@Model.Account.Id" />
-</form>
 @section Scripts {
     <script>
         $(function () {
-            $('a.js-impersonate').click(function (e) {
-                e.preventDefault();
-                $('#impersonate').submit();
-            });
         });
     </script>
 }
 @section modal
     {
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_ResetPassword, Title = "Reset password" })
-    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_ChangeDetails, Title = "Change details" })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_Update, Title = "Change details" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_ChangeRole, Title = "Change role" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Company.User_ChangeStatus, Title = "Change status" })
 }

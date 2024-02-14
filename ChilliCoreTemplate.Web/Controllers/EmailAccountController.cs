@@ -87,29 +87,21 @@ namespace ChilliCoreTemplate.Web.Controllers
         [HttpPost, ActionName("Login")]
         public virtual ActionResult LoginPost(SessionEditModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                model.OAuthUrls = OAuthUrls();
-                return View(model);
-            }
-
-            var loginResult = _accountService.Login(model, this.LoginWithPrincipal);
-
-            if (!loginResult.Success)
-            {
-                if (loginResult.Error == "ResendRegistrationCompleteEmail")
+            return this.ServiceCall(() => _accountService.Login(model, this.LoginWithPrincipal))
+                .OnSuccess(m =>
                 {
-                    return Mvc.Root.EmailAccount_RegistrationActivationSent.Redirect(this, routeValues: new { email = model.Email });
-                }
-                else
+                    return RedirectionAfterLogin(m, model.ReturnUrl);
+                })
+                .OnServiceFailure(m =>
                 {
-                    ModelState.AddModelError("Login failed", loginResult.Error);
-                }
-                model.OAuthUrls = OAuthUrls();
-                return View(model);
-            }
-
-            return RedirectionAfterLogin(loginResult.Result, model.ReturnUrl);
+                    if (m.Error == "ResendRegistrationCompleteEmail")
+                    {
+                        return Mvc.Root.EmailAccount_RegistrationActivationSent.Redirect(this, routeValues: new { email = model.Email });
+                    }
+                    model.OAuthUrls = OAuthUrls();
+                    return View(model);
+                })
+                .Call();
         }
 
         private ActionResult RedirectionAfterLogin(UserDataPrincipal ticket = null, string returnUrl = null)

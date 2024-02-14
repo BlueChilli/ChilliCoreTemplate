@@ -80,34 +80,18 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 .ToList();
         }
 
-        public ServiceResult<CompanyDetailViewModel> Get(int? id = null)
+        public ServiceResult<T> Get<T>(int? id = null) where T : class, ICompanyViewModel, new()
         {
             if (id == null) id = CompanyId;
 
-            var model = Authorised()
-                .AsNoTracking()
-                .Where(x => x.Id == id)
-                .Materialize<Company, CompanyDetailViewModel>()
+            var model = this.Authorised(id.Value)
+                .Materialize<Company, T>()
                 .FirstOrDefault();
 
-            if (model == null) return ServiceResult<CompanyDetailViewModel>.AsError($"Company not found for {id}");
+            if (model == null)
+                return ServiceResult<T>.AsError("Company not found for {id}");
 
-            //if (loadStripeDetails)
-            //{
-            //    if (company.HasBillingPerSite)
-            //    {
-            //        if (!String.IsNullOrEmpty(company.SubscriptionJson))
-            //            model.StripeDetail = new StripeDetail { Plan = company.SubscriptionJson.FromJson<List<string>>().ToDelimitedString(", ") };
-            //    }
-            //    else
-            //    {
-            //        var stripeDetailRequest = Stripe_Get(company.StripeId);
-            //        if (!stripeDetailRequest.Success) return ServiceResult<CompanyViewModel>.CopyFrom(stripeDetailRequest);
-            //        model.StripeDetail = stripeDetailRequest.Result;
-            //    }
-            //}
-
-            return ServiceResult<CompanyDetailViewModel>.AsSuccess(model);
+            return ServiceResult<T>.AsSuccess(model);
         }
 
         public ServiceResult<CompanyEditModel> Edit(CompanyEditModel model)
@@ -195,10 +179,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<CompanyEditModel> GetForEdit(int? id = null, string name = null)
         {
-            if (id == null) id = User.UserData().IsMasterCompany ? 0 : CompanyId ?? 0;
-            var model = Authorised(id.Value)
+            var model = id.HasValue ? Authorised(id.Value)
                 .Materialize<Company, CompanyEditModel>()
-                .FirstOrDefault();
+                .FirstOrDefault() : null;
 
             if (model == null && id.GetValueOrDefault(0) != 0) return ServiceResult<CompanyEditModel>.AsError("Company not found");
 
@@ -439,7 +422,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
             Context.SaveChanges();
 
-            return ServiceResult<CompanyDetailViewModel>.AsSuccess(Get(id).Result);
+            return Get<CompanyDetailViewModel>(id);
         }
 
         public PagedList<CompanyUserViewModel> Company_Admin_List(IDataTablesRequest model, int id, Role role)

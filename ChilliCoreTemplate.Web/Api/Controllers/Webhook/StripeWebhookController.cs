@@ -8,6 +8,7 @@ namespace ChilliCoreTemplate.Web.Api
 {
     public partial class WebhooksController
     {
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ApiKeyIgnore]
         [HttpPost]
         [Route("stripe")]
@@ -17,6 +18,7 @@ namespace ChilliCoreTemplate.Web.Api
             return Ok(result.Error);
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ApiKeyIgnore]
         [HttpPost]
         [Route("stripecreate")]

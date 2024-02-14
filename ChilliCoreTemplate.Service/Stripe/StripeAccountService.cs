@@ -36,8 +36,13 @@ namespace ChilliCoreTemplate.Service
                 var service = new AccountService(_client);
                 var account = new AccountCreateOptions
                 {
-                    Country = company.Country?.ToString(),
+                    Country = company.Region,
                     Email = user.Email,
+                    Capabilities = new AccountCapabilitiesOptions
+                    {
+                        CardPayments = new AccountCapabilitiesCardPaymentsOptions { Requested = false }, //TODO
+                        Transfers = new AccountCapabilitiesTransfersOptions { Requested = true },
+                    },
                     Company = new AccountCompanyOptions
                     {
                         //TaxId = company.TaxId,
@@ -47,7 +52,7 @@ namespace ChilliCoreTemplate.Service
                             City = company.Suburb,
                             PostalCode = company.Postcode,
                             State = company.State,
-                            Country = company.Country?.ToString()
+                            Country = company.Region
                         }
                     },
                     BusinessProfile = new AccountBusinessProfileOptions

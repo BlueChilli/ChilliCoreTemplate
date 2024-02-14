@@ -17,6 +17,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 {
     public static  class EmailServiceHelpers
     {
+        public static void LinqMapperConfigure()
+        {
+            LinqMapper.CreateMap<Email, EmailSummaryModel>();
+        }
+
         public static void SetConfigProperties(IEmailTemplateDataModel model, ProjectSettings config, string userEmail)
         {
             model.Site = config.ProjectDisplayName;

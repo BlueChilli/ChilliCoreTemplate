@@ -36,7 +36,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (from == null) from = new EmailData_Address(model.Email, $"{company.Name} via {_config.ProjectDisplayName}");
 
                 var companyAdmin = GetCompanyAdmin(company.Id);
-                model.CompanyEmail = companyAdmin.Email;
+                model.CompanyEmail = companyAdmin?.Email;
                 //replyTo = new EmailData_Address(_config.EmailTemplate.Email, _config.ProjectDisplayName);
             }
             if (String.IsNullOrEmpty(model.CompanyName)) model.CompanyName = _config.ProjectDisplayName;

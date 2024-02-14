@@ -68,6 +68,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         [HtmlAttributeName(ActionAttribute)]
         public IMvcActionDefinition Action { get; set; }
 
+        public string JsonData { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             if (Action == null)
@@ -77,7 +79,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             output.Attributes.RemoveAll(ActionAttribute);
 
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
-            var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues });
+            var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues }, data: JsonData ?? "null");
             output.Attributes.SetAttribute("onclick", new HtmlString(url));
         }
     }

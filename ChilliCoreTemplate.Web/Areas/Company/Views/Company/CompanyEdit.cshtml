@@ -2,10 +2,14 @@
 @{
     var breadcrumb = new PageHeaderOptions
     {
-        Heading = Model.Name,
-        Title = Model.Name,
-        Tabs = new List<string> { "Details", "Admins" }
+        Heading = Model.Id == 0 ? "Create new partner" : Model.Name,
+        Title = Model.Id == 0 ? "Create" : "Edit",
+        Tabs = new List<string> { "Details" }
     };
+    if (Model.Id != 0)
+    {
+        breadcrumb.Tabs.Add("Admins");
+    }
     var pageButtons = new Template_PageButtons
     {
         CancelMenuUrl = Mvc.Company.Company_List.Url(this.Url)

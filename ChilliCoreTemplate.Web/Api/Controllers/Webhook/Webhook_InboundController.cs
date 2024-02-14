@@ -26,6 +26,7 @@ namespace ChilliCoreTemplate.Web.Api
             _env = env;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [CustomAuthorize(MultipleRoles = new string[] { AccountCommon.Administrator })]
         [HttpGet]
         [Route("run")]

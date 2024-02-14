@@ -55,7 +55,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult Detail(int id)
         {
-            return this.ServiceCall(() => _service.Get(id))
+            return this.ServiceCall(() => _service.Get<CompanyDetailViewModel>(id))
                 .Always(m => { return View("CompanyDetail", m); })
                 .Call();
         }
@@ -82,11 +82,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult Delete(int id)
         {
-            return this.ServiceCall(() => _service.Get(id))
-                .Always(m =>
-                {
-                    return PartialView("CompanyDelete", m);
-                })
+            return this.ServiceCall(() => _service.Get<CompanyDetailViewModel>(id))
                 .Call();
         }
 
@@ -105,7 +101,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         public ActionResult Purge(int id)
         {
-            return this.ServiceCall(() => _service.Get(id))
+            return this.ServiceCall(() => _service.Get<CompanyDetailViewModel>(id))
                 .Always(m =>
                 {
                     return PartialView("CompanyPurge", m);
@@ -160,7 +156,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 })
                 .OnFailure(() =>
                 {
-                    model = _service.Get(model.Id).Result;
+                    model = _service.Get<CompanyDetailViewModel>(model.Id).Result;
                     return PartialView("CompanyAdminAdd", model);
                 })
                 .Call();

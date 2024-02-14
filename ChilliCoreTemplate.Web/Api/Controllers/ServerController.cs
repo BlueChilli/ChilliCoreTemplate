@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Api
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiKeyIgnore]
     [Route("api/[controller]")]
     [ProducesResponseType(typeof(ErrorResult), StatusCodes.Status400BadRequest)]

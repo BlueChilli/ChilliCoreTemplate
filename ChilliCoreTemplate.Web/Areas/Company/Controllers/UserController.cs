@@ -13,6 +13,7 @@ using DataTables.AspNet.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,20 +59,20 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
             return new DataTablesJsonResult(response, true);
         }
 
-        //[HttpPost]
-        //public virtual RedirectResult Impersonate(int id, string redirectUrl = null)
-        //{
-        //    var result = _accountService.ImpersonateAccount(id, this.LoginWithPrincipal);
-        //    if (result.Success)
-        //    {
-        //        redirectUrl = Mvc.Company.Location_List.Url(this);
-        //    }
-        //    else
-        //    {
-        //        redirectUrl = Mvc.Root.Public_Index.Url(this);
-        //    }
-        //    return new RedirectResult(redirectUrl);
-        //}
+        [HttpPost]
+        public virtual RedirectResult Impersonate(int id, string redirectUrl = null)
+        {
+            var result = _accountService.ImpersonateAccount(id, this.LoginWithPrincipal);
+            if (result.Success && String.IsNullOrEmpty(redirectUrl))
+            {
+                redirectUrl = Mvc.Root.Entry_ImpersonateRedirect.Url(this);
+            }
+            else
+            {
+                redirectUrl = Mvc.Root.Public_Index.Url(this);
+            }
+            return new RedirectResult(redirectUrl);
+        }
 
         [HttpGet, AllowAnonymous]
         public virtual ActionResult UndoImpersonate(string redirectUrl = null)
@@ -120,21 +121,21 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
                 .Call();
         }
 
-        public virtual ActionResult ChangeDetails(int id)
+        public virtual ActionResult Update(int id)
         {
             var user = _accountService.GetForEdit(id).Result;
             return PartialView(user);
         }
 
-        [HttpPost, ActionName("ChangeDetails")]
-        public virtual ActionResult ChangeDetailsPost(int id, AccountDetailsEditModel model)
+        [HttpPost, ActionName("Update")]
+        public virtual ActionResult UpdatePost(int id, AccountDetailsEditModel model)
         {
             return this.ServiceCall(() => _accountService.Update(model, id, onBehalfOfUser: true))
                 .OnSuccess(m =>
                 {
                     return Mvc.Company.User_Detail.Redirect(this, new { id });
                 })
-                .OnFailure(m => { return ChangeDetails(id); })
+                .OnFailure(m => { return Update(id); })
                 .Call();
         }
 
