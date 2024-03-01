@@ -104,6 +104,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public int LoginCount { get; set; }
 
+        public bool IsMfaEnabled { get; set; }
+
         [DateTimeKind]
         public DateTime CreatedDate { get; set; }
 

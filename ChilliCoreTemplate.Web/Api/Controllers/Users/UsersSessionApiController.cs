@@ -57,9 +57,9 @@ namespace ChilliCoreTemplate.Web.Api
         /// </summary>
         [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
         [HttpPost("bytoken/{token}")]
-        public virtual IActionResult AddByToken(UserTokenModel model)
+        public virtual IActionResult AddByToken(UserTokenDeviceModel model)
         {
-            return this.ApiServiceCall(() => _accountService.LoginWithToken(model, this.LoginWithPrincipal))
+            return this.ApiServiceCall(() => _accountService.LoginWithToken(model, this.LoginWithPrincipal, model.DeviceId))
                 .OnSuccess(x =>
                 {
                     return Ok(_webService.GetSessionSummary(x.Result, includeUserKey: true));
@@ -73,9 +73,9 @@ namespace ChilliCoreTemplate.Web.Api
         /// <returns></returns>
         [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
         [HttpPost("bycode/{token}")]
-        public virtual IActionResult AddByCode(UserTokenModel model)
+        public virtual IActionResult AddByCode(UserTokenDeviceModel model)
         {
-            return this.ApiServiceCall(() => _accountService.LoginWithCode(model, this.LoginWithPrincipal))
+            return this.ApiServiceCall(() => _accountService.LoginWithCode(model, this.LoginWithPrincipal, model.DeviceId))
                  .OnSuccess(x =>
                  {
                      return Ok(_webService.GetSessionSummary(x.Result, includeUserKey: true));

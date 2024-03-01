@@ -16,7 +16,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public AccountViewModel Account { get; set; }
 
-        public string User { get { return Account.FullName + "<br/>" + Account.Email; } }
+        public string User { get { return Account == null ? null : Account.FullName + "<br/>" + Account.Email; } }
 
         public DateTime ActivityOn { get; set; }
 

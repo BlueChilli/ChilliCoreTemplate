@@ -62,6 +62,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public UserStatus Status { get; set; }
 
         public string StatusDescription => UserRoles == null ? "" : UserRoles.Count == 1 && UserRoles[0].Status.HasValue ? UserRoles[0].Status.GetDescription() : Status.GetDescription();
+
+        public bool IsMfaEnabled { get; set; }
     }
 
     public class RoleSelectionViewModel
@@ -212,6 +214,11 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string NewPassword { get; set; }
 
         public bool Success { get; set; }
+    }
+
+    public class UserTokenDeviceModel : UserTokenModel
+    {
+        public string DeviceId { get; set; }
     }
 
     public class UserTokenModel : TokenModel

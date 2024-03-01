@@ -30,5 +30,7 @@ namespace ChilliCoreTemplate.Data
         public DateTime SessionExpiryOn { get; set; }
 
         public string ImpersonationChain { get; set; }
+
+        public bool IsMfaVerified { get; set; }
     }
 }

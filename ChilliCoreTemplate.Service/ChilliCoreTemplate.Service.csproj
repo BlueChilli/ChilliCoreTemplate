@@ -20,6 +20,7 @@
     <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0043" />
     <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0016" />
     <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
+    <PackageReference Include="GoogleAuthenticator" Version="3.1.1" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />    
     <PackageReference Include="DataTables.AspNet.AspNetCore" Version="2.0.2" />

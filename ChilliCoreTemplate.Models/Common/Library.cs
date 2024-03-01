@@ -10,6 +10,8 @@ using PhoneNumbers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -102,6 +104,17 @@ namespace ChilliCoreTemplate.Models
             foreach (T element in source)
             {
                 action(element);
+            }
+        }
+
+        public static void AddByteArray(this ZipArchiveEntry entry, byte[] data)
+        {
+            using (var originalFileStream = new MemoryStream(data))
+            {
+                using (var zipEntryStream = entry.Open())
+                {
+                    originalFileStream.CopyTo(zipEntryStream);
+                }
             }
         }
     }

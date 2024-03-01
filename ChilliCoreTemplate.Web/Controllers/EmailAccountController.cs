@@ -113,7 +113,7 @@ namespace ChilliCoreTemplate.Web.Controllers
 
                 var url = $"{_settings.BaseUrl}{returnUrl}";
                 url = String.Join('/', url.Split('/').Distinct());
-                return this.Redirect(url);
+                return _settings.MfaSettings.Enabled ? Mvc.Root.Mfa_Confirm.Redirect(this, new { ReturnUrl = returnUrl }) : this.Redirect(url);
             }
 
             return this.RedirectToRoot(_settings, ticket);

@@ -512,6 +512,14 @@
           "Newtonsoft.Json": "12.0.3"
         }
       },
+      "GoogleAuthenticator": {
+        "type": "Transitive",
+        "resolved": "3.1.1",
+        "contentHash": "83PKTyDW7+S/gaBfh1xgytrtS1vtvRlKQCKa1KKSr+E4MebxjMq4VqawsdcFtLzqus9JfqmrqbaWzNOiLb7xjw==",
+        "dependencies": {
+          "QRCoder": "1.4.3"
+        }
+      },
       "HtmlAgilityPack": {
         "type": "Transitive",
         "resolved": "1.11.54",
@@ -1603,6 +1611,11 @@
           "System.Runtime.CompilerServices.Unsafe": "4.7.1"
         }
       },
+      "QRCoder": {
+        "type": "Transitive",
+        "resolved": "1.4.3",
+        "contentHash": "fWuFqjm8GTlEb2GqBl3Hi8HZZeZQwBSHxvRPtPjyNbT82H0ff0JwavKRBmMaXCno1Av6McPC8aJzri0Mj2w9Jw=="
+      },
       "RestSharp": {
         "type": "Transitive",
         "resolved": "110.2.0",
@@ -2503,6 +2516,7 @@
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0016, )",
           "DataTables.AspNet.AspNetCore": "[2.0.2, )",
           "FirebaseAdmin": "[2.4.0, )",
+          "GoogleAuthenticator": "[3.1.1, )",
           "LazyCache": "[2.4.0, )",
           "LazyCache.AspNetCore": "[2.4.0, )",
           "Microsoft.Azure.NotificationHubs": "[4.1.0, )",

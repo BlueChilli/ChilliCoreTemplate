@@ -1,0 +1,91 @@
+@model BulkImportListModel
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions()))
+{
+}
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+    <filter>
+        <filter-left>
+            @await Html.FieldTemplateInnerForAsync(m => m.Status)
+        </filter-left>
+    </filter>
+    <box>
+        <box-content>
+            <table-default class="js-table">
+                <thead class="table-light">
+                    <tr>
+                        <th data-priority="1">Id</th>
+                        <th data-priority="3">Partner</th>
+                        <th data-priority="4">Type</th>
+                        <th data-priority="8">File</th>
+                        <th data-priority="5">Status</th>
+                        <th data-priority="6">Queued</th>
+                        <th data-priority="7">Completed on</th>
+                        <th data-priority="9">Errors</th>
+                        <th data-priority="2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach(var item in Model.Imports)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.CompanyName</td>
+                        <td>@item.Type</td>
+                        <td>@item.Description</td>
+                        <td data-search="@item.Status"><label type="@(item.Status.GetData<LabelType>("LabelType"))">@item.Status</label></td>
+                        <td>@item.QueuedOn</td>
+                        <td>@item.FinishedOn</td>
+                        <td>@item.Errors</td>
+                        <td>
+                            <button mvc-action="Mvc.Admin.BulkImport_Download" asp-route-id="@item.Id" icon="Download" Condition="item.CanDownload"></button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table-default>
+        </box-content>
+    </box>
+</page>
+@section Scripts {
+    <script>
+        var table;
+        $(function () {
+
+            initTooltips();
+
+            $('#Search').on('keyup', function () {
+                SearchTable();
+            });
+
+            $('#Status').on('change', function () {
+                SearchTable();
+            });
+
+            table = $('.js-table').DataTable({
+                responsive: true,
+                dom: 'Tgtip',
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { "orderable": false, "targets": [1,2,3,4,5,6,7,8] }
+                ],
+                "iDisplayLength": 50
+            });
+        });
+
+       function SearchTable() {
+            if ($('#Status').val() != '') {
+                table.column(4).search($('#Status').val(), false, false, false);
+            } else {
+                table.column(4).search('');
+            }
+
+            table.search($('#Search').val());
+
+            table.draw();
+        }
+    </script>
+}
+@section Modal
+{
+}

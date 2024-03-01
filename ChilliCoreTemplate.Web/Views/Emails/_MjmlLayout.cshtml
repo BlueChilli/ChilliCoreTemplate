@@ -1,0 +1,176 @@
+﻿@model IEmailTemplateDataModel
+@inject ProjectSettings projectConfig
+@{
+    Layout = null;
+    var emailSection = projectConfig.EmailTemplate;
+
+    Model.FileStoragePath = emailSection.Bucket;
+    if (String.IsNullOrEmpty(Model.Logo))
+    {
+        var image = "logo-inverted.png";
+        Model.Logo = @projectConfig.ResolveUrl($"~/Images/{image}?h=84&w=550&mode=pad");
+    }
+    //Model.TwitterUrl = "https://twitter.com/myproject";
+    //Model.FacebookUrl = "https://www.facebook.com/myproject/";
+    //Model.InstagramUrl = "https://www.instagram.com/myproject/";
+}
+<mjml>
+    <mj-head>
+        <mj-title>@Model.CompanyName - @Model.Subject</mj-title>
+        <mj-font name="Open Sans" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600" />
+        <mj-attributes>
+            <mj-class name="paragraph" font-size="16px" font-weight="400" line-height="1.7" color="#000000" />
+            <mj-class name="btn" background-color="#51C6D8" border-radius="24px" inner-padding="12px 48px" font-size="16px" font-weight="400" line-height="1.7" />
+            <mj-class name="narrow" padding="10px 0px" />
+            <mj-all font-family="Open Sans, Helvetica, Arial" />
+        </mj-attributes>
+        <mj-style inline="inline">
+            .outro { color: #555961; font-size: 14px; font-weight: 400; font-family: 'Poppins', Arial, Helvetica, Verdana, 'Trebuchet MS'; text-align: center; line-height: 1.8; }
+            .outro a { color: #555961 !important; }
+            .legals { color: #555961; font-size: 14px; font-weight: 400; font-family: 'Poppins', Arial, Helvetica, Verdana, 'Trebuchet MS'; text-align: center; line-height: 1.8; }
+            .link { color: #000000 !important; text-decoration: underline; }
+        </mj-style>
+        <mj-style>
+            .logo img { margin: 0 auto !important; }
+        </mj-style>
+        @if (this.IsSectionDefined("Head"))
+        {
+            @RenderSection("Head")
+        }
+        @*      @if(Model.EmailPreview != null)
+        {
+        <mj-preview id="email-preview">@Model.EmailPreview </mj-preview>
+        }*@
+    </mj-head>
+    <mj-body background-color="#EFEFF5">
+        @if (Model.EmailPreview != null)
+        {
+            <mj-raw>
+                <div id="email-preview" style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+                    @Model.EmailPreview
+                    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+                    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+                    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+                    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+                    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+                    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+                </div>
+            </mj-raw>
+        }
+        <mj-section background-color="#51C6D8">
+            <mj-column>
+                <mj-image css-class="logo" src="@Model.Logo" href="@Model.PublicUrl" alt="logo" height="84px"></mj-image>
+
+                <mj-text font-size="24px" color="#FFF" align="center" padding-top="24px">
+                    @Model.Title
+                </mj-text>
+            </mj-column>
+        </mj-section>
+        }
+
+        <!-- Start of EMAIL BODY  -->
+        @RenderBody()
+        <!-- End of EMAIL BODY  -->
+
+        <mj-section background-color="#FFFFFF" padding-top="0" padding-bottom="48px">
+            <mj-column>
+                <mj-text mj-class="paragraph" padding="0 25px">
+                    @if (String.IsNullOrEmpty(Model.TagLine))
+                    {
+                        @if (String.IsNullOrEmpty(Model.CompanyName))
+                        {
+                            @:Thanks for using @Model.Site!
+                            @:<br />The @Model.Site team
+                        }
+                        else
+                        {
+                            @:Thanks for your support
+                            @:<br />The @Model.CompanyName team
+                        }
+                    }
+                    else
+                    {
+                        @Html.Raw(Model.TagLine)
+                    }
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+
+        <mj-wrapper background-color="#100A29">
+            <mj-section padding="0">
+                <mj-column>
+                    <mj-image width="160px"
+                              src="@projectConfig.ResolveUrl("~/Images/logo-inverted.png?w=160")"
+                              href="@Model.PublicUrl" alt="logo"></mj-image>
+                </mj-column>
+            </mj-section>
+            @*            <mj-section padding="30px 0 10px">
+            <mj-group width="320px">
+            <mj-column>
+            <mj-image width="32px"
+            src="https://static.auditcover.io/campaign/images/LinkedIn@2x.png"
+            href="https://www.linkedin.com/company/auditcover/" alt="linkedin"></mj-image>
+            </mj-column>
+            </mj-group>
+            </mj-section>
+            *@            <mj-section>
+                <mj-column>
+                    <mj-text color="#FFFFFF"
+                             font-size="12px"
+                             font-weight="400"
+                             line-height="1.7"
+                             align="center"
+                             padding="0">
+                        &copy;@DateTime.UtcNow.Year @projectConfig.LegalName
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+        </mj-wrapper>
+
+        <mj-wrapper mj-class="narrow">
+            <mj-section padding="0">
+                <mj-column>
+                    <mj-text>
+                        <div class="outro">
+                            @if (this.IsSectionDefined("Outro"))
+                            {
+                                @RenderSection("Outro")
+                            }
+                            else
+                            {
+                                @:Have a question? Email us at <a style="font-weight:bold;text-decoration:none;color:#8d9aa5;" href="mailto:@Model.Email">@Model.Email</a>
+                            }
+                        </div>
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+            <mj-section padding="0">
+                <mj-group>
+                    <mj-column>
+                        <mj-text align="center">
+                            <a href="@Model.PublicUrl" class="outro" target="_blank">Website</a>
+                            &nbsp; &nbsp;
+                            <a href="@Model.PublicUrl/privacy-policy" class="outro" target="_blank">Privacy</a>
+                            &nbsp; &nbsp;
+                            @*                             <a href="@Constants.PolicyWordingLink" class="outro" target="_blank">Policy Wording</a> *@
+                        </mj-text>
+                    </mj-column>
+                </mj-group>
+            </mj-section>
+
+            <!-- Include global legals -->
+            <mj-section padding="0">
+                <mj-column>
+                    <mj-text>
+                        @*                         <div class="legals">@Constants.Legals</div>*@
+                    </mj-text>
+                    @if (Model.TrackingId.Guid != Guid.Empty)
+                    {
+                        <mj-image width="1px" padding="0" src="@projectConfig.BaseUrl/EmailAccount/EmailOpen?emailId=@Model.TrackingId.Value" alt="opened"></mj-image>
+                    }
+                </mj-column>
+            </mj-section>
+        </mj-wrapper>
+    </mj-body>
+</mjml>

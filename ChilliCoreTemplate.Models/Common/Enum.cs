@@ -527,6 +527,8 @@ namespace ChilliCoreTemplate.Models
         [Description("warning")]
         Warning,
         [Description("danger")]
-        Danger
+        Danger,
+        [Description("info")]
+        Info
     }
 }

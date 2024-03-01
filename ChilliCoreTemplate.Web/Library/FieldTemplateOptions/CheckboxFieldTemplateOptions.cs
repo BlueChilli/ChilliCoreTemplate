@@ -16,6 +16,8 @@ namespace ChilliCoreTemplate.Web
 
         public CheckBoxAttribute CheckBoxAttribute { get; set; }
 
+        public bool IsFloating { get; set; }
+
         public override IFieldInnerTemplateModel ProcessInnerField(IFieldInnerTemplateModel templateModel)
         {
             var member = templateModel.InnerMetadata.MemberExpression;

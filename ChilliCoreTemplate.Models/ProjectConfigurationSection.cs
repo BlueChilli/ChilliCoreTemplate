@@ -73,6 +73,7 @@ namespace ChilliCoreTemplate.Models
             SmsSettings = new SmsConfigurationSection(configuration.GetSection("SmsSettings"));
             _apiConfigurationSection = new ApiConfigurationSection(configuration.GetSection("ProjectSettings:Api"));
             _hostingSection = new HostingSection(configuration.GetSection("ProjectSettings:Hosting"));
+            MfaSettings = new MfaConfigurationSection(configuration.GetSection("ProjectSettings:Mfa"));
             OAuthsSettings = new OAuthsConfigurationSection(configuration.GetSection("ProjectSettings:OAuth"));
             _googleApisSection = new GoogleApisSection(configuration.GetSection("ProjectSettings:GoogleApis"));
             GoogleTagManager = new GoogleTagManagerSection(configuration.GetSection("ProjectSettings:GoogleTagManager"));
@@ -154,6 +155,11 @@ namespace ChilliCoreTemplate.Models
         public string ProjectDisplayName => _baseSection.GetString("ProjectDisplayName").DefaultTo(ProjectName);
 
         /// <summary>
+        /// Legal entity of project
+        /// </summary>        
+        public string LegalName => _baseSection.GetRequiredString("LegalName");
+
+        /// <summary>
         /// Email to send internal emails to
         /// </summary>
         public string AdminEmail => _baseSection.GetRequiredString("AdminEmail");
@@ -207,6 +213,8 @@ namespace ChilliCoreTemplate.Models
         public EmailTemplateSection EmailTemplate => _emailTemplateSection;
 
         public HostingSection Hosting => _hostingSection;
+
+        public MfaConfigurationSection MfaSettings { get; }
 
         public OAuthsConfigurationSection OAuthsSettings { get; }
 
@@ -588,6 +596,22 @@ namespace ChilliCoreTemplate.Models
         /// Gets the bucket name
         /// </summary>
         public bool Hsts => _section.GetValue<bool>("Hsts");
+    }
+
+    public class MfaConfigurationSection
+    {
+        private readonly IConfigurationSection _section;
+
+        public MfaConfigurationSection(IConfigurationSection section)
+        {
+            _section = section;
+        }
+
+        public bool Enabled => _section.GetValue<bool>("Enabled");
+
+        public string Secret => _section.GetRequiredString("Secret");
+
+        public int? TrustDeviceInDays => _section.GetValue<int?>("TrustDeviceInDays");
     }
 
     public class OAuthsConfigurationSection

@@ -1,0 +1,16 @@
+@model AccountViewModel
+@using (Html.BeginFormCustom(Mvc.Root.Mfa_Remove))
+{
+    <div class="modal-body">
+        @Html.ValidationSummary()
+        @Html.HiddenFor(m => m.Id)
+        <p>Are you sure you want remove MFA for <b>@Model.Email?</b></p>
+    </div>
+    <div class="modal-footer">
+        @await Html.ButtonSubmitAsync(new Template_Button { Style = ButtonStyle.Danger, Text = $"Yes, remove MFA from this user" })
+        @await Html.ButtonAsync(FieldTemplateHelper.ButtonModalDismissOptions)
+    </div>
+}
+<script>
+    $('#@Mvc.Root.Mfa_Remove.GetFormId()').ajaxForm({ target: '#@Mvc.Root.Mfa_Remove.GetModalId()_content' });
+</script>

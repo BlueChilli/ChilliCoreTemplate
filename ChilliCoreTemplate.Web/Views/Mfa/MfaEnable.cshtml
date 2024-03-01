@@ -1,0 +1,60 @@
+@inject ProjectSettings config
+@model MfaSetupModel
+@{
+    ViewBag.WideScreen = true;
+}
+
+<h2 class="mb-10">Enable two-factor authentication</h2>
+
+<div class="alert alert-secondary" role="alert">
+    <h4 class="alert-heading">@config.ProjectDisplayName requires two-factor authentication to be enabled.</h4>
+    <p>To use an authenticator app go through the following steps:</p>
+    <hr>
+    <ol class="list">
+        <li>
+            <p>
+                Download a two-factor authenticator app like Microsoft Authenticator for
+                <a href="https://go.microsoft.com/fwlink/?Linkid=825072" target="_blank">Android</a> and
+                <a href="https://go.microsoft.com/fwlink/?Linkid=825073" target="_blank">iOS</a> or
+                Google Authenticator for
+                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en target="_blank"">Android</a> and
+                <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iOS</a>.
+            </p>
+        </li>
+        <li>
+            <p>Scan the following QR Code into your two factor authenticator app or you can <a href="#" onclick="clipboardCopy()" data-clipboard="@Model.SetupCode">copy the code <icon type="clipboard"></icon></a>.</p>
+            <img src="@Model.QrCodeImage" />
+        </li>
+        <li>
+            <p class="mb-5">
+                Once you have scanned the QR Code your two factor authentication app will provide you
+                with a unique code. Enter the code in the confirmation box below.
+            </p>
+            @using (Html.BeginFormCustom(Mvc.Root.Mfa_Enable))
+            {
+                @Html.ValidationSummary()
+
+                @await Html.FieldTemplateForAsync(m => m.ConfirmationCode, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
+
+                <div class="d-grid mb-5">
+                    <button type="submit" class="btn btn-primary">Verify</button>
+                </div>
+                <a mvc-action="@Mvc.Root.EmailAccount_Logout">Logout</a>
+            }
+        </li>
+    </ol>
+</div>
+@section scripts
+{
+    <script>
+        function clipboardCopy() {
+            this.event.preventDefault();
+
+            const $button = this.event.target;
+            const copy = $button.getAttribute('data-clipboard');
+            window.navigator.clipboard.writeText(copy);
+
+            $($button).children('i').removeClass('bi-clipboard').addClass('bi-clipboard-check').addClass('text-success');
+        }
+    </script>
+}

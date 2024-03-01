@@ -9,17 +9,11 @@
         Model.HtmlAttributes.Remove(key);
     }
 }
-@if (options.Inline)
-{
-    <label class="checkbox-inline i-checks"><input type="radio" value="True" name="@Model.Name" id="@(Model.Id)_True" @if (isTrue) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.TrueText</label>
-    <label class="checkbox-inline i-checks"><input type="radio" value="False" name="@Model.Name" id="@(Model.Id)_False" @if (isFalse) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.FalseText</label>
-}
-else
-{
-    <div class="i-checks"><label><input type="radio" value="True" name="@Model.Name" id="@(Model.Id)_True" @if (isTrue) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.TrueText</label></div>
-    <div class="i-checks"><label><input type="radio" value="False" name="@Model.Name" id="@(Model.Id)_False" @if (isFalse) { <text> checked="checked" </text> } @Model.HtmlAttributes.ToAttributeHtmlContent()> @options.FalseText</label></div>
-}
-@if (Model.Options.AutoWireUpJavascript)
-{
-    <partial name="FieldTemplates/_RegisterICheckScript" />
-} 
+<div class="@Html.When(options.Inline, "form-check-inline") form-check checkbox-lg">
+    <input class="form-check-input mt-2" type="radio" name="@Model.Name" id="@(Model.Id)_True" value="True" @Html.When(isTrue, "checked=\"checked\"") @Model.HtmlAttributes.ToAttributeHtmlContent()>
+    <label class="form-check-label" for="@(Model.Id)_True">@options.TrueText</label>
+</div>
+<div class="@Html.When(options.Inline, "form-check-inline") form-check checkbox-lg">
+    <input class="form-check-input mt-2" type="radio" name="@Model.Name" id="@(Model.Id)_False" value="False" @Html.When(isFalse, "checked=\"checked\"") @Model.HtmlAttributes.ToAttributeHtmlContent()>
+    <label class="form-check-label" for="@(Model.Id)_False">@options.FalseText</label>
+</div> 

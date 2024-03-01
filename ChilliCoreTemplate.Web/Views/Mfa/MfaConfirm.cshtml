@@ -1,0 +1,33 @@
+@inject ProjectSettings config
+@model MfaConfirmModel
+@{
+    ViewBag.WideScreen = true;
+}
+
+<h2 class="mb-10">Confirm two-factor authentication</h2>
+
+<div class="alert alert-secondary" role="alert">
+    <h4 class="alert-heading">@config.ProjectDisplayName requires two-factor authentication to be confirmed.</h4>
+    <p>Use your authenticator app to enter the code in the confirmation box below</p>
+    <p>Can't access your authenticator? Contact us at <a href="tel:1300895797">1300 895 797</a></p>
+    <hr>
+    @using (Html.BeginFormCustom(Mvc.Root.Mfa_Confirm))
+    {
+        @Html.ValidationSummary()
+
+        @await Html.FieldTemplateForAsync(m => m.ConfirmationCode, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Confirm</button>
+        </div>
+
+        @if(config.MfaSettings.TrustDeviceInDays.HasValue)
+        {
+        <div class="d-grid mt-3 mb-3">
+            @await Html.FieldTemplateInnerForAsync(m => m.TrustDevice, new CheckboxFieldTemplateOptions { IsFloating = true })
+        </div>            
+        }
+
+        <a mvc-action="@Mvc.Root.EmailAccount_Logout">Logout</a>
+    }
+</div>

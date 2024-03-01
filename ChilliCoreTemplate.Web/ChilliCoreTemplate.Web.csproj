@@ -115,7 +115,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Areas\Admin\Views\BulkImport\BulkImportList.cshtml" />
     <None Include="Areas\Company\Views\Company\CompanySettings.cshtml" />
+    <None Include="Views\Mfa\MfaConfirm.cshtml" />
+    <None Include="Views\Mfa\MfaEnable.cshtml" />
+    <None Include="Views\Mfa\MfaRemove.cshtml" />
+    <None Include="Views\Mfa\_ViewStart.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_LeftMenu.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_LeftMenuGroup.cshtml" />
     <None Include="Views\Shared\Layout\Clever\_MenuIcon.cshtml" />

@@ -371,7 +371,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (User.UserData().IsMasterCompany) return query.Where(x => x.CompanyId == CompanyId.Value || x.Company.MasterCompanyId == CompanyId.Value);
 
-            if (CompanyId.HasValue) query = query.Where(x => x.CompanyId == CompanyId.Value);
+            if (CompanyId.HasValue) return query = query.Where(x => x.CompanyId == CompanyId.Value);
 
             return query.Where(x => false);
         }

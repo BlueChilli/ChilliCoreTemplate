@@ -22,7 +22,14 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public BulkImportType Type { get; set; }
 
         [MaxLength(200)]
+        public string Parameters { get; set; }
+
+        [MaxLength(200)]
         public string Description { get; set; }
+
+        public string FilesJson { get; set; }   //JSON array of file paths
+
+        public IReadOnlyList<BulkImportFileModel> Files() => FilesJson == null ? new List<BulkImportFileModel>() : FilesJson.FromJson<List<BulkImportFileModel>>();
 
         public int Records { get; set; }
 
@@ -36,13 +43,10 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [DateTimeKind]
         public DateTime? FinishedOn { get; set; }
 
-        public byte[] Data { get; set; }
-
-        public async Task FatalErrorAsync<T>(DataContext context, string error, List<T> records = null)
+        public async Task FatalErrorAsync<T>(DataContext context, string error)
         {
             Errors = error;
             FinishedOn = DateTime.UtcNow;
-            if (Data == null) Data = records?.ToByteArray();
             await context.SaveChangesAsync();
         }
     }

@@ -43,6 +43,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             session.SessionCreatedOn = DateTime.UtcNow;
             session.SessionExpiryOn = expiresOn;
             session.ImpersonationChain = userData.ImpersonationChain().ToJson();
+            session.IsMfaVerified = userData.IsMfaVerified || (userData.Impersonator?.IsMfaVerified ?? false);
         }
 
         public async Task<UserData> GetCompanySession(Guid guid)
@@ -213,6 +214,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (session == null) return null;
 
             var userData = MapUserData(session.User, session.UserDeviceId);
+            userData.IsMfaVerified = session.IsMfaVerified;
 
             if (!String.IsNullOrEmpty(session.ImpersonationChain))
             {
@@ -229,6 +231,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                                                 : impersonationQuery.FirstOrDefault();
 
                     var impersonationData = _mapper.Map<UserData>(impersonation);
+                    impersonationData.IsMfaVerified = session.IsMfaVerified;
                     impersonationPointer.ImpersonatedBy(impersonationData);
                     impersonationPointer = impersonationData;
                 }

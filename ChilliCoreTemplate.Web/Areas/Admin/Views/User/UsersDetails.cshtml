@@ -41,6 +41,7 @@
                         <heading title="Last login" Condition="Model.Account.LastLoginDate.HasValue">@Model.Account.LastLoginDate.Value.ToTimezone().ToIsoDateTime()</heading>
                         <heading title="Activated on" Condition="Model.Account.ActivatedDate.HasValue">@Model.Account.ActivatedDate.Value.ToTimezone().ToIsoDateTime()</heading>
                         <heading title="Password changed on" Condition="Model.Account.LastPasswordChangedDate.HasValue">@Model.Account.LastPasswordChangedDate.Value.ToTimezone().ToIsoDateTime()</heading>
+                        <heading title="MFA status" Condition="Model.Account.IsMfaEnabled"><a mvc-modal="Mvc.Root.Mfa_Remove" asp-route-id="@Model.Account.Id">Enabled</a></heading>
                     </headings>
                 </div>
                 <div class="col-lg-6">
@@ -78,17 +79,19 @@
     </box>
 
 </page>
-@section Scripts {
+@section Scripts 
+{
     <script>
         $(function () {
         });
     </script>
 }
 @section modal
-    {
+{
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ResetPassword, Title = "Reset password" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeDetails, Title = "Change details" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeRole, Title = "Change role" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeStatus, Title = "Change status" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_Purge, Title = "Purge account" })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.Mfa_Remove, Title = "Remove MFA" })
 }

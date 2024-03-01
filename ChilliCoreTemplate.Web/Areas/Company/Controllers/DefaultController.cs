@@ -11,6 +11,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 {
 
     [Area("Company")]
+    [Mfa]
     [CustomAuthorize(MultipleRoles = new string[] { AccountCommon.CompanyAdmin, AccountCommon.CompanyUser })]
     public class DefaultController : Controller
     {

@@ -30,6 +30,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public UserStatus Status { get; set; }
 
+        public bool IsMfaVerified { get; set; }
+
         public string Name => $"{FirstName} {LastName}".Trim();
 
         public string FirstName { get; set; }

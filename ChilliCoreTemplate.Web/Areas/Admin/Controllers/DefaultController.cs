@@ -12,6 +12,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
     [Area("Admin")]
     [CustomAuthorize(Roles = AccountCommon.Administrator)]
+    [Mfa]
     public class DefaultController : Controller
     {
 

@@ -204,6 +204,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
     {
         string TemplateId { get; set; }
         string EmailPreview { get; set; }
+        string Title { get; set; }
         string TagLine { get; set; }
         string YouAreReceivingText { get; set; }
         string FileStoragePath { get; set; }
@@ -264,6 +265,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         /// Overrides email client default of extracing the first x characters of the email as the summary
         /// </summary>
         public string EmailPreview { get; set; }
+        public string Title { get; set; }
         public string TagLine { get; set; }
         public string YouAreReceivingText { get; set; }
         public string FileStoragePath { get; set; }

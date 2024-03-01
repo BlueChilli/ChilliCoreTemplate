@@ -30,7 +30,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 model.CompanyId = company.Id;
                 model.CompanyName = company.Name;
-                model.Logo = String.IsNullOrEmpty(company.LogoPath) ? null : _fileStoragePath.GetImagePath(company.LogoPath, fullPath: true) + "?h=75";
+                model.Logo = String.IsNullOrEmpty(company.LogoPath) ? null : _fileStoragePath.GetImagePath(company.LogoPath, fullPath: true);
                 model.PublicUrl = company.Website;
                 model.Email = _config.EmailTemplate.Email;
                 if (from == null) from = new EmailData_Address(model.Email, $"{company.Name} via {_config.ProjectDisplayName}");

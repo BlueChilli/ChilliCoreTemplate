@@ -12,25 +12,89 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChilliSource.Core.Extensions;
+using System.Security.Principal;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using ChilliSource.Cloud.Core.LinqMapper;
+using System.IO.Compression;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
-    public class BulkImportService : IService
+    public class BulkImportServiceAutoMapperConfig : Profile
     {
-        private readonly DataContext Context;
+        public BulkImportServiceAutoMapperConfig()
+        {
+            CreateMap<BulkImport, BulkImportViewModel>()
+                .ForMember(dest => dest.StartedOn, opt => opt.MapFrom((src, dest, destMember, ctx) => src.StartedOn == null ? null : src.StartedOn.Value.ToTimezone((string)ctx.Items["Timezone"]).ToNullable<DateTime>()))
+                .ForMember(dest => dest.FinishedOn, opt => opt.MapFrom((src, dest, destMember, ctx) => src.FinishedOn == null ? null : src.FinishedOn.Value.ToTimezone((string)ctx.Items["Timezone"]).ToNullable<DateTime>()));
+        }
+    }
+
+    public class BulkImportService : BaseService
+    {
+        public const string Folder = "BulkImport";
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public BulkImportService(DataContext context, IServiceScopeFactory scopeFactory) 
+        public BulkImportService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, IServiceScopeFactory scopeFactory, IMapper mapper)
+            : base(user, context, config, fileStorage, environment, mapper)
         {
-            Context = context;
             _scopeFactory = scopeFactory;
         }
 
-        internal static void AutoMapper(IMapperConfigurationExpression cfg)
+        internal static void LinqMapperConfigure()
         {
-            cfg.CreateMap<BulkImport, BulkImportViewModel>()
-                .ForMember(dest => dest.StartedOn, opt => opt.MapFrom((src, dest, destMember, ctx) => src.StartedOn == null ? null : src.StartedOn.Value.ToTimezone((string)ctx.Items["Timezone"]).ToNullable<DateTime>()))
-                .ForMember(dest => dest.FinishedOn, opt => opt.MapFrom((src, dest, destMember, ctx) => src.FinishedOn == null ? null : src.FinishedOn.Value.ToTimezone((string)ctx.Items["Timezone"]).ToNullable<DateTime>()));
+            LinqMapper.CreateMap<BulkImport, BulkImportViewModel>(x => new BulkImportViewModel
+            {
+                CanDownload = x.FilesJson != null
+            });
+            Materializer.RegisterAfterMap<BulkImportViewModel>((x) =>
+            {
+                x.QueuedOn = x.QueuedOn.ToTimezone(x.CompanyTimezone ?? Constants.DefaultTimezone);
+                if (x.StartedOn.HasValue) x.StartedOn = x.StartedOn.Value.ToTimezone(x.CompanyTimezone ?? Constants.DefaultTimezone);
+                if (x.FinishedOn.HasValue) x.FinishedOn = x.FinishedOn.Value.ToTimezone(x.CompanyTimezone ?? Constants.DefaultTimezone);
+            });
+        }
+
+        public IQueryable<BulkImport> Authorised()
+        {
+            if (IsAdmin) return Context.BulkImports.AsQueryable();
+
+            return Context.BulkImports.Where(x => x.CompanyId == CompanyId.Value);
+        }
+
+        public ServiceResult<BulkImportListModel> List()
+        {
+            var records = Authorised()
+                .Materialize<BulkImport, BulkImportViewModel>()
+                .ToList();
+            return ServiceResult<BulkImportListModel>.AsSuccess(new BulkImportListModel { Imports = records });
+        }
+
+        public ServiceResult<MemoryStream> Download(int id)
+        {
+            var record = Authorised().Where(x => x.Id == id).FirstOrDefault();
+
+            if (record == null) return ServiceResult<MemoryStream>.AsError("Bulk import not found");
+
+            var memoryStream = new MemoryStream();
+
+            using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+            {
+                var files = record.Files();
+
+                foreach (var file in files)
+                {
+                    if (_fileStorage.Exists(file.FilePath))
+                    {
+                        var data = _fileStorage.GetContent(file.FilePath).ReadToByteArray();
+                        var entry = archive.CreateEntry(file.FileName);
+                        entry.AddByteArray(data);
+                    }
+                }
+            }
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            return ServiceResult<MemoryStream>.AsSuccess(memoryStream);
         }
 
         public static List<BulkImportViewModel> List(DataContext context, IMapper mapper, BulkImportType type, int? companyId = null, string timezone = Constants.DefaultTimezone)

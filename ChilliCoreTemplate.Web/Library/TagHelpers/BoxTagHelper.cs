@@ -32,7 +32,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             }
             else
             {
-                output.PreContent.SetHtmlContent($"<h5 class=\"me-auto\">{Title} {help}</h5>");
+                output.PreContent.SetHtmlContent($"<h5>{Title} {help}</h5>");
             }
         }
     }

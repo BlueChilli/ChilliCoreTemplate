@@ -223,7 +223,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             Activity_Add(Context, new UserActivity { UserId = user.Id, ActivityType = ActivityType.Create, EntityId = user.Id, EntityType = EntityType.Session });
         }
 
-        public ServiceResult<UserDataPrincipal> LoginWithToken(UserTokenModel model, Action<UserDataPrincipal> loginAction)
+        public ServiceResult<UserDataPrincipal> LoginWithToken(UserTokenModel model, Action<UserDataPrincipal> loginAction, string deviceId = null)
         {
             var userRequest = User_GetAccountByEmailToken(model);
             if (!userRequest.Success) return ServiceResult<UserDataPrincipal>.CopyFrom(userRequest);
@@ -232,11 +232,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             Activate(user);
             LoginRecord(user);
 
-            var session = Session_Create(user, null, TimeSpan.FromDays(1), loginAction);
+            var session = Session_Create(user, CreateUserDeviceId(user, deviceId), TimeSpan.FromDays(1), loginAction);
             return ServiceResult<UserDataPrincipal>.AsSuccess(session);
         }
 
-        public ServiceResult<UserDataPrincipal> LoginWithCode(UserTokenModel model, Action<UserDataPrincipal> loginAction)
+        public ServiceResult<UserDataPrincipal> LoginWithCode(UserTokenModel model, Action<UserDataPrincipal> loginAction, string deviceId = null)
         {
             var userRequest = User_GetAccountByOneTimePassword(model);
             if (!userRequest.Success) return ServiceResult<UserDataPrincipal>.CopyFrom(userRequest);
@@ -245,7 +245,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             Activate(user);
             LoginRecord(user);
 
-            var session = Session_Create(user, null, TimeSpan.FromDays(1), loginAction);
+            var session = Session_Create(user, CreateUserDeviceId(user, deviceId), TimeSpan.FromDays(1), loginAction);
             return ServiceResult<UserDataPrincipal>.AsSuccess(session);
         }
 

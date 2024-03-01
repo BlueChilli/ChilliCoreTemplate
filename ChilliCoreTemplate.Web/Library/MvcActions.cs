@@ -41,6 +41,11 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition EmailAccount_EmailRedirect = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_EmailUnsubscribe = MvcAction();
 
+        public readonly IMvcActionDefinition Mfa_Entry = MvcAction();
+        public readonly IMvcActionDefinition Mfa_Enable = MvcAction();
+        public readonly IMvcActionDefinition Mfa_Confirm = MvcAction();
+        public readonly IMvcActionDefinition Mfa_Remove = MvcAction();
+
         public readonly IMvcActionDefinition Entry_Index = MvcAction();
         public readonly IMvcActionDefinition Entry_ImpersonateRedirect = MvcAction();
     }
@@ -103,6 +108,11 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_Error_List = MvcAction();
         public readonly IMvcActionDefinition User_Error_Query = MvcAction();
         public readonly IMvcActionDefinition User_Error_Detail = MvcAction();
+
+        public readonly IMvcActionDefinition Data = MvcAction();
+
+        public readonly IMvcActionDefinition BulkImport_List = MvcAction();
+        public readonly IMvcActionDefinition BulkImport_Download = MvcAction();
     }
 
     public class CompanyActions : MvcActionContainer
