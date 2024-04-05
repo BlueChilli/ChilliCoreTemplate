@@ -17,9 +17,11 @@
     @await Html.FieldTemplateForAsync(m => m.LastName, FieldTemplateLayouts.FloatingField)
     @await Html.FieldTemplateForAsync(m => m.Email, FieldTemplateLayouts.FloatingField)
     @await Html.FieldTemplateForAsync(m => m.Password, FieldTemplateLayouts.FloatingField)
-    @await Html.FieldTemplateForAsync(m => m.AcceptTermsConditions, new TemplateOptions { Label = "", FieldColumnSize = 12, FieldSize = FieldTemplateSize.ExtraLarge }, new CheckboxFieldTemplateOptions { CheckBoxAttribute = new CheckBoxAttribute { Label = $"I accept the <a href=\"{termsUrl}\" target=\"_blank\">terms & conditions</a>" } })
+    <div class="text-start">
+        @await Html.FieldTemplateForAsync(m => m.AcceptTermsConditions, new TemplateOptions { Label = "", FieldColumnSize = 12, FieldSize = FieldTemplateSize.ExtraLarge }, new CheckboxFieldTemplateOptions { CheckBoxAttribute = new CheckBoxAttribute { Label = $"I accept the <a href=\"{termsUrl}\" target=\"_blank\">terms & conditions</a>" } })
+    </div>
 
-    <div class="d-grid">
+    <div class="d-grid mt-6">
         <button type="submit" class="btn btn-primary">Join</button>
     </div>
 }

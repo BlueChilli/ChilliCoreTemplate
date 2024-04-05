@@ -6,6 +6,7 @@ using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service.Api;
 using ChilliCoreTemplate.Service.EmailAccount;
+using ChilliSource.Core.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,10 @@ namespace ChilliCoreTemplate.Service
                 .ForMember(dest => dest.Guid, opt => opt.Condition(src => src.Id == 0))
                 .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.LogoPath, opt => opt.Ignore())
-                .ForMember(dest => dest.Notes, opt => opt.Condition((src, dest, m1, m2, opts) => bool.Parse(opts.Items["IsAdmin"].ToString())));
+                .ForMember(dest => dest.Notes, opt => opt.Condition((src, dest, m1, m2, opts) => bool.Parse(opts.Items["IsAdmin"].ToString())))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country == null ? null : src.Country.Value.GetDescription()))
+                .ForMember(dest => dest.Region, opt => opt.MapFrom(src => src.Country == null ? null : src.Country.Value.ToString()))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.IsManualAddress ? src.AddressFormatted() : src.Address));
             CreateMap<Company, CompanyViewModel>();
 
             CreateMap<CompanySettingsModel, Company>()

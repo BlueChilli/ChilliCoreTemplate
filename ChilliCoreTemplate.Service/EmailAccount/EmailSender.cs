@@ -217,13 +217,17 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
 
             var to = data.To.DefaultTo(message.From.Address);
-            if (mailSettings.Quarantine.ShouldQuarantine(to))
+            foreach (var recipient in to.Split(';'))
             {
-                message.To.Add(mailSettings.Quarantine.Quarantine(to));
-            }
-            else
-            {
-                message.To.Add(to);
+                if (String.IsNullOrEmpty(recipient)) continue;
+                if (mailSettings.Quarantine.ShouldQuarantine(recipient))
+                {
+                    message.To.Add(mailSettings.Quarantine.Quarantine(recipient));
+                }
+                else
+                {
+                    message.To.Add(recipient);
+                }
             }
 
             if (mailSettings.Bcc != null)

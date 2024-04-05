@@ -1,5 +1,6 @@
 using AutoMapper;
 using ChilliCoreTemplate.Models.Api;
+using ChilliSource.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,7 +99,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public bool CanImpersonate(AccountViewModel target)
         {
-            return target.Status != UserStatus.Deleted && this.CurrentRoles.Any(currentRole => target.UserRoles.Any(targetRole => currentRole.CanImpersonate(targetRole)));
+            return target.Id != UserId && target.Status != UserStatus.Deleted && this.CurrentRoles.Any(currentRole => target.UserRoles.Any(targetRole => currentRole.CanImpersonate(targetRole)));
         }
 
         private IEnumerable<UserRoleApiModel> GetCurrentRolesApiModel()
@@ -165,7 +166,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         {
             if (this.Role.IsCompanyRole())
             {
-                return (this.CompanyId == other.CompanyId || this.CompanyId == other.MasterCompanyId) && this.Role == Role.CompanyAdmin;
+                if (this.CompanyId == other.CompanyId && this.Role == Role.CompanyAdmin && other.Role.IsIn(Role.CompanyUser)) return true;
+                if (this.CompanyId == other.MasterCompanyId) return this.Role == Role.CompanyAdmin;
+                return false;
             }
 
             return this.Role == Role.Administrator && other.Role != Role.Administrator && (other.CompanyIsDeleted == null || !other.CompanyIsDeleted.Value);

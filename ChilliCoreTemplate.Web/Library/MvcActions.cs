@@ -19,6 +19,9 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition Public_Index = MvcAction();
         public readonly IMvcActionDefinition Public_ConfirmationModal = MvcAction();
 
+        public readonly IMvcActionDefinition Error_Index = MvcAction();
+        public readonly IMvcActionDefinition Error_Message = MvcAction();
+
         public readonly IMvcActionDefinition EmailAccount_Login = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_LoginOAuth = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_LoginWithToken = MvcAction();

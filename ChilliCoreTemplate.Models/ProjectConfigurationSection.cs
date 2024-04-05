@@ -77,6 +77,7 @@ namespace ChilliCoreTemplate.Models
             OAuthsSettings = new OAuthsConfigurationSection(configuration.GetSection("ProjectSettings:OAuth"));
             _googleApisSection = new GoogleApisSection(configuration.GetSection("ProjectSettings:GoogleApis"));
             GoogleTagManager = new GoogleTagManagerSection(configuration.GetSection("ProjectSettings:GoogleTagManager"));
+            GoogleRecaptcha = new GoogleRecaptchaSection(configuration.GetSection("ProjectSettings:GoogleRecaptcha"));
             StripeSettings = new StripeConfigurationSection(configuration.GetSection("ProjectSettings:Stripe"));
             ErrorLogSettings = new ErrorLogConfigurationSection(configuration.GetSection("ErrorLog"));
             SlackSettings = new SlackConfigurationSection(configuration.GetSection("Slack"));
@@ -221,6 +222,8 @@ namespace ChilliCoreTemplate.Models
         public GoogleApisSection GoogleApis => _googleApisSection;
 
         public GoogleTagManagerSection GoogleTagManager;
+
+        public GoogleRecaptchaSection GoogleRecaptcha;
 
         public StripeConfigurationSection StripeSettings { get; }
 
@@ -437,6 +440,8 @@ namespace ChilliCoreTemplate.Models
         /// </summary>
         public string QuarantineDomain { get; set; }
 
+        public Dictionary<string, string> Sanitise { get; set; }
+
         internal static MailConfigurationQuarantine FromSection(IConfigurationSection section)
         {
             var safeDomains = section.GetString("quarantine:safeDomains");
@@ -458,7 +463,8 @@ namespace ChilliCoreTemplate.Models
 
         public string Quarantine(string email, bool noDomain = false)
         {
-            var sanitised = $"{email.Replace('@', '-').Replace('.', '_')}";
+            var sanitised = email;
+            foreach (var item in Sanitise) sanitised = sanitised.Replace(item.Key, item.Value);
             return noDomain ? sanitised : $"{sanitised}@{QuarantineDomain}";
         }
     }
@@ -702,6 +708,26 @@ namespace ChilliCoreTemplate.Models
         /// </summary>
         public string TagId => _section.GetString("TagId");
 
+    }
+
+    public class GoogleRecaptchaSection
+    {
+        private readonly IConfigurationSection _section;
+
+        public GoogleRecaptchaSection(IConfigurationSection section)
+        {
+            _section = section;
+        }
+
+        public bool Enabled => _section.GetValue<bool>("Enabled");
+
+        public string PublicApiKey => _section.GetString("PublicApiKey");
+
+        public string PrivateApiKey => _section.GetString("PrivateApiKey");
+
+        public double DefaultScore => _section.GetValue<double?>("DefaultScore") ?? 0.5;
+
+        public Guid DebugToken => _section.GetValue<Guid>("DebugToken");
     }
 
     public class ErrorLogConfigurationSection

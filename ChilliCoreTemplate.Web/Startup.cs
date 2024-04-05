@@ -345,7 +345,7 @@ namespace ChilliCoreTemplate.Web
                     policy.SetIsOriginAllowedToAllowWildcardSubdomains();
                     policy.AllowCredentials();
                     policy.WithMethods("GET", "POST", "PUT", "DELETE", "PATCH");
-                    policy.WithHeaders("Origin", "X-Requested-With", "Content-Type", "Accept", "ApiKey", "UserKey");
+                    policy.WithHeaders("Origin", "X-Requested-With", "Content-Type", "Accept", "ApiKey", "UserKey", "X-Grecaptcha");
                     policy.SetPreflightMaxAge(TimeSpan.FromDays(1));
                 });
             }

@@ -7,7 +7,7 @@
 {
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" name="@Model.Name" id="@Model.Id" value="true" @Model.HtmlAttributes.ToAttributeHtmlContent()>
-        <label class="form-check-label" for="@Model.Id">@options.CheckBoxAttribute?.Label</label>
+        <label class="form-check-label" for="@Model.Id">@options.CheckBoxAttribute?.LabelHtml</label>
     </div>
 }
 else
@@ -16,14 +16,14 @@ else
     {
         <div class="checkbox-lg">
             <input class="form-check-input mt-2" type="checkbox" name="@Model.Name" id="@Model.Id" value="true" @Model.HtmlAttributes.ToAttributeHtmlContent()>
-            <label class="form-check-label" style="color: gray" for="@Model.Id">@options.CheckBoxAttribute?.Label</label>
+            <label class="form-check-label" style="color: gray" for="@Model.Id">@options.CheckBoxAttribute?.LabelHtml</label>
         </div>
     }
     else
     {
         <div class="form-check checkbox-lg">
             <input class="form-check-input mt-2" type="checkbox" name="@Model.Name" id="@Model.Id" value="true" @Model.HtmlAttributes.ToAttributeHtmlContent()>
-            <label class="form-check-label" for="@Model.Id">@options.CheckBoxAttribute?.Label</label>
+            <label class="form-check-label" for="@Model.Id">@options.CheckBoxAttribute?.LabelHtml</label>
         </div>
     }
 }

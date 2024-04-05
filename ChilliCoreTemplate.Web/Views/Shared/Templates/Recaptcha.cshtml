@@ -1,0 +1,18 @@
+@inject ProjectSettings config
+<script>
+    $(function () {
+        $('form').submit(function (e) {
+            var $f = $(this);
+            if ($('input[name=g-recaptcha-response]').length == 0) {
+                e.preventDefault();
+                grecaptcha.ready(function () {
+                    grecaptcha.execute('@config.GoogleRecaptcha.PublicApiKey', { action: '@Url.ActionContext.RouteData.Values["action"]' }).then(function (token) {
+                        $f.append('<input type="hidden" name="g-recaptcha-response" value="{0}" />'.format(token));
+                        $f.data('submitted', false);
+                        $f.submit();
+                    });
+                });
+            }
+        });
+    });
+</script>

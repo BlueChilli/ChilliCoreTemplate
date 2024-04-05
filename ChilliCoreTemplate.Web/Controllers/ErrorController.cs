@@ -21,6 +21,11 @@ namespace ChilliCoreTemplate.Web.Controllers
             return View();
         }
 
+        public ActionResult Message()
+        {
+            return View();
+        }
+
         public new ActionResult NotFound()
         {
             if (Request.IsAjaxRequest())

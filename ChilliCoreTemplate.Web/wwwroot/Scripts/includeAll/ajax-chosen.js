@@ -22,7 +22,7 @@
     options = $.extend({}, defaultOptions, $(select).data(), settings);
     this.chosen(chosenOptions ? chosenOptions : {});
     return this.each(function() {
-      return $(this).next('.chosen-container').find("input").bind('keyup', function() {
+      return $(this).next('.chosen-container').find("input").bind('keyup', function(event) {
         if (event.which === 13) return true;
         var field, msg, success, untrimmed_val, val;
         untrimmed_val = $(this).val();

@@ -1,0 +1,61 @@
+@model RazorTemplateDataModel<AccountViewModel>
+@inject IWebHostEnvironment env;
+@inject ProjectSettings config;
+@{
+    Layout = "~/Views/Emails/_MjmlLayout.cshtml";
+    var partner = Model.Data.UserRoles.First().CompanyName;
+    Model.Subject = $"New partner {partner} registered";
+    Model.Title = Model.Subject;
+}
+@section Head
+{
+    <mj-attributes>
+        <mj-class name="heading"
+                  padding="10px 25px 0 25px"
+                  color="#636465"
+                  font-size="14px"
+                  font-weight="400"
+                  line-height="14px" />
+        <mj-class name="value"
+                  padding="0 25px 10px 25px"
+                  font-size="16px"
+                  font-weight="700"
+                  line-height="1.4" />
+    </mj-attributes>
+}
+<mj-section background-color="#FFFFFF" padding="24px 0 0 0">
+    <mj-column>
+        <mj-text mj-class="paragraph">
+            Congratulations! A new partner has registered under your group.
+        </mj-text>
+        <mj-text mj-class="quote">
+            REGISTRATION DETAILS
+        </mj-text>
+    </mj-column>
+</mj-section>
+
+<mj-wrapper background-color="#FFFFFF" padding="0 0 12px 0">
+    <mj-section border-left="21px solid #FFFFFF"
+                border-right="21px solid #FFFFFF"
+                border-bottom="5px solid #FFFFFF"
+                background-color="#F7F9FC"
+                padding-top="5px"
+                padding-bottom="5px">
+        <mj-column width="50%">
+            <mj-text mj-class="heading">First name</mj-text>
+            <mj-text mj-class="value">@Model.Data.FirstName</mj-text>
+
+            <mj-text mj-class="heading">Last name</mj-text>
+            <mj-text mj-class="value">@Model.Data.LastName</mj-text>
+
+            <mj-text mj-class="heading">Email</mj-text>
+            <mj-text mj-class="value">@Model.Data.Email</mj-text>
+        </mj-column>
+        <mj-column width="50%">
+            <mj-text mj-class="heading">Partner</mj-text>
+            <mj-text mj-class="value">@partner</mj-text>
+            <mj-text mj-class="heading">Admin link</mj-text>
+            <mj-text mj-class="value"><a href="@Mvc.Admin.Company_Detail.Url(Url, Model.Data.UserRoles.First().CompanyId.Value)" target="_blank">View</a></mj-text>
+        </mj-column>
+    </mj-section>
+</mj-wrapper>

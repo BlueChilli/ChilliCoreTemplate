@@ -18,7 +18,6 @@ namespace ChilliCoreTemplate.Web.Tasks
                     var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
                     
                     await svc.Execute(executionInfo);
-                    await svc.CleanUp(executionInfo);
                 }
             });
            

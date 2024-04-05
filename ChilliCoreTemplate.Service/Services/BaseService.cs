@@ -14,10 +14,6 @@ namespace ChilliCoreTemplate.Service
         protected readonly IWebHostEnvironment _environment;
         protected readonly IMapper _mapper;
 
-        protected int? UserId { get { return User.UserData() == null ? null : (int?)User.UserData().UserId; } }
-
-        protected int? CompanyId { get { return User.UserData() == null ? null : (int?)User.UserData().CompanyId; } }
-
         protected bool IsInRole(Role role) => User.UserData() != null && User.UserData().IsInRole(role);
 
         public BaseService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, IMapper mapper) : base(user, context)

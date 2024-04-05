@@ -34,6 +34,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [MaxLength(50)]
         public string StripeId { get; set; }
 
+        public bool StripeCompleted { get; set; }
+
         [Required, StringLength(100)]
         public string Name { get; set; }
 

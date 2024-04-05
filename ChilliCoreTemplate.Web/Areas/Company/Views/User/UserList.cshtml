@@ -1,8 +1,8 @@
 @model UserListModel
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions()))
 {
-    <div class="float-right m-t-lg">
-        <a class="btn btn-primary" mvc-action="@Mvc.Company.User_Invite">+ Invite user</a>
+    <div class="float-right">
+        <button mvc-action="@Mvc.Company.User_Invite" style="Primary" icon="Create" icon-placement="Left">Invite user</button>
         @*<a class="btn btn-neutral" mvc-action="@Mvc.Company.User_Import">+ Import users</a>*@
     </div>
 }

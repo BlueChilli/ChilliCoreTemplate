@@ -10,6 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>@Html.GetCurrentMenu().Title | @config.ProjectDisplayName</title>
+    @if (config.GoogleRecaptcha.Enabled)
+    {
+        <script src="https://www.google.com/recaptcha/api.js?render=@config.GoogleRecaptcha.PublicApiKey"></script>
+    }
     @if (config.GoogleTagManager.Enabled)
     {
         @await Html.TemplateAsync(TemplateTypes.GoogleTagManager)
@@ -28,5 +32,10 @@
     @Html.RenderCustomSection("scripts")
     @RenderSection("modal", required: false)
     @await Html.PartialAsync("Layout/_MiniProfiler")
+
+    @if (config.GoogleRecaptcha.Enabled)
+    {
+        @await Html.TemplateAsync(TemplateTypes.Recaptcha)
+    }
 </body>
 </html>

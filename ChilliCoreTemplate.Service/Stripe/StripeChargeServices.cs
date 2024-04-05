@@ -28,12 +28,12 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
-        public ServiceResult<Charge> Charge_Get(string id, string accountId = null)
+        public ServiceResult<Charge> Charge_Get(string id, ChargeGetOptions options = null, string accountId = null)
         {
             try
             {
                 var service = new ChargeService(_client);
-                var response = service.Get(id, requestOptions: CreateRequestOptions(accountId));
+                var response = service.Get(id, options, CreateRequestOptions(accountId));
                 return ServiceResult<Charge>.AsSuccess(response);
             }
             catch (Exception ex)

@@ -197,5 +197,32 @@ namespace ChilliCoreTemplate.Service
             return customer.Subscriptions.Any(x => x.IsValid());
         }
 
+        internal ServiceResult<string> OAuthUrl()
+        {
+            var company = Context.Companies.Where(x => x.Id == CompanyId.Value && !x.IsDeleted).FirstOrDefault();
+            if (company == null) return ServiceResult<string>.AsError(error: "Company not found");
+
+            if (company.StripeId == null)
+            {
+                var createRequest = _stripe.Account_Create(company, User.UserData(), isIndividual: false);
+                if (!createRequest.Success) return ServiceResult<string>.CopyFrom(createRequest);
+
+                company.StripeId = createRequest.Result.Id;
+                company.UpdatedAt = DateTime.UtcNow;
+                Context.SaveChanges();
+            }
+
+            if (company.StripeCompleted)
+            {
+                var loginRequest = _stripe.Account_Login(company.StripeId);
+                if (!loginRequest.Success) return ServiceResult<string>.CopyFrom(loginRequest);
+                return ServiceResult<string>.AsSuccess(loginRequest.Result.Url);
+            }
+
+            var linkRequest = _stripe.Account_Link(company.StripeId, _config.ResolveUrl("~/Company"), _config.ResolveUrl("~/Company"));
+            if (!linkRequest.Success) return ServiceResult<string>.CopyFrom(linkRequest);
+            return ServiceResult<string>.AsSuccess(linkRequest.Result.Url);
+        }
+
     }
 }

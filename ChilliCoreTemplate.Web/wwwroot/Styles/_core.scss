@@ -247,6 +247,36 @@ td.text-end > .btn:first-child {
     width: min(95vw, 400px);
 }
 
+//chosen
+.form-floating .chosen-container-single .chosen-single {
+    height: 3.5rem;
+    line-height: 3.5rem;
+}
+
+//conditions component styling
+ol.nested-counter-list {
+    & > li {
+        margin-bottom: 0.5rem;
+
+
+        &:first-child {
+            margin-top: 0.5rem;
+        }
+
+        &::marker {
+            content: counters(list-item, '.') '. ';
+        }
+    }
+
+    & > li > ol > li > ol {
+        list-style-type: lower-alpha;
+    }
+
+    & > li > ol > li > ol > li > ol {
+        list-style-type: lower-roman;
+    }
+}
+
 /* Previous core which may still be needed. Also lots from inspinia patch which probably needs to be in here
     
 //windows and mac make fonts same

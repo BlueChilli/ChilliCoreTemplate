@@ -128,7 +128,7 @@ namespace ChilliCoreTemplate.Models
         public string Address { get; set; }
 
         [StringLength(100)]
-        public string StreetAddress { get; set; }
+        public string Street { get; set; }
 
         [StringLength(50)]
         public string Suburb { get; set; }
@@ -140,6 +140,11 @@ namespace ChilliCoreTemplate.Models
         public string Postcode { get; set; }
 
         public Country? Country { get; set; }
+
+        public string AddressFormatted()
+        {
+            return Street == null ? $"{Suburb} {State} {Postcode}, {Country?.GetDescription()}" : $"{Street}, {Suburb} {State} {Postcode}, {Country?.GetDescription()}";
+        }
 
         [Required, EmptyItem]
         public string Timezone { get; set; }

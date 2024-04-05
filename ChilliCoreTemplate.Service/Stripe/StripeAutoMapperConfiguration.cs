@@ -16,17 +16,14 @@ namespace ChilliCoreTemplate.Service
 {
     public partial class StripeService
     {
-        internal static void MappingConfigure(IMapperConfigurationExpression cfg)
+        public class StripeServiceAutoMapperConfig : Profile
         {
-            cfg.CreateMap<User, StripeCustomerEditModel>()
-                .ForMember(x => x.Id, opt => opt.MapFrom(src => src.StripeId))
-                .ForMember(x => x.Description, opt => opt.MapFrom(src => src.FullName));
-
-            //cfg.CreateMap<StripePayoutDetail, Data.Payout>()
-            //    .ForMember(dest => dest.Id, opt => opt.Ignore())
-            //    .ForMember(dest => dest.PayoutId, opt => opt.MapFrom(src => src.Id))
-            //    .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.UtcNow));
-
+            public StripeServiceAutoMapperConfig()
+            {
+                CreateMap<User, StripeCustomerEditModel>()
+                    .ForMember(x => x.Id, opt => opt.MapFrom(src => src.StripeId))
+                    .ForMember(x => x.Description, opt => opt.MapFrom(src => src.FullName));
+            }
         }
     }
 }

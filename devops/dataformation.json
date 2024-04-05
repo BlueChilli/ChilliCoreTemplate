@@ -162,7 +162,7 @@
           "Fn::FindInMap": ["EnvMappings", { "Ref": "Env" }, "DBInstanceClass"]
         },
         "Engine": "sqlserver-ex",
-        "EngineVersion": "14.00.3465.1.v1",
+        "EngineVersion": "16.00.4095.4.v1",
         "MasterUsername": "sql",
         "MasterUserPassword": {
           "Fn::Join": [

@@ -51,6 +51,16 @@ namespace ChilliCoreTemplate.Web.Tasks
                     await svc.CleanWebhooks(executionInfo);
                 }
             });
+
+            TaskHelper.WaitSafeSync(async () =>
+            {
+                using (var scope = ScopeContextFactory.Instance.CreateScope())
+                {
+                    var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
+
+                    await svc.CleanUp(executionInfo);
+                }
+            });
         }
     }
 }

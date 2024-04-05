@@ -16,6 +16,7 @@ namespace ChilliCoreTemplate.Web
         public static readonly TemplateType PageHeader = new TemplateType("Templates/PageHeader");
         public static readonly TemplateType ValidationSummary = new TemplateType("Templates/ValidationSummary");
         public static readonly TemplateType GoogleTagManager = new TemplateType("Templates/GoogleTagManager");
+        public static readonly TemplateType Recaptcha = new TemplateType("Templates/Recaptcha");
     }
 
     public class FieldTemplateLayouts

@@ -348,7 +348,7 @@ namespace ChilliCoreTemplate.Service.Api
             {
                 if (!requirements.EventuallyDue.Any() && !requirements.PendingVerification.Any() && account.PayoutsEnabled)
                 {
-                    //return _services.ManagedAccount_Completed(account.Id);
+                    return _companyService.Stripe_Completed(account.Id);
                 }
                 else if (!requirements.EventuallyDue.Any())
                 {

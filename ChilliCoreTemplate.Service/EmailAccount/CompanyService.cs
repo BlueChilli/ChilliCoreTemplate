@@ -22,12 +22,14 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     {
         private readonly AccountService _accountService;
         private readonly StripeService _stripe;
+        private readonly StripeHelperService _stripeHelperService;
 
-        public CompanyService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment,
-            AccountService accountService, StripeService stripeService, IMapper mapper) : base(user, context, config, fileStorage, environment, mapper)
+        public CompanyService(IPrincipal user, DataContext context, ProjectSettings config, IFileStorage fileStorage, IWebHostEnvironment environment, IMapper mapper,
+            AccountService accountService, StripeService stripeService, StripeHelperService stripeHelperService) : base(user, context, config, fileStorage, environment, mapper)
         {
             _accountService = accountService;
             _stripe = stripeService;
+            _stripeHelperService = stripeHelperService;
         }
 
         internal static void LinqMapperConfigure(FileStoragePath storagePath)
@@ -501,5 +503,37 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             return user ?? new AccountViewModel();
         }
-    }    
+
+        public ServiceResult<string> Stripe()
+        {
+            return _stripeHelperService.OAuthUrl();
+        }
+
+        internal ServiceResult Stripe_Completed(string stripeAccountId)
+        {
+            var record = Context.Companies.Where(x => x.StripeId == stripeAccountId).FirstOrDefault();
+            if (record == null) return ServiceResult.AsError($"Company not found for {stripeAccountId}");
+            if (record.StripeCompleted) return ServiceResult.AsSuccess();
+
+            record.StripeCompleted = true;
+            record.UpdatedAt = DateTime.UtcNow;
+            Context.SaveChanges();
+
+            //send email?
+            //var adminEmail = Context.UserRoles.Where(x => x.CompanyId == company.Id && x.Role == Role.CompanyAdmin).Select(x => x.User.Email).FirstOrDefault();
+            //if (!String.IsNullOrEmpty(adminEmail))
+            //{
+            //    _accountService.QueueMail(RazorTemplates.Emails_Payment_ConnectAccountComplete, adminEmail, new RazorTemplateDataModel<ConnectAccountCompleteEmailModel>
+            //    {
+            //        Data = new ConnectAccountCompleteEmailModel
+            //        {
+            //            Company = Mapper.Map<CompanyViewModel>(company),
+            //            Email = adminEmail
+            //        }
+            //    });
+            //}
+
+            return ServiceResult.AsSuccess();
+        }
+    }
 }

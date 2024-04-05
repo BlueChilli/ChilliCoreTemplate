@@ -1,43 +1,27 @@
 @model RazorTemplateDataModel<RegistrationCompleteViewModel>
 @inject ProjectSettings config
 @{
-    Layout = "~/Views/Emails/_EmailLayout.cshtml";
-    Model.Subject = String.Format("Complete your {0} sign up", Model.CompanyName);
+    Layout = "~/Views/Emails/_MjmlLayout.cshtml";
+    Model.Subject = $"Complete your {Model.CompanyName} sign up";
+    Model.Title = $"Welcome to {Model.CompanyName}";
     Model.EmailPreview = config.UserConfirmationMethod == UserConfirmationMethod.Link ? "please verify your email address" : "please read the onboarding instructions carefully";
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
     var data = new UserTokenModel { Email = Model.Data.Email, Token = Model.Data.Token }.ToTokenModel();
-    var url = Model.IsApi 
-        ? config.ResolveAppUrl("~/account/confirmemail", data)
+    var url = Model.IsApi
+        ? config.ResolveUrl("~/account/confirmemail", data)
         : Mvc.Root.EmailAccount_RegistrationComplete.Url(this.Url, routeValues: data, protocol: "https");
 }
-@section Header
-    {
-    @using (builder.BeginHeader(rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
-    {
-        @builder.H1(String.Format("Welcome to {0}", Model.CompanyName))
-    }
-}
-@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
-{
-    if(!String.IsNullOrEmpty(Model.Data.FirstName))
-    {
-        using (builder.BeginP())
-        {
-            @:Hi @Model.Data.FirstName,
-        }            
-    }
-    using (builder.BeginP())
-    {
-        @:Thank you for signing up to @Model.Site.
-    }
-
-    if (config.UserConfirmationMethod == UserConfirmationMethod.Link)
-    {
-        using (builder.BeginP())
-        {
-            @:To get started, verify your email below.
-        }
-        @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, url, "Verify email address")
-    }
-
-}
+<mj-section background-color="#FFFFFF" padding="48px 0">
+    <mj-column>
+        <mj-text mj-class="paragraph">
+            Hi @Model.Data.FirstName,
+        </mj-text>
+        <mj-text mj-class="paragraph">
+            Thank you for signing up to @Model.Site.
+        </mj-text>
+        <mj-text mj-class="paragraph">
+            To get started, verify your email below.
+        </mj-text>
+        <mj-button mj-class="btn" href="@builder.UrlTrack(Model.TrackingId, Model.TemplateId, url)">Verify email address</mj-button>
+    </mj-column>
+</mj-section>

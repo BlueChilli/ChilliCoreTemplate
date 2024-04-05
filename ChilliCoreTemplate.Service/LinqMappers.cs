@@ -133,6 +133,7 @@ namespace ChilliCoreTemplate.Service
 
             LinqMapper.CreateMap<Company, CompanyEditModel>(c => new CompanyEditModel
             {
+                Country = c.Region == null ? null : EnumHelper.Parse<Country>(c.Region)
             });
             LinqMapper.CreateMap<Company, CompanyViewModel>(c => new CompanyViewModel
             {

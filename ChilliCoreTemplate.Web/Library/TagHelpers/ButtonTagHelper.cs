@@ -1,7 +1,4 @@
 using ChilliCoreTemplate.Models;
-using ChilliCoreTemplate.Models;
-using ChilliCoreTemplate.Web.TagHelpers;
-using ChilliCoreTemplate.Web;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;
@@ -137,6 +134,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
         public ButtonStyle Style { get; set; }
 
+        public ButtonSize Size { get; set; } = ButtonSize.Small;
+
         public IconType Icon { get; set; }
 
         [HtmlAttributeName("icon-placement")]
@@ -168,7 +167,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
                     output.PostContent.SetHtmlContent(icon);
             }
 
-            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} btn-sm {iconStyle}");
+            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} {Size.GetData<string>("css")} {iconStyle}");
         }
     }
 }

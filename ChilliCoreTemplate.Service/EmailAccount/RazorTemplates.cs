@@ -26,8 +26,9 @@ namespace ChilliCoreTemplate.Service
         public static RazorTemplate SendSmsViaEmail = new RazorTemplate("Emails/EmailAccount/SendSmsViaEmail");
         public static RazorTemplate ForgotPin = new RazorTemplate("Emails/EmailAccount/ForgotPin");
 
+        public static RazorTemplate MasterCompany_NewRegistration = new("Emails/MasterCompany/NewRegistration");
+
         public static RazorTemplate ErrorAlert = new RazorTemplate("Emails/Admin/ErrorAlert");
         public static RazorTemplate ErrorDaily = new RazorTemplate("Emails/Admin/ErrorDaily");
-
     }
 }

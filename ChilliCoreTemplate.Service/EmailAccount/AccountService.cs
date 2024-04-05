@@ -665,6 +665,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 if (_config.UserConfirmationMethod == UserConfirmationMethod.OneTimePassword) SendWelcomeEmail(user);
 
+                if (_config.HasMasterCompany && user.HasCompanyLoaded())
+                {
+                    var masterCompanyId = user.GetFirstCompany().MasterCompanyId;
+                    if (masterCompanyId.HasValue)
+                        QueueCompanyWideMail(masterCompanyId.Value, RazorTemplates.MasterCompany_NewRegistration, new RazorTemplateDataModel<AccountViewModel>(_mapper.Map<User, AccountViewModel>(user)));
+                }
+
                 Mixpanel.SendAccountToMixpanel(user, "Account activated");
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
 
@@ -899,10 +906,18 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         internal void SendRegistrationCompleteEmail(User account, bool isApi = false)
         {
-            if (!account.Tokens.Any(t => t.Type == UserTokenType.Activate && t.Expiry > DateTime.UtcNow))
+            var token = account.Tokens.Where(t => t.Type == UserTokenType.Activate && t.Expiry > DateTime.UtcNow).FirstOrDefault();
+            var emailModel = new RazorTemplateDataModel<RegistrationCompleteViewModel>(new RegistrationCompleteViewModel { FirstName = account.FirstName, Email = account.Email, IsApi = isApi });
+            if (token == null)
             {
-                var token = Token_Add(account, UserTokenType.Activate, new TimeSpan(7, 0, 0, 0));
-                QueueMail(RazorTemplates.RegistrationComplete, account.Email, new RazorTemplateDataModel<RegistrationCompleteViewModel> { Data = new RegistrationCompleteViewModel { FirstName = account.FirstName, Token = token.ToShortGuid().ToString(), Email = account.Email, IsApi = isApi } });
+                var guid = Token_Add(account, UserTokenType.Activate, new TimeSpan(7, 0, 0, 0));
+                emailModel.Data.Token = guid.ToShortGuid();
+                QueueMail(RazorTemplates.RegistrationComplete, account.Email, emailModel);
+            }
+            else
+            {
+                emailModel.Data.Token = token.Token.ToShortGuid();
+                QueueMail_Distinct(RazorTemplates.RegistrationComplete, account.Email, emailModel, new TimeSpan(24, 0, 0));
             }
         }
 

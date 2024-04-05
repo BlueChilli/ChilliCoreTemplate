@@ -39,6 +39,8 @@ namespace ChilliCoreTemplate.Web
             //    templateModel.Value = this.SelectList.First(x => x.Value == templateModel.Value.ToString()).Text;
             //}
 
+            PlaceholderAttribute.Resolve(metadata, templateModel.HtmlAttributes);
+
             return templateModel;
         }
     }

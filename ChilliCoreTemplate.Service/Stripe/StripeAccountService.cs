@@ -36,6 +36,7 @@ namespace ChilliCoreTemplate.Service
                 var service = new AccountService(_client);
                 var account = new AccountCreateOptions
                 {
+                    Type = "express",
                     Country = company.Region,
                     Email = user.Email,
                     Capabilities = new AccountCapabilitiesOptions
@@ -45,7 +46,8 @@ namespace ChilliCoreTemplate.Service
                     },
                     Company = new AccountCompanyOptions
                     {
-                        //TaxId = company.TaxId,
+                        //Name = company.LegalName,
+                        //TaxId = company.Abn,
                         Address = new AddressOptions
                         {
                             Line1 = company.Street,
@@ -63,7 +65,18 @@ namespace ChilliCoreTemplate.Service
                         Url = company.Website
                     },
                     BusinessType = isIndividual ? "individual" : "company", //TODO determine if company/individual
-                    Type = "standard"
+                    Settings = new AccountSettingsOptions
+                    {
+                        Payouts = new AccountSettingsPayoutsOptions
+                        {
+                            Schedule = new AccountSettingsPayoutsScheduleOptions
+                            {
+                                DelayDays = AccountSettingsPayoutsScheduleDelayDays.Minimum,
+                                Interval = "monthly",
+                                MonthlyAnchor = 31
+                            }
+                        }
+                    }
                 };
                 if (isIndividual)
                 {
@@ -112,6 +125,23 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
+        public ServiceResult<LoginLink> Account_Login(string id)
+        {
+            try
+            {
+                var service = new LoginLinkService(_client);
+                var response = service.Create(id);
+                return ServiceResult<LoginLink>.AsSuccess(response);
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is StripeException))
+                {
+                    ex.LogException();
+                }
+                return ServiceResult<LoginLink>.AsError(ex.Message);
+            }
+        }
 
     }
 }

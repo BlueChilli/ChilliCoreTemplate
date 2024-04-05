@@ -185,6 +185,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 email.OpenCount++;
                 if (!email.IsOpened)
                 {
+                    //email.IsDelivered = true;
                     email.IsOpened = true;
                     email.Error = null;
                     email.OpenDate = DateTime.UtcNow;
@@ -204,7 +205,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 email.ClickCount++;
                 if (!email.IsClicked)
                 {
+                    //email.IsDelivered = true;
+                    email.IsOpened = true;
                     email.IsClicked = true;
+                    email.Error = null;
                     email.ClickDate = DateTime.UtcNow;
                 }
                 Context.SaveChanges();
@@ -323,6 +327,21 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                             Token = "ABC123"
                         }
                     },
+                    new EmailPreviewItemModel
+                    {
+                        Template = RazorTemplates.MasterCompany_NewRegistration,
+                        EmailName = "Master company - new company created",
+                        Data = new AccountViewModel
+                        {
+                            FirstName = "Fred",
+                            LastName = "Feline",
+                            Email = "fred@example.com",
+                            UserRoles = new List<UserRoleModel>
+                            {
+                                new() { CompanyName = "Fred Company" }
+                            }
+                        }
+                    },
                 }
             };
             model.EmailList = model.Emails.ToSelectList(v => (int?)model.Emails.IndexOf(v), t => String.IsNullOrEmpty(t.EmailName) ? t.Id.SplitByUppercase() : t.EmailName);
@@ -346,7 +365,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 email.Data = model.Data.FromJson<InviteEditModel>();
                 return Email_Preview<InviteEditModel>(email);
             }
-            else if (email.Template == RazorTemplates.PasswordChanged)
+            else if (email.Template == RazorTemplates.PasswordChanged || email.Template == RazorTemplates.MasterCompany_NewRegistration)
             {
                 email.Data = model.Data.FromJson<AccountViewModel>();
                 return Email_Preview<AccountViewModel>(email);

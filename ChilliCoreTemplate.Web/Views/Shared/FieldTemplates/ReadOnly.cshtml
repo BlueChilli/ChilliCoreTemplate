@@ -1,4 +1,8 @@
 @model IFieldInnerTemplateModel<ReadonlyFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    Model.HtmlAttributes.Merge("class", "form-control-readonly");
+}
 @if (Model.Options.PreAddOn != null || Model.Options.PostAddOn != null)
 {
     @:<div class="input-group">
@@ -7,7 +11,7 @@
 {
     @Model.Options.PreAddOn
 }
-<input type="text" readonly class="form-control form-control-readonly" id="@Model.Id" value="@Model.Value">
+<input type="text" readonly id="@Model.Id" value="@Model.Value" @Model.HtmlAttributes.ToAttributeHtmlContent()>
 @if (Model.Options.PostAddOn != null)
 {
     @Model.Options.PostAddOn

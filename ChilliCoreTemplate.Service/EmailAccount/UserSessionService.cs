@@ -233,7 +233,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     var impersonationData = _mapper.Map<UserData>(impersonation);
                     impersonationData.IsMfaVerified = session.IsMfaVerified;
                     impersonationPointer.ImpersonatedBy(impersonationData);
-                    impersonationPointer = impersonationData;
+                    impersonationPointer = impersonationPointer.Impersonator;
                 }
             }
 

@@ -27,8 +27,9 @@ namespace ChilliCoreTemplate.Service.Api
         private readonly ProjectSettings _config;
         private readonly IMapper _mapper;
         private readonly AccountService _accountService;
+        private readonly CompanyService _companyService;
 
-        public WebhookService(BackgroundTaskPrincipal user, DataContext context, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config, IMapper mapper) : base(user, context)
+        public WebhookService(BackgroundTaskPrincipal user, DataContext context, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config, IMapper mapper, CompanyService companyService) : base(user, context)
         {
             _accountService = accountService;
             _stripe = stripe;
@@ -36,6 +37,7 @@ namespace ChilliCoreTemplate.Service.Api
             _fileStorage = fileStorage;
             _config = config;
             _mapper = mapper;
+            _companyService = companyService;
         }
 
         public ServiceResult QueueWebhook(WebhookType type, string json)

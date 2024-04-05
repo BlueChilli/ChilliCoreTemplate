@@ -3,6 +3,7 @@ using ChilliCoreTemplate.Models.Api.OAuth;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.EmailAccount;
+using ChilliCoreTemplate.Web.Library;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
 using Microsoft.AspNetCore.Mvc;
@@ -83,8 +84,9 @@ namespace ChilliCoreTemplate.Web.Controllers
             return urls;
         }
 
-        [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Login")]
+        [GoogleRecaptcha(Score = 0.75)]
+        [ValidateAntiForgeryToken]
         public virtual ActionResult LoginPost(SessionEditModel model)
         {
             return this.ServiceCall(() => _accountService.Login(model, this.LoginWithPrincipal))
@@ -196,6 +198,7 @@ namespace ChilliCoreTemplate.Web.Controllers
         }
 
         [HttpPost, ActionName("Registration")]
+        [GoogleRecaptcha(Score = 0.75)]
         [ValidateAntiForgeryToken]
         public virtual ActionResult RegistrationPost([FromForm] RegistrationViewModel model)
         {
@@ -206,8 +209,8 @@ namespace ChilliCoreTemplate.Web.Controllers
                     //Choice activate now, or log user on - some functions may need to be blocked when not activated
                     return Mvc.Root.EmailAccount_RegistrationActivationSent.Redirect(this, routeValues: new { email = model.Email });
 
-                    //_accountService.Session_Create(m.UserId).SetLoginCookie();
-                    //return Menu.Company.Redirect();
+                    //var principle = _accountService.Session_Create(m.UserId, null, TimeSpan.FromDays(1), this.LoginWithPrincipal);
+                    //return RedirectionAfterLogin(principle);
                 })
                 .OnFailure(() =>
                 {

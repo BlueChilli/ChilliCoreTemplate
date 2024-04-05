@@ -25,6 +25,7 @@ namespace ChilliCoreTemplate.Web
             var metadata = templateModel.InnerMetadata.ModelMetadata;
             var member = templateModel.InnerMetadata.MemberExpression;
 
+            AutoCompleteAttribute.Resolve(metadata, templateModel.HtmlAttributes);
             PlaceholderAttribute.Resolve(metadata, templateModel.HtmlAttributes);
             HtmlHelperExtensions.ResolveStringLength(member, templateModel.HtmlAttributes);
             templateModel.HtmlAttributes.AddOrSkipIfExists("type", inputType);
