@@ -1,5 +1,7 @@
 using ChilliCoreTemplate.Models;
 using ChilliSource.Cloud.Core.EntityFramework;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Data.EmailAccount
 {
+    [Index(nameof(Guid), IsUnique = true, Name = "IX_Company_Guid")]
+    [Index(nameof(StripeId), IsUnique = true)]
+    [Index(nameof(ExternalIdHash), IsUnique = false)]
     public class Company : IExternalId
     {
         public int Id { get; set; }
@@ -103,6 +108,14 @@ namespace ChilliCoreTemplate.Data.EmailAccount
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
+        }
+    }
+
+    public class CompanyConfiguration : IEntityTypeConfiguration<Company>
+    {
+        public void Configure(EntityTypeBuilder<Company> builder)
+        {
+            builder.ToTable(t => t.HasCheckConstraint("CK_Companies_MasterCompanyId", "[Id] <> [MasterCompanyId]"));
         }
     }
 

@@ -1,0 +1,134 @@
+@inject ProjectSettings config;
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,500">
+    <style>
+        body {
+            font-size: 12px;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        body * {
+            break-before: avoid;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: 500;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        h3 {
+            font-size: 14px;
+        }
+
+        h4 {
+            font-size: 12px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        div.header {
+            display: block;
+        }
+
+        div.footer {
+            display: block;
+            line-height: 14px;
+            font-size: 10px;
+            page-break-inside: avoid; 
+        }
+
+        div.content {
+            padding-top: 10px;            
+        }
+
+        @@page {
+            size: A4 portrait;
+            margin-top: 1cm;
+            margin-left: 1cm;
+            margin-right: 1cm;
+            margin-bottom: 1cm;
+
+            @@top-left {
+                content: element(header)
+            }
+        }
+
+        .normal {
+            padding-bottom: 3px;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .bold {
+            padding-bottom: 3px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .notice {
+            font-size: 14px;
+            color: #555961;
+            line-height: 22px;
+            padding-right: 10px;
+        }
+
+        .notice-small {
+            font-size: 10px;
+            color: #555961;
+            line-height: 20px;
+        }
+
+        .alight-right {
+            text-align: right;
+        }
+
+        .contact {
+            font-size: 14px;
+            background-color: #F7F9FC;
+            padding: 20px 35px;
+            border: 1px solid #D9D9D9;
+        }
+
+        .contact a {
+            color: #06D1DF;
+            text-decoration: none;
+        }
+
+        .section-gap {
+            height: 30px;
+        }
+
+    </style>
+    @if (IsSectionDefined("Styles"))
+    {
+        @RenderSection("Styles", required: false)
+    }
+</head>
+<body>
+    <div class="header">
+        <table>
+            <tr>
+                <td>
+                    <img src="@config.ResolveUrl("~/Images/logo.png?w=500")" style="width:250px" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    @RenderBody()
+</body>
+</html>

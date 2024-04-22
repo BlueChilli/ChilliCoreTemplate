@@ -63,7 +63,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             if (condition.Conditions != null && condition.Conditions.Count != 0)
             {
                 if (condition.Content != null) sb.AppendLine($"<li>{condition.Content}");
-                sb.AppendLine(level > 1 ? "<ol>" : "<ol class=\"nested-counter-list\">");
+                sb.AppendLine($"<ol class=\"nested-counter-list{(level > 0 ? "-level" + level : "")}\">");
                 foreach (var subcondition in condition.Conditions) ProcessCondition(sb, subcondition, level + 1);
                 sb.AppendLine("</ol>");
                 if (condition.Content != null) sb.AppendLine("</li>");

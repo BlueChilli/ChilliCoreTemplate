@@ -39,6 +39,21 @@ namespace ChilliCoreTemplate.Models.Stripe
             return false;
         }
 
+        public static bool IsValid(this PaymentMethod method)
+        {
+            if (method.Card != null) return method.Card.IsValid();
+            if (method.AuBecsDebit != null) return true;
+
+            return false;
+        }
+
+        public static string Description(this PaymentMethod method)
+        {
+            if (method.Card != null) return $"XXXX {method.Card.Last4}";
+            if (method.AuBecsDebit != null) return $"{method.AuBecsDebit.BsbNumber} XXXX{method.AuBecsDebit.Last4}";
+            return "Unknown";
+        }
+
         public static bool IsValid(this PaymentMethodCard card)
         {
             var cvcCheck = card.Checks?.CvcCheck;

@@ -46,5 +46,22 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
+        internal ServiceResult<TransferReversal> Transfer_Reverse(string transferId, TransferReversalCreateOptions options)
+        {
+            try
+            {
+                var service = new TransferReversalService(_client);
+                var response = service.Create(transferId, options);
+                return ServiceResult<TransferReversal>.AsSuccess(response);
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is StripeException))
+                {
+                    ex.LogException();
+                }
+                return ServiceResult<TransferReversal>.AsError(ex.Message);
+            }
+        }
     }
 }

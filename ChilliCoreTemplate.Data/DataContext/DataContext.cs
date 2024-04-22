@@ -45,10 +45,6 @@ namespace ChilliCoreTemplate.Data
 
             modelBuilder.Entity<Webhook_Inbound>().HasIndex(c => c.WebhookIdHash);
 
-            modelBuilder.Entity<Company>().HasIndex(c => c.Guid).HasDatabaseName("IX_Company_Guid").IsUnique();
-            modelBuilder.Entity<Company>().HasIndex(c => c.StripeId).IsUnique();
-            modelBuilder.Entity<Company>().HasIndex(c => c.ExternalIdHash);
-
             modelBuilder.Entity<Email>().HasIndex(c => c.TrackingId);
             modelBuilder.Entity<Email>().HasIndex(c => c.TemplateIdHash);
             modelBuilder.Entity<Email>().HasIndex(c => c.DateQueued);

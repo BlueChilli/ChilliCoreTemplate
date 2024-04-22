@@ -41,6 +41,15 @@ namespace ChilliCoreTemplate.Service.Admin
                 account.Status = model.Status;
                 account.UpdatedDate = DateTime.UtcNow;
 
+                if (account.Status == UserStatus.Deleted)
+                {
+                    account.ClosedDate = DateTime.UtcNow;
+                }
+                else
+                {
+                    account.ClosedDate = null;
+                }
+
                 Context.SaveChanges();
             }
         }      

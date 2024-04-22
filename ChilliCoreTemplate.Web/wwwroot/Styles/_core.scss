@@ -255,10 +255,21 @@ td.text-end > .btn:first-child {
 
 //conditions component styling
 ol.nested-counter-list {
+    padding-inline-start: 15px;
+
     & > li {
         margin-bottom: 0.5rem;
 
 
+        &:first-child {
+            margin-top: 0.5rem;
+        }
+    }
+}
+
+ol.nested-counter-list-level1 {
+
+    & > li {
         &:first-child {
             margin-top: 0.5rem;
         }
@@ -267,14 +278,14 @@ ol.nested-counter-list {
             content: counters(list-item, '.') '. ';
         }
     }
+}
 
-    & > li > ol > li > ol {
-        list-style-type: lower-alpha;
-    }
+ol.nested-counter-list-level2 {
+    list-style-type: lower-alpha
+}
 
-    & > li > ol > li > ol > li > ol {
-        list-style-type: lower-roman;
-    }
+ol.nested-counter-list-level3 {
+    list-style-type: lower-roman
 }
 
 /* Previous core which may still be needed. Also lots from inspinia patch which probably needs to be in here

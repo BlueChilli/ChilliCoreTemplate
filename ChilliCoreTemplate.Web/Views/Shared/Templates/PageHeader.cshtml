@@ -27,7 +27,7 @@
                         @heading
                         @foreach (var status in Model.Status)
                         {
-                            <span class="badge badge-@status.Value.GetDescription().ToLower() align-middle">@status.Key</span>
+                            <label type="@status.Value" class="text-sm align-middle">@status.Key</label>
                         }
                     </h1>
                     <ol class="breadcrumb noprint" style="background-color: inherit;">

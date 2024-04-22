@@ -31,6 +31,9 @@ namespace ChilliCoreTemplate.Web
             MenuConfigByRole.DefaultConfig(cfg =>
             {
                 cfg.AddRoot(Mvc.Root.Public_Index);
+                cfg.AddRoot(Mvc.Root.EmailAccount_Login);
+                cfg.AddRoot(Mvc.Root.EmailAccount_Registration, title: "Register");
+                cfg.AddRoot(Mvc.Root.EmailAccount_ForgotPassword, title: "Reset password");
             });
 
             MenuConfigByRole.Config(Role.Administrator, cfg =>

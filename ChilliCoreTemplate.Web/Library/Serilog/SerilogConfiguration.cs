@@ -27,25 +27,15 @@ namespace ChilliCoreTemplate.Web.Serilog
                 .Filter.ByExcluding("SourceContext = 'Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer'") //Bug in Microsoft.AspNetCore.Server.IIS.Core.IISHttpContext.GetOriginalPath() during warm up
                 .Filter.ByExcluding(x => x.Exception?.Message == "Could not obtain database time information") //Common nuisance error when connecting with low spec azure databases (Scheduled tasks)
                 .Filter.ByExcluding(x => x.Exception?.Message == "The antiforgery token could not be decrypted.") //Encryption changes after a release
+                .Filter.ByExcluding(x => x.Exception?.Message == "The client has disconnected") //https://github.com/dotnet/aspnetcore/issues/45086
                 .Enrich.FromLogContext()
                 .Enrich.WithHttpRequestUrl()
                 .Enrich.WithHttpRequestForm()
                 .Enrich.WithExceptionDetails(new DestructuringOptionsBuilder().WithDefaultDestructurers().WithDestructurers(new[] { new DbUpdateExceptionDestructurer() }))
                 .Enrich.WithExceptionMessage()
                 .Enrich.WithUserId()
-                //.Enrich.With<CustomExceptionDataEnricher>()
                 .Enrich.WithMachineName()
                 .Enrich.WithEnvironmentUserName()
-                //.Enrich.WithHttpRequestRawUrl()
-                //.Enrich.WithHttpRequestType()
-                //.Enrich.WithHttpRequestUrl()
-                //.Enrich.WithHttpRequestUrlReferrer()
-                //.Enrich.WithHttpRequestUserAgent()
-                //.Enrich.WithMvcActionName()
-                //.Enrich.WithMvcControllerName()
-                //.Enrich.WithWebApiRouteData()
-                //.Enrich.WithWebApiControllerName()
-                //.Enrich.WithWebApiActionName()
                 .WriteTo.File(logFilePath, fileSizeLimitBytes: 1024 * 1024, buffered: true, flushToDiskInterval: TimeSpan.FromSeconds(10),
                     rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true, retainedFileCountLimit: 15);
 

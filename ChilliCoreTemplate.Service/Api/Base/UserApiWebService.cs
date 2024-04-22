@@ -154,7 +154,7 @@ namespace ChilliCoreTemplate.Service.Api
                     return _accountService.Password_ResetRequest(model.Email);
                 case UserTokenType.Activate:
                     user = _accountService.GetAccountByEmail(model.Email);
-                    _accountService.SendRegistrationCompleteEmail(user);
+                    _accountService.SendVerificationReminderEmail(user);
                     return ServiceResult.AsSuccess();
                 case UserTokenType.OneTimePassword:
                     user = _accountService.GetAccountByEmail(model.Email);

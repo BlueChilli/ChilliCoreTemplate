@@ -159,6 +159,7 @@ namespace ChilliCoreTemplate.Service
 
             LinqMapper.CreateMap<UserRole, CompanyUserViewModel>(u => new CompanyUserViewModel
             {
+                Id = u.CompanyId.Value,
                 Email = u.User.Email,
                 Name = u.User.FullName,
                 Status = u.Status != null && u.User.Status != UserStatus.Deleted ? u.Status.ToString() : u.User.Status.ToString()

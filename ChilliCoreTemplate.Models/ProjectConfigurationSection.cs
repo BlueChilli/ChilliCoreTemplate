@@ -450,7 +450,8 @@ namespace ChilliCoreTemplate.Models
             {
                 QuarantineDomain = section.GetString("quarantine:quarantineDomain"),
                 SafeDomains = String.IsNullOrEmpty(safeDomains) ? new List<string>() : safeDomains.Split(','),
-                SafeEmails = String.IsNullOrEmpty(safeEmails) ? new List<string>() : safeEmails.Split(',')
+                SafeEmails = String.IsNullOrEmpty(safeEmails) ? new List<string>() : safeEmails.Split(','),
+                Sanitise = section.GetSection("quarantine:sanitise").Get<Dictionary<string, string>>()
             };
         }
 

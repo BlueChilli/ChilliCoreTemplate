@@ -83,4 +83,48 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         }
     }
 
+    [HtmlTargetElement("a", Attributes = ActionAttribute)]
+    public class AnchorTagPostHelper : TagHelper
+    {
+        protected const string ActionAttribute = "mvc-post";
+
+        private readonly IUrlHelperFactory _urlHelperFactory;
+        public AnchorTagPostHelper(IUrlHelperFactory urlHelperFactory)
+        {
+            _urlHelperFactory = urlHelperFactory;
+        }
+
+        [ViewContext, HtmlAttributeNotBound]
+        public ViewContext ViewContext { get; set; }
+
+        [HtmlAttributeName(ActionAttribute)]
+        public IMvcActionDefinition Action { get; set; }
+
+        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        public string JsonData { get; set; }
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            if (Action == null)
+                return;
+
+            output.Attributes.RemoveAll(ActionAttribute);
+            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
+
+            var route = Action.GetRouteValueDictionary();
+            route = route.AddRouteValues(RouteValues);
+
+            var url = urlHelper.RouteUrl(route);
+            var target = "";
+            if (output.Attributes.ContainsName("target"))
+            {
+                target = output.Attributes["target"].Value.ToString();
+                output.Attributes.RemoveAll("target");
+            }
+            output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {JsonData ?? "null"});");
+            output.Attributes.SetAttribute("href", "javascript: void(0);");
+        }
+    }
 }

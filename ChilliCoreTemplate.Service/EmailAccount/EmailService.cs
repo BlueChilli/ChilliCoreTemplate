@@ -309,7 +309,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     },
                     new EmailPreviewItemModel
                     {
-                        Template = RazorTemplates.RegistrationComplete,
+                        Template = RazorTemplates.VerificationReminder,
                         Data = new RegistrationCompleteViewModel { Email = _config.AdminEmail, FirstName = "Jim", Token = "ABC123" }
                     },
                     new EmailPreviewItemModel
@@ -375,7 +375,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 email.Data = model.Data.FromJson<ResetPasswordRequestModel>();
                 return Email_Preview<ResetPasswordRequestModel>(email);
             }
-            else if (email.Template == RazorTemplates.RegistrationComplete || email.Template == RazorTemplates.WelcomeEmail)
+            else if (email.Template == RazorTemplates.VerificationReminder || email.Template == RazorTemplates.WelcomeEmail)
             {
                 email.Data = model.Data.FromJson<RegistrationCompleteViewModel>();
                 return Email_Preview<RegistrationCompleteViewModel>(email);

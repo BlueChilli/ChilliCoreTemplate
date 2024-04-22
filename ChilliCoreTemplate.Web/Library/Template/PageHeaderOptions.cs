@@ -37,7 +37,7 @@ namespace ChilliCoreTemplate.Web
         /// <summary>
         /// Status labels which are rendered after the page title 
         /// </summary>
-        public Dictionary<string, BreadcrumbStatus> Status { get; set; } = new Dictionary<string, BreadcrumbStatus>();
+        public Dictionary<string, LabelType> Status { get; set; } = [];
 
         /// <summary>
         /// Name of a partial view to call, which is rendered on the right empty space of the breadcrumb
@@ -134,6 +134,19 @@ namespace ChilliCoreTemplate.Web
             {
                 options.AddPath(new BreadcrumbPathItem() { Text = options.Title });
             }
+        }
+
+        public static LabelType ToLabelType(this string status)
+        {
+            switch (status)
+            {
+                case "danger": return LabelType.Danger;
+                case "info": return LabelType.Info;
+                //case "plain": return LabelType.Plain;
+                //case "primary": return LabelType.Primary;
+                case "success": return LabelType.Success;
+            }
+            return LabelType.Warning;
         }
     }
 

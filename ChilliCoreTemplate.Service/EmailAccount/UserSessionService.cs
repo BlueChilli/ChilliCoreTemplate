@@ -42,8 +42,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             session.UserDeviceId = userData.UserDeviceId;
             session.SessionCreatedOn = DateTime.UtcNow;
             session.SessionExpiryOn = expiresOn;
-            session.ImpersonationChain = userData.ImpersonationChain().ToJson();
-            session.IsMfaVerified = userData.IsMfaVerified || (userData.Impersonator?.IsMfaVerified ?? false);
+            session.ImpersonationChain = userData.ImpersonationChain().Select(x => x.UserId).ToJson();
+            session.IsMfaVerified = userData.IsMfaVerified || userData.ImpersonationChain().Any(x => x.IsMfaVerified);
         }
 
         public async Task<UserData> GetCompanySession(Guid guid)

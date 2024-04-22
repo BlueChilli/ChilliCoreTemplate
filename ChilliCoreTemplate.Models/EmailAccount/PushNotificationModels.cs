@@ -13,8 +13,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 {
     public class PushNotificationListModel
     {
-        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.Date.ToTimezone().AddDays(-7);
-        public DateTime? DateTo { get; set; } = DateTime.UtcNow.Date.ToTimezone();
+        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.ToTimezone().AddDays(-7);
+        public DateTime? DateTo { get; set; } = DateTime.UtcNow.ToTimezone();
 
         [EmptyItem("Any type")]
         public PushNotificationType? Type { get; set; }

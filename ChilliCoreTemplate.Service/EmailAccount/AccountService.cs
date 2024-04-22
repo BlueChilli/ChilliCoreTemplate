@@ -196,7 +196,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 if (_config.UserConfirmationMethod == UserConfirmationMethod.Link)
                 {
-                    if (account.CreatedDate < DateTime.UtcNow.AddHours(-1)) SendRegistrationCompleteEmail(account, isApi);
+                    if (account.CreatedDate < DateTime.UtcNow.AddHours(-1)) SendVerificationReminderEmail(account, isApi);
                 }
                 else
                 {
@@ -898,13 +898,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return Context.Users.Any(a => a.PhoneHash == hash && a.Id != accountId && a.Phone == phone && a.Status != UserStatus.Deleted);
         }
 
-        public void SendRegistrationCompleteEmail(int accountId)
+        public void SendVerificationReminderEmail(int accountId)
         {
             var account = this.GetAccount(accountId);
-            this.SendRegistrationCompleteEmail(account);
+            this.SendVerificationReminderEmail(account);
         }
 
-        internal void SendRegistrationCompleteEmail(User account, bool isApi = false)
+        internal void SendVerificationReminderEmail(User account, bool isApi = false)
         {
             var token = account.Tokens.Where(t => t.Type == UserTokenType.Activate && t.Expiry > DateTime.UtcNow).FirstOrDefault();
             var emailModel = new RazorTemplateDataModel<RegistrationCompleteViewModel>(new RegistrationCompleteViewModel { FirstName = account.FirstName, Email = account.Email, IsApi = isApi });
@@ -912,12 +912,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 var guid = Token_Add(account, UserTokenType.Activate, new TimeSpan(7, 0, 0, 0));
                 emailModel.Data.Token = guid.ToShortGuid();
-                QueueMail(RazorTemplates.RegistrationComplete, account.Email, emailModel);
+                QueueMail(RazorTemplates.VerificationReminder, account.Email, emailModel);
             }
             else
             {
                 emailModel.Data.Token = token.Token.ToShortGuid();
-                QueueMail_Distinct(RazorTemplates.RegistrationComplete, account.Email, emailModel, new TimeSpan(24, 0, 0));
+                QueueMail_Distinct(RazorTemplates.VerificationReminder, account.Email, emailModel, new TimeSpan(24, 0, 0));
             }
         }
 

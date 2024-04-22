@@ -10,7 +10,7 @@ namespace ChilliCoreTemplate.Service
 {
     public partial class RazorTemplates
     {
-        public static RazorTemplate RegistrationComplete = new RazorTemplate("Emails/EmailAccount/RegistrationComplete");
+        public static RazorTemplate VerificationReminder = new RazorTemplate("Emails/EmailAccount/VerificationReminder");
         public static RazorTemplate AccountAlreadyRegistered = new RazorTemplate("Emails/EmailAccount/AccountAlreadyRegistered");
         public static RazorTemplate AccountNotRegistered = new RazorTemplate("Emails/EmailAccount/AccountNotRegistered");
 

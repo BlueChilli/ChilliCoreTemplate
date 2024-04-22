@@ -509,17 +509,6 @@ namespace ChilliCoreTemplate.Models
         ZW
     }
 
-    public enum BreadcrumbStatus
-    {
-        Plain,
-        Primary,
-        [Description("info")]
-        Information,
-        Success,
-        Warning,
-        Danger,
-    }
-
     public enum LabelType
     {
         [Description("success")]

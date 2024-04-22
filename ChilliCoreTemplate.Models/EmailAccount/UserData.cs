@@ -86,7 +86,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public void ImpersonatedBy(UserData currentUser)
         {
             if (currentUser != null)
+            {
                 this.Impersonator = currentUser.Clone();
+                this.IsMfaVerified = this.ImpersonationChain().Any(x => x.IsMfaVerified);
+            }
         }
 
         public void RemoveImpersonation(IMapper mapper)
@@ -119,13 +122,13 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             };
         }
 
-        public List<int> ImpersonationChain()
+        public List<UserData> ImpersonationChain()
         {
-            var chain = new List<int>();
+            var chain = new List<UserData>();
             var user = this;
             while (user.IsImpersonated())
             {
-                chain.Insert(0, user.Impersonator.UserId);
+                chain.Insert(0, user.Impersonator);
                 user = user.Impersonator;
             }
             return chain;

@@ -12,8 +12,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 {
     public class ErrorListModel
     {
-        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.Date.ToTimezone().AddDays(-7);
-        public DateTime? DateTo { get; set; } = DateTime.UtcNow.Date.ToTimezone();
+        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.ToTimezone().AddDays(-7);
+        public DateTime? DateTo { get; set; } = DateTime.UtcNow.ToTimezone();
 
         [Placeholder("Search"), MaxLength(100)]
         public string Search { get; set; }
