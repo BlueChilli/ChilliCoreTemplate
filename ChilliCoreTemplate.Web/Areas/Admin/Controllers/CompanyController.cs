@@ -56,7 +56,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         public ActionResult Detail(int id)
         {
             return this.ServiceCall(() => _service.Get<CompanyDetailViewModel>(id))
-                .Always(m => { return View("CompanyDetail", m); })
+                .OnFailure(() => Mvc.Admin.Company_List.Redirect(this))
                 .Call();
         }
 
@@ -102,10 +102,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         public ActionResult Purge(int id)
         {
             return this.ServiceCall(() => _service.Get<CompanyDetailViewModel>(id))
-                .Always(m =>
-                {
-                    return PartialView("CompanyPurge", m);
-                })
+                .OnFailure(() => Mvc.Admin.Company_List.Redirect(this))
                 .Call();
         }
 

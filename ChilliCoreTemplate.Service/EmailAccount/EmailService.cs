@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Aws;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.LinqMapper;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using DataTables.AspNet.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -185,7 +188,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 email.OpenCount++;
                 if (!email.IsOpened)
                 {
-                    //email.IsDelivered = true;
+                    email.IsDelivered = true;
                     email.IsOpened = true;
                     email.Error = null;
                     email.OpenDate = DateTime.UtcNow;
@@ -205,7 +208,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 email.ClickCount++;
                 if (!email.IsClicked)
                 {
-                    //email.IsDelivered = true;
+                    email.IsDelivered = true;
                     email.IsOpened = true;
                     email.IsClicked = true;
                     email.Error = null;
@@ -271,6 +274,120 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
             }
             return ServiceResult<EmailUnsubscribeModel>.AsSuccess(model);
+        }
+
+        public async Task Email_Notification(SnsMessage model)
+        {
+            switch (model.Type)
+            {
+                case "Notification":
+                    var notification = model.Message.FromJson<SnsNotification>();
+                    switch (notification.NotificationType)
+                    {
+                        case "Bounce":
+                            await Email_ProcessBounceNotification(notification);
+                            break;
+                        case "Delivery":
+                            await Email_ProcessDeliveryNotification(notification);
+                            break;
+                        case "Complaint":
+                            await Email_ProcessComplaintNotification(notification);
+                            break;
+                    }
+                    break;
+                case "SubscriptionConfirmation":
+                    var client = new RestClient();
+                    var request = new RestRequest(model.SubscribeURL);
+                    var result = await client.ExecuteGetAsync(request);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private async Task Email_ProcessBounceNotification(SnsNotification notification)
+        {
+            var types = new List<BounceType> { BounceType.Permanent, BounceType.Transient };
+            var messageId = notification.Mail.MessageId;
+            if (!String.IsNullOrEmpty(messageId) && types.Contains(notification.Bounce.BounceType) && notification.Bounce.BouncedRecipients != null)
+            {
+                foreach (var recipient in notification.Bounce.BouncedRecipients)
+                {
+                    var hash = CommonLibrary.CalculateHash(messageId);
+                    var email = await Context.Emails.Where(x => x.MessageIdHash == hash && x.MessageId == messageId && x.IsSent && !x.IsDelivered && !x.IsOpened && x.Error == null).FirstOrDefaultAsync();
+                    if (email != null)
+                    {
+                        email.Error = recipient.DiagnosticCode;
+                        if (notification.Bounce.BounceType == BounceType.Permanent)
+                        {
+                            Email_Unsubscribe(new EmailUnsubscribeModel
+                            {
+                                Id = email.TrackingId,
+                                Reason = EmailUnsubscribeReason.Bounce,
+                                ReasonOther = $"AWS SES - Not deliverable - {notification.Bounce.BounceSubType.GetDescription()}"
+                            });
+                        }
+                    }
+                    break;
+                }
+                await Context.SaveChangesAsync();
+            }
+        }
+
+        private async Task Email_ProcessDeliveryNotification(SnsNotification notification)
+        {
+            var messageId = notification.Mail.MessageId;
+            if (!String.IsNullOrEmpty(messageId))
+            {
+                foreach (var emailAddress in notification.Mail.Destination)
+                {
+                    var hash = CommonLibrary.CalculateHash(messageId);
+                    var email = await Context.Emails.Where(x => x.MessageIdHash == hash && x.MessageId == messageId).FirstOrDefaultAsync();
+                    if (email != null) email.IsDelivered = true;
+                    break;
+                }
+                await Context.SaveChangesAsync();
+            }
+        }
+
+        private async Task Email_ProcessComplaintNotification(SnsNotification notification)
+        {
+            var messageId = notification.Mail.MessageId;
+            if (!String.IsNullOrEmpty(messageId))
+            {
+                foreach (var emailAddress in notification.Mail.Destination)
+                {
+                    var hash = CommonLibrary.CalculateHash(messageId);
+                    var email = await Context.Emails
+                        .Include(x => x.User)
+                        .Where(x => x.MessageIdHash == hash && x.MessageId == messageId).FirstOrDefaultAsync();
+
+                    if (email != null)
+                    {
+                        var model = new ComplaintEmailModel
+                        {
+                            User = email.User == null ? null : new UserBasicModel { Id = email.UserId.Value, Email = email.User.Email, Name = email.User.FullName },
+                            Email = notification.Complaint.ComplainedRecipients.First().EmailAddress,
+                            Reason = notification.Complaint.ComplaintSubType ?? notification.Complaint.ComplaintFeedbackType
+                        };
+                        QueueMail(RazorTemplates.EmailComplaint, _config.AdminEmail, new RazorTemplateDataModel<ComplaintEmailModel>(model));
+
+                        if (email.User != null)
+                        {
+                            Email_Unsubscribe(new EmailUnsubscribeModel
+                            {
+                                Id = email.TrackingId,
+                                Reason = EmailUnsubscribeReason.Other,
+                                ReasonOther = $"AWS SES - {model.Reason}"
+                            });
+
+                            await Activity_AddAsync(Context, new UserActivity { UserId = email.UserId.Value, ActivityType = ActivityType.Delete, EntityId = email.UserId.Value, EntityType = EntityType.Email, JsonData = notification.ToJson() });
+                        }
+                    }
+                    break;
+                }
+                await Context.SaveChangesAsync();
+            }
         }
 
         public ServiceResult<EmailPreviewModel> Email_Preview()

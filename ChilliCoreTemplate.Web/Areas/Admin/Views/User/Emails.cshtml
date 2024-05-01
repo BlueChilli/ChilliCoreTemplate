@@ -29,13 +29,15 @@
             <table-default class="js-emails-table">
                 <thead class="table-light">
                     <tr>
-                        <th>Date</th>
-                        <th>Recipient</th>
-                        <th>Template</th>
-                        <th>Sent</th>
-                        <th>Opened</th>
-                        <th>Clicked</th>
-                        <th>Actions</th>
+                        <th data-priority="3">Date</th>
+                        <th data-priority="1">Recipient</th>
+                        <th data-priority="4">Template</th>
+                        <th data-priority="5">Sent</th>
+                        <th data-priority="6">Delivered</th>
+                        <th data-priority="7">Opened</th>
+                        <th data-priority="8">Clicked</th>
+                        <th data-priority="9">Error</th>
+                        <th data-priority="2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,11 +82,19 @@
                     },
                     { "data": "isSent" },
                     {
+                        "data": "isDelivered",
+                        "orderable": false
+                    },
+                    {
                         "data": "isOpened",
                         "orderable": false
                     },
                     {
                         "data": "isClicked",
+                        "orderable": false
+                    },
+                    {
+                        "data": "error",
                         "orderable": false
                     },
                     {
@@ -129,15 +139,15 @@
             }
 
             if ($('#Opened').val() != '') {
-                api.column(4).search($('#Opened').val(), false, false, false);
+                api.column(5).search($('#Opened').val(), false, false, false);
             } else {
-                api.column(4).search('');
+                api.column(5).search('');
             }
 
             if ($('#Clicked').val() != '') {
-                api.column(5).search($('#Clicked').val(), false, false, false);
+                api.column(6).search($('#Clicked').val(), false, false, false);
             } else {
-                api.column(5).search('');
+                api.column(6).search('');
             }
 
             api.draw();

@@ -27,10 +27,11 @@ namespace ChilliCoreTemplate.Tests
         public bool EnableSsl { get; set; }
         public ICredentialsByHost Credentials { get; set; }
 
-        public async Task SendAsync(MailMessage message)
+        public async Task<string> SendAsync(MailMessage message)
         {
             _message = message;
             await Task.Delay(0);
+            return null;
         }
 
         public void Send(MailMessage message)

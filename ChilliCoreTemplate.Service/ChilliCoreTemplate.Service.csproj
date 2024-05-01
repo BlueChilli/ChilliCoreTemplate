@@ -13,7 +13,7 @@
     <PackageReference Include="AppleAuth.NET" Version="1.0.6" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.80" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0155" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0157" />
     <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0015" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0029" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
@@ -24,7 +24,8 @@
     <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />    
     <PackageReference Include="DataTables.AspNet.AspNetCore" Version="2.0.2" />
-    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
+	<PackageReference Include="MailKit" Version="4.3.0" />
+	<PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />

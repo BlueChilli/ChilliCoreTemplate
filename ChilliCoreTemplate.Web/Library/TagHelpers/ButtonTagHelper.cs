@@ -40,10 +40,18 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             route = route.AddRouteValues(RouteValues);
 
             var url = urlHelper.RouteUrl(route);
-            if (Window == ButtonWindow.Current)
-                output.Attributes.SetAttribute("onclick", new HtmlString($"window.location='{url}';"));
+
+            if(Type == ButtonType.Button)
+            {
+                if (Window == ButtonWindow.Current)
+                    output.Attributes.SetAttribute("onclick", new HtmlString($"window.location='{url}';"));
+                else
+                    output.Attributes.SetAttribute("onclick", new HtmlString($"window.open('{url}');"));
+            }
             else
-                output.Attributes.SetAttribute("onclick", new HtmlString($"window.open('{url}');"));
+            {
+                output.Attributes.SetAttribute("formaction", $"{url}");
+            }
         }
     }
 
@@ -132,6 +140,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         [ViewContext, HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
 
+        public ButtonType Type { get; set; } = ButtonType.Button;
+
         public ButtonStyle Style { get; set; }
 
         public ButtonSize Size { get; set; } = ButtonSize.Small;
@@ -148,7 +158,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            output.Attributes.SetAttribute("type", "button");
+            output.Attributes.SetAttribute("type", Type.ToString().ToLower());
 
             var iconStyle = String.Empty;
             if (Icon != IconType.None)

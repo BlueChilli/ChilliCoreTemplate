@@ -34,13 +34,6 @@ namespace ChilliCoreTemplate.Web
 
             return htmlHelper.TemplateAsync(TemplateTypes.Button, options);
         }
-
-        public static Task<IHtmlContent> LinkAsync(this IHtmlHelper htmlHelper, Template_Button options = null)
-        {
-            if (options == null) options = new Template_Button();
-            options.Type = ButtonType.Link;
-            return htmlHelper.TemplateAsync(TemplateTypes.Button, options);
-        }
     }
 
     public class Template_Button
@@ -70,8 +63,7 @@ namespace ChilliCoreTemplate.Web
     public enum ButtonType
     {
         Button = 1,
-        Submit,
-        Link
+        Submit
     }
 
     public enum ButtonStyle

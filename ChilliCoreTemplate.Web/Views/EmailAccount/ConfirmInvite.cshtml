@@ -9,8 +9,8 @@
     @await Html.FieldTemplateForAsync(m => m.NewPassword, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
     @await Html.FieldTemplateForAsync(m => m.ConfirmPassword, FieldTemplateLayouts.FloatingField)
 
-    <div class="d-grid mb-5">
+    <div class="d-grid gap-1">
         <button type="submit" class="btn btn-primary">Set my Password</button>
-        @await Html.ButtonAsync(Mvc.Root.EmailAccount_Login, new Template_Button { Text = "Cancel", Style = ButtonStyle.Secondary })
+        @await Html.ButtonAsync(Mvc.Root.EmailAccount_Login, new Template_Button { Text = "Cancel", Style = ButtonStyle.Secondary, Size = ButtonSize.Medium })
     </div>
 }

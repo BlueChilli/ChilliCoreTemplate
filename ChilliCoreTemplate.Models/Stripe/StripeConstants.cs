@@ -9,7 +9,11 @@ namespace ChilliCoreTemplate.Models.Stripe
     //For use with paymentmethods api
     public static class StripeConstants
     {
+        public const string DefaultCurrency = "AUD";
+
         public const string CreditCard = "card";
         public const string DirectDebit = "au_becs_debit";
+
+        public static readonly List<string> PaymentMethods = [CreditCard, DirectDebit];
     }
 }

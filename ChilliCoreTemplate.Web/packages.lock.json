@@ -14,9 +14,9 @@
       },
       "ChilliSource.Cloud.Core": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0155, )",
-        "resolved": "2.0.0-alpha0155",
-        "contentHash": "eJI9KRHPy/a7WSGd6Zr34M1BZz+ZlXU+BSZuz59Ct8R4fO9ldX5Jl76Q2uMgpq/qqk/FbHEcn4bREPkwSORk3A==",
+        "requested": "[2.0.0-alpha0157, )",
+        "resolved": "2.0.0-alpha0157",
+        "contentHash": "1rao96c2yNcmduzJfbBFoJzkwXKhIs74daPWtRFK3+G4YOS9A01Prs0RnV2vFfLitqcKxZTRW4ZYS46FbE+VDg==",
         "dependencies": {
           "AutoMapper": "12.0.1",
           "ChilliSource.Core.Extensions": "2.0.4-alpha0016",
@@ -383,6 +383,11 @@
           "System.Threading.Tasks.Extensions": "4.5.4"
         }
       },
+      "BouncyCastle.Cryptography": {
+        "type": "Transitive",
+        "resolved": "2.2.1",
+        "contentHash": "A6Zr52zVqJKt18ZBsTnX0qhG0kwIQftVAjLmszmkiR/trSp8H+xj1gUOzk7XHwaKgyREMSV1v9XaKrBUeIOdvQ=="
+      },
       "ChilliSource.Cloud.AWS": {
         "type": "Transitive",
         "resolved": "2.0.0-alpha0015",
@@ -553,6 +558,14 @@
         "type": "Transitive",
         "resolved": "1.1.26",
         "contentHash": "svSbON3rh4QVIeTK7sDO8OyC2lrhDGctnRPUMNPKVChMPY2v/x0DDtfBq7CWsWyuaYD00q5TxVKoZkW5+pqcXw=="
+      },
+      "MailKit": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "jVmB3Nr0JpqhyMiXOGWMin+QvRKpucGpSFBCav9dG6jEJPdBV+yp1RHVpKzxZPfT+0adaBuZlMFdbIciZo1EWA==",
+        "dependencies": {
+          "MimeKit": "4.3.0"
+        }
       },
       "Microsoft.AspNetCore.Antiforgery": {
         "type": "Transitive",
@@ -1451,6 +1464,17 @@
           "Microsoft.NETCore.Platforms": "2.0.0",
           "System.Security.AccessControl": "4.4.0",
           "System.Security.Principal.Windows": "4.4.0"
+        }
+      },
+      "MimeKit": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "39KDXuERDy5VmHIn7NnCWvIVp/Ar4qnxZWg9m06DfRqDbW1B6zFv9o3Tdoa4CCu71tE/0SRqRCN5Z+bbffw6uw==",
+        "dependencies": {
+          "BouncyCastle.Cryptography": "2.2.1",
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0",
+          "System.Security.Cryptography.Pkcs": "7.0.3",
+          "System.Text.Encoding.CodePages": "7.0.0"
         }
       },
       "MiniProfiler.AspNetCore": {
@@ -2484,7 +2508,7 @@
         "type": "Project",
         "dependencies": {
           "ChilliCoreTemplate.Models": "[1.0.0, )",
-          "ChilliSource.Cloud.Core": "[2.0.0-alpha0155, )",
+          "ChilliSource.Cloud.Core": "[2.0.0-alpha0157, )",
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0017, )",
           "Microsoft.AspNetCore.DataProtection.EntityFrameworkCore": "[8.0.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.0, )",
@@ -2496,7 +2520,7 @@
         "type": "Project",
         "dependencies": {
           "AutoMapper": "[12.0.1, )",
-          "ChilliSource.Cloud.Core": "[2.0.0-alpha0155, )",
+          "ChilliSource.Cloud.Core": "[2.0.0-alpha0157, )",
           "ChilliSource.Cloud.Web.MVC": "[2.0.0-alpha0128, )",
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0017, )",
           "FoolProof.Core": "[1.2.1, )",
@@ -2516,7 +2540,7 @@
           "ChilliCoreTemplate.Models": "[1.0.0, )",
           "ChilliSource.Cloud.AWS": "[2.0.0-alpha0015, )",
           "ChilliSource.Cloud.Azure": "[2.0.0-alpha0029, )",
-          "ChilliSource.Cloud.Core": "[2.0.0-alpha0155, )",
+          "ChilliSource.Cloud.Core": "[2.0.0-alpha0157, )",
           "ChilliSource.Cloud.ImageSharp": "[2.0.0-alpha0006, )",
           "ChilliSource.Cloud.Web": "[2.0.0-alpha0043, )",
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0017, )",
@@ -2525,6 +2549,7 @@
           "GoogleAuthenticator": "[3.1.1, )",
           "LazyCache": "[2.4.0, )",
           "LazyCache.AspNetCore": "[2.4.0, )",
+          "MailKit": "[4.3.0, )",
           "Microsoft.Azure.NotificationHubs": "[4.1.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.0, )",
           "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "[8.0.0, )",

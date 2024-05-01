@@ -4,11 +4,10 @@ using ChilliSource.Cloud.Core;
 using ChilliSource.Core.Extensions;
 using Dasync.Collections;
 using Microsoft.Extensions.Logging;
+using MimeKit;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -16,28 +15,6 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
-    /// <summary>
-    /// sends an email
-    /// </summary>
-    public interface IEmailSender
-    {
-        Task<ServiceResult> SendAsync(EmailData data);
-        ServiceResult Send(EmailData data);
-    }
-
-    /// <summary>
-    ///  email client that sends the email
-    /// </summary>
-    public interface IEmailClient : IDisposable
-    {
-        bool EnableSsl { get; set; }
-
-        ICredentialsByHost Credentials { get; set; }
-
-        Task SendAsync(MailMessage message);
-        void Send(MailMessage message);
-
-    }
 
     /// <summary>
     /// email client that sends the email
@@ -45,42 +22,45 @@ namespace ChilliCoreTemplate.Service.EmailAccount
     public class EmailClient : IEmailClient
     {
 
-        private readonly SmtpClient _client;
+        private readonly string _host;
+        private readonly int _port;
+        private readonly string _username;
+        private readonly string _password;
 
         public EmailClient(string host, int port)
         {
-            _client = new SmtpClient(host, port);
+            _host = host;
+            _port = port;
         }
 
-        public EmailClient(string host, int port, string username, string password, bool enableSsl = false)
+        public EmailClient(string host, int port, string username, string password, bool enableSsl = false) //TLS is determined by port number
         {
-            _client = new SmtpClient(host, port)
-            {
-                Credentials = !String.IsNullOrWhiteSpace(username) && !String.IsNullOrWhiteSpace(password) ? new NetworkCredential(username, password) : null,
-                EnableSsl = enableSsl
-            };
+            _host = host;
+            _port = port;
+            _username = username;
+            _password = password;
         }
 
         public void Dispose()
         {
-            _client?.Dispose();
         }
 
-        public bool EnableSsl { get => _client.EnableSsl; set => _client.EnableSsl = value; }
-        public ICredentialsByHost Credentials
+        public async Task<string> SendAsync(MailMessage message)
         {
-            get => _client.Credentials;
-            set => _client.Credentials = value;
-        }
-
-        public Task SendAsync(MailMessage message)
-        {
-            return _client.SendMailAsync(message);
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
+            {
+                client.Connect(_host, _port);
+                if (!String.IsNullOrEmpty(_username) && !String.IsNullOrEmpty(_password))
+                    client.Authenticate(_username, _password);
+                var result = await client.SendAsync((MimeMessage)message);
+                client.Disconnect(true);
+                return result;
+            }
         }
 
         public void Send(MailMessage message)
         {
-            _client.Send(message);
+            throw new NotImplementedException();
         }
     }
 
@@ -111,7 +91,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         /// </summary>
         /// <param name="data">object that consits of email information such as to, from address</param>
         /// <returns>ServiceResult</returns>
-        public async Task<ServiceResult> SendAsync(EmailData data)
+        public async Task<ServiceResult<string>> SendAsync(EmailData data)
         {
             var mailSettings = _settings.MailSettings;
 
@@ -136,15 +116,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 // add attachments
                 Array.ForEach(attachments.ToArray(), a => message.Attachments.Add(a));
 
-                await client.SendAsync(message).ConfigureAwait(false);
+                var result = await client.SendAsync(message);
 
-                return ServiceResult.AsSuccess();
-
+                if (!result.StartsWith("Ok", StringComparison.OrdinalIgnoreCase)) return ServiceResult<string>.AsError(error: result);
+                result = result.Substring(2).Trim();
+                return ServiceResult<string>.AsSuccess(String.IsNullOrEmpty(result) ? null : result);
             }
             catch (Exception ex)
             {
                 _logger?.LogError(ex, $"Sending email failed with {data}");
-                return ServiceResult.AsError(ex.ToString());
+                return ServiceResult<string>.AsError(error: ex.ToString());
             }
             finally
             {
@@ -160,41 +141,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         /// <returns>ServiceResult</returns>
         public ServiceResult Send(EmailData data)
         {
-
-            var mailSettings = _settings.MailSettings;
-
-            var client = _emailClientFactory.Invoke(mailSettings);
-
-
-            try
-            {
-                var attachments = new List<Attachment>();
-
-                foreach (var f in data.Attachments)
-                {
-                    var attachment = f.Load(_storage, null);
-                    attachments.Add(new Attachment(attachment.Stream, f.FileName, attachment.MimeType));
-                }
-
-                var message = CreateMessage(data, mailSettings);
-
-                // add attachments
-                attachments.ForEach(a => message.Attachments.Add(a));
-
-                client.Send(message);
-
-                return ServiceResult.AsSuccess();
-
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError(ex, $"Sending email failed with {data}");
-                return ServiceResult.AsError(ex.ToString());
-            }
-            finally
-            {
-                client.Dispose();
-            }
+            throw new NotImplementedException();
         }
 
         private static MailMessage CreateMessage(EmailData data, MailConfigurationSection mailSettings)
@@ -217,7 +164,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
 
             var to = data.To.DefaultTo(message.From.Address);
-            foreach (var recipient in to.Split(';'))
+            foreach(var recipient in to.Split(';')) 
             {
                 if (String.IsNullOrEmpty(recipient)) continue;
                 if (mailSettings.Quarantine.ShouldQuarantine(recipient))

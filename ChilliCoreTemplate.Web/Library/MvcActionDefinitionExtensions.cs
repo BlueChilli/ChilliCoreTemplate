@@ -113,15 +113,6 @@ namespace ChilliCoreTemplate.Web
             return false;
         }
 
-        public static async Task<IHtmlContent> ModalOpenLinkAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, string text, object routeValues, object htmlAttributes = null)
-        {
-            var modalCommand = htmlHelper.ModalOpen(actionResult, new MenuUrlValues { RouteValues = routeValues });
-            if (htmlAttributes == null) htmlAttributes = new { };
-            var dictionary = HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
-            dictionary.AddOrSkipIfExists("onclick", modalCommand);
-            return await htmlHelper.LinkAsync(new Template_Button { Url = "#", Text = text, HtmlAttributes = dictionary });
-        }
-
         public static IHtmlContent ModalOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id)
         {
             return htmlHelper.ModalOpen(actionResult, new MenuUrlValues(id));
@@ -140,16 +131,6 @@ namespace ChilliCoreTemplate.Web
         public static IHtmlContent OffCanvasOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, object routeValues = null, string data = "null")
         {
             return htmlHelper.OffCanvasOpen(actionResult, new MenuUrlValues { RouteValues = routeValues }, data);
-        }
-
-        public static async Task<IHtmlContent> LinkAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id, string text, object routeValues = null, object htmlAttributes = null)
-        {
-            return await htmlHelper.LinkAsync(actionResult, new MenuUrlValues(id) { RouteValues = routeValues }, new Template_Button { Text = text, HtmlAttributes = htmlAttributes });
-        }
-
-        public static async Task<IHtmlContent> LinkAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, string text, object routeValues = null, object htmlAttributes = null)
-        {
-            return await htmlHelper.LinkAsync(actionResult, new MenuUrlValues() { RouteValues = routeValues }, new Template_Button { Text = text, HtmlAttributes = htmlAttributes });
         }
 
         public static async Task<IHtmlContent> ButtonAsync<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, int id, Template_Button options)

@@ -1,0 +1,30 @@
+@model RazorTemplateDataModel<ComplaintEmailModel>
+@inject IWebHostEnvironment env;
+@inject ProjectSettings config;
+@{
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
+
+    Model.Subject = $"Email complaint or non-delivery - {Model.Data.Reason}";
+}
+@section Header
+{
+    @using (builder.BeginHeader())
+    {
+        @builder.H1("Email complaint or non-delivery")
+    }
+}
+@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
+{
+    using (builder.BeginP())
+    {
+        @:Environment: @env.EnvironmentName<br/><br/> 
+        @:Email: @Model.Data.Email<br/><br/> 
+        @if(Model.Data.User != null)
+        {
+        @:Name: @Model.Data.User.Name<br/><br/>   
+        @:Admin user link: <a href="@Mvc.Admin.User_Users_Details.Url(Url, Model.Data.User.Id)" target="_blank">Admin</a><br/><br/>                        
+        }
+        @:Reason: @Model.Data.Reason<br/><br/>            
+    }
+}

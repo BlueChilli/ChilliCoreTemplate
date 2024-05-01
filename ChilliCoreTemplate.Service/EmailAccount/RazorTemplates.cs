@@ -30,5 +30,6 @@ namespace ChilliCoreTemplate.Service
 
         public static RazorTemplate ErrorAlert = new RazorTemplate("Emails/Admin/ErrorAlert");
         public static RazorTemplate ErrorDaily = new RazorTemplate("Emails/Admin/ErrorDaily");
+        public static RazorTemplate EmailComplaint = new RazorTemplate("Emails/Admin/EmailComplaint");
     }
 }

@@ -213,7 +213,7 @@
                                     {
                                         using (builder.BeginP())
                                         {
-                                            @if (String.IsNullOrEmpty(Model.TagLine))
+                                            @if (Model.DefaultTagLine)
                                             {
                                                 @if(String.IsNullOrEmpty(Model.CompanyName))
                                                 {
@@ -225,10 +225,6 @@
                                                     @:Thanks for your support
                                                     @:<br />The @Model.CompanyName team
                                                 }
-                                            }
-                                            else
-                                            {
-                                                @Html.Raw(Model.TagLine)
                                             }
                                         }
                                     }

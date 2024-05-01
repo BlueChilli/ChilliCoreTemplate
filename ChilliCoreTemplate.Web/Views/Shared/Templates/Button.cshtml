@@ -25,31 +25,24 @@
         }
     }
 }
-@if (Model.Type == ButtonType.Link)
+@if (!String.IsNullOrEmpty(Model.Url))
 {
-    <a href="@Model.Url" @attributes.ToAttributeHtmlContent()>@Model.Text</a>
+    if (Model.Type == ButtonType.Button)
+    {
+        attributes.AddOrSkipIfExists("onclick", "window.location='" + Model.Url + "';");
+    }
+    else
+    {
+        attributes.AddOrSkipIfExists("formaction", Model.Url);
+    }
 }
-else
-{
-    if (!String.IsNullOrEmpty(Model.Url))
-    {
-        if (Model.Type == ButtonType.Button)
-        {
-            attributes.AddOrSkipIfExists("onclick", "window.location='" + Model.Url + "';");
-        }
-        else
-        {
-            attributes.AddOrSkipIfExists("formaction", Model.Url);
-        }
-    }
 
-    <button @attributes.ToAttributeHtmlContent()>@Model.Text</button>
-    if (Model.IsLaddaButton)
-    {
-        @Html.RegisterCustomSection("scripts",
-            @<script>
-                Ladda.bind('.@(laddaClass)');
-            </script>
-        );
-    }
+<button @attributes.ToAttributeHtmlContent()>@Model.Text</button>
+@if (Model.IsLaddaButton)
+{
+    @Html.RegisterCustomSection("scripts",
+        @<script>
+            Ladda.bind('.@(laddaClass)');
+        </script>
+    );
 }

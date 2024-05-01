@@ -178,6 +178,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     context.Emails.Attach(email);
                     if (result.Success)
                     {
+                        email.MessageId = result.Result;
                         email.DateSent = DateTime.UtcNow;
                         email.IsSent = true;
                         email.IsSending = false;

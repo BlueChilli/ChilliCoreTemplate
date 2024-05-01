@@ -106,17 +106,5 @@ namespace ChilliCoreTemplate.Models
                 action(element);
             }
         }
-
-        public static void AddByteArray(this ZipArchiveEntry entry, byte[] data)
-        {
-            using (var originalFileStream = new MemoryStream(data))
-            {
-                using (var zipEntryStream = entry.Open())
-                {
-                    originalFileStream.CopyTo(zipEntryStream);
-                }
-            }
-        }
-
     }
 }

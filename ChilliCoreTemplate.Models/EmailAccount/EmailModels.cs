@@ -205,7 +205,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         string TemplateId { get; set; }
         string EmailPreview { get; set; }
         string Title { get; set; }
-        string TagLine { get; set; }
+        bool DefaultTagLine { get; set; }
         string YouAreReceivingText { get; set; }
         string FileStoragePath { get; set; }
         bool HasSocialMedia { get; }
@@ -228,6 +228,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         string PublicUrl { get; set; }
         string Logo { get; set; }
         string Email { get; set; }
+        string Phone { get; set; }
         bool IsApi { get; set; }
     }
 
@@ -266,7 +267,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         /// </summary>
         public string EmailPreview { get; set; }
         public string Title { get; set; }
-        public string TagLine { get; set; }
+        public bool DefaultTagLine { get; set; }
         public string YouAreReceivingText { get; set; }
         public string FileStoragePath { get; set; }
         public bool HasSocialMedia { get { return !String.IsNullOrEmpty(TwitterUrl) || !String.IsNullOrEmpty(FacebookUrl) || !String.IsNullOrEmpty(GooglePlusUrl) || !String.IsNullOrEmpty(YoutubeUrl) || !String.IsNullOrEmpty(LinkedInUrl) || !String.IsNullOrEmpty(InstagramUrl); } }
@@ -277,12 +278,12 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string LinkedInUrl { get; set; }
         public string InstagramUrl { get; set; }
         public string Email { get; set; }
+        public string Phone { get; set; }
         public string FooterTextColor { get; set; }
         public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string CompanyEmail { get; set; }
         public string PublicUrl { get; set; }
-
         public string Logo { get; set; }
         #endregion
     }
@@ -640,11 +641,15 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public bool IsSent { get; set; }
 
+        public bool IsDelivered { get; set; }
+
         public bool IsOpened { get; set; }
 
         public bool IsClicked { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public string Error { get; set; }
     }
 
     public class EmailListModel
@@ -726,7 +731,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         Frequency = 1,
         [Description("The email content is not relevant to me")]
         Content,
-        Other
+        [Description("Other reason")]
+        Other,
+        Bounce
     }
 
     public class EmailPreviewModel
@@ -760,5 +767,14 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string CompanyName { get; set; }
 
         public string CompanyLogo { get; set; }
+    }
+
+    public class ComplaintEmailModel
+    {
+        public UserBasicModel User { get; set; }
+
+        public string Email { get; set; }
+
+        public string Reason { get; set; }
     }
 }

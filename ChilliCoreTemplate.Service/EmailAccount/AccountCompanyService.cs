@@ -44,7 +44,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             QueueMail(template, to, model, attachments, replyTo, from, bcc == null ? null : new List<EmailData_Address> { bcc });
         }
 
-        public void QueueCompanyWideMail(int companyId, RazorTemplate template, IEmailTemplateDataModel model)
+        public void QueueCompanyAdminsMail(int companyId, RazorTemplate template, IEmailTemplateDataModel model)
         {
             var company = Context.Companies
                 .AsNoTracking()
@@ -58,7 +58,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             model.Email = _config.EmailTemplate.Email;
 
             var to = company.UserRoles
-                .Where(x => x.Status == null && x.User.Status != UserStatus.Deleted)
+                .Where(x => x.Role == Role.CompanyAdmin && x.Status == null && x.User.Status != UserStatus.Deleted)
                 .Select(x => x.User.Email)
                 .ToList();
             if (!to.Any()) to.Add(_config.AdminEmail);

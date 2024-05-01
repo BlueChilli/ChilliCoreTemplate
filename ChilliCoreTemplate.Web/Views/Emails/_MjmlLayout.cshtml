@@ -68,34 +68,20 @@
         </mj-section>
         }
 
-        <!-- Start of EMAIL BODY  -->
         @RenderBody()
-        <!-- End of EMAIL BODY  -->
 
-        <mj-section background-color="#FFFFFF" padding-top="0" padding-bottom="48px">
-            <mj-column>
-                <mj-text mj-class="paragraph" padding="0 25px">
-                    @if (String.IsNullOrEmpty(Model.TagLine))
-                    {
-                        @if (String.IsNullOrEmpty(Model.CompanyName))
-                        {
-                            @:Thanks for using @Model.Site!
-                            @:<br />The @Model.Site team
-                        }
-                        else
-                        {
-                            @:Thanks for your support
-                            @:<br />The @Model.CompanyName team
-                        }
-                    }
-                    else
-                    {
-                        @Html.Raw(Model.TagLine)
-                    }
-                </mj-text>
-            </mj-column>
-        </mj-section>
-
+        @if (Model.DefaultTagLine)
+        {
+            <mj-section background-color="#FFFFFF" padding="0 0 48px 0">
+                <mj-column>
+                    <mj-text mj-class="paragraph">
+                        If you have any questions you can call the @Model.Site Team on @Model.Phone or reply to this email.
+                    </mj-text>
+                    <mj-text mj-class="paragraph">Cheers,</mj-text>
+                    <mj-text mj-class="paragraph">The @Model.Site Team</mj-text>
+                </mj-column>
+            </mj-section>
+        }
 
         <mj-wrapper background-color="#100A29">
             <mj-section padding="0">

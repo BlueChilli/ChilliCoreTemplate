@@ -669,7 +669,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 {
                     var masterCompanyId = user.GetFirstCompany().MasterCompanyId;
                     if (masterCompanyId.HasValue)
-                        QueueCompanyWideMail(masterCompanyId.Value, RazorTemplates.MasterCompany_NewRegistration, new RazorTemplateDataModel<AccountViewModel>(_mapper.Map<User, AccountViewModel>(user)));
+                        QueueCompanyAdminsMail(masterCompanyId.Value, RazorTemplates.MasterCompany_NewRegistration, new RazorTemplateDataModel<AccountViewModel>(_mapper.Map<User, AccountViewModel>(user)));
                 }
 
                 Mixpanel.SendAccountToMixpanel(user, "Account activated");

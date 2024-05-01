@@ -39,25 +39,6 @@ namespace ChilliCoreTemplate.Web
             return ButtonAsync(htmlHelper, options);
         }
 
-        public static Task<IHtmlContent> LinkAsync(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, long id, Template_Button options = null)
-        {
-            options = PopulateOptions(htmlHelper, actionResult, new MenuUrlValues(id), options);
-            return LinkAsync(htmlHelper, options);
-        }
-
-        public static Task<IHtmlContent> LinkAsync(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, long id, string text, Template_Button options = null)
-        {
-            options = PopulateOptions(htmlHelper, actionResult, new MenuUrlValues(id), options);
-            options.Text = text;
-            return LinkAsync(htmlHelper, options);
-        }
-
-        public static Task<IHtmlContent> LinkAsync(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, Template_Button options = null)
-        {
-            options = PopulateOptions(htmlHelper, actionResult, urlValues, options);
-            return LinkAsync(htmlHelper, options);
-        }
-
         public static IHtmlContent ModalOpen(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, long id)
         {
             return htmlHelper.ModalOpen(actionResult, new MenuUrlValues(id));
@@ -114,16 +95,6 @@ namespace ChilliCoreTemplate.Web
             var url = GetUrl(urlHelper, actionResult, urlValues);
             var id = actionResult.GetModalId();
             return $"$('#{id}_content').ajaxLoad({{url: '{url}', data: {data}}}).done(function() {{ $('#{id}').{type}('show'); }});";
-        }
-
-        public static Task<IHtmlContent> ModalOpenJSAsync(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, Template_Button options = null, MenuUrlValues urlValues = null, string data = "null")
-        {
-            if (options == null) options = new Template_Button();
-            options.Text = options.Text ?? actionResult.GetRouteValueDictionary()["action"] as string;
-
-            options.Url = htmlHelper.ModalOpenCommand(actionResult, urlValues, data);
-
-            return htmlHelper.LinkAsync(options);
         }
 
         public static string OffCanvasOpenCommand(this IHtmlHelper htmlHelper, IMvcActionDefinition actionResult, MenuUrlValues urlValues = null, string data = "null")

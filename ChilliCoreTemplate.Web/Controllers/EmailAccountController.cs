@@ -6,11 +6,14 @@ using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Web.Library;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Controllers
@@ -473,6 +476,18 @@ namespace ChilliCoreTemplate.Web.Controllers
                 return new RedirectResult(_settings.PublicUrl);
             }
             return new RedirectResult(url);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EmailNotification()
+        {
+            Models.Aws.SnsMessage model;
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                model = (await reader.ReadToEndAsync()).FromJson<Models.Aws.SnsMessage>();
+            }
+            await _accountService.Email_Notification(model);
+            return Ok();
         }
 
         //public ActionResult EmailUnsubscribe(ShortGuid id)

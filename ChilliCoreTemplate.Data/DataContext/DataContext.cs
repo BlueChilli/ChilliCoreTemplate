@@ -47,6 +47,7 @@ namespace ChilliCoreTemplate.Data
 
             modelBuilder.Entity<Email>().HasIndex(c => c.TrackingId);
             modelBuilder.Entity<Email>().HasIndex(c => c.TemplateIdHash);
+            modelBuilder.Entity<Email>().HasIndex(c => c.MessageIdHash);
             modelBuilder.Entity<Email>().HasIndex(c => c.DateQueued);
 
             modelBuilder.Entity<SmsQueueItem>().HasIndex(c => c.TemplateIdHash);

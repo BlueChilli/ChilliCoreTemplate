@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using ChilliSource.Cloud.Core.LinqMapper;
 using System.IO.Compression;
+using ChilliSource.Cloud.Core.Compression;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {

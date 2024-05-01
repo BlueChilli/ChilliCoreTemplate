@@ -32,8 +32,12 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         [StringLength(100)]
         public string TemplateId { get; set; }
-
         public int TemplateIdHash { get; set; }
+
+        [StringLength(100)]
+        public string MessageId { get { return _MessageId; } set { _MessageId = value; MessageIdHash = CommonLibrary.CalculateHash(value); } }
+        private string _MessageId;
+        public int? MessageIdHash { get; set; }
 
         [StringLength(100)]
         public string Recipient { get; set; }
@@ -54,6 +58,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         [DateTimeKind]
         public DateTime? DateSent { get; set; }
+
+        public bool IsDelivered { get; set; }
 
         public bool IsOpened { get; set; }
 
