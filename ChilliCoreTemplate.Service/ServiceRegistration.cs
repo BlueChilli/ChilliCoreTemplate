@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using ChilliSource.Cloud.ImageSharp;
 using ChilliCoreTemplate.Service.Sms;
 using Microsoft.AspNetCore.DataProtection;
+using Sqids;
 
 namespace ChilliCoreTemplate.Service
 {
@@ -115,6 +116,14 @@ namespace ChilliCoreTemplate.Service
                     options.BaseUri = new Uri(settings.BaseUrl);
                 });
             services.AddScoped<ITemplateViewRenderer, TemplateViewRenderer>();
+
+            services.AddOptions<SqidsOptions>()
+                .Configure<ProjectSettings>((options, settings) =>
+                {
+                    options.Alphabet = settings.ShuffledAlphanumeric;
+                    options.MinLength = 6;
+                });
+            services.AddSingleton<SqidsEncoder<int>>();
 
             ServiceTypesCache.Value.ForEach(type => services.AddScoped(type));
         }

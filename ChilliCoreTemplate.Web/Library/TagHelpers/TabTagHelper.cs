@@ -49,7 +49,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             output.TagName = "li";
             output.AddClass("nav-item", HtmlEncoder.Default);
 
-            output.PreContent.SetHtmlContent($"<a class=\"nav-link {(IsActive ? "active" : "")}\" data-bs-toggle=\"tab\" data-bs-target=\"#tab-{Id}\" role=\"tab\">");
+            output.PreContent.SetHtmlContent($"<a href=\"#\" class=\"nav-link {(IsActive ? "active" : "")}\" data-bs-toggle=\"tab\" data-bs-target=\"#tab-{Id}\" role=\"tab\">");
             output.PostContent.SetHtmlContent($"</a>");
         }
     }

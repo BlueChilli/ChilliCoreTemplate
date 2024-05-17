@@ -10,12 +10,12 @@ namespace ChilliCoreTemplate.Service
 {
     public partial class StripeService
     {
-        public ServiceResult<Event> Event_Get(Event model, EventGetOptions options = null)
+        public async Task<ServiceResult<Event>> Event_GetAsync(Event model, EventGetOptions options = null)
         {
             try
             {
                 var service = new EventService(_client);
-                var response = service.Get(model.Id, options: options, requestOptions: CreateRequestOptions(model.Account));
+                var response = await service.GetAsync(model.Id, options: options, requestOptions: CreateRequestOptions(model.Account));
                 return ServiceResult<Event>.AsSuccess(response);
             }
             catch (Exception ex)
@@ -27,6 +27,5 @@ namespace ChilliCoreTemplate.Service
                 return ServiceResult<Event>.AsError(ex.Message);
             }
         }
-
     }
 }

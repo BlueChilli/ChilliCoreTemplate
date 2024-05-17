@@ -35,7 +35,11 @@ $table-link-color: $link-color;
 $table-text-color: $headings-color;
 $table-hover-color: #ECF2F8;
 
-$navbar-light-active-color: #16192C;
+$navbar-light-color: $black;
+$navbar-light-icon-color: $black;
+$navbar-light-active-bg: $gray-100;
+$navbar-light-active-color: #4C6FFF;
+$navbar-light-hover-bg: $gray-200;
 
 $surface-colors: () !default;
 $surface-colors: map-merge(( "primary": $white, "secondary": $gray-50, "tertiary": $gray-50, "light": $gray-200, "dark": shade-color($dark, 7%) ), $surface-colors);

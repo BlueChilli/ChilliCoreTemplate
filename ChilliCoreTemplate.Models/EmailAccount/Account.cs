@@ -45,7 +45,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string StripeId { get; set; }
 
-        public List<UserRoleModel> UserRoles { get; set; } = new List<UserRoleModel>();
+        public List<UserRoleModel> UserRoles { get; set; } = [];
         public bool HasRole(Role role) => UserRoles.Any(r => (r.Role & role) > 0);
         public List<DataLinkModel> Companies => UserRoles.Where(r => r.CompanyId.HasValue).Select(x => new DataLinkModel { Id = x.CompanyId.Value, Name = x.CompanyName }).DistinctBy(x => x.Id).ToList();
 
@@ -517,6 +517,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string ProfilePhotoUrl { get; set; }
 
         public string ExternalId { get; set; }
+
+        public bool IsReinvite { get; set; }
     }
 
     public class UserBasicModel

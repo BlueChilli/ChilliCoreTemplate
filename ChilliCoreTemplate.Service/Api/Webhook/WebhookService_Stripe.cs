@@ -78,14 +78,14 @@ namespace ChilliCoreTemplate.Service.Api
             _stripe.Webhook_Create(options2);
         }
 
-        private ServiceResult Stripe_ProcessWebhook(Webhook_Inbound task)
+        private async Task<ServiceResult> Stripe_ProcessWebhook(Webhook_Inbound task)
         {
             ServiceResult result = ServiceResult.AsSuccess();
 
-            var stripeEvent = Stripe.EventUtility.ParseEvent(task.Raw);
+            var stripeEvent = EventUtility.ParseEvent(task.Raw);
 
             var userId = stripeEvent.Account;
-            var stripeEventResult = _stripe.Event_Get(stripeEvent);
+            var stripeEventResult = await _stripe.Event_GetAsync(stripeEvent);
             if (!stripeEventResult.Success)
             {
                 result = ServiceResult.CopyFrom(stripeEventResult);

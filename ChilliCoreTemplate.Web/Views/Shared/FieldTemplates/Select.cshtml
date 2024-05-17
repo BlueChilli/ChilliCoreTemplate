@@ -18,7 +18,7 @@
                 @:<optgroup label="@optGroup">
                 }
             }
-            <!option value="@option.Value" @(Html.When(option.Selected, "selected" ))>@option.Text</!option>
+            <!option value="@option.Value" @(Html.When(option.Selected, "selected" )) @(Html.When(option.Disabled, "disabled" ))>@option.Text</!option>
         }
     @if (!String.IsNullOrEmpty(optGroup))
     {

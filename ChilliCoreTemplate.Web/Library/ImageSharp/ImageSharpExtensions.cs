@@ -11,6 +11,7 @@ using SixLabors.ImageSharp.Web.Caching;
 using SixLabors.ImageSharp.Web.Commands;
 using SixLabors.ImageSharp.Web.DependencyInjection;
 using SixLabors.ImageSharp.Web.Middleware;
+using SixLabors.ImageSharp.Web.Processors;
 using SixLabors.ImageSharp.Web.Providers;
 using System.Threading.Tasks;
 
@@ -43,12 +44,23 @@ namespace ChilliCoreTemplate.Web
         }
 
         //https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
-        public static Task EnhanceParsedCommand(ImageCommandContext commandContext)
+        public static Task EnhanceParsedCommand(ImageCommandContext c)
         {
-            MutateCommand(commandContext, "w", "width");
-            MutateCommand(commandContext, "h", "height");
-            MutateCommand(commandContext, "mode", "rmode");
-            MutateCommand(commandContext, "q", "quality");
+            MutateCommand(c, "w", "width");
+            MutateCommand(c, "h", "height");
+            MutateCommand(c, "mode", "rmode");
+            MutateCommand(c, "q", "quality");
+
+            var width = c.Parser.ParseValue<uint>(
+                 c.Commands.GetValueOrDefault(ResizeWebProcessor.Width),
+                 c.Culture);
+
+            var height = c.Parser.ParseValue<uint>(
+                c.Commands.GetValueOrDefault(ResizeWebProcessor.Height),
+                c.Culture);
+
+            if (width > 2000) c.Commands.Remove(ResizeWebProcessor.Width);
+            if (height > 2000) c.Commands.Remove(ResizeWebProcessor.Height);
 
             return Task.CompletedTask;
         }

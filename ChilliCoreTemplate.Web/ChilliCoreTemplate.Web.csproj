@@ -53,7 +53,7 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0157" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
-    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0128" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0129" />
     <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0017" />
     <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.2.0" />
     <PackageReference Include="HybridModelBinding" Version="0.18.1-alpha.5" />

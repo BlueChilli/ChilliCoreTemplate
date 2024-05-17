@@ -93,10 +93,11 @@ namespace ChilliCoreTemplate.Service
             }
             catch (Exception ex)
             {
-                if (!(ex is StripeException))
+                if (ex is StripeException stripeException)
                 {
-                    ex.LogException();
+                    return ServiceResult<Account>.AsError($"{ex.Message} for {stripeException.StripeError.Param}");
                 }
+                ex.LogException();
                 return ServiceResult<Account>.AsError(ex.Message);
             }
         }

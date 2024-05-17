@@ -567,8 +567,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var account = String.IsNullOrEmpty(model.Email) ? GetAccountByPhone(model.Phone, includeDeleted: true) : GetAccountByEmail(model.Email, includeDeleted: true);
 
-            var isInvited = (account == null && model.UserRoles.Any(x => x.Status == RoleStatus.Invited)) || (account != null && account.UserRoles.Count == 1 && account.UserRoles.First().Status == RoleStatus.Invited);
-            var inviteCompanyRole = account != null && model.UserRoles.Any(x => x.Role.IsCompanyRole() && !account.UserRoles.Any(x => x.Role.IsIn(Role.Administrator, Role.CompanyAdmin, Role.CompanyUser)));
+            var isInvited = (account == null && model.UserRoles.Any(x => x.Status == RoleStatus.Invited)) || (account != null && model.IsReinvite && account.UserRoles.Count == 1 && account.UserRoles.First().Status == RoleStatus.Invited);
+            var inviteCompanyRole = account != null && model.IsReinvite && model.UserRoles.Any(x => x.Role.IsCompanyRole() && !account.UserRoles.Any(x => x.Role.IsIn(Role.Administrator, Role.CompanyAdmin, Role.CompanyUser)));
             if (account == null || isInvited || inviteCompanyRole || account.Status == UserStatus.Deleted || account.Status == UserStatus.Anonymous)
             {
                 if (account == null)
@@ -643,16 +643,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             if (!userRequest.Success) return ServiceResult.CopyFrom(userRequest);
 
             return Activate(userRequest.Result);
-        }
-
-        /// <summary>
-        /// Activate a user on their behalf
-        /// </summary>
-        internal ServiceResult Activate(int id)
-        {
-            var user = Context.Users.Where(x => x.Id == id).FirstOrDefault();
-            if (user == null) return ServiceResult.AsError("User not found");
-            return Activate(user, onBehalfOf: true);
         }
 
         internal ServiceResult Activate(User user, bool onBehalfOf = false)

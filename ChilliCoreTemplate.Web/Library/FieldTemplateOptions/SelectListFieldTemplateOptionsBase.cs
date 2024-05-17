@@ -19,7 +19,7 @@ namespace ChilliCoreTemplate.Web
 
         public IEnumerable<SelectListItem> SelectList { get; set; }
 
-        protected void ProcessSelect(Type baseType, ModelMetadata metadata, IFieldInnerTemplateModel data)
+        protected void ProcessSelect(Type baseType, ModelMetadata metadata, IFieldInnerTemplateModel data, bool isRequired = false)
         {
             var listPopulatedByClient = (this.SelectList != null);
             if (baseType == typeof(Enum) && !listPopulatedByClient)
@@ -71,8 +71,8 @@ namespace ChilliCoreTemplate.Web
 
             // When SelectList is populated by the client, only resolves EmptyItemAttribute if the attribute is explicitly declared.
             this.SelectList = listPopulatedByClient ?
-                                EmptyItemAttribute.Resolve(metadata, this.SelectList)
-                                : EmptyItemAttribute.Resolve(metadata, this.SelectList, SingleEmptyItem);
+                                EmptyItemAttribute.Resolve(metadata, this.SelectList, isRequired)
+                                : EmptyItemAttribute.Resolve(metadata, this.SelectList, SingleEmptyItem, isRequired);
 
             this.SelectList = RemoveItemAttribute.Resolve(metadata, this.SelectList);
         }

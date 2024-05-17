@@ -55,7 +55,7 @@
             <mj-text mj-class="heading">Partner</mj-text>
             <mj-text mj-class="value">@partner</mj-text>
             <mj-text mj-class="heading">Admin link</mj-text>
-            <mj-text mj-class="value"><a href="@Mvc.Admin.Company_Detail.Url(Url, Model.Data.UserRoles.First().CompanyId.Value)" target="_blank">View</a></mj-text>
+            <mj-text mj-class="value"><a href="@Mvc.Admin.Company_Detail.Url(Url, Model.Data.Companies.First().Id)" target="_blank">View</a></mj-text>
         </mj-column>
     </mj-section>
 </mj-wrapper>

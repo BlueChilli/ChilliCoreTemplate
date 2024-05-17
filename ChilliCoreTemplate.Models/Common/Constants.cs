@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace ChilliCoreTemplate.Models
         public const string DefaultCountry = "AU";
 
         public const string DefaultTimezone = "Australia/Sydney";
+
+        public static readonly CultureInfo DefaultCulture = CultureInfo.GetCultureInfo("en-AU");
 
         public const string AllowedGraphicExtensions = "jpg, jpeg, png, gif";
 

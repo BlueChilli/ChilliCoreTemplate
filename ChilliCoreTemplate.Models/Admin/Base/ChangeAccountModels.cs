@@ -29,8 +29,9 @@ namespace ChilliCoreTemplate.Models.Admin
 
         [Required]
         public UserStatus Status { get; set; }
-
         public SelectList StatusList { get; set; } = EnumHelper.GetValues<UserStatus>().Where(x => x != UserStatus.Anonymous).ToSelectList(v => v, t => t.GetDescription());
+
+        public bool IsInvited { get; set; }
     }
 
 }

@@ -1,24 +1,20 @@
 @model RazorTemplateDataModel<string>
 @inject ProjectSettings config
 @{
-    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+    Layout = "~/Views/Emails/_MjmlLayout.cshtml";
     Model.Subject = String.Format("You are already registered with {0}", Model.CompanyName);
+    Model.Title = "Oops, you're already registered with us";
     Model.EmailPreview = "Try signing in or resetting your password";
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
     var data = new { email = Model.Data };
     var loginUrl = Mvc.Root.EmailAccount_Login.Url(this.Url, routeValues: data, protocol: "https"); //config.ResolveUrl("~/login", data); //
     var resetPasswordUrl = Mvc.Root.EmailAccount_ForgotPassword.Url(this.Url, routeValues: data, protocol: "https"); //config.ResolveUrl("~/users/forgot-password", data);
 }
-@section Header
-{
-    @using (builder.BeginHeader())
-    {
-        @builder.H1("Oops, you're already registered with us")
-    }
-}
-@using (builder.BeginRow(borderType: DefaultEmailBuilder.RowBorderType.None, rowPaddingType: DefaultEmailBuilder.RowPaddingType.Reduced))
-{
-    @builder.P(String.Format("Try signing in with the email you used, or if you cannot remember your login details <a target=\"_blank\" href=\"{0}\">request a new password</a>.", resetPasswordUrl))
-
-    @builder.ButtonTrack(Model.TrackingId, Model.TemplateId, loginUrl, "Login to your account")
-}
+<mj-section background-color="#FFFFFF" padding="48px 0 0 0">
+    <mj-column>
+        <mj-text mj-class="paragraph">
+            Try signing in with the email you used, or if you cannot remember your login details <a target="_blank" href="@resetPasswordUrl">request a new password</a>.
+        </mj-text>
+        <mj-button mj-class="btn" href="@builder.UrlTrack(Model.TrackingId, Model.TemplateId, loginUrl)">Login to your account</mj-button>
+    </mj-column>
+</mj-section>

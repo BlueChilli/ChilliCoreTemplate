@@ -5,6 +5,7 @@ using ChilliSource.Cloud.Web.MVC;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Api
 {
@@ -30,9 +31,9 @@ namespace ChilliCoreTemplate.Web.Api
         [CustomAuthorize(MultipleRoles = new string[] { AccountCommon.Administrator })]
         [HttpGet]
         [Route("run")]
-        public void Run(string webhookId)
+        public async Task Run(string webhookId)
         {
-            _service.ProcessWebhook(webhookId);
+            await _service.ProcessWebhook(webhookId);
         }
     }
 }

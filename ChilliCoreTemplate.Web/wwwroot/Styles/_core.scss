@@ -143,6 +143,19 @@ div.dataTables_wrapper div.dataTables_paginate {
     background-color: $gray-100;
 }
 
+//select placeholder
+select:required:invalid {
+    color: $gray-100;
+}
+
+option[value=""][disabled] {
+    display: none;
+}
+
+option {
+    color: black;
+}
+
 //buttons
 button.close {
     padding: 0;

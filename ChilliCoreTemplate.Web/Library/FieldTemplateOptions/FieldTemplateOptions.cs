@@ -47,7 +47,14 @@ namespace ChilliCoreTemplate.Web
             }
             else if (metadata.AdditionalValues.ContainsKey("CheckBox"))
             {
-                templateModel = templateModel.UseOptions(new CheckboxFieldTemplateOptions(this));
+                if (valueBaseType == typeof(Enum))
+                {
+                    templateModel = templateModel.UseOptions(new CheckboxListFieldTemplateOptions(this));
+                }
+                else
+                {
+                    templateModel = templateModel.UseOptions(new CheckboxFieldTemplateOptions(this));
+                }
             }
             else if (metadata.AdditionalValues.ContainsKey("Radio"))
             {

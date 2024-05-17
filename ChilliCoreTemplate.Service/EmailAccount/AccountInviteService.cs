@@ -31,9 +31,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 .ToList();
         }
 
-        public ServiceResult<AccountViewModel> Invite(InviteEditModel model, bool sendEmail)
+        public ServiceResult<AccountViewModel> Invite(InviteEditModel model, bool sendEmail, bool isReInvite = false)
         {
             var createModel = _mapper.Map<UserCreateModel>(model);
+            createModel.IsReinvite = isReInvite;
 
             var createAccountRequest = Create(createModel);
             if (createAccountRequest.Success)
@@ -67,7 +68,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             var account = GetAccount(id);
             var model = _mapper.Map<InviteEditModel>(account);
-            return Invite(model, sendEmail: true);
+            return Invite(model, sendEmail: true, isReInvite: true);
         }
 
         public ServiceResult<UserData> ConfirmInvite(ResetPasswordViewModel model)

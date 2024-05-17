@@ -1,4 +1,6 @@
 using ChilliSource.Cloud.Web.MVC;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace ChilliCoreTemplate.Web
 {
@@ -15,8 +17,15 @@ namespace ChilliCoreTemplate.Web
         public override IFieldInnerTemplateModel ProcessInnerField(IFieldInnerTemplateModel templateModel)
         {
             var metadata = templateModel.InnerMetadata.ModelMetadata;
+            var member = templateModel.InnerMetadata.MemberExpression;
             var baseType = templateModel.InnerMetadata.MemberUnderlyingType.BaseType;
-            base.ProcessSelect(baseType, metadata, templateModel);
+
+            var isRequired = member.Member.GetCustomAttribute<RequiredAttribute>() != null;
+
+            base.ProcessSelect(baseType, metadata, templateModel, isRequired);
+
+            if (isRequired && !templateModel.HtmlAttributes.ContainsKey("required"))
+                templateModel.HtmlAttributes.Add("required", "required");
 
             return templateModel;
         }

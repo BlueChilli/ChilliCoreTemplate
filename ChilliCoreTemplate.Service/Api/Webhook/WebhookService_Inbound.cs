@@ -84,7 +84,7 @@ namespace ChilliCoreTemplate.Service.Api
 
                             try
                             {
-                                result = ProcessWebhook(task);
+                                result = await ProcessWebhook(task);
                             }
                             catch (Exception ex)
                             {
@@ -96,7 +96,7 @@ namespace ChilliCoreTemplate.Service.Api
                             task.Processed = true;
                             task.Success = result.Success;
                             task.Error = String.IsNullOrEmpty(result.Error) ? null : result.Error;
-                            webhookContext.SaveChanges();
+                            await webhookContext.SaveChangesAsync();
 
                             if (!result.Success && _env.IsProduction())
                             {
@@ -113,29 +113,29 @@ namespace ChilliCoreTemplate.Service.Api
 
         }
 
-        public void ProcessWebhook(string webhookId)
+        public async Task ProcessWebhook(string webhookId)
         {
             if (String.IsNullOrEmpty(webhookId)) return;
             var webhookIdHash = webhookId.GetIndependentHashCode().Value;
-            var task = Context.Webhooks_Inbound.Where(l => l.WebhookIdHash == webhookIdHash && l.WebhookId == webhookId).FirstOrDefault();
+            var task = await Context.Webhooks_Inbound.Where(l => l.WebhookIdHash == webhookIdHash && l.WebhookId == webhookId).FirstOrDefaultAsync();
             if (task == null) return;
 
-            var result = ProcessWebhook(task);
+            var result = await ProcessWebhook(task);
 
             task.Processed = true;
             task.Success = result.Success;
             task.Error = result.Error;
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        private ServiceResult ProcessWebhook(Webhook_Inbound task)
+        private async Task<ServiceResult> ProcessWebhook(Webhook_Inbound task)
         {
             ServiceResult result = ServiceResult.AsSuccess();
 
             switch (task.Type)
             {
                 case WebhookType.Stripe:
-                    result = Stripe_ProcessWebhook(task);
+                    result = await Stripe_ProcessWebhook(task);
                     break;
                 //case WebhookType.Twilio:
                 //    result = Twilio_ProcessWebhook(task);
@@ -146,7 +146,6 @@ namespace ChilliCoreTemplate.Service.Api
             }
             return result;
         }
-
 
         private void SaveWebhook(Webhook_Inbound model)
         {

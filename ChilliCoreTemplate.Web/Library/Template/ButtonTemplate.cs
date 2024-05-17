@@ -101,7 +101,9 @@ namespace ChilliCoreTemplate.Web
         [Data("Icon", "download")]
         Download,
         [Data("Icon", "person-bounding-box")]
-        Impersonate
+        Impersonate,
+        [Data("Icon", "arrow-repeat")]
+        Repeat
     }
 
     public enum IconPlacement

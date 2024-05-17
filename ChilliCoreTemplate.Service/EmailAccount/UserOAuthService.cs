@@ -131,7 +131,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     var newUserRequest = Create(registerModel, sendEmail: !oAuthUser.EmailIsVerified);
                     if (!newUserRequest.Success) return ServiceResult<User>.CopyFrom(newUserRequest);
                     user = GetAccount(newUserRequest.Result.UserId);
-                    if (oAuthUser.EmailIsVerified) Activate(user.Id);
+                    if (oAuthUser.EmailIsVerified) Activate(user, onBehalfOf: true);
                 }
                 else
                 {

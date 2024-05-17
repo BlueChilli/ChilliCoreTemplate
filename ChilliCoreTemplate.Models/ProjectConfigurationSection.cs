@@ -181,6 +181,9 @@ namespace ChilliCoreTemplate.Models
 
         public bool HasMasterCompany => _baseSection.GetValue<bool?>("HasMasterCompany") ?? false;
 
+        //https://codebeautify.org/shuffle-letters - replace default with this
+        public string ShuffledAlphanumeric => _baseSection.GetRequiredString("ShuffledAlphanumeric");
+
         /// <summary>
         /// Do users use a link (default) or a one time password to confirm their email address?
         /// </summary>
@@ -517,6 +520,11 @@ namespace ChilliCoreTemplate.Models
 
     }
 
+    public enum PrivateApiKeyType
+    {
+        Dummy = 1
+    }
+
     public class ApiConfigurationSection
     {
         private readonly IConfigurationSection _section;
@@ -530,6 +538,12 @@ namespace ChilliCoreTemplate.Models
         /// Gets the api key value.
         /// </summary>
         public string ApiKey => _section.GetString("ApiKey");
+
+        /// <summary>
+        /// List of private keys for private api endpoints (server to server comms). 
+        /// Can used with PrivateApiKey attribute.
+        /// </summary>
+        public Dictionary<PrivateApiKeyType, string> PrivateApiKeys => _section.GetSection("PrivateApiKeys").Get<Dictionary<PrivateApiKeyType, string>>();
 
         /// <summary>
         /// Log all api calls. Not recommended for production due to leaking confidential information

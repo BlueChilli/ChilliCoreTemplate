@@ -179,6 +179,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         {
             var user = _accountService.Get<AccountViewModel>(model.Id, visibleOnly: true);
             model.Status = user.Status;
+            model.IsInvited = user.Status == UserStatus.Registered && user.UserRoles.Any(x => x.Status == RoleStatus.Invited);
             return PartialView(model);
         }
 
@@ -319,7 +320,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success($"{m.FirstName} has been successfully re-invited.");
-                    return Mvc.Company.User_Invite.Redirect(this);
+                    return Mvc.Admin.User_Invite.Redirect(this);
                 })
                 .OnFailure(() => InviteResend(id))
                 .Call();

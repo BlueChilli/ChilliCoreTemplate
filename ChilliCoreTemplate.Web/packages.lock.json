@@ -52,9 +52,9 @@
       },
       "ChilliSource.Cloud.Web.MVC": {
         "type": "Direct",
-        "requested": "[2.0.0-alpha0128, )",
-        "resolved": "2.0.0-alpha0128",
-        "contentHash": "mV+xHbYcvlKQYNF0DtuNKa/BMfNutmRC05k8SUar1nKwtf7sdrveKCfDXm0F3BoqHO1oOmS+XbH/2FyCgvX+WA==",
+        "requested": "[2.0.0-alpha0129, )",
+        "resolved": "2.0.0-alpha0129",
+        "contentHash": "lSfSlryNLDpH8TTQEltg6kjK3WSgt80cPLfujrDR4pqHa+hWvF0tWMfy9oHKYDx/ZW6nSVqZA8SjophSr85l+w==",
         "dependencies": {
           "ChilliSource.Cloud.Core": "2.0.0-alpha0139",
           "ChilliSource.Cloud.Web": "2.0.0-alpha0042",
@@ -1756,6 +1756,11 @@
           "SixLabors.ImageSharp": "2.1.2"
         }
       },
+      "Sqids": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "Fi3/WN1s/bszAIX888hcSKYnDfdPuJD4TijskGmOxGRnA2hvngWb9IbBJPizxaOi7VpD0Nn8NHJh7i1ks/OyPw=="
+      },
       "Stripe.net": {
         "type": "Transitive",
         "resolved": "43.6.0",
@@ -2521,7 +2526,7 @@
         "dependencies": {
           "AutoMapper": "[12.0.1, )",
           "ChilliSource.Cloud.Core": "[2.0.0-alpha0157, )",
-          "ChilliSource.Cloud.Web.MVC": "[2.0.0-alpha0128, )",
+          "ChilliSource.Cloud.Web.MVC": "[2.0.0-alpha0129, )",
           "ChilliSource.Core.Extensions": "[2.0.4-alpha0017, )",
           "FoolProof.Core": "[1.2.1, )",
           "HtmlAgilityPack": "[1.11.54, )",
@@ -2557,6 +2562,7 @@
           "MiniProfiler.AspNetCore.Mvc": "[4.3.8, )",
           "Mjml.Net": "[3.4.0, )",
           "RestSharp.Serializers.NewtonsoftJson": "[110.2.0, )",
+          "Sqids": "[3.1.0, )",
           "Stripe.net": "[43.6.0, )",
           "Twilio": "[6.15.2, )"
         }
