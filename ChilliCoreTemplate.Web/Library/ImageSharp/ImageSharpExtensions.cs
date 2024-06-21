@@ -51,13 +51,16 @@ namespace ChilliCoreTemplate.Web
             MutateCommand(c, "mode", "rmode");
             MutateCommand(c, "q", "quality");
 
-            var width = c.Parser.ParseValue<uint>(
-                 c.Commands.GetValueOrDefault(ResizeWebProcessor.Width),
-                 c.Culture);
-
-            var height = c.Parser.ParseValue<uint>(
-                c.Commands.GetValueOrDefault(ResizeWebProcessor.Height),
-                c.Culture);
+            var widthCommand = c.Commands.GetValueOrDefault(ResizeWebProcessor.Width);
+            if (!uint.TryParse(widthCommand, out var width))
+            {
+                c.Commands.Remove(ResizeWebProcessor.Width);
+            }
+            var heightCommand = c.Commands.GetValueOrDefault(ResizeWebProcessor.Height);
+            if (!uint.TryParse(heightCommand, out var height))
+            {
+                c.Commands.Remove(ResizeWebProcessor.Height);
+            }
 
             if (width > 2000) c.Commands.Remove(ResizeWebProcessor.Width);
             if (height > 2000) c.Commands.Remove(ResizeWebProcessor.Height);

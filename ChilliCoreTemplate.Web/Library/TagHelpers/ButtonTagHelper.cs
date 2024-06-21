@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
@@ -178,6 +179,43 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             }
 
             output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} {Size.GetData<string>("css")} {iconStyle}");
+        }
+    }
+
+    [HtmlTargetElement("buttonsubmit")]
+    public class ButtonSubmitTagHelper : TagHelper
+    {
+        public ButtonSubmitTagHelper()
+        {
+        }
+
+        public IMvcActionDefinition Form { get; set; }
+
+        public ButtonStyle Style { get; set; } = ButtonStyle.Primary;
+
+        public ButtonSize Size { get; set; } = ButtonSize.Small;
+
+        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "button";
+            output.Attributes.Add("type", "submit");
+
+            if (Form != null)
+            {
+                output.Attributes.Add("form", Form.GetFormId());
+            }
+
+            if (RouteValues.Count > 0)
+            {
+                var first = RouteValues.First();
+                output.Attributes.Add("name", first.Key);
+                output.Attributes.Add("value", first.Value);
+            }
+
+            output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} {Size.GetData<string>("css")}");
         }
     }
 }

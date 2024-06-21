@@ -114,7 +114,6 @@ namespace ChilliCoreTemplate.Service
 
             CreateMap<InviteUploadItemModel, InviteEditModel>();
 
-            CreateMap<Email, EmailSummaryModel>();
             CreateMap<Email, EmailViewModel>();
             CreateMap<Email, EmailUnsubscribeModel>();
         }

@@ -20,7 +20,7 @@
             @await Html.FieldTemplateInnerForAsync(m => m.Clicked, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.ClickedList })
         </filter-left>
         <filter-right>
-            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn(IconType.Search) })
         </filter-right>
     </filter>
 
@@ -95,7 +95,10 @@
                     },
                     {
                         "data": "error",
-                        "orderable": false
+                        "orderable": false,
+                        render: function (data) {
+                            return shorten(data, 60, 50);
+                        }
                     },
                     {
                         "orderable": false,
@@ -109,7 +112,10 @@
                     },
                 ],
                 "iDisplayLength": 50,
-                dom: 'Tgtip'
+                dom: 'Tgtip',
+                drawCallback: function (settings) {
+                    initTooltips();
+                }
             });
 
             $('#Search').on('keyup', function () {

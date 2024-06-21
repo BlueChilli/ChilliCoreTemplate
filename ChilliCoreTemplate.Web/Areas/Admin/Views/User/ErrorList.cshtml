@@ -7,7 +7,7 @@
             @await Html.FieldDateRangeForAsync(m => m.DateFrom, m => m.DateTo, x => x == null ? null : x.Value.ToTimezone().ToIsoDate())
         </filter-left>
         <filter-right>
-            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn(IconType.Search) })
         </filter-right>
     </filter>
     <box>

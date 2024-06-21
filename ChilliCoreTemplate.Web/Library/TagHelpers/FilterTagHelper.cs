@@ -42,7 +42,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.Attributes.SetAttribute("class", $"d-flex flex-row gap-{Gap()}");
+            output.Attributes.SetAttribute("class", $"filter-tag d-flex flex-row gap-{Gap()}");
         }
     }
 

@@ -6,8 +6,8 @@
     @Html.HiddenFor(model => model.Token)
     @Html.HiddenFor(model => model.Email)
 
-    @await Html.FieldTemplateForAsync(m => m.NewPassword, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
-    @await Html.FieldTemplateForAsync(m => m.ConfirmPassword, FieldTemplateLayouts.FloatingField)
+    @await Html.FieldTemplateInnerForAsync(m => m.NewPassword, new FloatingFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
+    @await Html.FieldTemplateInnerForAsync(m => m.ConfirmPassword, new FloatingFieldTemplateOptions())
 
     <div class="d-grid gap-1">
         <button type="submit" class="btn btn-primary">Set my Password</button>

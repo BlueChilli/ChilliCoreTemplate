@@ -555,6 +555,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             account.UpdatedDate = DateTime.UtcNow;
 
+            Context.SaveChanges();
+
             return ServiceResult.AsSuccess();
         }
 

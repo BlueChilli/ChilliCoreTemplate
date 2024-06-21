@@ -11,12 +11,12 @@
     @Html.HiddenFor(m => m.Roles)
     if (Model.Roles.IsCompanyRole())
     {
-        @await Html.FieldTemplateForAsync(m => m.CompanyName, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField, IsMandatory = true }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
+        @await Html.FieldTemplateInnerForAsync(m => m.CompanyName, new FloatingFieldTemplateOptions { IsMandatory = true, HtmlAttributes = new { autofocus = "autofocus" } })
     }
-    @await Html.FieldTemplateForAsync(m => m.FirstName, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = Model.Roles.IsCompanyRole() ? "" : "autofocus" } })
-    @await Html.FieldTemplateForAsync(m => m.LastName, FieldTemplateLayouts.FloatingField)
-    @await Html.FieldTemplateForAsync(m => m.Email, FieldTemplateLayouts.FloatingField)
-    @await Html.FieldTemplateForAsync(m => m.Password, FieldTemplateLayouts.FloatingField)
+    @await Html.FieldTemplateInnerForAsync(m => m.FirstName, new FloatingFieldTemplateOptions())
+    @await Html.FieldTemplateInnerForAsync(m => m.LastName, new FloatingFieldTemplateOptions())
+    @await Html.FieldTemplateInnerForAsync(m => m.Email, new FloatingFieldTemplateOptions())
+    @await Html.FieldTemplateInnerForAsync(m => m.Password, new FloatingFieldTemplateOptions())
     <div class="text-start">
         @await Html.FieldTemplateForAsync(m => m.AcceptTermsConditions, new TemplateOptions { Label = "", FieldColumnSize = 12, FieldSize = FieldTemplateSize.ExtraLarge }, new CheckboxFieldTemplateOptions { CheckBoxAttribute = new CheckBoxAttribute { Label = $"I accept the <a href=\"{termsUrl}\" target=\"_blank\">terms & conditions</a>" } })
     </div>

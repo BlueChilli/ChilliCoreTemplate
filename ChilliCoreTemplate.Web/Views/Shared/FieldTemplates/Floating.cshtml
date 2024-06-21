@@ -1,0 +1,31 @@
+@model IFieldInnerTemplateModel<FloatingFieldTemplateOptions>
+@{
+    Model.HtmlAttributes.Merge("class", "form-control");
+    if (Model.Options.PreAddOn != null && Model.Options.PostAddOn != null)
+    {
+        Model.HtmlAttributes.Merge("class", "rounded-0");
+    }
+    else if (Model.Options.PreAddOn != null)
+    {
+        Model.HtmlAttributes.Merge("class", "rounded-0 rounded-end");
+    }
+    else if (Model.Options.PostAddOn != null)
+    {
+        Model.HtmlAttributes.Merge("class", "rounded-0 rounded-start");
+    }
+}
+
+<div class="input-group mb-3">
+@if (Model.Options.PreAddOn != null)
+{
+    @Model.Options.PreAddOn
+}
+    <div class="form-floating @Html.When(Model.Options.PreAddOn != null || Model.Options.PostAddOn != null, "form-floating-group") flex-grow-1">
+        <input id="@Model.Id" name="@Model.Name" value="@Model.Value" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+        <label for="@Model.Name" class="@Html.When(Model.Options.IsMandatory.GetValueOrDefault(false), "mandatory")">@Model.DisplayName</label>
+    </div>
+@if (Model.Options.PostAddOn != null)
+{
+    @Model.Options.PostAddOn
+}
+</div>

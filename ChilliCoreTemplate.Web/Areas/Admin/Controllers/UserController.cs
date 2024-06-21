@@ -296,7 +296,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         }
 
         [HttpPost, ActionName("Invite")]
-        public virtual ActionResult InvitePost([FromForm] InviteManageModel model)
+        public virtual ActionResult InvitePost([FromForm] InviteEditModel model)
         {
             return this.ServiceCall(() => _accountService.Invite(model, sendEmail: true))
                 .OnSuccess(m =>

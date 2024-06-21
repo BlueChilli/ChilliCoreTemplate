@@ -93,7 +93,7 @@
 
             $textbox.val(place.formatted_address);
 
-            if (typeof settings.onselect === 'function') settings.onselect(result);
+            if (typeof settings.onselect === 'function') settings.onselect(result, this.$textbox);
         },
         restrictGeoCode: function () {
             var that = this;

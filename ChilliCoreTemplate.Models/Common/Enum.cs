@@ -518,6 +518,14 @@ namespace ChilliCoreTemplate.Models
         [Description("danger")]
         Danger,
         [Description("info")]
-        Info
+        Info,
+        [Description("light")]
+        Light,
+        [Description("dark")]
+        Dark,
+        [Description("primary")]
+        Primary,
+        [Description("secondary")]
+        Secondary
     }
 }

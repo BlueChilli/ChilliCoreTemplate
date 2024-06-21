@@ -15,7 +15,7 @@
             @await Html.FieldTemplateInnerForAsync(m => m.Opened, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.OpenedList })
         </filter-left>
         <filter-right>
-            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn(IconType.Search) })
         </filter-right>
     </filter>
 

@@ -9,8 +9,8 @@
     @Html.ValidationSummary()
     @Html.HiddenFor(m => m.ReturnUrl)
 
-    @await Html.FieldTemplateForAsync(m => m.Email, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField }, new InputFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
-    @await Html.FieldTemplateForAsync(m => m.Password, FieldTemplateLayouts.FloatingField)
+    @await Html.FieldTemplateInnerForAsync(m => m.Email, new FloatingFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
+    @await Html.FieldTemplateInnerForAsync(m => m.Password, new FloatingFieldTemplateOptions())
 
     <div class="d-grid mb-5">
         <button type="submit" class="btn btn-primary">Login</button>

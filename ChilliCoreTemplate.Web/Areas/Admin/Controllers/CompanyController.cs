@@ -1,7 +1,6 @@
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
-using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Web.Controllers;
 using ChilliSource.Cloud.Web.MVC;
@@ -20,11 +19,13 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
     [CustomAuthorize(Roles = AccountCommon.Administrator)]
     public class CompanyController : Controller
     {
-        private CompanyService _service;
+        private readonly CompanyService _service;
+        private readonly AccountService _accountService;
 
-        public CompanyController(CompanyService service)
+        public CompanyController(CompanyService service, AccountService accountService)
         {
             _service = service;
+            _accountService = accountService;
         }
 
         public ActionResult Index()
@@ -175,6 +176,20 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             return this.ServiceCall(() => _service.Company_Admin_Delete(id, userId))
                 .OnSuccess(() => { return Ok(); })
                 .OnFailure(() => AdminRemove(id, userId))
+                .Call();
+        }
+
+        public ActionResult AdminResend(int id, int userId)
+        {
+            return this.ServiceCall(() => _service.Company_Admin_Get(userId)).Call();
+        }
+
+        [HttpPost, ActionName("AdminResend")]
+        public ActionResult AdminResendPost(int id, int userId)
+        {
+            return this.ServiceCall(() => _accountService.Reinvite(userId))
+                .OnSuccess(() => { return Ok(); })
+                .OnFailure(() => AdminResend(id, userId))
                 .Call();
         }
 

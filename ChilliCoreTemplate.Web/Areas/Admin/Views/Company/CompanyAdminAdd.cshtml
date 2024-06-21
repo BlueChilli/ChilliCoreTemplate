@@ -9,7 +9,7 @@
     using (await Html.FieldTemplateOuterForAsync(m => m.Id, options: new TemplateOptions { Label = "" }))
     {
         @await Html.ButtonSubmitAsync("Invite")
-        <button type="button" class="btn btn-neutral js-user-cancel">Cancel</button>
+        <button type="button" class="btn btn-neutral btn-sm js-user-cancel">Cancel</button>
     }
 }
 @if (Context.Request.IsAjaxRequest())

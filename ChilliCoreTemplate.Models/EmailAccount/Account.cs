@@ -61,7 +61,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public UserStatus Status { get; set; }
 
-        public string StatusDescription => UserRoles == null ? "" : UserRoles.Count == 1 && UserRoles[0].Status.HasValue ? UserRoles[0].Status.GetDescription() : Status.GetDescription();
+        private bool HasSecondaryStatus => UserRoles != null && UserRoles.Any(x =>x.Status.HasValue);
+        public string StatusDescription => Status == UserStatus.Deleted || !HasSecondaryStatus ? Status.GetDescription() : UserRoles.Where(x => x.Status.HasValue).First().Status.GetDescription();
 
         public bool IsMfaEnabled { get; set; }
     }

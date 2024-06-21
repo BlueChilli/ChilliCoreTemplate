@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using ChilliCoreTemplate.Service;
+﻿using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Web.Serilog;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web;

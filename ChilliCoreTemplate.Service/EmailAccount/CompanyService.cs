@@ -18,7 +18,7 @@ using System.Security.Principal;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
-    public class CompanyService : BaseService
+    public partial class CompanyService : BaseService
     {
         private readonly AccountService _accountService;
         private readonly StripeService _stripe;
@@ -321,6 +321,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
                 else
                 {
+                    var bulkImports = Context.BulkImports.Where(x => x.CompanyId == id).ToList();
+                    if (bulkImports.Any()) Context.BulkImports.RemoveRange(bulkImports);
                     Context.Companies.Remove(data);
                 }
                 Context.SaveChanges();

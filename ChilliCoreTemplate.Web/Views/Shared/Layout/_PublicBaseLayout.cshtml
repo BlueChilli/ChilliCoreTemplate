@@ -25,9 +25,7 @@
 </head>
 <body class="public-body">
     @Html.RenderBundle("~/bundles/scriptbundle.min.js")
-    <div>
-        @RenderBody()
-    </div>
+    @RenderBody()
     @RenderSection("scripts", required: false)
     @Html.RenderCustomSection("scripts")
     @RenderSection("modal", required: false)

@@ -23,7 +23,7 @@
                 @Html.HiddenFor(m => m.InviteRole.CompanyId)
                 @await Html.FieldTemplateForAsync(m => m.ProfilePhotoFile, fieldOptions: new FieldImageUploadWithPreviewOptions(Model.ProfilePhotoPath, new ImageSharpCommand { Format = ImageSharpFormat.JPG, Height = 200, Width = 200, Quality = 70, Mode = ResizeMode.Crop }) { AlternativeImage = "~/Images/generic/default-profile-image.jpg", ButtonText = "Upload Id" })
 
-                <div class="hr-line-dashed"></div>
+                <hr />
                 <div class="form-group">
                     <div class="col-sm-6 offset-sm-2">
                         <button type="submit" class="btn btn-primary ladda-button js-ladda-button" data-style="expand-right">Invite</button>

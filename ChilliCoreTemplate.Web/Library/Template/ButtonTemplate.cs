@@ -100,6 +100,8 @@ namespace ChilliCoreTemplate.Web
         Upload,
         [Data("Icon", "download")]
         Download,
+        [Data("Icon", "search")]
+        Search,
         [Data("Icon", "person-bounding-box")]
         Impersonate,
         [Data("Icon", "arrow-repeat")]

@@ -6,3 +6,8 @@ function initTooltips() {
         return new bootstrap.Tooltip(tooltipTriggerEl, { trigger: "hover" })
     })
 };
+
+function shorten(text, max = 25, to = 20, postfix = '&centerdot;&centerdot;&centerdot;') {
+    if (text == null) return '';
+    return text.length > max ? '<span data-bs-toggle="tooltip" data-bs-original-title="{0}">{1}</span>'.format(text, text.substr(0, to) + postfix) : text;
+}

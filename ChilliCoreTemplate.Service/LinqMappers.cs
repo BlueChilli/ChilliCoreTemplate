@@ -112,8 +112,7 @@ namespace ChilliCoreTemplate.Service
                 if (role != null)
                 {
                     x.Role = role.Role.GetDescription();
-                    if (role.Status != null)
-                        x.Status = role.Status.ToString();
+                    if (x.Status != "Deleted" && role.Status != null) x.Status = role.Status.ToString();
                     x.Company = role.CompanyId.HasValue ? new DataLinkModel { Id = role.CompanyId.Value, Name = role.CompanyName } : null;
                 }
             });

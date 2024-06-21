@@ -14,7 +14,7 @@
             @await Html.FieldTemplateInnerForAsync(m => m.Activity)
         </filter-left>
         <filter-right>
-            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn("search") })
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn(IconType.Search) })
         </filter-right>
     </filter>
 

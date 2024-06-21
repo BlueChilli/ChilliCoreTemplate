@@ -20,14 +20,20 @@ namespace ChilliCoreTemplate.Web
             return new HtmlString($"<span class=\"input-group-text {classes}\">{text}</span>");
         }
 
-        public static IHtmlContent ButtonAddOn(string text, string classes = "")
+        public static IHtmlContent ButtonAddOn(string text, string classes = "", IconType? icon = null)
         {
+            if (icon != null) text = $"<i class=\"bi bi-{icon.GetData<string>("Icon")}\"></i>";
             return new HtmlString($"<span class=\"input-group-btn\"><button type=\"button\" class=\"btn {classes}\">{text}</button></span>");
         }
 
         public static IHtmlContent IconAddOn(string type)
         {
             return new HtmlString($"<span class=\"input-group-text\"><i class=\"bi bi-{type}\"></i></span>");
+        }
+
+        public static IHtmlContent IconAddOn(IconType type)
+        {
+            return IconAddOn(type.GetData<string>("Icon"));
         }
 
         public override IFieldInnerTemplateModel CreateFieldInnerTemplateModel<TModel, TValue>(IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)

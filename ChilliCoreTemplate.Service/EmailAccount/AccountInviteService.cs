@@ -73,11 +73,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<UserData> ConfirmInvite(ResetPasswordViewModel model)
         {
+            var user = Context.Users.First(a => a.Email == model.Email);
+            if (user.Status == UserStatus.Deleted) return ServiceResult<UserData>.AsError("Your invitation has been cancelled.");
+
             var result = this.Password_Reset(model); //Reset of password will confirm the account
             if (!result.Success) return ServiceResult<UserData>.AsError("Your invitation has expired. Please request another invitation.");
 
-            var account = Context.Users.First(a => a.Email == model.Email);
-            return ServiceResult<UserData>.AsSuccess(MapUserData(account, null));
+            return ServiceResult<UserData>.AsSuccess(MapUserData(user, null));
         }
 
         private void Invite_Confirm(User user)

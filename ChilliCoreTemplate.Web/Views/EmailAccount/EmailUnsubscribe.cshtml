@@ -23,9 +23,9 @@ else
             @Html.ValidationSummary()
             @Html.HiddenFor(m => m.Id)
             @await Html.FieldTemplateForAsync(m => m.Recipient, new TemplateOptions { FieldSize = FieldTemplateSize.ExtraLarge })
-            @await Html.FieldTemplateForAsync(m => m.Reason, FieldTemplateLayouts.FloatingField)
+            @await Html.FieldTemplateForAsync(m => m.Reason, new TemplateOptions { Template = FieldTemplateLayouts.FloatingField })
             <div class="form-group js-reason-other" style="@Html.When(Html.GetModelStateValue(m => m.Reason) != EmailUnsubscribeReason.Other, "display:none")">
-                @await Html.FieldTemplateForAsync(m => m.ReasonOther, FieldTemplateLayouts.FloatingField)
+                @await Html.FieldTemplateInnerForAsync(m => m.ReasonOther, new FloatingFieldTemplateOptions())
             </div>
 
             <div class="d-grid mb-5">

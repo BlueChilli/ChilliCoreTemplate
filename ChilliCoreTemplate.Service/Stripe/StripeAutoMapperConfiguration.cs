@@ -22,7 +22,7 @@ namespace ChilliCoreTemplate.Service
             {
                 CreateMap<User, StripeCustomerEditModel>()
                     .ForMember(x => x.Id, opt => opt.MapFrom(src => src.StripeId))
-                    .ForMember(x => x.Description, opt => opt.MapFrom(src => src.FullName));
+                    .ForMember(x => x.Name, opt => opt.MapFrom(src => src.FullName));
             }
         }
     }

@@ -36,20 +36,20 @@ namespace ChilliCoreTemplate.Service
                 return Customer_Create(new CustomerCreateOptions
                 {
                     Email = model.Email,
-                    Description = model.Description,
+                    Name = model.Name,
                     Metadata = model.Metadata,
                     Source = model.Token
                 }, accountId);
             }
 
             model.Email = model.Email ?? customer.Email;
-            if (String.IsNullOrEmpty(model.Token) && String.IsNullOrEmpty(model.Card) && model.Email == customer.Email && model.Description == customer.Description)
+            if (String.IsNullOrEmpty(model.Token) && String.IsNullOrEmpty(model.Card) && model.Email == customer.Email && model.Name == customer.Description)
                 return ServiceResult<Customer>.AsSuccess(customer);
 
             return Customer_Update(customer.Id, new CustomerUpdateOptions
             {
                 Email = model.Email,
-                Description = model.Description,
+                Name = model.Name,
                 Metadata = model.Metadata,
                 Source = model.Token,
                 DefaultSource = model.Card
