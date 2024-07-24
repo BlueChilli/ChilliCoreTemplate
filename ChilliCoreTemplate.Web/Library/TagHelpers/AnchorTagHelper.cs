@@ -33,6 +33,9 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
         public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+        [HtmlAttributeName("asp-fragment")]
+        public string Fragment { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             if (Action == null)
@@ -44,7 +47,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             var route = Action.GetRouteValueDictionary();
             route = route.AddRouteValues(RouteValues);
 
-            var url = urlHelper.RouteUrl(route);
+            var url = urlHelper.RouteUrl(null, route, null, null, Fragment);
             output.Attributes.SetAttribute("href", url);
         }
     }
@@ -78,6 +81,40 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
             var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues });
+            output.Attributes.SetAttribute("onclick", url);
+            output.Attributes.SetAttribute("href", "javascript: void(0);");
+        }
+    }
+
+    [HtmlTargetElement("a", Attributes = ActionAttribute)]
+    public class AnchorTagOffCanvasHelper : TagHelper
+    {
+        protected const string ActionAttribute = "mvc-offcanvas";
+
+        private readonly IUrlHelperFactory _urlHelperFactory;
+        public AnchorTagOffCanvasHelper(IUrlHelperFactory urlHelperFactory)
+        {
+            _urlHelperFactory = urlHelperFactory;
+        }
+
+        [ViewContext, HtmlAttributeNotBound]
+        public ViewContext ViewContext { get; set; }
+
+        [HtmlAttributeName(ActionAttribute)]
+        public IMvcActionDefinition Action { get; set; }
+
+        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            if (Action == null)
+                return;
+
+            output.Attributes.RemoveAll(ActionAttribute);
+            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
+
+            var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues }, type: "offcanvas");
             output.Attributes.SetAttribute("onclick", url);
             output.Attributes.SetAttribute("href", "javascript: void(0);");
         }

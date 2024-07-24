@@ -86,6 +86,8 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_ChangeDetails = MvcAction();
         public readonly IMvcActionDefinition User_ChangeStatus = MvcAction();
         public readonly IMvcActionDefinition User_ChangeRole = MvcAction();
+        public readonly IMvcActionDefinition User_AddRole = MvcAction();
+        public readonly IMvcActionDefinition User_RemoveRole = MvcAction();
         public readonly IMvcActionDefinition User_Purge = MvcAction();
         public readonly IMvcActionDefinition User_Activity = MvcAction();
         public readonly IMvcActionDefinition User_ActivityQuery = MvcAction();

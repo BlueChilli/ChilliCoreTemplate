@@ -144,17 +144,38 @@ div.dataTables_wrapper div.dataTables_paginate {
 }
 
 //select placeholder
-select:required:invalid {
-    color: $gray-100;
+select.form-select {
+    option {
+        color: $gray-900;
+    }
+
+    option[value=""] {
+        color: $gray-500 !important;
+    }
+
+    color: $gray-500;
+
+    &:has(option:checked:not([value])) {
+        color: $gray-900;
+
+        option {
+            color: $gray-900;
+        }
+    }
+
+    &:has(option:checked:not([value=""])) {
+        color: $gray-900;
+
+        option {
+            color: $gray-900;
+        }
+    }
 }
 
 option[value=""][disabled] {
     display: none;
 }
 
-option {
-    color: black;
-}
 
 //buttons
 button.close {

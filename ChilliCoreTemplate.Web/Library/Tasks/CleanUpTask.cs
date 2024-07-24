@@ -61,6 +61,13 @@ namespace ChilliCoreTemplate.Web.Tasks
                     await svc.CleanUp(executionInfo);
                 }
             });
+
+            using (var scope = ScopeContextFactory.Instance.CreateScope())
+            {
+                var svc = scope.ServiceProvider.GetRequiredService<SystemService>();
+
+                svc.DocumentCache_CleanUp(executionInfo);
+            }
         }
     }
 }

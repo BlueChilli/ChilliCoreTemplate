@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,16 +11,30 @@ namespace ChilliCoreTemplate.Models.Admin
 {
     public class ChangeAccountRoleModel
     {
+        public int Id { get; set; }
+
+        public List<UserRoleModel> CurrentRoles { get; set; }
+    }
+
+    public class UserAddRoleModel
+    {
         [Required]
         public int Id { get; set; }
 
-        [Required, DisplayName("Role")]
+        [Required]
         public Role? Role { get; set; }
         public SelectList RoleList { get; set; }
 
         [DisplayName("Company")]
         public int? CompanyId { get; set; }
         public SelectList CompanyList { get; set; }
+    }
+
+    public class UserRemoveRoleModel
+    {
+        public int Id { get; set; }
+
+        public Role Role { get; set; }
     }
 
     public class ChangeUserStatusModel

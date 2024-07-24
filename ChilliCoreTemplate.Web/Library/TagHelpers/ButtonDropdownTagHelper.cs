@@ -60,6 +60,23 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         }
     }
 
+    [HtmlTargetElement("item", ParentTag = "button-dropdown", Attributes = ActionAttribute)]
+    public class ButtonDropdownItemTagOffCanvasHelper : AnchorTagOffCanvasHelper
+    {
+        public ButtonDropdownItemTagOffCanvasHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
+        {
+        }
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "a";
+            output.AddClass("dropdown-item", NullHtmlEncoder.Create());
+            base.Process(context, output);
+            output.PreElement.SetHtmlContent("<li>");
+            output.PostElement.SetHtmlContent("</li>");
+        }
+    }
+
     [HtmlTargetElement("itempost", ParentTag = "button-dropdown")]
     public class ButtonDropdownItemPostTagHelper : ButtonPostTagHelper
     {

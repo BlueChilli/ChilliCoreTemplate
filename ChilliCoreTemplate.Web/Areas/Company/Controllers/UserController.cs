@@ -139,33 +139,6 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
                 .Call();
         }
 
-        public virtual ActionResult ChangeRole(int id)
-        {
-            var user = _accountService.Get<AccountViewModel>(id, visibleOnly: true);
-            var role = user.UserRoles.FirstOrDefault();
-            var model = new ChangeAccountRoleModel
-            {
-                Id = id,
-                Role = role?.Role,
-                RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription())
-            };
-
-            return PartialView(model);
-        }
-
-        [HttpPost, ActionName("ChangeRole")]
-        public virtual ActionResult ChangeRolePost([FromForm] ChangeAccountRoleModel model)
-        {
-            return this.ServiceCall(() => _accountService.ChangeAccountRoles(model))
-                .OnSuccess(m =>
-                {
-                    TempData[PageMessage.Key()] = PageMessage.Success($"Roles successfully updated.");
-                    return Mvc.Company.User_Detail.Redirect(this, new { model.Id });
-                })
-                .OnFailure(m => { return ChangeRole(model.Id); })
-                .Call();
-        }
-
         public virtual ActionResult ChangeStatus(ChangeUserStatusModel model)
         {
             var user = _accountService.Get<AccountViewModel>(model.Id, visibleOnly: true);

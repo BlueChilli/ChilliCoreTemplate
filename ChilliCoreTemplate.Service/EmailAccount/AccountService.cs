@@ -518,13 +518,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<AccountViewModel>.AsSuccess(Get<AccountViewModel>(userId.Value, false));
         }
 
-        public ServiceResult ChangeAccountRoles(ChangeAccountRoleModel model)
+        public ServiceResult AccountRoles_Add(UserAddRoleModel model)
         {
-            var userData = User.UserData();
-            if (!userData.IsInRole(new UserRoleModel() { Role = Role.Administrator }))
-            {
-                return ServiceResult.AsError("Not found or access denied.");
-            }
+            if (!IsAdmin) return ServiceResult.AsError("Not found or access denied.");
 
             var account = this.VisibleUsers().Where(a => a.Id == model.Id)
                             .Include(a => a.UserRoles)
@@ -535,12 +531,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult.AsError("Not found or access denied.");
             }
 
-            var role = account.GetLatestUserRole();
-            if (role == null)
-            {
-                role = new UserRole();
-                account.UserRoles.Add(role);
-            }
+            if (account.UserRoles.Any(x => x.Role == model.Role.Value)) return ServiceResult.AsError($"User already has role {model.Role.Value.GetDescription()}");
+
+            var role = new UserRole();
+            account.UserRoles.Add(role);
             role.Role = model.Role.Value;
 
             if (role.Role.IsCompanyRole())
@@ -554,11 +548,36 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
 
             account.UpdatedDate = DateTime.UtcNow;
-
             Context.SaveChanges();
 
             return ServiceResult.AsSuccess();
         }
+
+        public ServiceResult AccountRoles_Remove(UserRemoveRoleModel model)
+        {
+            if (!IsAdmin) return ServiceResult.AsError("Not found or access denied.");
+
+            var account = this.VisibleUsers().Where(a => a.Id == model.Id)
+                .Include(a => a.UserRoles)
+                .FirstOrDefault();
+
+            if (account == null)
+            {
+                return ServiceResult.AsError("Not found or access denied.");
+            }
+
+            var userRole = account.UserRoles.Where(x => x.Role == model.Role).FirstOrDefault();
+
+            if (userRole != null)
+            {
+                Context.UserRoles.Remove(userRole);
+                account.UpdatedDate = DateTime.UtcNow;
+                Context.SaveChanges();
+            }
+
+            return ServiceResult.AsSuccess();
+        }
+
 
         private ServiceResult<User> Create(UserCreateModel model)
         {

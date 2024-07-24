@@ -215,7 +215,7 @@ namespace ChilliCoreTemplate.Web
                 return element;
             }
 
-            internal MenuElement Create(IMvcActionDefinition actionResult, string title = null, string icon = null, bool? isActive = null, string url = null, object routeValues = null, bool menuHidden = false, bool breadcrumbHidden = false)
+            internal MenuElement Create(IMvcActionDefinition actionResult, string title = null, string icon = null, bool? isActive = null, string url = null, object routeValues = null, string fragment = null, bool menuHidden = false, bool breadcrumbHidden = false, string target = null)
             {
                 var actionRoute = actionResult.GetRouteValueDictionary();
                 var actionName = (actionRoute["action"] as string).SplitByUppercase();
@@ -237,7 +237,7 @@ namespace ChilliCoreTemplate.Web
                 }
                 else
                 {
-                    element.Url = actionResult.Url(this.UrlHelper, routeValues: routeValues);
+                    element.Url = actionResult.Url(this.UrlHelper, routeValues: routeValues, fragment: fragment);
                 }
 
                 if (isActive != null)
@@ -253,6 +253,7 @@ namespace ChilliCoreTemplate.Web
 
                 element.MenuHidden = menuHidden;
                 element.BreadcrumbHidden = breadcrumbHidden;
+                element.Target = target;
 
                 return element;
             }
@@ -311,9 +312,9 @@ namespace ChilliCoreTemplate.Web
                 return false;
             }
 
-            internal MenuElement AddRoot(IMvcActionDefinition actionResult, string title = null, string icon = null, bool? isActive = null, string url = null, object routeValues = null)
+            internal MenuElement AddRoot(IMvcActionDefinition actionResult, string title = null, string icon = null, bool? isActive = null, string url = null, object routeValues = null, string fragment = null, string target = null)
             {
-                var element = Create(actionResult, title: title, icon: icon, isActive: isActive, url: url, routeValues: routeValues);
+                var element = Create(actionResult, title: title, icon: icon, isActive: isActive, url: url, routeValues: routeValues, fragment: fragment, target: target);
 
                 return this.AddRoot(element);
             }
@@ -333,6 +334,7 @@ namespace ChilliCoreTemplate.Web
 
         public bool BreadcrumbHidden { get; internal set; }
         public bool MenuHidden { get; internal set; }
+        public string Target { get; internal set; }
 
         public MenuElement() { }
 

@@ -273,7 +273,7 @@ BlueChilli.validateACN = function (value) {
     return check == parseInt(value.charAt(i));
 };
 
-BlueChilli.checkAnchor = function () {
+BlueChilli.checkFragment = function () {
     if (document.location.hash.length > 0) {
         $('.nav-tabs a[data-bs-target="' + document.location.hash + '"]').tab("show");
     }

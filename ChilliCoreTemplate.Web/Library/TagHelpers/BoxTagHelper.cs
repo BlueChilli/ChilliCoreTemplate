@@ -53,7 +53,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.Attributes.SetAttribute("class", $"card-footer border-0 py-5");
+            output.Attributes.SetAttribute("class", $"card-footer border-top py-5");
         }
     }
 }

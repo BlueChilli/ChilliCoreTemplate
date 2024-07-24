@@ -43,7 +43,7 @@ namespace ChilliCoreTemplate.Web.Serilog
             {
                 var context = _contextAccessor.HttpContext;
 
-                if (context.Request.HasFormContentType)
+                if (context.Request.HasFormContentType && context.Request.ContentLength.GetValueOrDefault(0) < 10 * 1024)
                     form = context.Request.Form.Select(f => new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(f.Key), new ScalarValue(f.Value))).ToList();
             }
 

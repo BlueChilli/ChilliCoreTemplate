@@ -147,31 +147,43 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         public virtual ActionResult ChangeRole(int id)
         {
             var user = _accountService.Get<AccountViewModel>(id, visibleOnly: true);
-            var role = user.UserRoles.FirstOrDefault();
             var model = new ChangeAccountRoleModel
             {
                 Id = id,
-                Role = role?.Role,
-                RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription()),
-                CompanyId = role?.CompanyId
+                CurrentRoles = user.UserRoles
             };
-            if (model.CompanyId.HasValue)
-            {
-                model.CompanyList = new List<DataLinkModel> { new DataLinkModel { Id = model.CompanyId.Value, Name = role.CompanyName } }.ToSelectList();
-            }
-            return PartialView(model);
+            return PartialView("ChangeRole", model);
         }
 
-        [HttpPost, ActionName("ChangeRole")]
-        public virtual ActionResult ChangeRolePost([FromForm] ChangeAccountRoleModel model)
+        public virtual ActionResult RemoveRole(UserRemoveRoleModel model)
         {
-            return this.ServiceCall(() => _accountService.ChangeAccountRoles(model))
-                .OnSuccess(m =>
-                {
-                    TempData[PageMessage.Key()] = PageMessage.Success($"Roles successfully updated.");
-                    return Mvc.Admin.User_Users_Details.Redirect(this, new { model.Id });
-                })
-                .OnFailure(m => { return ChangeRole(model.Id); })
+            return PartialView("RemoveRole", model);
+        }
+
+        [HttpPost, ActionName("RemoveRole")]
+        public virtual ActionResult RemoveRolePost(UserRemoveRoleModel model)
+        {
+            return this.ServiceCall(() => _accountService.AccountRoles_Remove(model))
+                .Always(m => { return Ok(); })
+                .Call();
+        }
+
+        public virtual ActionResult AddRole(int id)
+        {
+            var model = new UserAddRoleModel
+            {
+                Id = id,
+                RoleList = EnumHelper.GetValues<Role>().ToSelectList(v => v, t => t.GetDescription()),
+            };
+            return PartialView("AddRole", model);
+        }
+
+        [HttpPost, ActionName("AddRole")]
+        public virtual ActionResult AddRolePost(UserAddRoleModel model)
+        {
+            return this.ServiceCall(() => _accountService.AccountRoles_Add(model))
+                .OnSuccess(() => { return Ok(); })
+                .OnFailure(m => { return AddRole(model.Id); })
                 .Call();
         }
 

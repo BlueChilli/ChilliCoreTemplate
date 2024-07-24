@@ -144,5 +144,22 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
+        public ServiceResult Account_Delete(string id)
+        {
+            try
+            {
+                var service = new AccountService(_client);
+                var response = service.Delete(id);
+                return ServiceResult.AsSuccess();
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is StripeException))
+                {
+                    ex.LogException();
+                }
+                return ServiceResult.AsError(ex.Message);
+            }
+        }
     }
 }

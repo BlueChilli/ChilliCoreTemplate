@@ -99,7 +99,7 @@ namespace ChilliCoreTemplate.Models
         [Required, MaxLength(100)]
         public string Name { get; set; }
 
-        [CheckBox]
+        [CheckBox(Label = "Is master company")]
         public bool IsMasterCompany { get; set; }
 
         [DisplayName("Master company"), EmptyItem]

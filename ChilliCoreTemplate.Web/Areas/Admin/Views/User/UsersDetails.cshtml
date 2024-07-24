@@ -11,7 +11,7 @@
                 <button-dropdown title="Manage">
                     <item mvc-modal="Mvc.Admin.User_ResetPassword" asp-route-userid="@Model.Account.Id">Reset password</item>
                     <item mvc-modal="Mvc.Admin.User_ChangeDetails" asp-route-id="@Model.Account.Id">Change account details</item>
-                    <item mvc-modal="Mvc.Admin.User_ChangeRole" asp-route-id="@Model.Account.Id">Change account role</item>
+                    <item mvc-offcanvas="Mvc.Admin.User_ChangeRole" asp-route-id="@Model.Account.Id">Change account role</item>
                     <item mvc-modal="Mvc.Admin.User_ChangeStatus" asp-route-id="@Model.Account.Id">Change account status</item>
                     <item mvc-modal="Mvc.Admin.User_Purge" asp-route-id="@Model.Account.Id" Condition="Model.Account.Status == UserStatus.Deleted">Purge account</item>
                     <itempost mvc-action="Mvc.Admin.User_Impersonate" asp-route-id="@Model.Account.Id" Condition="User.UserData().CanImpersonate(Model.Account)">Impersonate</itempost>
@@ -90,7 +90,9 @@
 {
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ResetPassword, Title = "Reset password" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeDetails, Title = "Change details" })
-    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeRole, Title = "Change role" })
+    @await Html.PartialAsync("Layout/_OffCanvas", new OffCanvasViewModel { Menu = Mvc.Admin.User_ChangeRole })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_AddRole, Title = "Add role" })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_RemoveRole, Title = "Remove role" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_ChangeStatus, Title = "Change status" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_Purge, Title = "Purge account" })
     @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Root.Mfa_Remove, Title = "Remove MFA" })

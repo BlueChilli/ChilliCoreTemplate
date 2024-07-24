@@ -27,9 +27,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public static void SetConfigProperties(IEmailTemplateDataModel model, ProjectSettings config, string userEmail)
         {
-            model.Site = config.ProjectDisplayName;
             model.UserEmail = userEmail;
 
+            if (String.IsNullOrEmpty(model.Site)) model.Site = config.ProjectDisplayName;
             if (String.IsNullOrEmpty(model.Email)) model.Email = config.EmailTemplate.Email;
             if (String.IsNullOrEmpty(model.CompanyName)) model.CompanyName = config.ProjectDisplayName;
             if (String.IsNullOrEmpty(model.PublicUrl)) model.PublicUrl = config.PublicUrl;

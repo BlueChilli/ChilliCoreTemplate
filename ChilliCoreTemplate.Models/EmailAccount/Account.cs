@@ -100,10 +100,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [Required, EmailAddressWeb, MaxLength(100), Placeholder("Your email address")]
         public string Email { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(20), Placeholder("Your phone number")]
         public string Phone { get; set; }
 
-        [Required, DataType(DataType.Password), Placeholder("Your password"), MinLength(6), MaxLength(50)]
+        [Required, DataType(DataType.Password), Placeholder("Create a password for this account"), MinLength(6), MaxLength(50)]
         public string Password { get; set; }
 
         [MustBeTrue(ErrorMessage = "Please accept terms and conditions"), CheckBox]
@@ -179,10 +179,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class SessionEditModel
     {
-        [Required, MaxLength(100), EmailAddressWeb, Placeholder, DataType(DataType.EmailAddress)]
+        [Required, MaxLength(100), EmailAddressWeb, DataType(DataType.EmailAddress), Placeholder("Your account's email address")]
         public string Email { get; set; }
 
-        [Required, DataType(DataType.Password), MaxLength(50), Placeholder]
+        [Required, DataType(DataType.Password), MaxLength(50), Placeholder("Your account's password")]
         public string Password { get; set; }
 
         [StringLength(100)]
@@ -196,7 +196,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class ResetPasswordRequestModel
     {
-        [Required, MaxLength(100), EmailAddressWeb, DataType(DataType.EmailAddress)]
+        [Required, MaxLength(100), EmailAddressWeb, DataType(DataType.EmailAddress), Placeholder("Your account's email address")]
         public string Email { get; set; }
 
         public Guid Token { get; set; }
