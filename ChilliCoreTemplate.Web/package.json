@@ -33,6 +33,7 @@
     "clockpicker": "0.0.7",
     "datatables.net-bs5": "1.12.1",
     "datatables.net-responsive-bs5": "2.3.0",
-    "chart.js": "4.2.1"
+    "chart.js": "4.2.1",
+    "jquery-throttle-debounce": "1.0.0"
   }
 }

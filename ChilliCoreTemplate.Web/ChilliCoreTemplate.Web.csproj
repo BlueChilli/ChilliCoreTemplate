@@ -51,35 +51,35 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0157" />
-    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0006" />
-    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0129" />
-    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0017" />
+    <PackageReference Include="ChilliSource.Cloud.Core" Version="2.0.0-alpha0159" />
+    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0007" />
+    <PackageReference Include="ChilliSource.Cloud.Web.MVC" Version="2.0.0-alpha0135" />
+    <PackageReference Include="ChilliSource.Core.Extensions" Version="2.0.4-alpha0018" />
     <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.2.0" />
     <PackageReference Include="HybridModelBinding" Version="0.18.1-alpha.5" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
     <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
-    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-    <PackageReference Include="Serilog.Exceptions.EntityFrameworkCore" Version="8.4.0" />
-    <PackageReference Include="Serilog.Expressions" Version="3.4.1" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
+	<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+	<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+	<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+	<PackageReference Include="Serilog.Exceptions.EntityFrameworkCore" Version="8.4.0" />
+	<PackageReference Include="Serilog.Expressions" Version="5.0.0" />
+	<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
+	<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.6.1" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -115,32 +115,6 @@
     <Content Include="DocumentCache\cache.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Areas\Admin\Views\BulkImport\BulkImportList.cshtml" />
-    <None Include="Areas\Company\Views\Company\CompanySettings.cshtml" />
-    <None Include="Views\Mfa\MfaConfirm.cshtml" />
-    <None Include="Views\Mfa\MfaEnable.cshtml" />
-    <None Include="Views\Mfa\MfaRemove.cshtml" />
-    <None Include="Views\Mfa\_ViewStart.cshtml" />
-    <None Include="Views\Shared\Layout\Clever\_LeftMenu.cshtml" />
-    <None Include="Views\Shared\Layout\Clever\_LeftMenuGroup.cshtml" />
-    <None Include="Views\Shared\Layout\Clever\_MenuIcon.cshtml" />
-    <None Include="Views\Shared\Layout\Clever\_NavBar.cshtml" />
-    <None Include="Views\Shared\Layout\Clever\_PublicLayout.cshtml" />
-    <None Include="Views\Shared\Layout\Clever\_Sidebar.cshtml" />
-    <None Include="wwwroot\.well-known\dummy.txt" />
-    <None Include="wwwroot\Styles\boostrap5c-chosen\build.scss" />
-    <None Include="wwwroot\Styles\boostrap5c-chosen\_component-chosen.scss" />
-    <None Include="wwwroot\Styles\boostrap5c-chosen\_component-variables.scss" />
-    <None Include="wwwroot\Styles\clever\libs\_apexcharts.scss" />
-    <None Include="wwwroot\Styles\clever\libs\_flatpickr.scss" />
-    <None Include="wwwroot\Styles\clever\main.scss" />
-    <None Include="wwwroot\Styles\clever\themes\_default-dark.scss" />
-    <None Include="wwwroot\Styles\clever\themes\_default.scss" />
-    <None Include="wwwroot\Styles\clever\utilities.scss" />
-    <None Include="wwwroot\Styles\clever\_custom.scss" />
   </ItemGroup>
 	
   <Target Name="AdditionalCommentsToPublish" AfterTargets="CopyFilesToPublishDirectory">
