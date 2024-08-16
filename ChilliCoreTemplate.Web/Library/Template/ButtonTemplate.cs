@@ -23,14 +23,13 @@ namespace ChilliCoreTemplate.Web
 
         public static Task<IHtmlContent> ButtonSubmitAsync(this IHtmlHelper htmlHelper, string text)
         {
-            return htmlHelper.ButtonSubmitAsync(new Template_Button { Text = text });
+            return htmlHelper.ButtonSubmitAsync(new Template_Button { Text = text, Style = ButtonStyle.Primary });
         }
 
         public static Task<IHtmlContent> ButtonSubmitAsync(this IHtmlHelper htmlHelper, Template_Button options = null)
         {
             if (options == null) options = new Template_Button { Size = ButtonSize.Small };
             options.Type = ButtonType.Submit;
-            if (options.Style == ButtonStyle.Neutral) options.Style = ButtonStyle.Primary;
 
             return htmlHelper.TemplateAsync(TemplateTypes.Button, options);
         }

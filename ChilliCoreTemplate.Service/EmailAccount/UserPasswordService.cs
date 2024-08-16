@@ -19,7 +19,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var user = userRequest.Result;
 
-            Password_Set(user, model.NewPassword, sendEmail);
+            var result = Password_Set(user, model.NewPassword, sendEmail);
+            if (!result.Success) return ServiceResult<int>.CopyFrom(result);
 
             return ServiceResult<int>.AsSuccess(user.Id);
         }
@@ -33,19 +34,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult.AsError("Current password is not correct");
             }
 
-            if (!user.SetPassword(model.NewPassword, _config.ProjectId.Value))
-            {
-                return ServiceResult.AsError("New password cannot be same as current password");
-            }
-
-            Password_Set(user, model.NewPassword);
-
-            return ServiceResult.AsSuccess();
+            return Password_Set(user, model.NewPassword);
         }
 
-        internal void Password_Set(User user, string password, bool sendEmail = true)
+        internal ServiceResult Password_Set(User user, string password, bool sendEmail = true)
         {
-            user.SetPassword(password, _config.ProjectId.Value);
+            if (!user.SetPassword(password, _config.ProjectId.Value)) return ServiceResult.AsError("New password cannot be same as current password");
 
             if (user.Id != 0)
             {
@@ -58,6 +52,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 if (sendEmail && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = _mapper.Map<AccountViewModel>(user) });
             }
+
+            return ServiceResult.AsSuccess();
         }
 
         public ServiceResult Password_ResetRequest(string email)

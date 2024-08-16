@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
-    [HtmlTargetElement(Attributes = nameof(Condition))]
+    [HtmlTargetElement(Attributes = "condition")]
     public class ConditionTagHelper : TagHelper
     {
         public bool Condition { get; set; }

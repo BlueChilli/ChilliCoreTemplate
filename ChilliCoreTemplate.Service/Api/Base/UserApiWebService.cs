@@ -280,7 +280,8 @@ namespace ChilliCoreTemplate.Service.Api
 
             if (model.IsSetProperty(nameof(model.Password)))
             {
-                _accountService.Password_Set(userRequest.Result, model.Password);
+                var result = _accountService.Password_Set(userRequest.Result, model.Password);
+                if (!result.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(result);
             }
 
             return this.GetAccount(userId, onlyVisible: false);

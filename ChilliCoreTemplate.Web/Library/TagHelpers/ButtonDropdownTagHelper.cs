@@ -8,7 +8,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     /// https://getbootstrap.com/docs/5.0/components/dropdowns/
     /// </summary>
     [HtmlTargetElement("button-dropdown")]
-    [RestrictChildren("item", "itempost")]
+    [RestrictChildren("item", "itempost", "item-divider")]
     public class ButtonDropdownTagHelper : TagHelper
     {
         public string Title { get; set; }
@@ -27,9 +27,9 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     }
 
     [HtmlTargetElement("item", ParentTag= "button-dropdown", Attributes = ActionAttribute)]
-    public class ButtonDropdownItemTagModalHelper : AnchorTagModalHelper
+    public class ButtonDropdownItemModalTagHelper : AnchorModalTagHelper
     {
-        public ButtonDropdownItemTagModalHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
+        public ButtonDropdownItemModalTagHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
         {
         }
 
@@ -61,9 +61,9 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     }
 
     [HtmlTargetElement("item", ParentTag = "button-dropdown", Attributes = ActionAttribute)]
-    public class ButtonDropdownItemTagOffCanvasHelper : AnchorTagOffCanvasHelper
+    public class ButtonDropdownItemOffCanvasTagHelper : AnchorOffCanvasTagHelper
     {
-        public ButtonDropdownItemTagOffCanvasHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
+        public ButtonDropdownItemOffCanvasTagHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
         {
         }
 
@@ -88,6 +88,20 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         {
             output.TagName = "a";
             output.AddClass("dropdown-item", NullHtmlEncoder.Create());
+            base.Process(context, output);
+            output.PreElement.SetHtmlContent("<li>");
+            output.PostElement.SetHtmlContent("</li>");
+        }
+    }
+
+    [HtmlTargetElement("item-divider", ParentTag = "button-dropdown")]
+    public class ButtonDropdownItemDividerTagHelper : TagHelper
+    {
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "hr";
+            output.TagMode = TagMode.StartTagOnly;
+            output.AddClass("dropdown-divider", NullHtmlEncoder.Create());
             base.Process(context, output);
             output.PreElement.SetHtmlContent("<li>");
             output.PostElement.SetHtmlContent("</li>");

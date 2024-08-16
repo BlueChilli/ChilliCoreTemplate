@@ -14,16 +14,14 @@ using ChilliCoreTemplate.Data.EmailAccount;
 
 namespace ChilliCoreTemplate.Service
 {
-    public partial class StripeService
+    public class StripeServiceAutoMapperConfig : Profile
     {
-        public class StripeServiceAutoMapperConfig : Profile
+        public StripeServiceAutoMapperConfig()
         {
-            public StripeServiceAutoMapperConfig()
-            {
-                CreateMap<User, StripeCustomerEditModel>()
-                    .ForMember(x => x.Id, opt => opt.MapFrom(src => src.StripeId))
-                    .ForMember(x => x.Name, opt => opt.MapFrom(src => src.FullName));
-            }
+            CreateMap<User, StripeCustomerEditModel>()
+                .ForMember(x => x.Id, opt => opt.MapFrom(src => src.StripeId))
+                .ForMember(x => x.Name, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(x => x.Metadata, opt => opt.MapFrom(src => new Dictionary<string, string> { { "UserId", src.Id.ToString() } }));
         }
     }
 }

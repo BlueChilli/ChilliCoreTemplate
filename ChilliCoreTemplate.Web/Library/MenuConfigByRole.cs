@@ -33,6 +33,7 @@ namespace ChilliCoreTemplate.Web
                 cfg.AddRoot(Mvc.Root.Public_Index);
                 cfg.AddRoot(Mvc.Root.EmailAccount_Login);
                 cfg.AddRoot(Mvc.Root.EmailAccount_Registration, title: "Register");
+                cfg.AddRoot(Mvc.Root.EmailAccount_RegistrationActivationSent, title: "Verify");
                 cfg.AddRoot(Mvc.Root.EmailAccount_ForgotPassword, title: "Reset password");
             });
 

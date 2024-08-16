@@ -1,3 +1,4 @@
+using AutoMapper;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Admin;
@@ -20,6 +21,7 @@ namespace ChilliCoreTemplate.Service
         public static void Configure(IServiceProvider serviceProvider)
         {
             var _storagePath = serviceProvider.GetRequiredService<FileStoragePath>();
+            var _mapper = serviceProvider.GetRequiredService<IMapper>();
 
             LinqMapper.AllowNullPropertyProjection(p => !IsComplexType(p.PropertyType));
 

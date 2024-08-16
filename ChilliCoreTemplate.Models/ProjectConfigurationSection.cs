@@ -1,19 +1,16 @@
-using ChilliSource.Cloud;
+using ChilliCoreTemplate.Models.Api.OAuth;
+using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Models.Stripe;
+using ChilliSource.Cloud.Core.Email;
 using ChilliSource.Core.Extensions;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Web;
-using ChilliCoreTemplate.Models.EmailAccount;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
-using ChilliCoreTemplate.Models.Stripe;
-using ChilliCoreTemplate.Models.Api.OAuth;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using ChilliSource.Cloud.Core.Email;
+using System.Web;
 
 namespace ChilliCoreTemplate.Models
 {
@@ -702,6 +699,54 @@ namespace ChilliCoreTemplate.Models
         /// </summary>
         public string TimezoneApiKey => _section.GetString("TimezoneApiKey");
 
+        public GoogleApisServiceCredential ServiceCredential => _section.GetSection("ServiceCredential").Get<GoogleApisServiceCredential>();
+    }
+
+    public class GoogleApisServiceCredential
+    {
+        [ConfigurationKeyName("type")]
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [ConfigurationKeyName("project_id")]
+        [JsonProperty("project_id")]
+        public string ProjectId { get; set; }
+
+        [ConfigurationKeyName("private_key_id")]
+        [JsonProperty("private_key_id")]
+        public string PrivateKeyId { get; set; }
+
+        [ConfigurationKeyName("private_key")]
+        [JsonProperty("private_key")]
+        public string PrivateKey { get; set; }
+
+        [ConfigurationKeyName("client_email")]
+        [JsonProperty("client_email")]
+        public string ClientEmail { get; set; }
+
+        [ConfigurationKeyName("client_id")]
+        [JsonProperty("client_id")]
+        public string ClientId { get; set; }
+
+        [ConfigurationKeyName("auth_uri")]
+        [JsonProperty("auth_uri")]
+        public string AuthUri { get; set; }
+
+        [ConfigurationKeyName("token_uri")]
+        [JsonProperty("token_uri")]
+        public string TokenUri { get; set; }
+
+        [ConfigurationKeyName("auth_provider_x509_cert_url")]
+        [JsonProperty("auth_provider_x509_cert_url")]
+        public string AuthProviderX509CertUrl { get; set; }
+
+        [ConfigurationKeyName("client_x509_cert_url")]
+        [JsonProperty("client_x509_cert_url")]
+        public string ClientX509CertUrl { get; set; }
+
+        [ConfigurationKeyName("universe_domain")]
+        [JsonProperty("universe_domain")]
+        public string UniverseDomain { get; set; }
     }
 
     public class GoogleTagManagerSection

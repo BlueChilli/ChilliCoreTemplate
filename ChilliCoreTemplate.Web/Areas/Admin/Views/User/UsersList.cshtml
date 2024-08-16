@@ -125,9 +125,7 @@
                 ]
             });
 
-            $('#Search').on('keyup', function () {
-                SearchTable();
-            });
+            $('#Search').on('keyup', $.debounce(250, () => SearchTable()));
 
             $('#CompanyId,#Role,#Status').on('change', function () {
                 SearchTable();

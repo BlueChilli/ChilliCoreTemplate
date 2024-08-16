@@ -1,29 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Routing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace ChilliCoreTemplate.Web.TagHelpers
+namespace ChilliCoreTemplate.Web.TagHelpers;
+
+public class PageTagHelper : TagHelper
 {
-    public class PageTagHelper : TagHelper
+    public ModalSize Size { get; set; } = ModalSize.Large;
+    //<div id="page-container">
+    //    <div class="row m-b-sm">
+    //        <div class="col-lg-12">
+    //        </div>
+    //    </div>
+    //</div>
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        public ModalSize Size { get; set; } = ModalSize.ExtraLarge;
+        output.TagName = "main";
+        output.Attributes.SetAttribute("id", "page-container");
+        output.Attributes.SetAttribute("class", "py-6 bg-surface-secondary");
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            var sizeClass = Size == ModalSize.Medium ? "max-w-screen-md" : "";
+        var preSize = Size.IsIn(ModalSize.Medium, ModalSize.Small) ? $"<div class=\"row justify-content-center\"><div class=\"col-xl-{(Size == ModalSize.Small ? "9" : "10")}\">" : "";
+        var postSize = Size.IsIn(ModalSize.Medium, ModalSize.Small) ? "</div></div>" : "";
 
-            output.TagName = "main";
-            output.Attributes.SetAttribute("id", "page-container");
-            output.Attributes.SetAttribute("class", "py-6 bg-surface-secondary");
-            output.PreContent.SetHtmlContent($"<div class=\"container-fluid {sizeClass}\"><div class=\"vstack gap-4\">");
-            output.PostContent.SetHtmlContent("</div></div>");
-        }
+        output.PreContent.SetHtmlContent($"<div class=\"container-fluid\"><div class=\"vstack gap-4\">{preSize}");
+        output.PostContent.SetHtmlContent($"{postSize}</div></div>");
     }
 }

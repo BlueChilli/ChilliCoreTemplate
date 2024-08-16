@@ -21,25 +21,27 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
-    public partial class AccountService : Service<DataContext>
+    public class AccountOAuthServiceAutoMapperConfig : Profile
     {
-
-        public static void OAuth_AutoMapperConfigure(IMapperConfigurationExpression cfg)
+        public AccountOAuthServiceAutoMapperConfig()
         {
-            cfg.CreateMap<OAuthUserModel, RegistrationViewModel>()
+            CreateMap<OAuthUserModel, RegistrationViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => Role.User));
-            cfg.CreateMap<OAuthGoogleUserModel, OAuthUserModel>();
-            cfg.CreateMap<OAuthFacebookUserModel, OAuthUserModel>()
+            CreateMap<OAuthGoogleUserModel, OAuthUserModel>();
+            CreateMap<OAuthFacebookUserModel, OAuthUserModel>()
                 .ForMember(dest => dest.ProfilePhotoUrl, opt => opt.MapFrom(src => src.Picture == null ? null : src.Picture.Data.Url));
-            cfg.CreateMap<AppleAuth.TokenObjects.UserInformation, OAuthUserModel>()
+            CreateMap<AppleAuth.TokenObjects.UserInformation, OAuthUserModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserID))
                 .ForMember(dest => dest.EmailIsVerified, opt => opt.MapFrom(src => src.EmailVerified));
-            cfg.CreateMap<OAuthAppleUserModel, OAuthUserModel>()
+            CreateMap<OAuthAppleUserModel, OAuthUserModel>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Name.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Name.LastName));
         }
+    }
 
+    public partial class AccountService : Service<DataContext>
+    {
         public ServiceResult<string> OAuth_Url(OAuthUrlApiModel model, OAuthMode mode, string state = "")
         {
             var provider = model.Provider;

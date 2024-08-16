@@ -76,9 +76,7 @@
                 }
             });
 
-            $('#Search').on('keyup', function () {
-                SearchTable();
-            });
+            $('#Search').on('keyup', $.debounce(250, () => SearchTable()));
 
             $('#Status').on('change', function () {
                 SearchTable();

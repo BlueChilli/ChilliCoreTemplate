@@ -318,16 +318,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                         data.DeletedAt = null;
                         data.DeletedById = null;
                     }
+                    Context.SaveChanges();
+                    return ServiceResult<CompanyViewModel>.AsSuccess(_mapper.Map<CompanyViewModel>(data));
                 }
                 else
                 {
-                    var bulkImports = Context.BulkImports.Where(x => x.CompanyId == id).ToList();
-                    if (bulkImports.Any()) Context.BulkImports.RemoveRange(bulkImports);
-                    Context.Companies.Remove(data);
+                    return Purge(id);
                 }
-                Context.SaveChanges();
-
-                return ServiceResult<CompanyViewModel>.AsSuccess(_mapper.Map<CompanyViewModel>(data));
             }
 
             return ServiceResult<CompanyViewModel>.AsError("Company not found");

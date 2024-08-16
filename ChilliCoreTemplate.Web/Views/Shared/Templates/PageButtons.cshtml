@@ -16,7 +16,7 @@
                 <button type="submit" disabled style="display: none" aria-hidden="true"></button> @*Disable enter key submitting form*@
                 if (!String.IsNullOrEmpty(Model.SaveMenuText))
                 {
-                    @await Html.ButtonSubmitAsync(new Template_Button { Text = Model.SaveMenuText, HtmlAttributes = new { @class = "btn-sm"  } })                        
+                    @await Html.ButtonSubmitAsync(new Template_Button { Style = ButtonStyle.Primary, Text = Model.SaveMenuText, HtmlAttributes = new { @class = "btn-sm"  } })                        
                 }
                 foreach (var button in Model.Buttons)
                 {

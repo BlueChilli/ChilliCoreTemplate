@@ -164,7 +164,8 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         public virtual ActionResult RemoveRolePost(UserRemoveRoleModel model)
         {
             return this.ServiceCall(() => _accountService.AccountRoles_Remove(model))
-                .Always(m => { return Ok(); })
+                .OnSuccess(m => { return Ok(); })
+                .OnFailure(m => { return RemoveRole(model); })
                 .Call();
         }
 

@@ -53,12 +53,12 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     }
 
     [HtmlTargetElement("a", Attributes = ActionAttribute)]
-    public class AnchorTagModalHelper : TagHelper
+    public class AnchorModalTagHelper : TagHelper
     {
         protected const string ActionAttribute = "mvc-modal";
 
         private readonly IUrlHelperFactory _urlHelperFactory;
-        public AnchorTagModalHelper(IUrlHelperFactory urlHelperFactory)
+        public AnchorModalTagHelper(IUrlHelperFactory urlHelperFactory)
         {
             _urlHelperFactory = urlHelperFactory;
         }
@@ -87,12 +87,12 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     }
 
     [HtmlTargetElement("a", Attributes = ActionAttribute)]
-    public class AnchorTagOffCanvasHelper : TagHelper
+    public class AnchorOffCanvasTagHelper : TagHelper
     {
         protected const string ActionAttribute = "mvc-offcanvas";
 
         private readonly IUrlHelperFactory _urlHelperFactory;
-        public AnchorTagOffCanvasHelper(IUrlHelperFactory urlHelperFactory)
+        public AnchorOffCanvasTagHelper(IUrlHelperFactory urlHelperFactory)
         {
             _urlHelperFactory = urlHelperFactory;
         }

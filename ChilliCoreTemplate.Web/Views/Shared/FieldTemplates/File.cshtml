@@ -5,7 +5,7 @@
     Model.HtmlAttributes.Merge("class", "validate");
     var jsId = Model.Id.ToLower().Replace("_", "-");
 }
-<label title="@buttonText" for="@Model.Id" class="btn btn-neutral">
+<label title="@buttonText" for="@Model.Id" class="btn btn-sm btn-neutral">
     <input id="@Model.Id" name="@Model.Name" type="file" @Model.HtmlAttributes.ToAttributeHtmlContent() value="">
     <span>@buttonText</span>
 </label>
