@@ -10,7 +10,7 @@
     @Html.HiddenFor(m => m.ReturnUrl)
 
     @await Html.FieldTemplateInnerForAsync(m => m.Email, new FloatingFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
-    @await Html.FieldTemplateInnerForAsync(m => m.Password, new FloatingFieldTemplateOptions())
+    @await Html.FieldTemplateInnerForAsync(m => m.Password, new FloatingFieldTemplateOptions { PostAddOn = FieldTemplateOptions.IconAddOn(IconType.View, "js-password-mask") })
 
     <div class="d-grid mb-5">
         <button type="submit" class="btn btn-primary">Login</button>
@@ -43,3 +43,11 @@
 }
 <br>
 <span>Don't have an account? <a mvc-action=Mvc.Root.EmailAccount_Registration>Register here</a></span>
+@section scripts
+{
+    <script>
+        $(function () {
+            $('.js-password-mask').click(BlueChilli.passwordMask);
+        });
+    </script>
+}

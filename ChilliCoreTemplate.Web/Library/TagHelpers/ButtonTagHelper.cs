@@ -63,11 +63,11 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     }
 
     [HtmlTargetElement("button", Attributes = ActionAttribute)]
-    public class ButtonTagModalHelper : ButtonBaseTagHelper
+    public class ButtonModalTagHelper : ButtonBaseTagHelper
     {
         private const string ActionAttribute = "mvc-modal";
 
-        public ButtonTagModalHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
+        public ButtonModalTagHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
         {
         }
 
@@ -86,6 +86,34 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
             var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues }, data: JsonData ?? "null");
+            output.Attributes.SetAttribute("onclick", new HtmlString(url));
+        }
+    }
+
+    [HtmlTargetElement("button", Attributes = ActionAttribute)]
+    public class ButtonOffCanvasTagHelper : ButtonBaseTagHelper
+    {
+        private const string ActionAttribute = "mvc-offcanvas";
+
+        public ButtonOffCanvasTagHelper(IUrlHelperFactory urlHelperFactory) : base(urlHelperFactory)
+        {
+        }
+
+        [HtmlAttributeName(ActionAttribute)]
+        public IMvcActionDefinition Action { get; set; }
+
+        public string JsonData { get; set; }
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            if (Action == null)
+                return;
+
+            base.Process(context, output);
+            output.Attributes.RemoveAll(ActionAttribute);
+
+            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
+            var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues }, data: JsonData ?? "null", type: "offcanvas");
             output.Attributes.SetAttribute("onclick", new HtmlString(url));
         }
     }

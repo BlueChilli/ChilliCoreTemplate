@@ -16,7 +16,7 @@
     @await Html.FieldTemplateInnerForAsync(m => m.FirstName, new FloatingFieldTemplateOptions())
     @await Html.FieldTemplateInnerForAsync(m => m.LastName, new FloatingFieldTemplateOptions())
     @await Html.FieldTemplateInnerForAsync(m => m.Email, new FloatingFieldTemplateOptions())
-    @await Html.FieldTemplateInnerForAsync(m => m.Password, new FloatingFieldTemplateOptions())
+    @await Html.FieldTemplateInnerForAsync(m => m.Password, new FloatingFieldTemplateOptions { PostAddOn = FieldTemplateOptions.IconAddOn(IconType.View, "js-password-mask") })
     <div class="text-start">
         @await Html.FieldTemplateForAsync(m => m.AcceptTermsConditions, new TemplateOptions { Label = "", FieldColumnSize = 12, FieldSize = FieldTemplateSize.ExtraLarge }, new CheckboxFieldTemplateOptions { CheckBoxAttribute = new CheckBoxAttribute { Label = $"I accept the <a href=\"{termsUrl}\" target=\"_blank\">terms & conditions</a>" } })
     </div>
@@ -59,6 +59,7 @@
             e.preventDefault();
             $.doPost('@Mvc.Root.EmailAccount_RegistrationOAuth.Url(this.Url)', '', { Provider: $(this).data('provider'), CompanyName: $('#CompanyName').val() });
         });
-    </script>
 
+        $('.js-password-mask').click(BlueChilli.passwordMask);
+    </script>
 }

@@ -383,6 +383,11 @@ namespace ChilliCoreTemplate.Web
                 RequestPath = new PathString("/.well-known"),
                 ServeUnknownFileTypes = true
             });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "node_modules")),
+                RequestPath = new PathString("/node_modules"),
+            });
             app.UseWhen(context => context.Request.Path.Value.StartsWith("/version_check"), builder =>
             {
                 //if version check file was not found as a static file, just return 404.

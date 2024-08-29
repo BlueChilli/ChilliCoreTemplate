@@ -12,37 +12,6 @@ $.validator.setDefaults({
     ignore: ".ignore,:hidden:not(.validate)"
 });
 
-// bottom alignment plugin
-(function ($) {
-    $.fn.bottomAlign = function (minHeight) {
-        return this.each(function (i) {
-            $(this).css('margin-top', 0);
-            $(this).find("img").each(function () {
-                if ($(this).height() == 0)
-                    $(this).height($(this).attr("height"));
-            });
-            var itemHeight = Math.max($(this).outerHeight(true), minHeight);
-            var containerHeight = $(this).parent().outerHeight(true);
-            var margin = (containerHeight - itemHeight);
-            $(this).css('margin-top', margin);
-        });
-    };
-})(jQuery);
-
-// horizontal center
-(function ($) {
-    $.fn.horizontalCenter = function () {
-        return this.each(function (i) {
-            var div = $(this);
-            var width = 0;
-            div.children().each(function () {
-                width += $(this).outerWidth();
-            });
-            div.css("margin-left", (($(window).width() - width) / 2) + $(window).scrollLeft() + "px");
-        });
-    };
-})(jQuery);
-
 // $.ajaxLoad (for partial view loading, with success callback, handles framework redirect also)
 // obsolete
 (function ($) {
@@ -558,3 +527,17 @@ jQuery.fn.extend({
         });
     }
 });
+
+BlueChilli.passwordMask = function () {
+    $t = $(this);
+    var target = $t.closest('.input-group').find('input');
+    if ($t.hasClass('bi-eye')) {
+        $t.removeClass('bi-eye');
+        $t.addClass('bi-eye-slash');
+        target.attr('type', 'text');
+    } else {
+        $t.removeClass('bi-eye-slash');
+        $t.addClass('bi-eye');
+        target.attr('type', 'password');
+    }
+};

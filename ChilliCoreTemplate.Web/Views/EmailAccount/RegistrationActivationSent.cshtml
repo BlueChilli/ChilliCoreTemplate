@@ -2,10 +2,13 @@
 @{
     ViewData["WideScreen"] = true;
 }
-<h3 class="mb-4">Registration successful</h3>
-<alert type="Success">
-    <alert-title>Next steps</alert-title>
-    <p>We have sent a verification email to @Model.</p>
-    <p>Click the link within to complete your online registration.</p>
-    <p>If you don't receive the email within 5 minutes, check your spam. You can get a verification email re-sent by signing in <a mvc-action="Mvc.Root.EmailAccount_Login" asp-route-email="@Model">here</a>.</p>
-</alert>
+<img class="mb-6 d-block mx-auto" src="@Url.Content("~/images/icons/email-sent.svg")" width="100" />
+<h3 class="mb-6">Registration successful</h3>
+<box>
+    <box-content>
+        <h5 class="mb-2">Next steps</h5>
+        <p>You’re nearly done! To finish your registration, please verify your email. We've sent a verification email to <strong>@Model</strong> - just check your inbox and click the "Verify email address" button to confirm your address and start onboarding.</p>
+        <h5 class="mt-4 mb-2">Didn’t get the email?</h5>
+        <p>Please check your inbox, and if it doesn't arrive soon, check your spam folder. You can also <a mvc-action="Mvc.Root.EmailAccount_Login" asp-route-email="@Model">sign in here</a> to request a new email.</p>
+    </box-content>
+</box>

@@ -166,6 +166,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return result;
             }
 
+            if (account.UserRoles.All(x => x.CompanyId.HasValue && x.Company.IsDeleted))
+            {
+                return ServiceResult<UserDataPrincipal>.AsError($"Your account has been temporarily suspended due to inactivity. Please contact us at {Constants.Phone} or {Constants.Email} to reactivate it.");
+            }
+
             if (account.IsTooManyRetries)
             {
                 return result;

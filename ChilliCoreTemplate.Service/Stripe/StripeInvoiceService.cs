@@ -61,6 +61,23 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
+        public ServiceResult<Invoice> Invoice_Void(string invoiceId, InvoiceVoidOptions options = null)
+        {
+            try
+            {
+                var service = new InvoiceService(_client);
+                var response = service.VoidInvoice(invoiceId, options);
+                return ServiceResult<Invoice>.AsSuccess(response);
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is StripeException))
+                {
+                    ex.LogException();
+                }
+                return ServiceResult<Invoice>.AsError(ex.Message);
+            }
+        }
         public ServiceResult<InvoiceItem> InvoiceLineItem_Create(InvoiceItemCreateOptions options, string accountId = null)
         {
             try

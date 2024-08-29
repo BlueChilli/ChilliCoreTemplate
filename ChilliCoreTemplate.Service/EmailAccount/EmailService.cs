@@ -112,7 +112,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public ServiceResult<EmailListModel> Email_List()
         {
             var model = new EmailListModel();
-            model.TemplateList = Context.Emails.Select(x => x.TemplateId).Distinct().ToList().ToSelectList();
+            model.TemplateList = Context.Emails.Select(x => x.TemplateId).Distinct().ToList().OrderBy(x => x).ToList().ToSelectList();
             return ServiceResult<EmailListModel>.AsSuccess(model);
         }
 

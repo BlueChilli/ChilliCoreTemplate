@@ -19,6 +19,9 @@ namespace ChilliCoreTemplate.Models
 
         public const string AllowedGraphicExtensions = "jpg, jpeg, png, gif";
 
+        public const string Email = "hello@example.com"; //TODO this must be completed
+
+        public const string Phone = "02 9999 5555"; //TODO this must be completed or removed
     }
 
     public static class Descriptions

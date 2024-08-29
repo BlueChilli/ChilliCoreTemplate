@@ -26,14 +26,14 @@ namespace ChilliCoreTemplate.Web
             return new HtmlString($"<span class=\"input-group-btn\"><button type=\"button\" class=\"btn {classes}\">{text}</button></span>");
         }
 
-        public static IHtmlContent IconAddOn(string type)
+        public static IHtmlContent IconAddOn(string type, string classes = "")
         {
-            return new HtmlString($"<span class=\"input-group-text\"><i class=\"bi bi-{type}\"></i></span>");
+            return new HtmlString($"<span class=\"input-group-text\"><i class=\"bi bi-{type} {classes}\"></i></span>");
         }
 
-        public static IHtmlContent IconAddOn(IconType type)
+        public static IHtmlContent IconAddOn(IconType type, string classes = "")
         {
-            return IconAddOn(type.GetData<string>("Icon"));
+            return IconAddOn(type.GetData<string>("Icon"), classes);
         }
 
         public override IFieldInnerTemplateModel CreateFieldInnerTemplateModel<TModel, TValue>(IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
@@ -116,6 +116,10 @@ namespace ChilliCoreTemplate.Web
             else if (valueTypeName == "String" && metadata.DataTypeName == "Html")
             {
                 templateModel = templateModel.UseOptions(new HtmlFieldTemplateOptions(this));
+            }
+            else if (valueTypeName == "String" && metadata.DataTypeName == "Password")
+            {
+                templateModel = templateModel.UseOptions(new PasswordFieldTemplateOptions(this));
             }
             else
             {
