@@ -2,57 +2,38 @@
 @{
     Layout = null;
     var heading = "Error details";
-    if (Model.Properties.ContainsKey("HttpRequestRawUrl")) { heading = Model.Properties["HttpRequestRawUrl"].ToString(); }
+    if (Model.Properties.ContainsKey("RequestUrl")) { heading = Model.Properties["RequestUrl"].ToString(); }
     else if (Model.Properties.ContainsKey("ExceptionMessage")) { heading = Model.Properties["ExceptionMessage"].ToString(); }
 }
-<style>
-    tr td:first-child {
-        vertical-align: top;
-        padding-right: 5px;
-    }
-    tr {
-        padding-top: 2px;
-        padding-bottom: 2px;
-    }
-</style>
 <div class="modal-body">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <b>@heading</b>
-        </div>
-        <div class="panel-body">
-            <table>
-                <thead class="table-light">
-                    <tr>
-                        <th>Property</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var item in Model.GetFlattenProperties())
-                    {
-                        if (item.Property != "HttpRequestRawUrl")
+    <h4 class="mb-4">@heading</h4>
+    <table-default>
+        <thead class="table-light">
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.GetFlattenProperties())
+            {
+                <tr>
+                    <td>
+                        @for (var i = 0; i < item.Level; i++)
                         {
-                            <tr>
-                                <td>
-                                    @for (var i = 0; i < item.Level; i++)
-                                    {
-                                        <i class="fa fa-chevron-right"></i>
-                                    }
-                                    @item.Property
-                                </td>
-                                <td>@item.Value</td>
-                            </tr>
+                            <i class="bi bi-chevron-right"></i>
                         }
-                    }
-                    <tr>
-                        <td>Stack trace</td>
-                        <td style="white-space: pre-line">@Model.Exception</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                        @item.Property
+                    </td>
+                    <td style="white-space: pre-line">@item.Value</td>
+                </tr>
+            }
+            <tr>
+                <td>Stack trace</td>
+                <td style="white-space: pre-line">@Model.Exception</td>
+            </tr>
+        </tbody>
+    </table-default>
 </div>
 <div class="modal-footer">
     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

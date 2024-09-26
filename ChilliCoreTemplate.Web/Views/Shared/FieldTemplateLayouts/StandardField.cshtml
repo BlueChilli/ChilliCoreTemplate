@@ -5,7 +5,7 @@
 <div @Model.HtmlAttributes.ToAttributeHtmlContent()>
     @if (Model.FieldColumnSize.GetValueOrDefault(10) != 12)
     {
-        <label class="col-md-@(12 - Model.FieldColumnSize.GetValueOrDefault(10)) col-form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName @if(!String.IsNullOrEmpty(Model.HelpText)) {<br/><span class="text-sm text-muted">@Html.Raw(Model.HelpText)</span>}</label>
+        <label class="col-md-@(12 - Model.FieldColumnSize.GetValueOrDefault(10)) col-form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName <field-help-text help-text="@Model.HelpText" is-tool-tip="@Model.HelpTextAsToolTip"></field-help-text></label>
     }
     <div class="col-md-@Model.FieldColumnSize.GetValueOrDefault(10)">
         <div class="@Model.GetFieldSize()">

@@ -1,6 +1,8 @@
+using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using System;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
@@ -13,12 +15,20 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     {
         public string Title { get; set; }
 
+        public IconType Icon { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
             output.AddClass("dropdown", NullHtmlEncoder.Create());
 
-            var button = $"<button class=\"btn btn-sm btn-neutral dropdown-toggle\" type=\"button\" data-bs-toggle=\"dropdown\">{Title}</button>";
+            var icon = String.Empty;
+            if (Icon != IconType.None)
+            {
+                icon = $"<span class=\"pe-3\"><i class=\"bi bi-{Icon.GetData<string>("Icon")}\"></i></span>";
+            }
+
+            var button = $"<button class=\"btn btn-sm btn-neutral dropdown-toggle\" type=\"button\" data-bs-toggle=\"dropdown\">{icon}{Title}</button>";
             var list = $"<ul class=\"dropdown-menu dropdown-menu-xs\">";
 
             output.PreContent.SetHtmlContent(button + list);

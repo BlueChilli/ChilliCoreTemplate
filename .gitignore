@@ -68,3 +68,4 @@ local.json
 
 #Ignore secure files
 appsettings.*.json
+FireBaseConfig.json

@@ -94,8 +94,10 @@ namespace ChilliCoreTemplate.Service
                 MasterCompany = x.Company.MasterCompany.Name,
                 Company = x.Company.Name,
                 Email = x.User.Email,
+                Phone = x.User.Phone,
                 FirstName = x.User.FirstName,
                 LastName = x.User.LastName,
+                CreatedOn = x.User.CreatedDate,
                 LastLoginOn = x.User.LastLoginDate,
                 Role = x.Role.ToString(),
                 Status = x.Status.HasValue ? x.Status.Value.ToString() : x.User.Status.ToString()

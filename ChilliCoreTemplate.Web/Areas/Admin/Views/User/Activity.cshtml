@@ -87,6 +87,7 @@
                         d.dateTo = $('#DateTo').val();
                         d.EntityType = $('#Entity').val();
                         d.ActivityType = $('#Activity').val();
+                        d.userId = @(Model.UserId == null ? "null" : Model.UserId.Value);
                     }
                 },
                 "columns": [

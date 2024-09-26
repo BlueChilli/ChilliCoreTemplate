@@ -64,12 +64,14 @@
             table = $('.js-emails-table').dataTable({
                 "processing": true,
                 "serverSide": true,
+                responsive: true,
                 "ajax": {
                     "url": "@Mvc.Admin.User_EmailsQuery.Url(this.Url)",
                     "type": "POST",
                     "data": function ( d ) {
                         d.dateFrom = $('#DateFrom').val();
                         d.dateTo = $('#DateTo').val();
+                        d.userId = @(Model.UserId == null ? "null" : Model.UserId.Value);
                     }
                 },
                 "order": [[ 0, "desc" ]],

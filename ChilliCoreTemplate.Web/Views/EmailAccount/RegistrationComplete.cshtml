@@ -2,19 +2,19 @@
 @inject ProjectSettings config
 @if (ViewData.ModelState.IsValid)
 {
-    <h2 class="m-t-xl">Registration Complete</h2>
+    <h2>Registration Complete</h2>
 
-    <div class="m-t-xl">
+    <div class="mt-4">
         <a mvc-action="@Mvc.Root.EmailAccount_Login.AddRouteValues(new { Email = Model.Email })" class="btn btn-primary btn-lg full-width">Login Now</a>
-        <p class="m-t-md">
+        <p class="mt-4">
             & start using @config.ProjectDisplayName
         </p>
     </div>
 }
 else
 {
-    <div class="alert alert-warning m-t-xl">
-        <h3 class="m-t-xs">Activation failed</h3>
-        The activation code has expired or there was an error. Please @Html.ActionLink("login", Mvc.Root.EmailAccount_Login) and a new activation email will be sent to you.
-    </div>
+    <alert type="Warning">
+        <alert-title>Activation failed</alert-title>
+        <p>The activation code has expired or there was an error. Please @Html.ActionLink("login", Mvc.Root.EmailAccount_Login) and a new activation email will be sent to you.</p>
+    </alert>
 }

@@ -20,16 +20,17 @@
 }
 
 //Datatables
-div.dataTables_wrapper div.dataTables_info {
+div.dt-container div.dt-info {
     float: left;
     margin-left: 1.5rem;
+    margin-top: 1.0rem;
     font-size: .8125rem;
 }
 
-div.dataTables_wrapper div.dataTables_paginate {
+div.dt-container div.dt-paging {
     float: right;
-    margin-right: 1.5rem;
-    margin-top: 0.5rem;
+    margin-right: 1.5rem !important;
+    margin-top: 0.5rem !important;
 }
 
 //validation summary
@@ -229,6 +230,16 @@ a {
     button.btn-neutral.btn-square {
         color: $table-link-color;
     }
+}
+
+table.table.table-light {
+    th {
+        background-color: $table-light-th-bg !important;
+    }
+}
+
+.table > :not(:first-child) {
+    border-top: inherit !important;
 }
 
 table.table-hover > tbody > tr:hover > * {

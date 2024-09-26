@@ -199,7 +199,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [Required, MaxLength(100), EmailAddressWeb, DataType(DataType.EmailAddress), Placeholder("Your account's email address")]
         public string Email { get; set; }
 
-        public Guid Token { get; set; }
+        public string Token { get; set; }
 
         public TimeSpan ExpiryTime { get; set; }
     }

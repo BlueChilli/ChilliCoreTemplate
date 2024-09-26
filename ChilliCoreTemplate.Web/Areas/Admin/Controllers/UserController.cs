@@ -122,7 +122,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                     TempData[PageMessage.Key()] = PageMessage.Success($"Password was successfully reset.");
                     return Mvc.Admin.User_Users_Details.Redirect(this, m);
                 })
-                .OnFailure(ResetPassword)
+                .OnFailure(m => ResetPassword(model.UserId))
                 .Call();
         }
 
@@ -260,14 +260,14 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
 
         #region Activity
 
-        public virtual ActionResult Activity()
+        public virtual ActionResult Activity(int? userId, EntityType? entityType)
         {
-            return View(new UserActivityModel());
+            return View(new UserActivityModel { UserId = userId, Entity = entityType });
         }
 
-        public virtual IActionResult ActivityQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, EntityType? entityType, ActivityType? activityType)
+        public virtual IActionResult ActivityQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, EntityType? entityType, ActivityType? activityType, int? userId)
         {
-            var data = _service.GetActivities(model, dateFrom, dateTo, entityType, activityType);
+            var data = _service.GetActivities(model, dateFrom, dateTo, entityType, activityType, userId);
             var total = _service.GetActivityTotal();
 
             var response = DataTablesResponse.Create(model, total, data.TotalCount, data.ToList());
@@ -390,9 +390,9 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         #endregion
 
         #region Emails
-        public virtual ActionResult Emails()
+        public virtual ActionResult Emails(int? userId)
         {
-            return this.ServiceCall(() => _accountService.Email_List())
+            return this.ServiceCall(() => _accountService.Email_List(userId))
             .Always(m =>
             {
                 return View(m);
@@ -401,9 +401,9 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult EmailsQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo)
+        public IActionResult EmailsQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, int? userId)
         {
-            var data = _accountService.Email_Search(model, dateFrom, dateTo);
+            var data = _accountService.Email_Search(model, dateFrom, dateTo, userId);
             var count = _accountService.Email_Count();
 
             var response = DataTablesResponse.Create(model, count, data.TotalCount, data.ToList());

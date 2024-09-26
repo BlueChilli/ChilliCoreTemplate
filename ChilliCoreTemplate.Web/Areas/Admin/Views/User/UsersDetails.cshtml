@@ -30,7 +30,7 @@
                             }
                         </heading>
                         <heading title="Status">@(Model.Account.StatusDescription)</heading>
-                        <heading title="Email"><a href="mailto:@Model.Account.Email">@Model.Account.Email</a></heading>
+                        <heading title="Email"><a mvc-action="Mvc.Admin.User_Emails" asp-route-userid="@Model.Account.Id">@Model.Account.Email</a></heading>
                         @if (config.MailSettings.Quarantine.QuarantineDomain == "mailinator.com" && config.MailSettings.Quarantine.ShouldQuarantine(Model.Account.Email))
                         {
                             <heading title="Inbox"><a href="https://www.mailinator.com/v4/public/inboxes.jsp?to=@WebUtility.UrlEncode(config.MailSettings.Quarantine.Quarantine(Model.Account.Email, noDomain: true))" target="_blank">Mailinator <i class="bi bi-box-arrow-in-up-right"></i></a></heading>
@@ -48,7 +48,7 @@
                     <box>
                         <box-title title="Last activity" class="bg-gray-100">
                             <div class="ms-auto">
-                                <a mvc-action="@Mvc.Admin.User_Activity.AddRouteValues(new { UserId = Model.Account.Id })"><i class="bi bi-box-arrow-in-up-right"></i></a>
+                                <a mvc-action="Mvc.Admin.User_Activity" asp-route-userid="@Model.Account.Id" asp-route-entitytype="@EntityType.Email"><icon type="box-arrow-in-up-right"></icon></a>
                             </div>
                         </box-title>
                         <box-content>

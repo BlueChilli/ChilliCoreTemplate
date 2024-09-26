@@ -68,7 +68,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (request.Success)
             {
-                var emailModel = new ResetPasswordRequestModel { Email = account.Email, Token = request.Result };
+                var emailModel = new ResetPasswordRequestModel { Email = account.Email, Token = request.Result.ToShortGuid().ToString() };
 
                 if (wasExpired)
                     QueueMail(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel });

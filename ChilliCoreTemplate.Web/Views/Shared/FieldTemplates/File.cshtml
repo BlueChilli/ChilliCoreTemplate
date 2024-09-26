@@ -9,12 +9,21 @@
     <input id="@Model.Id" name="@Model.Name" type="file" @Model.HtmlAttributes.ToAttributeHtmlContent() value="">
     <span>@buttonText</span>
 </label>
+@if (Model.Options.HasRemoveButton)
+{
+    <input id="@(Model.Id)Remove" name="@(Model.Name)Remove" type="hidden" value="@bool.FalseString">
+    <button type="button" class="btn btn-sm btn-neutral js-file-remove-@jsId">@Model.Options.RemoveButtonText</button>
+}
 <span class="ms-2 js-file-@jsId"></span>
 @if (Model.Options.AutoWireUpJavascript)
 {
     @Html.RegisterCustomScripts(
     @<script>
-    $('#@Model.Id').filePreview('.js-file-@jsId');
+        $('#@Model.Id').filePreview('.js-file-@jsId');
+        @if (Model.Options.HasRemoveButton)
+        {
+        @:$('button.js-file-remove-@jsId').click(function () { $('#@(Model.Id)Remove').val('@bool.TrueString'); $('span.js-file-@jsId').text(''); });
+        }    
     </script>
     )
 }

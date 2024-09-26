@@ -109,10 +109,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
             public Builder Bcc(List<EmailData_Address> addresses)
             {
-                _bcc = addresses;
+                _bcc = addresses?.Where(x => x != null).ToList();
                 return this;
             }
-
 
             public Builder Bcc(EmailData_Address address)
             {
@@ -671,6 +670,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [Placeholder("Search"), MaxLength(100)]
         public string Search { get; set; }
+
+        public int? UserId { get; set; }
     }
 
     public class EmailViewModel

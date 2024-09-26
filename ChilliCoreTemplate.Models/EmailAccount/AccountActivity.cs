@@ -54,6 +54,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [Placeholder("Search"), MaxLength(100)]
         public string Search { get; set; }
+        public int? UserId { get; set; }
     }
 
     public class UserDetailsModel

@@ -9,6 +9,10 @@ namespace ChilliCoreTemplate.Web
 
         public string ButtonText { get; set; } = "Choose";
 
+        public bool HasRemoveButton { get; set; }  //The remove button will set a input hidden field #IDRemove to true
+
+        public string RemoveButtonText { get; set; } = "Remove";
+
         public override string GetViewPath()
         {
             return "FieldTemplates/File";

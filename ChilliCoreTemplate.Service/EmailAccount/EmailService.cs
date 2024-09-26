@@ -109,10 +109,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             };
         }
 
-        public ServiceResult<EmailListModel> Email_List()
+        public ServiceResult<EmailListModel> Email_List(int? userId)
         {
-            var model = new EmailListModel();
-            model.TemplateList = Context.Emails.Select(x => x.TemplateId).Distinct().ToList().OrderBy(x => x).ToList().ToSelectList();
+            var model = new EmailListModel
+            {
+                UserId = userId,
+                TemplateList = Context.Emails.Select(x => x.TemplateId).Distinct().ToList().OrderBy(x => x).ToList().ToSelectList()
+            };
             return ServiceResult<EmailListModel>.AsSuccess(model);
         }
 
@@ -126,7 +129,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<EmailViewModel>.AsSuccess(model);
         }
 
-        public PagedList<EmailSummaryModel> Email_Search(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo)
+        public PagedList<EmailSummaryModel> Email_Search(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, int? userId)
         {
             dateFrom = dateFrom.FromUserTimezone();
             dateTo = dateTo.FromUserTimezone().Add(new TimeSpan(23, 59, 59));
@@ -140,6 +143,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var query = Context.Emails
                     .Where(e => e.DateQueued > dateFrom && e.DateQueued < dateTo);
 
+            if (userId.HasValue) query = query.Where(e => e.UserId == userId.Value);
             if (!String.IsNullOrEmpty(model.Search.Value)) query = query.Where(e => e.Recipient.Contains(model.Search.Value));
             if (templateQueryHash != 0) query = query.Where(e => e.TemplateIdHash == templateQueryHash);
             if (isOpened != null) query = query.Where(e => e.IsOpened == isOpened);
@@ -432,7 +436,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     new EmailPreviewItemModel
                     {
                         Template = RazorTemplates.ResetPassword,
-                        Data = new ResetPasswordRequestModel { Email = _config.AdminEmail, Token = Guid.NewGuid() }
+                        Data = new ResetPasswordRequestModel { Email = _config.AdminEmail, Token = Guid.NewGuid().ToShortGuid().ToString() }
                     },
                     new EmailPreviewItemModel
                     {

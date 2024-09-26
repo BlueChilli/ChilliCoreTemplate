@@ -341,10 +341,11 @@ namespace ChilliCoreTemplate.Web.Controllers
             return View(model);
         }
 
-        public virtual ActionResult ResetPassword(ResetPasswordViewModel model)
+        public virtual ActionResult ResetPassword(UserTokenModel model)
         {
-            ModelState.Clear();
-            return View(model);
+            var viewModel = new ResetPasswordViewModel { Token = model.Token, Email = model.Email };
+
+            return View(viewModel);
         }
 
         [HttpPost, ActionName("ResetPassword")]

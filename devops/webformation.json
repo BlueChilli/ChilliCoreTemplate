@@ -317,6 +317,14 @@
     },
     "WebServerELB": {
       "Properties": {
+		"Policies": [{
+			"PolicyName": "My-SSLNegotiation-Policy",
+			"PolicyType": "SSLNegotiationPolicyType",
+			"Attributes": [{
+				"Name": "Reference-Security-Policy",
+				"Value": "ELBSecurityPolicy-TLS-1-2-2017-01"
+			}]
+		}], 
         "SecurityGroups": [
           { "Fn::GetAtt": ["SecurityGroupELBPublic", "GroupId"] }
         ],
@@ -355,7 +363,8 @@
                 "InstanceProtocol": "HTTP",
                 "LoadBalancerPort": "443",
                 "Protocol": "HTTPS",
-                "SSLCertificateId": { "Ref": "SSLCertificateARN" }
+                "SSLCertificateId": { "Ref": "SSLCertificateARN" },
+				"PolicyNames": ["My-SSLNegotiation-Policy"]
               },
               { "Ref": "AWS::NoValue" }
             ]

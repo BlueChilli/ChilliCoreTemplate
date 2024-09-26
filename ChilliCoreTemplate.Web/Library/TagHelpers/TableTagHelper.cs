@@ -17,7 +17,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "table";
-            output.Attributes.SetAttribute("class", $"table table-hover {Class}");
+            output.Attributes.SetAttribute("class", $"table table-light table-hover {Class}");
             output.Attributes.SetAttribute("width", "100%");
         }
     }

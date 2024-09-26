@@ -25,6 +25,9 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         [HtmlAttributeName(ActionAttribute)]
         public IMvcActionDefinition Action { get; set; }
 
+        [HtmlAttributeName("asp-fragment")]
+        public string Fragment { get; set; }
+
         public ButtonWindow Window { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -40,9 +43,9 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             var route = Action.GetRouteValueDictionary();
             route = route.AddRouteValues(RouteValues);
 
-            var url = urlHelper.RouteUrl(route);
+            var url = urlHelper.RouteUrl(null, route, null, null, Fragment);
 
-            if(Type == ButtonType.Button)
+            if (Type == ButtonType.Button)
             {
                 if (Window == ButtonWindow.Current)
                     output.Attributes.SetAttribute("onclick", new HtmlString($"window.location='{url}';"));

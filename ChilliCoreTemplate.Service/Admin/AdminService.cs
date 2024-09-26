@@ -375,7 +375,7 @@ namespace ChilliCoreTemplate.Service.Admin
             return (100 * (to - from) / Math.Abs(from));
         }
 
-        public PagedList<UserActivityViewModel> GetActivities(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, EntityType? entityType, ActivityType? activityType)
+        public PagedList<UserActivityViewModel> GetActivities(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo, EntityType? entityType, ActivityType? activityType, int? userId)
         {
             dateFrom = dateFrom.FromUserTimezone();
             dateTo = dateTo.FromUserTimezone().Add(new TimeSpan(23, 59, 59));
@@ -396,9 +396,11 @@ namespace ChilliCoreTemplate.Service.Admin
                 filter = filter.And(aa => aa.EntityType == entityType.Value);
             }
 
+            if (userId.HasValue) filter = filter.And(aa => aa.UserId == userId.Value);
+
             var query = Context.UserActivities.Where(filter)
-                            .OrderByDescending(aa => aa.ActivityOn)
-                            .Include(aa => aa.User);
+                .OrderByDescending(aa => aa.ActivityOn)
+                .Include(aa => aa.User);
 
             return query
                 .Materialize<UserActivity, UserActivityViewModel>()
