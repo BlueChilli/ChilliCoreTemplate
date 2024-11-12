@@ -517,7 +517,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var html = TaskHelper.GetResultSafeSync(() => _templateViewRenderer.RenderAsync(email.Template.TemplateName, templateModel));
 
-            MjmlToHtmlHelper.Render(ref html);
+            html = MjmlToHtmlHelper.Render(html);
 
             var data = new EmailData.Builder()
                         .To("fake@example.com")

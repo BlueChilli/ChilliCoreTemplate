@@ -62,7 +62,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 .Select(x => x.User.Email)
                 .ToList();
             if (!to.Any()) to.Add(_config.AdminEmail);
-            foreach (var email in to)
+            foreach (var email in to)   //Warning Layout or email can modify data, becareful this works in a loop.
                 QueueMail(template, email, model);
         }
 

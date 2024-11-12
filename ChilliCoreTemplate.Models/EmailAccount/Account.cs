@@ -250,10 +250,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string Email { get { return Id.UrlSafeDecode<string>(); } set { Id = value.UrlSafeEncode(); } }
 
-        [Required, DataType(DataType.Password), MinLength(6), MaxLength(50), Placeholder]
+        [Required, DataType(DataType.Password), MinLength(6), MaxLength(50), Placeholder("Enter your new password")]
         public string NewPassword { get; set; }
 
-        [Required, DataType(DataType.Password), System.ComponentModel.DataAnnotations.Compare("NewPassword"), MaxLength(50), Placeholder]
+        [Required, DataType(DataType.Password), System.ComponentModel.DataAnnotations.Compare("NewPassword"), MaxLength(50), Placeholder("Renter your new password for confirmation")]
         public string ConfirmPassword { get; set; }
 
         public bool Success { get; set; }

@@ -42,6 +42,9 @@ namespace ChilliCoreTemplate.Models.Api
         [Required, EmailAddressWeb, MaxLength(100)]
         public string Email { get; set; }
 
+        [MaxLength(20)]
+        public string Phone { get; set; }
+
         [MaxLength(50)]
         public string CompanyName { get; set; }
 
@@ -206,7 +209,7 @@ namespace ChilliCoreTemplate.Models.Api
 
     public class UserAccountApiModel : IInterceptApiModel
     {
-        public int Id { get; set; }
+        public int UserId { get; set; }
         public virtual string FirstName { get; set; }
         public virtual string LastName { get; set; }
 

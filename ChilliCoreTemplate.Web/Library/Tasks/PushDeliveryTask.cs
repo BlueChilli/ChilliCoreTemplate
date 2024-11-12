@@ -15,8 +15,6 @@ namespace ChilliCoreTemplate.Web.Tasks
         {
             using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
-                var svc = scope.ServiceProvider.GetRequiredService<WebhookService>();
-
                 var pushConfig = scope.ServiceProvider.GetRequiredService<PushNotificationConfiguration>();
                 var pushService = pushConfig.GetService(PushNotificationAppId.Default);
                 await pushService.QueuePushNotificationTask(executionInfo);

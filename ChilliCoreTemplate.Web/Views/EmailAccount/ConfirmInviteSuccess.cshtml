@@ -1,7 +1,7 @@
-@model string
+@model RegistrationCompleteViewModel
 
-<h3 class="m-t-md">Invitation accepted</h3>
-<div class="alert alert-info">
-    <p class="alert">Your invitation has been successfully accepted.</p>
-    <p class="alert"><a href="@Mvc.Root.EmailAccount_Login.Url(this.Url, routeValues: new { Email = Model })" title="click here to login" class="alert-link">Click here</a> to login</p>
-</div>
+<h3>Invitation accepted</h3>
+<alert type="Info" class="mt-4">
+    <alert-title>Your invitation has been successfully accepted</alert-title>
+    <a href="@Mvc.Root.EmailAccount_Login.Url(this.Url, routeValues: new { Model.Email })" title="click here to login" class="alert-link">Click here</a> to login
+</alert>

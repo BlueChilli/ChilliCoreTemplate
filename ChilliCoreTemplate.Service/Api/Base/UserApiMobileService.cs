@@ -230,7 +230,7 @@ namespace ChilliCoreTemplate.Service.Api
             var device = (UserDevice)deviceRequest.Result;
 
             var alreadyExists = await Context.UserDevices.AnyAsync(x => x.Id != device.Id && x.PushToken == model.Token);
-            if (alreadyExists) return ServiceResult<object>.AsError("Push token is already registered");
+            if (alreadyExists) return ServiceResult.AsSuccess();
 
             device.PushToken = model.Token;
             device.PushProvider = model.Provider;
@@ -251,8 +251,12 @@ namespace ChilliCoreTemplate.Service.Api
             if (!deviceRequest.Success) return deviceRequest;
             var device = (UserDevice)deviceRequest.Result;
 
+            if (device.PushTokenId == null) return ServiceResult.AsError("Device does not have a registered push token");
+
             var notification = new SendNotificationModel
             {
+                UserId = UserId.Value,
+                UserDeviceId = device.Id,
                 AppId = device.PushAppId.Value,
                 PushTokenId = device.PushTokenId,
                 Provider = device.PushProvider.Value,

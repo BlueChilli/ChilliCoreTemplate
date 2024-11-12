@@ -421,6 +421,8 @@ namespace ChilliCoreTemplate.Models
         public MailConfigurationQuarantine Quarantine => MailConfigurationQuarantine.FromSection(_section);
 
         public EmailData_Address Bcc => _bccAddressConfiguration?.EmailAddress;
+
+        public string OkMatch => Host == "smtp.gmail.com" ? "2.0.0 OK" : "Ok";
     }
 
     public class MailConfigurationQuarantine

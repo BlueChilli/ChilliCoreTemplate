@@ -47,7 +47,7 @@ namespace ChilliCoreTemplate.Models.Api
         [Data("Provider", "GCM")]
         [Data("Sandbox", "GCM")]
         Google,
-        FireBase
+        Generic
     };
 
     public enum PushNotificationAppId

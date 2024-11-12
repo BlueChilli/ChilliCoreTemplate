@@ -61,6 +61,7 @@ namespace ChilliCoreTemplate.Service
 
             LinqMapper.CreateMap<User, UserAccountApiModel>(x => new UserAccountApiModel
             {
+                UserId = x.Id,
                 UserRoles = x.UserRoles.Where(r => r.CompanyId == null || !r.Company.IsDeleted).Select(r => r.InvokeMap<UserRole, UserRoleApiModel>()).ToList()
             })
             .IgnoreMembers(a => a.Roles);

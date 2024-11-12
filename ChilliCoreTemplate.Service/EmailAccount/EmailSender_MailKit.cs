@@ -118,7 +118,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 var result = await client.SendAsync(message);
 
-                if (!result.StartsWith("Ok", StringComparison.OrdinalIgnoreCase)) return ServiceResult<string>.AsError(error: result);
+                if (!result.StartsWith(mailSettings.OkMatch, StringComparison.OrdinalIgnoreCase)) return ServiceResult<string>.AsError(error: result);
                 result = result.Substring(2).Trim();
                 return ServiceResult<string>.AsSuccess(String.IsNullOrEmpty(result) ? null : result);
             }
@@ -184,7 +184,18 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (data.Bcc != null)
             {
-                foreach (var bcc in data.Bcc.Where(x => x != null)) message.Bcc.Add(bcc.ToMailAddress());
+                foreach (var bcc in data.Bcc.Where(x => x != null))
+                {
+                    var recipient = bcc.Address;
+                    if (mailSettings.Quarantine.ShouldQuarantine(recipient))
+                    {
+                        message.Bcc.Add(mailSettings.Quarantine.Quarantine(recipient));
+                    }
+                    else
+                    {
+                        message.Bcc.Add(bcc.ToMailAddress());
+                    }
+                }
             }
 
             message.Subject = data.Subject;

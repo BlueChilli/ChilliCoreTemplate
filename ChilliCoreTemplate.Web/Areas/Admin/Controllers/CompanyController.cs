@@ -116,7 +116,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                     TempData[PageMessage.Key()] = PageMessage.Success($"The company {m.Name} was purged");
                     return Mvc.Admin.Company_List.Redirect(this);
                 })
-                .OnFailure(() => Delete(id))
+                .OnFailure(() => Purge(id))
                 .Call();
         }
 

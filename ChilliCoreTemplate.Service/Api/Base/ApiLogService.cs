@@ -70,7 +70,7 @@ namespace ChilliCoreTemplate.Service.Api
                 User = User?.Identity?.Name,
                 Machine = Environment.MachineName,
                 RequestIpAddress = "127.0.0.1",
-                RequestContentType = contentType ??= body?.ContentType,
+                RequestContentType = contentType ?? body?.ContentType?.ToString(),
                 RequestContentBody = body?.Value.ToJson(),
                 RequestUri = client.BuildUri(response.Request).ToString(),
                 RequestMethod = response.Request.Method.ToString(),

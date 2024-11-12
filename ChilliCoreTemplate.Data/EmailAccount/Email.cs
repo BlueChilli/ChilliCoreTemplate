@@ -39,8 +39,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         private string _MessageId;
         public int? MessageIdHash { get; set; }
 
-        [StringLength(100)]
-        public string Recipient { get; set; }
+        [StringLength(200)]
+        public string Recipient { get; set; } //To support sending to dual recipients seperated by ';'
 
         public string Model { get; set; }
 

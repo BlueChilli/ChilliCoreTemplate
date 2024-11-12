@@ -1,12 +1,13 @@
 ﻿using ChilliCoreTemplate.Models;
 using Mjml.Net;
 using System.IO;
+using System.Web;
 
 namespace ChilliCoreTemplate.Service
 {
     public static class MjmlToHtmlHelper
     {
-        internal static void Render(ref string html)
+        internal static string Render(string html)
         {
             if (html.Contains("<mjml>"))
             {
@@ -16,9 +17,11 @@ namespace ChilliCoreTemplate.Service
                     Beautify = false,
                     FileLoader = () => new DiskFileLoader()
                 };
-                var result = mjmlRenderer.Render(html, options);
-                html = result.Html;
+                var result = mjmlRenderer.Render(HttpUtility.HtmlDecode(html), options);
+
+                return result.Html;            
             }
+            return html;
         }
     }
 

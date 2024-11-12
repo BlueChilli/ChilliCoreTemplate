@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Data.EmailAccount
 {
+    [Index(nameof(UserId), nameof(Role), nameof(CompanyId), IsUnique = true)]
     public class UserRole : IValidatableObject
     {
         public int Id { get; set; }
@@ -29,14 +30,15 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (this.Role.IsCompanyRole() && this.CompanyId == null && this.Company == null)
-                yield return new ValidationResult($"Company role - Invalid role '{this.Role.ToString()}'. Company is missing.", new string[] { "Role" });
+                yield return new ValidationResult($"Company role - Invalid role '{this.Role}'. Company is missing.", ["Role"]);
         }
 
         public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         {
             public void Configure(EntityTypeBuilder<UserRole> builder)
             {
-                builder.HasCheckConstraint("CK_UserRoles_Role", "[Role] > 0");
+                builder.ToTable(t => t.HasCheckConstraint("CK_UserRoles_Role", "[Role] > 0"));
+                builder.ToTable(t => t.HasCheckConstraint("CK_UserRoles_RoleStatus", "[Role] <> 2 or [Status] <> 2"));
             }
         }
     }

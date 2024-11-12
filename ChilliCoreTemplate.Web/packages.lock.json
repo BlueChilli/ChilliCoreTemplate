@@ -303,6 +303,14 @@
           "Swashbuckle.AspNetCore.SwaggerGen": "6.7.0"
         }
       },
+      "AngleSharp": {
+        "type": "Transitive",
+        "resolved": "1.0.7",
+        "contentHash": "jZg7lDcrXRiIC8VBluuGKOCMR9mc4CIRX5vpQJ8fcgafs6T6plOzKHhAn3lJEwXorrltd9p1WtRxxhFpRBACbg==",
+        "dependencies": {
+          "System.Text.Encoding.CodePages": "8.0.0"
+        }
+      },
       "AppleAuth.NET": {
         "type": "Transitive",
         "resolved": "1.0.8",
@@ -532,11 +540,8 @@
       },
       "HtmlPerformanceKit": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "BHePdNNOkAhDIzFh0LmrbRpmbp/2mSn4SyJggqeLmKSQJo++8mC9zFvzUo/cb/hkOwY0HYAFFWWauViVycHM9Q==",
-        "dependencies": {
-          "System.Memory": "4.5.5"
-        }
+        "resolved": "0.8.1",
+        "contentHash": "tmKeR7CGb2E0Z1MGrXfpIvctOhVCsTSlEpSiv9rHZv8JHUxxaZxzDN+IRIL/n2znTUu/xcr9i8Y8TI32JGlU9Q=="
       },
       "Humanizer.Core": {
         "type": "Transitive",
@@ -1310,8 +1315,8 @@
       },
       "Microsoft.Extensions.ObjectPool": {
         "type": "Transitive",
-        "resolved": "8.0.2",
-        "contentHash": "LA7lDy048CVjGCwsPqRFVwH8vl5ooHmSFji13Oczw+mOnGhqenWXttkWcJ5dhIR0bhayZrQz4BaSPEVtE8Tt0A=="
+        "resolved": "8.0.0",
+        "contentHash": "4pm+XgxSukskwjzDDfSjG4KNUIOdFF2VaqZZDtTzoyQMOVSnlV6ZM8a9aVu5dg9LVZTB//utzSc8fOi0b0Mb2Q=="
       },
       "Microsoft.Extensions.Options": {
         "type": "Transitive",
@@ -1501,11 +1506,12 @@
       },
       "Mjml.Net": {
         "type": "Transitive",
-        "resolved": "3.12.0",
-        "contentHash": "qGFP27nT0T9HMJvM1nWaiZlYG4AzXRhmqDIMUTjnowWN+uvhuLXPyUGILKmZialxXRmGjQXzclpo1vOJAQkA0Q==",
+        "resolved": "3.8.0",
+        "contentHash": "Jmf0ZZstNpNlM0+z2jzaQmKtj/veevGlPF5os4KlD9i7cn+enTNs5eMLk+2dr3xvw4wIHEgtMrNVNMFXvGzGTw==",
         "dependencies": {
-          "HtmlPerformanceKit": "1.0.0",
-          "Microsoft.Extensions.ObjectPool": "8.0.2"
+          "AngleSharp": "1.0.7",
+          "HtmlPerformanceKit": "0.8.1",
+          "Microsoft.Extensions.ObjectPool": "8.0.0"
         }
       },
       "Mono.TextTemplating": {
@@ -2170,8 +2176,8 @@
       },
       "System.Memory": {
         "type": "Transitive",
-        "resolved": "4.5.5",
-        "contentHash": "XIWiDvKPXaTveaB7HVganDlOCRoj03l+jrwNvcge/t8vhGYKvqV+dMv6G4SAX2NoNmN0wZfVPTAlFwZcZvVOUw=="
+        "resolved": "4.5.4",
+        "contentHash": "1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw=="
       },
       "System.Memory.Data": {
         "type": "Transitive",
@@ -2419,11 +2425,8 @@
       },
       "System.Text.Encoding.CodePages": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "ZFCILZuOvtKPauZ/j/swhvw68ZRi9ATCfvGbk1QfydmcXBkIWecWKn/250UH7rahZ5OoDBaiAudJtPvLwzw85A==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
+        "resolved": "8.0.0",
+        "contentHash": "OZIsVplFGaVY90G2SbpgU7EnCoOO5pw1t4ic21dBF3/1omrJFpAGoNAVpPyMVOC90/hvgkGG3VFqR13YgZMQfg=="
       },
       "System.Text.Encodings.Web": {
         "type": "Transitive",
@@ -2563,7 +2566,7 @@
           "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "[8.0.8, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[8.0.0, )",
           "MiniProfiler.AspNetCore.Mvc": "[4.3.8, )",
-          "Mjml.Net": "[3.12.0, )",
+          "Mjml.Net": "[3.8.0, )",
           "RestSharp.Serializers.NewtonsoftJson": "[112.0.0, )",
           "Sqids": "[3.1.0, )",
           "Stripe.net": "[45.8.0, )",

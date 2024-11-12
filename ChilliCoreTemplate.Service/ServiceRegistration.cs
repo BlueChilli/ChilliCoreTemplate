@@ -117,13 +117,15 @@ namespace ChilliCoreTemplate.Service
                 });
             services.AddScoped<ITemplateViewRenderer, TemplateViewRenderer>();
 
-            services.AddOptions<SqidsOptions>()
-                .Configure<ProjectSettings>((options, settings) =>
+            services.AddSingleton((provider) =>
+            {
+                var settings = provider.GetRequiredService<ProjectSettings>();
+                return new SqidsEncoder<int>(new()
                 {
-                    options.Alphabet = settings.ShuffledAlphanumeric;
-                    options.MinLength = 6;
+                    Alphabet = settings.ShuffledAlphanumeric,
+                    MinLength = 6,
                 });
-            services.AddSingleton<SqidsEncoder<int>>();
+            });
 
             ServiceTypesCache.Value.ForEach(type => services.AddScoped(type));
         }

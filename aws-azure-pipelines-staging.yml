@@ -1,0 +1,82 @@
+variables:
+  AppAddress: 'https://portal.staging.example.com.au'
+  AWS:Bucket: 'example-stg'
+  AWS:CloudFormationStack: 'WebStg'
+  AWS:Environment: 'Staging'
+  AWS:HealthCheckTarget: 'api/server/tick'
+  AWS:KeyPairName: 'KeyPair_example_PMM4yMl4'
+  AWS:MaxAutoScalingSize: 1
+  AWS:ReplaceAutoScalingGroup: false
+  AWS:SSLCertificateARN: 'arn:aws:acm:ap-southeast-2:975049939841:certificate/d9679fc8-7179-4338-988b-XXXXXX'
+  BuildConfiguration: 'Staging'
+  BuildPlatform: 'Any CPU'
+  WebProjectName: 'Example.Web'
+  AppSettingsSecureFile: cb7fdb98-bd7c-42b8-963a-XXXXXXXXX
+  AWSCredentials: 793d158d-6901-4447-a9b6-XXXXXXXXXX
+
+trigger:
+  branches:
+    include:
+    - staging
+  batch: True
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/staging
+jobs:
+- job: Job_1
+  displayName: ${{variables.BuildConfiguration}}
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - checkout: self
+    clean: true
+    fetchTags: false
+  - task: mattlabrum.build-task.custom-build-task.downloadsSecureFile@0
+    displayName: App Settings (BuildConfiguration)
+    inputs:
+      fileInput: $(AppSettingsSecureFile)
+      targetPath: $(System.DefaultWorkingDirectory)\$(WebProjectName)
+  - task: Npm@1
+    displayName: npm install
+    inputs:
+      workingDir: $(WebProjectName)
+      verbose: false
+  - task: gulp@0
+    displayName: Build Bundles
+    inputs:
+      gulpFile: $(WebProjectName)\gulpfile.js
+  - task: DotNetCoreCLI@2
+    displayName: dotnet publish (package)
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: $(WebProjectName)/*.csproj
+      arguments: -v normal /p:PublishProfile=Profile /p:Configuration=$(BuildConfiguration)
+      zipAfterPublish: false
+      modifyOutputPath: false
+  - task: AmazonWebServices.aws-vsts-tools.AWSCLI.AWSCLI@1
+    displayName: S3 upload
+    inputs:
+      awsCredentials: $(AWSCredentials)
+      regionName: ap-southeast-2
+      awsCommand: s3
+      awsSubCommand: cp
+      awsArguments: $(WebProjectName)\obj\$(BuildConfiguration)\Package\$(WebProjectName).zip s3://$(AWS:Bucket)/Deployments/$(Build.BuildNumber).zip
+      failOnStandardError: false
+  - task: AmazonWebServices.aws-vsts-tools.AWSCLI.AWSCLI@1
+    displayName: CF Deploy
+    inputs:
+      awsCredentials: $(AWSCredentials)
+      regionName: ap-southeast-2
+      awsCommand: cloudformation
+      awsSubCommand: deploy
+      awsArguments: --template-file ./devops/webformation.json --stack-name $(AWS:CloudFormationStack) --capabilities CAPABILITY_NAMED_IAM --parameter-overrides KeyPairName=$(AWS:KeyPairName) HealthCheckTarget=$(AWS:HealthCheckTarget) MaxAutoScalingSize=$(AWS:MaxAutoScalingSize) MinAutoScalingSize=1 SSLCertificateARN=$(AWS:SSLCertificateARN) S3Bucket=$(AWS:Bucket) Build=$(Build.BuildNumber) Env=$(AWS:Environment) ReplaceAutoScalingGroup=$(AWS:ReplaceAutoScalingGroup)
+      failOnStandardError: false
+  - task: PowerShell@2
+    displayName: Version check
+    inputs:
+      targetType: inline
+      script: "$versionUrl = \"$(AppAddress)\".TrimEnd(\"/\")\n$versionUrl = $versionUrl + \"/version_check_$(Build.BuildNumber).txt\"\nfunction TestUrl([string]$url) {\n    $HTTP_Response = $null\n    try {\n        $HTTP_Request = [System.Net.WebRequest]::Create($url)\n        $HTTP_Response = $HTTP_Request.GetResponse()\n        $HTTP_Status = [int]$HTTP_Response.StatusCode\n        If ($HTTP_Status -eq 200) {\n            return $true\n        }\n    }\n    catch {        \n    }\n    finally {\n        if ($HTTP_Response) {\n            $HTTP_Response.Close()\n        }        \n    }\n    return $false    \n}\nfunction TestUrlDelay([string]$url, [int]$times, [int]$delay) {\n    [int]$count = 0;\n    while ($count -lt $times) {\n        Write-Host $delay second delay\n        Start-Sleep $delay        \n        Write-Host Pinging $url\n        if (TestUrl $url) {\n            return $true;    \n        }\n        $count = $count + 1\n    }\n    return $false;\n}\n$online = TestUrlDelay $versionUrl 10 30\nif ($online) {\n    Write-Host $versionUrl found\n    Exit 0\n}\nelse {\n    Write-Host $versionUrl not found\n    Exit 404\n}"
+...

@@ -66,15 +66,14 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             var request = Password_SetRequestToken(account, null, out bool wasExpired);
 
-            if (request.Success)
-            {
-                var emailModel = new ResetPasswordRequestModel { Email = account.Email, Token = request.Result.ToShortGuid().ToString() };
+            if (!request.Success) return ServiceResult.CopyFrom(request);
 
-                if (wasExpired)
-                    QueueMail(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel });
-                else
-                    QueueMail_Distinct(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel }, new TimeSpan(0, 15, 0));
-            }
+            var emailModel = new ResetPasswordRequestModel { Email = account.Email, Token = request.Result.ToShortGuid().ToString() };
+
+            if (wasExpired)
+                QueueMail(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel });
+            else
+                QueueMail_Distinct(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel }, new TimeSpan(0, 15, 0));
 
             return ServiceResult.AsSuccess();
         }
@@ -89,11 +88,14 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         private ServiceResult<Guid> Password_SetRequestToken(User account, TimeSpan? expiryTime, out bool wasExpired)
         {
+            wasExpired = false;
             if (account == null)
             {
-                wasExpired = false;
                 return ServiceResult<Guid>.AsError("Email address not registered.");
             }
+
+            if (account.UserRoles.Any(x => x.CompanyId.HasValue && x.Company.IsDeleted))
+                return ServiceResult<Guid>.AsError("Company is archived");
 
             if (expiryTime == null) expiryTime = TimeSpan.FromMinutes(60);
 

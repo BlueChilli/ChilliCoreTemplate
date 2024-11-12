@@ -39,10 +39,9 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public bool IsQueued => Status >= PushNotificationStatus.Queued;
 
-        public bool IsSent => Status >= PushNotificationStatus.Sent;
+        public bool IsSent => Status == PushNotificationStatus.Sent;
 
         public bool IsOpened => OpenedOn.HasValue;
-
 
         public static PushNotification CreateFrom(SendNotificationModel model)
         {

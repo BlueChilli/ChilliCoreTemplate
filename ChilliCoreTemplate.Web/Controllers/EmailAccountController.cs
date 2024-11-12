@@ -300,7 +300,7 @@ namespace ChilliCoreTemplate.Web.Controllers
             return this.ServiceCall(() => _accountService.ConfirmInvite(model))
                 .OnSuccess(m =>
                 {
-                    return Mvc.Root.EmailAccount_ConfirmInviteSuccess.Redirect(this, routeValues: new { Email = model.Email });
+                    return Mvc.Root.EmailAccount_ConfirmInviteSuccess.Redirect(this, routeValues: new { model.Email });
 
                 })
                 .OnFailure(() =>

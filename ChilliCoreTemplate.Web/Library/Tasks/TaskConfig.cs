@@ -21,6 +21,7 @@ namespace ChilliCoreTemplate.Web
         public static Guid ErrorLogTask_Id { get { return new Guid("D6713FDA-E468-4029-A83E-5D014DD08949"); } }
         public static Guid EmailTask_Id { get { return new Guid("D83D5A5A-D7A3-46BD-A9DA-3B4F518720DF"); } }
         public static Guid SmsTask_Id { get { return new Guid("2d2bbe82-51c9-45d0-8e89-4767cd22166a"); } }
+        public static Guid PushTask_Id { get { return new Guid("8fa9d8ef-c72b-4bdd-b2a5-e8659f2208c0"); } }
         public static Guid CleanUpTask_Id { get { return new Guid("781569FE-A731-4995-8F38-44C52C396C14"); } }
         public static Guid WebhookTask_Id { get { return new Guid("8AE66995-49DD-45E9-B861-777A10D3ACA9"); } }
         public static Guid BulkImportTask_Id { get { return new Guid("766b842e-977d-4baf-a340-2300e04ccfdd"); } }
@@ -41,8 +42,11 @@ namespace ChilliCoreTemplate.Web
             manager.RegisterTaskType(typeof(EmailDeliveryTask), new TaskSettings(TaskDescription.EmailTask_Id));
             manager.EnqueueRecurrentTask<EmailDeliveryTask>((long)TimeSpan.FromSeconds(10).TotalMilliseconds);
 
-            manager.RegisterTaskType(typeof(SmsDeliveryTask), new TaskSettings(TaskDescription.SmsTask_Id));
-            manager.EnqueueRecurrentTask<SmsDeliveryTask>((long)TimeSpan.FromSeconds(20).TotalMilliseconds);
+            //manager.RegisterTaskType(typeof(SmsDeliveryTask), new TaskSettings(TaskDescription.SmsTask_Id));
+            //manager.EnqueueRecurrentTask<SmsDeliveryTask>((long)TimeSpan.FromSeconds(20).TotalMilliseconds);
+
+            //manager.RegisterTaskType(typeof(PushDeliveryTask), new TaskSettings(TaskDescription.PushTask_Id));
+            //manager.EnqueueRecurrentTask<PushDeliveryTask>((long)TimeSpan.FromSeconds(10).TotalMilliseconds);
 
             manager.RegisterTaskType(typeof(CleanUpTask), new TaskSettings(TaskDescription.CleanUpTask_Id));
             manager.EnqueueRecurrentTask<CleanUpTask>((long)TimeSpan.FromMinutes(15).TotalMilliseconds);

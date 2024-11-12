@@ -64,10 +64,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 try
                 {
-                    var message =
-                        await _templateViewRenderer.RenderAsync(queuedItem.Template.TemplateName, queuedItem.Model);
+                    var message = await _templateViewRenderer.RenderAsync(queuedItem.Template.TemplateName, queuedItem.Model);
 
-                    MjmlToHtmlHelper.Render(ref message);
+                    message = MjmlToHtmlHelper.Render(message);
 
                     var subject = templateDataModel?.Subject
                             .DefaultTo(queuedItem.Subject.DefaultTo(queuedItem.Template.Subject));
