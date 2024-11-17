@@ -14,8 +14,8 @@
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.80" />
     <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0015" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0029" />
-    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0008" />
-    <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0044" />
+    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0009" />
+    <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0046" />
     <PackageReference Include="FirebaseAdmin" Version="3.1.0" />
     <PackageReference Include="GoogleAuthenticator" Version="3.2.0" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
