@@ -153,12 +153,12 @@ namespace ChilliCoreTemplate.Service
         {
             try
             {
-                var service = new CustomerService(_client);
-                var options = new CustomerListPaymentMethodsOptions
+                var service = new CustomerPaymentMethodService(_client);
+                var options = new CustomerPaymentMethodListOptions
                 {
                     Type = "card",
                 };
-                var paymentMethods = service.ListPaymentMethods(id, options);
+                var paymentMethods = service.List(id, options);
                 return ServiceResult<List<PaymentMethod>>.AsSuccess(paymentMethods.Data);
             }
             catch (Exception ex)

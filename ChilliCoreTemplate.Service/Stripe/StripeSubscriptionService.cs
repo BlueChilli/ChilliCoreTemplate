@@ -149,9 +149,9 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
-        public ServiceResult<UsageRecord> Plan_Usage(string subscriptionItemId, UsageRecordCreateOptions options)
+        public ServiceResult<UsageRecord> Plan_Usage(string subscriptionItemId, SubscriptionItemUsageRecordCreateOptions options)
         {
-            var usageService = new UsageRecordService(_client);
+            var usageService = new SubscriptionItemUsageRecordService(_client);
             try
             {
                 var stripeResult = usageService.Create(subscriptionItemId, options);

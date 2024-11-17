@@ -54,6 +54,11 @@ namespace ChilliCoreTemplate.Models
             return dt.ToString("dd MMM yyyy HH:mm");
         }
 
+        public static string ToFormattedTime(this DateTime dt)
+        {
+            return dt.ToString("HH:mm tt");
+        }
+
         public static List<TzdbZoneLocation> TimeZones()
         {
             return TzdbDateTimeZoneSource.Default

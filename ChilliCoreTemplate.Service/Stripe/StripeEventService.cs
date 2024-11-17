@@ -11,11 +11,11 @@ namespace ChilliCoreTemplate.Service
 {
     public partial class StripeService
     {
-        public ServiceResult<Person> Person_Get(string personId, string accountId, PersonGetOptions options = null)
+        public ServiceResult<Person> Person_Get(string personId, string accountId, AccountPersonGetOptions options = null)
         {
             try
             {
-                var service = new PersonService(_client);
+                var service = new AccountPersonService(_client);
                 var response = service.Get(accountId, personId, options: options);
                 return ServiceResult<Person>.AsSuccess(response);
             }

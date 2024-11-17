@@ -130,7 +130,7 @@ namespace ChilliCoreTemplate.Service
         {
             try
             {
-                var service = new LoginLinkService(_client);
+                var service = new AccountLoginLinkService(_client);
                 var response = service.Create(id);
                 return ServiceResult<LoginLink>.AsSuccess(response);
             }

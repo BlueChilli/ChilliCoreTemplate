@@ -97,47 +97,47 @@ namespace ChilliCoreTemplate.Service.Api
 
                 switch (stripeEvent.Type)
                 {
-                    case Stripe.Events.ChargeSucceeded:
+                    case "charge.succeded":
                         result = ProcessChargeSucceeded(stripeEvent);
                         break;
-                    case Stripe.Events.ChargeRefunded:
+                    case "charge.refunded":
                         result = ProcessChargeRefunded(stripeEvent);
                         break;
-                    case Stripe.Events.ChargeDisputeCreated:
-                    case Stripe.Events.ChargeDisputeClosed:
-                        result = ProcessChargeDisputed(stripeEvent);
-                        break;
-                    case Stripe.Events.PayoutPaid:
-                        result = ProcessPayoutPaid(stripeEvent);
-                        break;
-                    case Stripe.Events.TransferCreated:
-                    case Stripe.Events.TransferUpdated:
-                        result = ProcessTransfer(stripeEvent);
-                        break;
+                    //case Stripe.Events.ChargeDisputeCreated:
+                    //case Stripe.Events.ChargeDisputeClosed:
+                    //    result = ProcessChargeDisputed(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.PayoutPaid:
+                    //    result = ProcessPayoutPaid(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.TransferCreated:
+                    //case Stripe.Events.TransferUpdated:
+                    //    result = ProcessTransfer(stripeEvent);
+                    //    break;
                     //case Stripe.Events.TransferFailed:
                     //    result = ProcessTransferFailed(stripeEvent);
                     //    break;
-                    case Stripe.Events.InvoiceUpcoming:
-                        result = ProcessInvoiceUpcoming(stripeEvent);
-                        break;
-                    case Stripe.Events.InvoicePaymentSucceeded:
-                        result = ProcessInvoicePaymentSucceeded(stripeEvent);
-                        break;
-                    case Stripe.Events.InvoicePaymentFailed:
-                        result = ProcessInvoicePaymentFailed(stripeEvent);
-                        break;
-                    case Stripe.Events.AccountUpdated:
-                        result = Stripe_ProcessAccountUpdated(stripeEvent);
-                        break;
-                    case Stripe.Events.PaymentIntentSucceeded:
-                        result = Stripe_ProcessPaymentIntentSucceeded(stripeEvent);
-                        break;
-                    case Stripe.Events.CustomerSubscriptionDeleted:
-                        result = ProcessSubscriptionDeleted(stripeEvent);
-                        break;
-                    case Stripe.Events.CustomerDeleted:
-                        result = ProcessCustomerDeleted(stripeEvent);
-                        break;
+                    //case Stripe.Events.InvoiceUpcoming:
+                    //    result = ProcessInvoiceUpcoming(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.InvoicePaymentSucceeded:
+                    //    result = ProcessInvoicePaymentSucceeded(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.InvoicePaymentFailed:
+                    //    result = ProcessInvoicePaymentFailed(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.AccountUpdated:
+                    //    result = Stripe_ProcessAccountUpdated(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.PaymentIntentSucceeded:
+                    //    result = Stripe_ProcessPaymentIntentSucceeded(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.CustomerSubscriptionDeleted:
+                    //    result = ProcessSubscriptionDeleted(stripeEvent);
+                    //    break;
+                    //case Stripe.Events.CustomerDeleted:
+                    //    result = ProcessCustomerDeleted(stripeEvent);
+                    //    break;
                     default:
                         result = ServiceResult.AsError($"Stripe event {stripeEvent.Type} not handled");
                         break;

@@ -47,7 +47,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             var route = Action.GetRouteValueDictionary();
             route = route.AddRouteValues(RouteValues);
 
-            var url = urlHelper.RouteUrl(null, route, null, null, Fragment);
+            var url = urlHelper.RouteUrl(null, route, "https", null, Fragment);
             output.Attributes.SetAttribute("href", url);
         }
     }
