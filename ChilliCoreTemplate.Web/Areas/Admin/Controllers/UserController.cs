@@ -329,7 +329,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         [HttpPost, ActionName("InviteResend")]
         public virtual ActionResult InviteResendPost(int id)
         {
-            return this.ServiceCall(() => _accountService.Reinvite(id))
+            return this.ServiceCall(() => _accountService.Invite_Resend(id))
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success($"{m.FirstName} has been successfully re-invited.");

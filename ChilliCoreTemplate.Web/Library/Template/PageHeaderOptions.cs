@@ -47,6 +47,8 @@ namespace ChilliCoreTemplate.Web
 
         public List<string> Tabs { get; set; } = new List<string>();
 
+        public int TabActiveId { get; set; }
+
         public IReadOnlyList<BreadcrumbPathItem> PathItems { get { return _pathItems; } } 
 
         public void AddPath(string text, string url = null)

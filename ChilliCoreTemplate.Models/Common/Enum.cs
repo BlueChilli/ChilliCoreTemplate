@@ -526,6 +526,8 @@ namespace ChilliCoreTemplate.Models
         [Description("primary")]
         Primary,
         [Description("secondary")]
-        Secondary
+        Secondary,
+        [Description("yellow-500")]
+        Pending
     }
 }

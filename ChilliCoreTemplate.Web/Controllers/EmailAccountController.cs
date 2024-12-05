@@ -288,19 +288,31 @@ namespace ChilliCoreTemplate.Web.Controllers
             return View(model);
         }
 
-        public virtual ActionResult ConfirmInvite(UserTokenModel model)
+        public virtual ActionResult InviteConfirm(UserTokenModel model)
         {
             var viewModel = new ResetPasswordViewModel { Token = model.Token, Email = model.Email };
-            return View(viewModel);
-        }
-
-        [HttpPost, ActionName("ConfirmInvite")]
-        public virtual ActionResult ConfirmInvitePost(ResetPasswordViewModel model)
-        {
-            return this.ServiceCall(() => _accountService.ConfirmInvite(model))
+            return this.ServiceCall(() => _accountService.Invite_Confirm_Validate(model))
                 .OnSuccess(m =>
                 {
-                    return Mvc.Root.EmailAccount_ConfirmInviteSuccess.Redirect(this, routeValues: new { model.Email });
+                    return View("InviteConfirm", viewModel);
+
+                })
+                .OnServiceFailure((e) =>
+                {
+                    TempData[PageMessage.Key()] = PageMessage.Error(e.Error);
+                    viewModel.Error = e.Error;
+                    return View("InviteConfirm", viewModel);
+                })
+                .Call();
+        }
+
+        [HttpPost, ActionName("InviteConfirm")]
+        public virtual ActionResult InviteConfirmPost(ResetPasswordViewModel model)
+        {
+            return this.ServiceCall(() => _accountService.Invite_Confirm(model))
+                .OnSuccess(m =>
+                {
+                    return Mvc.Root.EmailAccount_Invite_ConfirmSuccess.Redirect(this, routeValues: new { model.Email });
 
                 })
                 .OnFailure(() =>
@@ -310,9 +322,17 @@ namespace ChilliCoreTemplate.Web.Controllers
                 .Call();
         }
 
-        public virtual ActionResult ConfirmInviteSuccess(string email)
+        public virtual ActionResult InviteConfirmSuccess(RegistrationCompleteViewModel model)
         {
-            return View("ConfirmInviteSuccess", model: email);
+            return View(model);
+        }
+
+        [HttpPost]
+        public virtual ActionResult InviteResend(UserTokenModel model)
+        {
+            return this.ServiceCall(() => _accountService.Invite_Resend(model))
+                .Always(() => View("InviteResend"))
+                .Call();
         }
 
         public virtual ActionResult ForgotPassword(string email)
@@ -351,8 +371,6 @@ namespace ChilliCoreTemplate.Web.Controllers
         [HttpPost, ActionName("ResetPassword")]
         public virtual ActionResult ResetPasswordPost(ResetPasswordViewModel model)
         {
-            model.Success = false;
-
             if (!ModelState.IsValid)
             {
                 return View(model);

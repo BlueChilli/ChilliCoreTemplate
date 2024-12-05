@@ -42,6 +42,7 @@ node_modules/
 *.Web/localstorage
 *.Web/logs
 *.Web/logs*
+*.Models/wwwroot
 *.lock
 .vs
 .nuget

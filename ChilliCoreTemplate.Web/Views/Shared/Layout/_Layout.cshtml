@@ -18,11 +18,10 @@
     {
         @await Html.TemplateAsync(TemplateTypes.GoogleTagManager)
     }
-    <link rel="stylesheet" href="~/bundles/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/bundles/stylebundle.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/bundles/bootstrap.min.css" asp-append-version="true" />
     @RenderSection("styles", required: false)
     @await Html.PartialAsync("~/Views/Shared/Layout/_Icons.cshtml")
-    @await Html.PartialAsync("~/Views/Shared/ConfirmationModalHandlebars.cshtml")
 </head>
 
 <body>

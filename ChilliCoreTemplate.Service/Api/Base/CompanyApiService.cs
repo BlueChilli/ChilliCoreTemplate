@@ -167,7 +167,7 @@ namespace ChilliCoreTemplate.Service.Api
             userRole.User.Email = model.Email;
             Context.SaveChanges();
 
-            if (userRole.Status == RoleStatus.Invited) _accountService.Reinvite(userRole.UserId);
+            if (userRole.Status == RoleStatus.Invited) _accountService.Invite_Resend(userRole.UserId);
 
             return ServiceResult.AsSuccess();
         }

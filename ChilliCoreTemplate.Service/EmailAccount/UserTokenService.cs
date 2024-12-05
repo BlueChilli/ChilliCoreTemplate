@@ -64,6 +64,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<User>.AsError(user == null ? "Account not found or access denied" : "Token is invalid or has expired");
         }
 
+        internal ServiceResult Token_Validate(User user, string tokenString)
+        {
+            var tokenKey = ShortGuid.Decode(tokenString);
+
+            var token = user.Tokens.FirstOrDefault(t => t.Token == tokenKey && t.Expiry > DateTime.UtcNow);
+            if (token == null) return ServiceResult.AsError($"Your invitation has expired. Click resend to send a new invite email to {user.Email}");
+
+            return ServiceResult.AsSuccess();
+        }
+
         public ServiceResult<AccountViewModel> User_GetByEmailToken(UserTokenModel model, bool includeDeleted = false)
         {
             var accountResult = User_GetAccountByEmailToken(model);

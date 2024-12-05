@@ -238,7 +238,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         public async Task<ActionResult> InviteResendPost(int id)
         {
             var referrer = await Mvc.Company.User_Invite.IsRefererAsync(HttpContext) ? Mvc.Company.User_Invite : Mvc.Company.User_List;
-            return this.ServiceCall(() => _accountService.Reinvite(id))
+            return this.ServiceCall(() => _accountService.Invite_Resend(id))
                 .OnSuccess(m =>
                 {
                     TempData[PageMessage.Key()] = PageMessage.Success($"{m.FirstName} has been successfully re-invited.");

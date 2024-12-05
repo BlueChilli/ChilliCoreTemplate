@@ -1,21 +1,17 @@
-using AutoMapper;
-using ChilliSource.Cloud.Core;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core;
+using ChilliSource.Cloud.Core.LinqMapper;
+using ChilliSource.Cloud.Web;
 using ChilliSource.Core.Extensions;
 using CsvHelper;
-using CsvHelper.Configuration;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using ChilliSource.Cloud.Web;
-using System.Globalization;
-using ChilliSource.Cloud.Core.LinqMapper;
 
 namespace ChilliCoreTemplate.Service.EmailAccount
 {
@@ -64,14 +60,21 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
         }
 
-        public ServiceResult<AccountViewModel> Reinvite(int id)
+        public ServiceResult Invite_Resend(UserTokenModel model)
+        {
+            var user = GetAccountByEmail(model.Email, includeDeleted: true);
+            var inviteModel = _mapper.Map<InviteEditModel>(user);
+            return ServiceResult.CopyFrom(Invite(inviteModel, sendEmail: true));
+        }
+
+        public ServiceResult<AccountViewModel> Invite_Resend(int id)
         {
             var account = GetAccount(id);
             var model = _mapper.Map<InviteEditModel>(account);
             return Invite(model, sendEmail: true, isReInvite: true);
         }
 
-        public ServiceResult<UserData> ConfirmInvite(ResetPasswordViewModel model)
+        public ServiceResult<UserData> Invite_Confirm(ResetPasswordViewModel model)
         {
             var user = Context.Users.First(a => a.Email == model.Email);
             if (user.Status == UserStatus.Deleted) return ServiceResult<UserData>.AsError("Your invitation has been cancelled.");
@@ -97,6 +100,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 Mixpanel.SendAccountToMixpanel(user, "Invite confirmed");
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
             }
+        }
+
+        public ServiceResult Invite_Confirm_Validate(UserTokenModel model)
+        {
+            var user = GetAccountByEmail(model.Email, includeDeleted: true);
+            if (user == null) return ServiceResult.AsError($"Invitation not found for {model.Email}");
+            if (user.Status == UserStatus.Deleted) return ServiceResult.AsError("Your invitation has been cancelled.");
+            if (user.Status == UserStatus.Activated) return ServiceResult.AsError($"Account {model.Email} already has a password set. Click login to go to the login page.");
+
+            return Token_Validate(user, model.Token);
         }
 
         public ServiceResult<int> Invite_Upload(InviteUploadModel model)

@@ -187,7 +187,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         [HttpPost, ActionName("AdminResend")]
         public ActionResult AdminResendPost(int id, int userId)
         {
-            return this.ServiceCall(() => _accountService.Reinvite(userId))
+            return this.ServiceCall(() => _accountService.Invite_Resend(userId))
                 .OnSuccess(() => { return Ok(); })
                 .OnFailure(() => AdminResend(id, userId))
                 .Call();

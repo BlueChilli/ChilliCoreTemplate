@@ -11,11 +11,7 @@
     var data = new UserTokenModel { Email = Model.Data.Email, Token = Model.Data.Token }.ToTokenModel();
     var url = Model.Data.InviteRole.Role.Value.HasFlag(Role.User)
         ? config.ResolveUrl("~/users/acceptInvite", data)
-        : Mvc.Root.EmailAccount_ConfirmInvite.Url(this.Url, routeValues: data, protocol: "https");
-
-    var forgotPasswordUrl = Model.Data.InviteRole.Role.Value.HasFlag(Role.User)
-        ? config.ResolveUrl("~/users/forgot-password", new { Email = Model.Data.Email })
-        : Mvc.Root.EmailAccount_ForgotPassword.Url(this.Url, routeValues: new { Email = Model.Data.Email }, protocol: "https");
+        : Mvc.Root.EmailAccount_Invite_Confirm.Url(this.Url, routeValues: data, protocol: "https");
 
     var builder = EmailBuilder.CreateDefault(this.Html, EmailConstants.EmailOptions);
 }
@@ -39,7 +35,7 @@
         </mj-text>
         <mj-button mj-class="btn" href="@builder.UrlTrack(Model.TrackingId, Model.TemplateId, url)">Set password</mj-button>
         <mj-text mj-class="paragraph">
-            For your security, this link expires in 7 days, so if you've taken longer than that, click <a target="_blank" href="@forgotPasswordUrl">here</a> to receive a reset password email.
+            For your security, this link expires in 7 days.
         </mj-text>
     </mj-column>
 </mj-section>

@@ -35,8 +35,9 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition EmailAccount_ForgotPasswordSent = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_ResetPassword = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_ResetPasswordSuccess = MvcAction();
-        public readonly IMvcActionDefinition EmailAccount_ConfirmInvite = MvcAction();
-        public readonly IMvcActionDefinition EmailAccount_ConfirmInviteSuccess = MvcAction();
+        public readonly IMvcActionDefinition EmailAccount_Invite_Confirm = MvcAction();
+        public readonly IMvcActionDefinition EmailAccount_Invite_ConfirmSuccess = MvcAction();
+        public readonly IMvcActionDefinition EmailAccount_Invite_Resend = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_Details = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_ChangePassword = MvcAction();
         public readonly IMvcActionDefinition EmailAccount_ChangeDetails = MvcAction();

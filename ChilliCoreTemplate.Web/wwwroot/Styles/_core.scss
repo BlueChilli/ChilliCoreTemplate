@@ -260,6 +260,15 @@ td.text-end > .btn:first-child {
     margin-left: 0;
 }
 
+//datepicker
+.datepicker table tr td.disabled {
+    color: silver;
+}
+
+.datepicker table tr td {
+    color: black;
+}
+
 //common helpers
 .clickable {
     cursor: pointer;
@@ -296,6 +305,12 @@ td.text-end > .btn:first-child {
 .form-floating .chosen-container-single .chosen-single {
     height: 3.5rem;
     line-height: 3.5rem;
+}
+
+//fix chose placeholder being cut off https://github.com/harvesthq/chosen/issues/2029
+.chosen-container .chosen-choices .search-field:only-child,
+.chosen-container .chosen-choices .search-field:only-child input {
+    width: 100% !important;
 }
 
 //conditions component styling

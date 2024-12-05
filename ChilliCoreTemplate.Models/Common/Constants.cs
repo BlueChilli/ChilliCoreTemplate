@@ -15,6 +15,8 @@ namespace ChilliCoreTemplate.Models
 
         public const string DefaultTimezone = "Australia/Sydney";
 
+        public const string DefaultDateFormat = "dd-MM-yyyy";
+
         public static readonly CultureInfo DefaultCulture = CultureInfo.GetCultureInfo("en-AU");
 
         public const string AllowedGraphicExtensions = "jpg, jpeg, png, gif";

@@ -1,0 +1,41 @@
+@model ResetPasswordViewModel
+
+<div condition="Model.Error == null">
+    <h2 class="mb-10">Set password for @Model.Email</h2>
+    @using (Html.BeginFormCustom(Mvc.Root.EmailAccount_Invite_Confirm))
+    {
+        @Html.ValidationSummary()
+        @Html.HiddenFor(model => model.Token)
+        @Html.HiddenFor(model => model.Email)
+
+        @await Html.FieldTemplateInnerForAsync(m => m.NewPassword, new FloatingFieldTemplateOptions { HtmlAttributes = new { autofocus = "autofocus" } })
+        @await Html.FieldTemplateInnerForAsync(m => m.ConfirmPassword, new FloatingFieldTemplateOptions())
+
+        <div class="d-grid gap-1">
+            <button type="submit" class="btn btn-primary">Set my Password</button>
+            @await Html.ButtonAsync(Mvc.Root.EmailAccount_Login, new Template_Button { Text = "Cancel", Style = ButtonStyle.Neutral, Size = ButtonSize.Medium })
+        </div>
+    }
+
+</div>
+<div condition="Model.Error != null">
+    @{
+        var action = Model.Error.Contains("login") ? Mvc.Root.EmailAccount_Login : Model.Error.Contains("expired") ? Mvc.Root.EmailAccount_Invite_Resend : null;
+    }
+    <h2 class="mb-10">Accept invite for @Model.Email</h2>
+
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+    @using (Html.BeginFormCustom(Mvc.Root.EmailAccount_Invite_Resend))
+    {
+        @Html.HiddenFor(model => model.Token)
+        @Html.HiddenFor(model => model.Email)
+
+        <div class="d-grid gap-1 mt-4">
+            <button condition="@Model.Error.Contains("login")" mvc-action="Mvc.Root.EmailAccount_Login" style="Primary" size="Medium">Login</button>
+            <buttonsubmit condition="@Model.Error.Contains("expired")" style="Primary" size="Medium">Resend</buttonsubmit>
+        </div>
+    }
+</div>
+
+

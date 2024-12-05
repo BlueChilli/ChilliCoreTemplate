@@ -44,14 +44,16 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         {
             output.TagName = null;
 
+            var @class = context.AllAttributes.Any(x => x.Name == "class") ? context.AllAttributes["class"].Value : "";
+
             var title = "";
             var hasTitle = !String.IsNullOrEmpty(Title);
             if (hasTitle)
             {
-                var @class = context.AllAttributes.Any(x => x.Name == "class") ? context.AllAttributes["class"].Value : "";
                 title = $"<div class=\"card\"><div class=\"card-header {@class}\">{Title}</div>";
+                @class = "";
             }
-            output.PreContent.SetHtmlContent($"{title}<div class=\"list-group\">");
+            output.PreContent.SetHtmlContent($"{title}<div class=\"list-group {@class}\">");
             output.PostContent.SetHtmlContent($"</div>{(hasTitle ? "</div>" : "")}");
         }
     }

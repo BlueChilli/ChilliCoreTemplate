@@ -51,7 +51,6 @@
       "./node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js",
       "./node_modules/@popperjs/core/dist/umd/popper.min.js",
       "wwwroot/Scripts/moment.min.js",
-      "wwwroot/Scripts/handlebars.min.js",
       "./node_modules/bootstrap/dist/js/bootstrap.js",
       "./node_modules/datatables.net/js/dataTables.min.js",
       "./node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js",

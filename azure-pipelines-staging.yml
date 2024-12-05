@@ -1,0 +1,82 @@
+variables:
+  ServerIP: 'example-staging-c3cda0e3fra5hvb5.scm.australiaeast-01.azurewebsites.net:443'
+  IisSiteName: 'example-staging'
+  Username: '$example-staging'
+  #Password: 'Set in Pipeline'
+  BuildConfiguration: 'Staging'
+  BuildPlatform: 'Any CPU'
+  WebProjectName: 'Example.Web'
+  #AppSettingsSecureFile: 'Set in pipeline'
+  #system.debug: 'true'
+    
+trigger:
+  branches:
+    include:
+    - refs/heads/staging
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/staging
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - checkout: self
+  - task: DownloadSecureFile@1
+    displayName: App Settings (BuildConfiguration)
+    name: appSettings
+    inputs:
+      secureFile: '$(AppSettingsSecureFile)'
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Agent.TempDirectory)'
+      contents: 'appsettings.$(BuildConfiguration).json'
+      targetFolder: '$(System.DefaultWorkingDirectory)\$(WebProjectName)'
+  - task: Npm@1
+    displayName: npm install
+    inputs:
+      workingDir: $(WebProjectName)
+      verbose: false
+  - task: gulp@0
+    displayName: MVC FE Bundles
+    inputs:
+      gulpFile: $(WebProjectName)/gulpfile.js
+  - task: DotNetCoreCLI@2
+    displayName: dotnet publish (package)
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: $(WebProjectName)/*.csproj
+      arguments: -v normal /p:PublishProfile=Profile /p:Configuration=$(BuildConfiguration)
+      verbosityRestore: Detailed
+      verbosityPack: Detailed
+  - task: rschiefer.MSDeployAllTheThings.msdeploy-package-sync.MSDeployPackageSync@0
+    displayName: Deploy
+    inputs:
+      Package: '$(WebProjectName)\obj\$(BuildConfiguration)\Package\$(WebProjectName).zip '
+      DestinationComputer: https://$(ServerIP)/MsDeploy.axd?site=$(IisSiteName)
+      AuthType: Basic
+      Username: $(Username)
+      Password: $(Password)
+      AdditionalArguments: -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -allowUntrusted -retryAttempts=2 -setParam:'IIS Web Application Name'='$(IisSiteName)' -enableRule:AppOffline
+  - task: CmdLine@2
+    displayName: Git Cleanup
+    inputs:
+      script: >
+        git reset --hard HEAD
+      workingDirectory: $(System.DefaultWorkingDirectory)
+  - task: DeleteFiles@1
+    displayName: Clean Binaries
+    inputs:
+      SourceFolder: $(System.DefaultWorkingDirectory)
+      Contents: '**\bin'
+  - task: DeleteFiles@1
+    displayName: Cleanup Output
+    inputs:
+      SourceFolder: $(build.artifactstagingdirectory)
+      Contents: '*.*'
+...

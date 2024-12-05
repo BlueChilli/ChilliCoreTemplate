@@ -73,8 +73,8 @@
                 <tabs>
                 @foreach(var tab in Model.Tabs)
                 {
-                    var i = Model.Tabs.IndexOf(tab) + 1;
-                    <tab id="@i" is-active="i == 1">@tab</tab>
+                    var i = Model.Tabs.IndexOf(tab);
+                    <tab id="@(i + 1)" is-active="i == Model.TabActiveId">@tab</tab>
                 }
                 </tabs>
             }
