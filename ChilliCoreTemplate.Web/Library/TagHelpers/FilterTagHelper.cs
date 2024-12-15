@@ -24,25 +24,10 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     public class FilterTagHelper : TagHelper
     {
 
-        public FieldTemplateSize Size { get; set; } = FieldTemplateSize.Medium;
-
-        private int Gap()
-        {
-            switch (Size)
-            {
-                case FieldTemplateSize.ExtraLarge: return 50;
-                case FieldTemplateSize.Large: return 30;
-                case FieldTemplateSize.Medium: return 20;
-                case FieldTemplateSize.Small: return 10;
-                case FieldTemplateSize.ExtraSmall: return 5;
-            }
-            return 0;
-        }
-
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.Attributes.SetAttribute("class", $"filter-tag d-flex flex-row gap-{Gap()}");
+            output.Attributes.SetAttribute("class", $"filter-tag d-flex flex-wrap gap-3");
         }
     }
 
@@ -50,8 +35,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     {
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            output.TagName = "div";
-            output.Attributes.SetAttribute("class", "d-flex gap-3");
+            output.TagName = "";
         }
     }
 
@@ -60,7 +44,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.Attributes.SetAttribute("class", "d-flex flex-md-grow-1");
+            output.Attributes.SetAttribute("class", "ms-auto");
         }
     }
 }

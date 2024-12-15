@@ -54,9 +54,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
             var data = _service.Users_Query(model);
             var total = _service.Users_Total();
 
-            var response = DataTablesResponse.Create(model, total, data.TotalCount, data.ToList());
-
-            return new DataTablesJsonResult(response, true);
+            return model.GetActionResult(total, data.TotalCount, data);
         }
 
         [HttpPost]
@@ -180,7 +178,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         //    var response = DataTablesResponse.Create(model, total, data.TotalCount, data.ToList());
 
-        //    return new DataTablesJsonResult(response, true);
+        //    return new DataTablesJsonResult(response);
         //}
 
         //public virtual ActionResult ActivityDetail(int id)
@@ -312,7 +310,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
         ////    var count = _accountService.Email_Count();
 
         ////    var response = DataTablesResponse.Create(model, count, data.TotalCount, data.ToList());
-        ////    return new DataTablesJsonResult(response, true);
+        ////    return new DataTablesJsonResult(response);
         ////}
 
         ////public ActionResult EmailsDetail(int id)

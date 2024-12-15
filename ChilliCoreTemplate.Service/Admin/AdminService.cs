@@ -102,7 +102,7 @@ namespace ChilliCoreTemplate.Service.Admin
             var sortColumn = model.Columns.FirstOrDefault(c => c.Sort != null);
             if (sortColumn == null || sortColumn.Field == "firstName")
             {
-                queryOrdered = sortColumn.Sort?.Direction == SortDirection.Descending
+                queryOrdered = sortColumn?.Sort?.Direction == SortDirection.Descending
                     ? query.OrderByDescending(x => x.FirstName)
                     : query.OrderBy(x => x.FirstName == null).ThenBy(x => x.FirstName);
             }

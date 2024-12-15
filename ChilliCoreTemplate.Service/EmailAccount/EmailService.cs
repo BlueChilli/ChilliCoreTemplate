@@ -153,7 +153,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var sortColumn = model.Columns.FirstOrDefault(c => c.Sort != null);
             if (sortColumn == null || sortColumn.Field == "dateQueuedDisplay")
             {
-                queryOrdered = sortColumn.Sort?.Direction == SortDirection.Ascending
+                queryOrdered = sortColumn?.Sort?.Direction == SortDirection.Ascending
                     ? query.OrderBy(e => e.DateQueued)
                     : query.OrderByDescending(e => e.DateQueued);
             }

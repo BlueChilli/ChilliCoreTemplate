@@ -44,7 +44,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _service.List(model);
             var count = _service.Company_Count();
 
-            return new DataTablesJsonResult(DataTablesResponse.Create(model, count, data.TotalCount, data), true);
+            return model.GetActionResult(count, data.TotalCount, data);
         }
 
         public JsonResult ListJson(string term)
@@ -139,7 +139,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _service.Company_Admin_List(model, id, Role.CompanyAdmin);
             var count = _service.Company_Admin_Count(id, Role.CompanyAdmin);
 
-            return new DataTablesJsonResult(DataTablesResponse.Create(model, count, data.TotalCount, data.ToList()), true);
+            return model.GetActionResult(count, data.TotalCount, data);
         }
 
         [HttpPost]

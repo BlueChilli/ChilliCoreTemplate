@@ -2,6 +2,7 @@ using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Admin;
 using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliCoreTemplate.Models.Sms;
 using ChilliCoreTemplate.Service.Admin;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliCoreTemplate.Web.Controllers;
@@ -56,9 +57,9 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _service.Users_Query(model);
             var total = _service.Users_Total();
 
-            var response = DataTablesResponse.Create(model, total, data.TotalCount, data.ToList());
+            var response = DataTablesResponse<UserSummaryViewModel>.Create(model, total, data.TotalCount, data);
 
-            return new DataTablesJsonResult(response, true);
+            return new JsonResult(response);
         }
 
         public JsonResult UsersJson(string term, Role? role = null)
@@ -270,9 +271,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _service.GetActivities(model, dateFrom, dateTo, entityType, activityType, userId);
             var total = _service.GetActivityTotal();
 
-            var response = DataTablesResponse.Create(model, total, data.TotalCount, data.ToList());
-
-            return new DataTablesJsonResult(response, true);
+            return model.GetActionResult(total, data.TotalCount, data);
         }
 
         public virtual ActionResult ActivityDetail(int id)
@@ -406,8 +405,8 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _accountService.Email_Search(model, dateFrom, dateTo, userId);
             var count = _accountService.Email_Count();
 
-            var response = DataTablesResponse.Create(model, count, data.TotalCount, data.ToList());
-            return new DataTablesJsonResult(response, true);
+            var response = DataTablesResponse<EmailSummaryModel>.Create(model, count, data.TotalCount, data.ToList());
+            return new JsonResult(response);
         }
 
         public ActionResult EmailsDetail(int id)
@@ -467,8 +466,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _service.Sms_Search(model, dateFrom, dateTo);
             var count = _service.Sms_Count();
 
-            var response = DataTablesResponse.Create(model, count, data.TotalCount, data.ToList());
-            return new DataTablesJsonResult(response, true);
+            return model.GetActionResult(count, data.TotalCount, data);
         }
 
         public ActionResult SmsDetail(int id)
@@ -494,8 +492,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _accountService.Error_Search(model, dateFrom, dateTo, search);
             var count = _accountService.Error_Count();
 
-            var response = DataTablesResponse.Create(model, count, data.TotalCount, data.ToList());
-            return new DataTablesJsonResult(response, true);
+            return model.GetActionResult(count, data.TotalCount, data);
         }
 
         public ActionResult ErrorDetail(int id)
@@ -520,8 +517,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             var data = _accountService.PushNotification_Search(model, dateFrom, dateTo);
             var count = _accountService.PushNotification_Count();
 
-            var response = DataTablesResponse.Create(model, count, data.TotalCount, data.ToList());
-            return new DataTablesJsonResult(response, true);
+            return model.GetActionResult(count, data.TotalCount, data);
         }
 
         public ActionResult NotificationDetail(int id)

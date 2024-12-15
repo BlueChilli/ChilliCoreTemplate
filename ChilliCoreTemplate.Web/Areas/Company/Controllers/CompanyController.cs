@@ -104,7 +104,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
             var data = _service.Company_Admin_List(model, id, Role.CompanyAdmin);
             var count = _service.Company_Admin_Count(id, Role.CompanyAdmin);
 
-            return new DataTablesJsonResult(DataTablesResponse.Create(model, count, data.TotalCount, data.ToList()), true);
+            return model.GetActionResult(count, data.TotalCount, data);
         }
 
         [HttpPost]

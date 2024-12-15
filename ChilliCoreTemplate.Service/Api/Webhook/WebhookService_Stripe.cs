@@ -120,8 +120,8 @@ namespace ChilliCoreTemplate.Service.Api
                     //case Stripe.Events.InvoiceUpcoming:
                     //    result = ProcessInvoiceUpcoming(stripeEvent);
                     //    break;
-                    //case Stripe.Events.InvoicePaymentSucceeded:
-                    //    result = ProcessInvoicePaymentSucceeded(stripeEvent);
+                    //case Stripe.Events.InvoicePaid:
+                    //    result = ProcessInvoicePaid(stripeEvent);
                     //    break;
                     //case Stripe.Events.InvoicePaymentFailed:
                     //    result = ProcessInvoicePaymentFailed(stripeEvent);
@@ -279,7 +279,7 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.AsSuccess();
         }
 
-        private ServiceResult ProcessInvoicePaymentSucceeded(Stripe.Event stripeEvent)
+        private ServiceResult ProcessInvoicePaid(Stripe.Event stripeEvent)
         {
             var model = stripeEvent.Data.Object as Invoice;
 
