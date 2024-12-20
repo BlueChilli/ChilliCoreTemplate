@@ -44,7 +44,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.Attributes.SetAttribute("class", "ms-auto");
+            output.Attributes.SetAttribute("class", "ms-auto flex-grow-1");
         }
     }
 }

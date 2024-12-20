@@ -192,9 +192,9 @@ namespace ChilliCoreTemplate.Web.Api
 
         [HttpPost]
         [Route("slack")]
-        public virtual IActionResult Slack(Guid? password = null)
+        public async Task<IActionResult> Slack(Guid? password = null)
         {
-            if (password == new Guid("3444B9DE-CEE2-4CB9-B8FF-0C1F78973764")) _slack.Channel_Post_Task(null);
+            if (password == new Guid("3444B9DE-CEE2-4CB9-B8FF-0C1F78973764")) await _slack.Channel_Post_Task(null);
             return Ok(new { result = "OK" });
         }
 

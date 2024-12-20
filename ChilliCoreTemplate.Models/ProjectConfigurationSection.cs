@@ -833,14 +833,39 @@ namespace ChilliCoreTemplate.Models
         }
 
         /// <summary>
-        /// Message destination
+        /// Message destinations
         /// </summary>
-        public string WebhookUrl => _section.GetString("WebhookUrl");
+        public List<SlackWebhookConfigurationElement> Webhooks => _section.GetSection("Webhooks").GetChildren().Select(x => new SlackWebhookConfigurationElement(x)).ToList();
 
         /// <summary>
         /// Only when enabled will slack service attempt to send messages (defaults to false if not specified)
         /// </summary>
         public bool Enabled => _section.GetValue<bool?>("Enabled") ?? false;
 
+    }
+
+    public class SlackWebhookConfigurationElement
+    {
+        private readonly IConfigurationSection _section;
+
+        public SlackWebhookConfigurationElement(IConfigurationSection section)
+        {
+            _section = section;
+        }
+
+        /// <summary>
+        /// Channel type
+        /// </summary>
+        public SlackChannelType Type => EnumHelper.Parse<SlackChannelType>(_section.GetString("Type"));
+
+        /// <summary>
+        /// Message destination
+        /// </summary>
+        public string Url => _section.GetString("Url");
+    }
+
+    public enum SlackChannelType
+    {
+        Default
     }
 }

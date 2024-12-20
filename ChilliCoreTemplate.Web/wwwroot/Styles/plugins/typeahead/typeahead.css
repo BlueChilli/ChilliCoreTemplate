@@ -6,6 +6,10 @@
     width: 322px;
 }
 
+.twitter-typeahead-100 .twitter-typeahead {
+    width: 100%;
+}
+
 .input-group .twitter-typeahead .tt-input {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
