@@ -50,8 +50,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     QueueMail(RazorTemplates.InviteUser, account.Email, new RazorTemplateDataModel<InviteEditModel> { Data = model });
                 }
 
-                Mixpanel.SendAccountToMixpanel(account, "Invite", data: new Dictionary<string, object> { { "Company", role.CompanyName } });
-
                 return ServiceResult<AccountViewModel>.AsSuccess(_mapper.Map<AccountViewModel>(account));
             }
             else
@@ -97,7 +95,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     user.ActivatedDate = DateTime.UtcNow;
                 }
 
-                Mixpanel.SendAccountToMixpanel(user, "Invite confirmed");
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
             }
         }

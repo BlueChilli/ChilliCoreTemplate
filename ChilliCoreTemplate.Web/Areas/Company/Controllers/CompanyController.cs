@@ -17,11 +17,13 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
     [CustomAuthorize(Roles = AccountCommon.CompanyAdmin)]
     public class CompanyController : Controller
     {
-        private CompanyService _service;
+        private readonly CompanyService _service;
+        private readonly AccountService _accountService;
 
-        public CompanyController(CompanyService service)
+        public CompanyController(CompanyService service, AccountService accountService)
         {
             _service = service;
+            _accountService = accountService;
         }
 
         public ActionResult Index()
@@ -40,6 +42,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
             return this.ServiceCall(() => _service.SaveSettings(model))
                 .OnSuccess(m =>
                 {
+                    _accountService.Session_Clear(User.Session()?.Id);
                     TempData[PageMessage.Key()] = PageMessage.Success("Settings has been successfully saved");
                     return Mvc.Company.Default.Redirect(this);
                 })
@@ -151,7 +154,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public ActionResult Impersonate(int id)
         {
-            return this.ServiceCall(() => _service.Company_Impersonate(id, this.LoginWithPrincipal))
+            return this.ServiceCall(() => _accountService.ImpersonateCompany(id, this.LoginWithPrincipal))
                 .OnSuccess(m =>
                 {
                     return new RedirectResult(Mvc.Company.User_List.Url(this));

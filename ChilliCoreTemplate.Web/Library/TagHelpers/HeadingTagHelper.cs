@@ -1,13 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Routing;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.TagHelpers
 {
@@ -62,9 +55,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     {
         public string Title { get; set; }
 
-        public bool PreWrap { get; set; } = true;
-
-        //<p style=\"{(PreWrap ? "white-space: pre-wrap" : "")}\">
+        public bool PreWrap { get; set; }
 
         public HeadingFormat Format { get; set; }
 
@@ -74,8 +65,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
             if (Format == HeadingFormat.Inline)
             {
-                output.PreContent.SetHtmlContent($"<div class=\"list-group-item d-flex justify-content-between align-items-start\"><div class=\"ms-2\"><div><strong>{Title}</strong></div></div>");
-                output.PostContent.SetHtmlContent("</div>");
+                output.PreContent.SetHtmlContent($"<div class=\"list-group-item d-flex justify-content-between align-items-start\"><div class=\"ms-2\"><div><strong>{Title}</strong></div></div>{(PreWrap ? "<span style=\"white-space: pre-wrap\">" : "")}");
+                output.PostContent.SetHtmlContent($"{(PreWrap ? "</span>" : "")}</div>");
             }
             else
             {

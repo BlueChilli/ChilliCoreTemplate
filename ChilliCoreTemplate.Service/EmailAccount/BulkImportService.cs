@@ -142,6 +142,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                         //    await scopedService.Email_Unsubscribe_ImportTask(next, executionInfo);
                         //}
                     }
+                    else if (next.Type == BulkImportType.Migration)
+                    {
+                        using var scope = _scopeFactory.CreateScope();
+                        var scopedService = scope.ServiceProvider.GetRequiredService<Admin.MigrationService>();
+                        await scopedService.Run(next, executionInfo);
+                    }
                 }
             }
             catch (Exception ex)

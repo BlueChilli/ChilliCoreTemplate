@@ -1990,7 +1990,7 @@
           "LazyCache.AspNetCore": "[2.4.0, )",
           "MailKit": "[4.8.0, )",
           "Microsoft.Azure.NotificationHubs": "[4.2.0, )",
-          "MiniProfiler.AspNetCore.Mvc": "[4.3.8, )",
+          "MiniProfiler.AspNetCore.Mvc": "[4.5.4, )",
           "Mjml.Net": "[3.8.0, )",
           "RestSharp.Serializers.NewtonsoftJson": "[112.1.0, )",
           "Sqids": "[3.1.0, )",

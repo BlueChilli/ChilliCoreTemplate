@@ -18,13 +18,13 @@ namespace ChilliCoreTemplate.Web.Api
     public class CompaniesController : ControllerBase
     {
         CompanyApiService _service;
-        CompanyService _companyService;
+        AccountService _accountService;
         UserApiWebService _webService;
 
-        public CompaniesController(CompanyApiService service, CompanyService companyService, UserApiWebService webService)
+        public CompaniesController(CompanyApiService service, AccountService accountService, UserApiWebService webService)
         {
             _service = service;
-            _companyService = companyService;
+            _accountService = accountService;
             _webService = webService;
         }
 
@@ -66,7 +66,7 @@ namespace ChilliCoreTemplate.Web.Api
         [ProducesResponseType(typeof(SessionSummaryApiModel), StatusCodes.Status200OK)]
         public virtual IActionResult Impersonate(int id)
         {
-            return this.ApiServiceCall(() => _companyService.Company_Impersonate(id, this.LoginWithPrincipal))
+            return this.ApiServiceCall(() => _accountService.ImpersonateCompany(id, this.LoginWithPrincipal))
                 .OnSuccess(x => { return Ok(_webService.GetSessionSummary(x.Result, includeUserKey: true)); })
                 .Call();
         }

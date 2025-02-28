@@ -377,15 +377,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return query.Where(x => false);
         }
 
-        public ServiceResult<UserDataPrincipal> Company_Impersonate(int companyId, Action<UserDataPrincipal> loginAction)
-        {
-            var adminAccount = Context.UserRoles.FirstOrDefault(a => a.CompanyId == companyId && a.User.Status != UserStatus.Deleted && a.Role.HasFlag(Role.CompanyAdmin));
-
-            if (adminAccount == null) return ServiceResult<UserDataPrincipal>.AsError("Company does not have administrator account that can be impersonated");
-
-            return _accountService.ImpersonateAccount(adminAccount.UserId, loginAction);
-        }
-
         public ServiceResult<string> CsvFileForExport()
         {
             var records = Context.UserRoles

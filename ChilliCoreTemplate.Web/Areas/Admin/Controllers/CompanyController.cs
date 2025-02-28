@@ -203,7 +203,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult Impersonate(int id)
         {
-            return this.ServiceCall(() => _service.Company_Impersonate(id, this.LoginWithPrincipal))
+            return this.ServiceCall(() => _accountService.ImpersonateCompany(id, this.LoginWithPrincipal))
                 .OnSuccess(m =>
                 {
                     return Mvc.Root.Entry_ImpersonateRedirect.Redirect(this);

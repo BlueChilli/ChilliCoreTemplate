@@ -69,7 +69,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public enum BulkImportType
     {
-        EmailUser = 1
+        EmailUser = 1,
+        Migration = 2
     }
 
     public enum BulkImportStatus

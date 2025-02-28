@@ -56,6 +56,9 @@ namespace ChilliCoreTemplate.Web
 
             manager.RegisterTaskType(typeof(WebhookTask), new TaskSettings(TaskDescription.WebhookTask_Id));
             manager.EnqueueRecurrentTask<WebhookTask>((long)TimeSpan.FromSeconds(10).TotalMilliseconds);
+
+            manager.RegisterTaskType(typeof(BulkImportTask), new TaskSettings(TaskDescription.BulkImportTask_Id));
+            manager.EnqueueRecurrentTask<BulkImportTask>((long)TimeSpan.FromSeconds(120).TotalMilliseconds);
         }
 
         public void StartListenner()

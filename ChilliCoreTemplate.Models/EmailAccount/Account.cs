@@ -106,12 +106,12 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [Required, DataType(DataType.Password), Placeholder("Create a password for this account"), MinLength(6), MaxLength(50)]
         public string Password { get; set; }
 
-        [MustBeTrue(ErrorMessage = "Please accept terms and conditions"), CheckBox]
+        [MustBeTrue(ErrorMessage = "Please accept the terms and conditions"), CheckBox]
         public bool AcceptTermsConditions { get; set; }
 
         public Role Roles { get; set; }
 
-        public Guid? MixpanelTempId { get; set; }
+        public Guid? AnonymousUserId { get; set; }
 
         /// <summary>
         /// If true user is unknown and won't be sent emails. 

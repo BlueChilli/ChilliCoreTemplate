@@ -16,6 +16,9 @@ namespace ChilliCoreTemplate.Web
             var userData = context.HttpContext.User?.UserData();
             if (userData == null) return;
 
+            if (!userData.CompanyIsSetup && userData.CompanyId.HasValue && !userData.IsMasterCompany)
+                return;
+
             if (userData.IsMfaVerified || (userData.IsImpersonated() && userData.Impersonator.IsMfaVerified))
                 return;
 

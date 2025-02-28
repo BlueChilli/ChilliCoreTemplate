@@ -43,7 +43,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         [DateTimeKind]
         public DateTime? FinishedOn { get; set; }
 
-        public async Task FatalErrorAsync<T>(DataContext context, string error)
+        public async Task FatalErrorAsync(DataContext context, string error)
         {
             Errors = error;
             FinishedOn = DateTime.UtcNow;

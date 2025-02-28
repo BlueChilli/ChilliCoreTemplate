@@ -18,6 +18,8 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult Index()
         {
+            var userData = User.UserData();
+            if (!userData.CompanyIsSetup) return Mvc.Company.Company_Settings.Redirect(this);
             return Mvc.Company.User_List.Redirect(this);
         }
     }

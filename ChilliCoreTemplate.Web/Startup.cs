@@ -414,7 +414,7 @@ namespace ChilliCoreTemplate.Web
             //app.UseCookiePolicy();
 
             app.UseAuthentication();
-            app.UseWhen(context => context.Request.IsApiRequest(), builder =>
+            app.UseWhen(context => context.Request.IsApiRequest(env.IsStaging() ? "/EmailAccount/EmailNotification" : ""), builder =>
             {
                 builder.UseMiddleware<UserKeyMiddleware>();
                 builder.UseMiddleware<CompanyKeyMiddleware>();

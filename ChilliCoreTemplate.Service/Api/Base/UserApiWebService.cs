@@ -91,7 +91,8 @@ namespace ChilliCoreTemplate.Service.Api
         public SessionSummaryApiModel GetSessionSummary(UserDataPrincipal principal, bool includeUserKey = false)
         {
             Guid.TryParse(principal.Id, out var sessionGuid);
-            return GetSessionSummary(principal.UserData, includeUserKey ? (Guid?)sessionGuid : null);
+            var session = _session.Get(sessionGuid.ToString());
+            return GetSessionSummary(session);
         }
 
         private SessionSummaryApiModel GetSessionSummary(SessionInfo sessionInfo)

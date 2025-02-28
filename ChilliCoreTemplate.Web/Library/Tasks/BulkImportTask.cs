@@ -3,24 +3,19 @@ using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Distributed;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Tasks
 {
-    public class BulkImportTask : IDistributedTask<object>
+    public class BulkImportTask : IDistributedTaskAsync<object>
     {
-        public void Run(object parameter, ITaskExecutionInfo executionInfo)
+        public async Task RunAsync(object parameter, ITaskExecutionInfoAsync executionInfo)
         {
 
-            TaskHelper.WaitSafeSync(async () =>
-            {
-                using (var scope = ScopeContextFactory.Instance.CreateScope())
-                {
-                    var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
-                    
-                    await svc.Execute(executionInfo);
-                }
-            });
-           
+            using var scope = ScopeContextFactory.Instance.CreateScope();
+            var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
+
+            await svc.Execute(executionInfo);
         }
     }
 }

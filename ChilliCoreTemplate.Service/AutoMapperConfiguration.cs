@@ -39,7 +39,8 @@ namespace ChilliCoreTemplate.Service
 
             CreateMap<CompanySettingsModel, Company>()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.LogoPath, opt => opt.Ignore());
+                .ForMember(dest => dest.LogoPath, opt => opt.Ignore())
+                .ForMember(dest => dest.IsSetup, opt => opt.MapFrom(src => true));
         }
 
         public void Configure()
@@ -61,6 +62,7 @@ namespace ChilliCoreTemplate.Service
                         dest.CompanyId = company.Id;
                         dest.CompanyLogoPath = company.LogoPath;
                         dest.CompanyName = company.Name;
+                        dest.CompanyIsSetup = company.IsSetup;
                         dest.Timezone = company.Timezone;
                         dest.IsMasterCompany = company.IsMasterCompany;
                     }
@@ -83,7 +85,7 @@ namespace ChilliCoreTemplate.Service
 
             CreateMap<AccountViewModel, RegistrationViewModel>();
             CreateMap<RegistrationApiModel, RegistrationViewModel>()
-                .ForMember(dest => dest.MixpanelTempId, opt => opt.MapFrom(src => src.AnonymousUserId));
+                .ForMember(dest => dest.AnonymousUserId, opt => opt.MapFrom(src => src.AnonymousUserId));
 
             CreateMap<RegistrationViewModel, UserCreateModel>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.IsAnonymous ? UserStatus.Anonymous : UserStatus.Registered))

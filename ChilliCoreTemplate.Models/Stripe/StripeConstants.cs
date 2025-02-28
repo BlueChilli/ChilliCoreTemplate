@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Models.Stripe
 {
-    //For use with paymentmethods api
     public static class StripeConstants
     {
         public const string DefaultCurrency = "aud";
@@ -14,6 +13,12 @@ namespace ChilliCoreTemplate.Models.Stripe
         public const string CreditCard = "card";
         public const string DirectDebit = "au_becs_debit";
 
-        public static readonly List<string> PaymentMethods = [CreditCard, DirectDebit];
+        public const string SubscriptionTrial = "trialing";
+        public const string SubscriptionActive = "active";
+        public const string SubscriptionOverdue = "past_due";
+
+        //Metadata
+        public const string COMPANYID = "CompanyId";
+        public const string SYSTEM = "System";
     }
 }

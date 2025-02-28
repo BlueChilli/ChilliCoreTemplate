@@ -23,6 +23,11 @@ namespace ChilliCoreTemplate.Web
             return request.Path.StartsWithSegments(ApiPrefix);
         }
 
+        public static bool IsApiRequest(this HttpRequest request, string additionalPath)
+        {
+            return IsApiRequest(request) || request.Path.StartsWithSegments(additionalPath);
+        }
+
         internal static async Task ExceptionHandler(HttpContext context, bool showErrors)
         {
             var feature = context.Features.Get<IExceptionHandlerPathFeature>();

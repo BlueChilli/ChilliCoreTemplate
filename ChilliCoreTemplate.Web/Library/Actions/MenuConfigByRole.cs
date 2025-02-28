@@ -74,10 +74,16 @@ namespace ChilliCoreTemplate.Web
                 }
                 else
                 {
-                    cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "people").SetChildren(
-                            cfg.CreateBreadcrumb(Mvc.Company.User_Detail),
-                            cfg.CreateBreadcrumb(Mvc.Company.User_Invite)
-                        );
+                    if (cfg.UserData.CompanyIsSetup)
+                    {
+                        cfg.AddRoot(Mvc.Company.User_List, title: "Users", icon: "people").SetChildren(
+                                cfg.CreateBreadcrumb(Mvc.Company.User_Detail),
+                                cfg.CreateBreadcrumb(Mvc.Company.User_Invite)
+                            );
+                    }
+                    cfg.AddRoot(Mvc.Company.Company_Settings, title: "Clinic settings", icon: "gear").SetChildren(
+                        cfg.CreateBreadcrumb(Mvc.Company.Company_Settings)
+                    );
                 }
             });
         }

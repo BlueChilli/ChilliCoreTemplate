@@ -11,6 +11,24 @@ namespace ChilliCoreTemplate.Service
     {
         private const string SubscriptionCacheKey = "Subscriptions";
 
+        public ServiceResult<List<Subscription>> Subscription_Search(string status)
+        {
+            try
+            {
+                var service = new SubscriptionService(_client);
+                var customers = service.SearchAutoPaging(new SubscriptionSearchOptions { Query = $@"status:""{status}""" }).ToList();
+                return ServiceResult<List<Subscription>>.AsSuccess(customers);
+            }
+            catch (Exception ex)
+            {
+                if (ex is not StripeException)
+                {
+                    ex.LogException();
+                }
+                return ServiceResult<List<Subscription>>.AsError(ex.Message);
+            }
+        }
+
         internal ServiceResult<Subscription> Subscription_Create(string customerId, SubscriptionCreateOptions options)
         {
             options.Customer = customerId;

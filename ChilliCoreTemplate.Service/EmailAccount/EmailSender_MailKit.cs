@@ -119,7 +119,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var result = await client.SendAsync(message);
 
                 if (!result.StartsWith(mailSettings.OkMatch, StringComparison.OrdinalIgnoreCase)) return ServiceResult<string>.AsError(error: result);
-                result = result.Substring(2).Trim();
+                result = result.Substring(mailSettings.OkMatch.Length).Trim();
                 return ServiceResult<string>.AsSuccess(String.IsNullOrEmpty(result) ? null : result);
             }
             catch (Exception ex)

@@ -193,10 +193,9 @@ namespace ChilliCoreTemplate.Web.Controllers
         public virtual ActionResult Registration(RegistrationViewModel model)
         {
             ModelState.Clear();
-            model.MixpanelTempId = Guid.NewGuid();
+            model.AnonymousUserId = Guid.NewGuid();
             model.Roles = _registrationRole;
             model.OAuthUrls = OAuthUrls();
-            Mixpanel.SendEventToMixpanel(model.MixpanelTempId.ToString(), "Signup form");
             return View(model);
         }
 
@@ -341,6 +340,7 @@ namespace ChilliCoreTemplate.Web.Controllers
         }
 
         [HttpPost, ActionName("ForgotPassword")]
+        [GoogleRecaptcha(Score = 0.75)]
         [ValidateAntiForgeryToken]
         public virtual ActionResult ForgotPassword(ResetPasswordRequestModel model)
         {
@@ -501,7 +501,7 @@ namespace ChilliCoreTemplate.Web.Controllers
         public async Task<ActionResult> EmailNotification()
         {
             Models.Aws.SnsMessage model;
-            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
                 model = (await reader.ReadToEndAsync()).FromJson<Models.Aws.SnsMessage>();
             }

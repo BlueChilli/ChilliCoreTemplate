@@ -7,45 +7,62 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChilliCoreTemplate.Service
+namespace ChilliCoreTemplate.Service;
+
+public partial class StripeService
 {
-    public partial class StripeService
+    public ServiceResult<List<PaymentMethod>> PaymentMethod_List(string customerId)
     {
-        public ServiceResult<PaymentMethod> PaymentMethod_Get(string id)
+        try
         {
-            try
-            {
-                var service = new Stripe.PaymentMethodService(_client);
-                var response = service.Get(id);
-                return ServiceResult<PaymentMethod>.AsSuccess(response);
-            }
-            catch (Exception ex)
-            {
-                if (!(ex is StripeException))
-                {
-                    ex.LogException();
-                }
-                return ServiceResult<PaymentMethod>.AsError(ex.Message);
-            }
+            var service = new Stripe.PaymentMethodService(_client);
+            var response = service.List(new PaymentMethodListOptions { Customer = customerId });
+            return ServiceResult<List<PaymentMethod>>.AsSuccess(response.ToList());
         }
-
-        public ServiceResult<PaymentMethod>PaymentMethod_Delete(string id)
+        catch (Exception ex)
         {
-            try
+            if (!(ex is StripeException))
             {
-                var service = new Stripe.PaymentMethodService(_client);
-                var response = service.Detach(id);
-                return ServiceResult<PaymentMethod>.AsSuccess(response);
+                ex.LogException();
             }
-            catch (Exception ex)
-            {
-                if (!(ex is StripeException))
-                {
-                    ex.LogException();
-                }
-                return ServiceResult<PaymentMethod>.AsError(ex.Message);
-            }
+            return ServiceResult<List<PaymentMethod>>.AsError(ex.Message);
         }
-
     }
+
+    public ServiceResult<PaymentMethod> PaymentMethod_Get(string id)
+    {
+        try
+        {
+            var service = new Stripe.PaymentMethodService(_client);
+            var response = service.Get(id);
+            return ServiceResult<PaymentMethod>.AsSuccess(response);
+        }
+        catch (Exception ex)
+        {
+            if (!(ex is StripeException))
+            {
+                ex.LogException();
+            }
+            return ServiceResult<PaymentMethod>.AsError(ex.Message);
+        }
+    }
+
+    public ServiceResult<PaymentMethod>PaymentMethod_Delete(string id)
+    {
+        try
+        {
+            var service = new Stripe.PaymentMethodService(_client);
+            var response = service.Detach(id);
+            return ServiceResult<PaymentMethod>.AsSuccess(response);
+        }
+        catch (Exception ex)
+        {
+            if (!(ex is StripeException))
+            {
+                ex.LogException();
+            }
+            return ServiceResult<PaymentMethod>.AsError(ex.Message);
+        }
+    }
+
 }

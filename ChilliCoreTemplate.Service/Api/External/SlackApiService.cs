@@ -26,23 +26,23 @@ public class SlackApiService : IService
         _environment = environment;
     }
 
-    public async Task Channel_Post_Task(ITaskExecutionInfo executionInfo)
+    public async Task ChannelPost_Task(ITaskExecutionInfo executionInfo)
     {
-        if (executionInfo != null)
-        {
-            executionInfo.SendAliveSignal();
-            if (executionInfo.IsCancellationRequested)
-                return;
-        }
-
         if (_config.SlackSettings.Enabled)
         {
+            if (executionInfo != null)
+            {
+                executionInfo.SendAliveSignal();
+                if (executionInfo.IsCancellationRequested)
+                    return;
+            }
+
             var dateToCheckFrom = DateTime.UtcNow.AddDays(-1);
             var loginsIn24Hours = Context.Users.Count(x => x.LastLoginDate >= dateToCheckFrom);
             var accountsIn24Hours = Context.Users.Count(x => x.CreatedDate >= dateToCheckFrom);
             var companyAccountsIn24Hours = Context.Users.Count(x => x.CreatedDate >= dateToCheckFrom && x.UserRoles.Any(r => r.CompanyId != null));
 
-            await Channel_Post(SlackChannelType.Default,
+            await ChannelPostAsync(SlackChannelType.Default,
                 $"\n" +
                 $"*Daily Updates* \n" +
                 $"> {loginsIn24Hours} logins.\n" +
@@ -51,25 +51,21 @@ public class SlackApiService : IService
         }
     }
 
-    public async Task Channel_Post(SlackChannelType channel, string text)
+    public async Task ChannelPostAsync(string text)
     {
-        var message = new SlackMessage { Text = text };
+        await ChannelPostAsync(SlackChannelType.Default, text);
+    }
+
+    public async Task ChannelPostAsync(SlackChannelType channel, string text)
+    {
         try
         {
             if (_config.SlackSettings.Enabled)
             {
-                var hook = _config.SlackSettings.Webhooks.Where(x => x.Type == channel).First();
-                using (var client = new HttpClient())
-                {
-                    if (!_environment.IsProduction()) //Add environment name to the message
-                    {
-                        message.Text += $"\n_({_environment.EnvironmentName})_";
-                    }
-                    // Set the request content
-                    var content = new StringContent(JsonConvert.SerializeObject(message), Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync(hook.Url, content);
-                    response.EnsureSuccessStatusCode();
-                }
+                var message = CreateMessage(channel, text);
+                var client = new HttpClient();
+                var response = await client.SendAsync(message);
+                response.EnsureSuccessStatusCode();
             }
         }
         catch (Exception ex)
@@ -78,7 +74,35 @@ public class SlackApiService : IService
         }
     }
 
+    public void ChannelPost(SlackChannelType channel, string text)
+    {
+        try
+        {
+            if (_config.SlackSettings.Enabled)
+            {
+                var message = CreateMessage(channel, text);
+                var client = new HttpClient();
+                var response = client.Send(message);
+                response.EnsureSuccessStatusCode();
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.LogException();
+        }
+    }
 
+    private HttpRequestMessage CreateMessage(SlackChannelType channel, string text)
+    {
+        var message = new SlackMessage { Text = text };
+        if (!_environment.IsProduction()) //Add environment name to the message
+        {
+            message.Text += $"\n_({_environment.EnvironmentName})_";
+        }
+        var content = new StringContent(JsonConvert.SerializeObject(message), Encoding.UTF8, "application/json");
+        var hook = _config.SlackSettings.Webhooks.Where(x => x.Type == channel).First();
+        return new HttpRequestMessage(HttpMethod.Post, hook.Url) { Content = content };
+    }
 }
 
 public class SlackMessage

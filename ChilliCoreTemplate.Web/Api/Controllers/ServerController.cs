@@ -48,7 +48,7 @@ namespace ChilliCoreTemplate.Web.Api
         }
 
         //Note that calls to api/server are not logged in ApiLogs
-
+        [HttpHead("tick")]
         [HttpGet("tick")]
         public virtual IActionResult ServerTick()
         {
@@ -194,7 +194,7 @@ namespace ChilliCoreTemplate.Web.Api
         [Route("slack")]
         public async Task<IActionResult> Slack(Guid? password = null)
         {
-            if (password == new Guid("3444B9DE-CEE2-4CB9-B8FF-0C1F78973764")) await _slack.Channel_Post_Task(null);
+            if (password == new Guid("3444B9DE-CEE2-4CB9-B8FF-0C1F78973764")) await _slack.ChannelPost_Task(null);
             return Ok(new { result = "OK" });
         }
 

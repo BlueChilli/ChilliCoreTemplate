@@ -63,7 +63,7 @@ namespace ChilliCoreTemplate.Models.Api
         public bool IsAnonymous { get; set; }
 
         /// <summary>
-        /// eg Id used to track actions in mixpanel before account created. Not related to IsAnonymous.
+        /// eg Id used to track actions before account offically created. Not related to IsAnonymous.
         /// </summary>
         public Guid? AnonymousUserId { get; set; }
 
@@ -108,7 +108,7 @@ namespace ChilliCoreTemplate.Models.Api
         [EmailAddressWeb, MaxLength(100)]
         public string Email { get; set; }
 
-        public Guid? AnonymousUserId { get; set; }   //For example id used to track in mixpanel before account created
+        public Guid? AnonymousUserId { get; set; }   //For example id used to track before account created
 
         private string ValidPhone(string p)
         {
@@ -141,7 +141,7 @@ namespace ChilliCoreTemplate.Models.Api
     public class RegistrationMobileModel
     {
         [Required]
-        public Guid AnonymousUserId { get; set; }   //For example id used to track in mixpanel before account created
+        public Guid AnonymousUserId { get; set; }   //For example id used to track before account created
 
         [Required, MaxLength(25)]
         public string FirstName { get; set; }

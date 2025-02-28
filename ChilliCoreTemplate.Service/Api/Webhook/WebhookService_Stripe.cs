@@ -120,12 +120,12 @@ namespace ChilliCoreTemplate.Service.Api
                     //case Stripe.Events.InvoiceUpcoming:
                     //    result = ProcessInvoiceUpcoming(stripeEvent);
                     //    break;
-                    //case Stripe.Events.InvoicePaid:
-                    //    result = ProcessInvoicePaid(stripeEvent);
-                    //    break;
-                    //case Stripe.Events.InvoicePaymentFailed:
-                    //    result = ProcessInvoicePaymentFailed(stripeEvent);
-                    //    break;
+                    case "invoice.payment_succeeded":
+                        result = ProcessInvoicePaid(stripeEvent);
+                        break;
+                    case "invoice.payment_failed":
+                        result = ProcessInvoicePaymentFailed(stripeEvent);
+                        break;
                     //case Stripe.Events.AccountUpdated:
                     //    result = Stripe_ProcessAccountUpdated(stripeEvent);
                     //    break;

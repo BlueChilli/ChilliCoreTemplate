@@ -1,5 +1,6 @@
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +23,12 @@ namespace ChilliCoreTemplate.Data
 
         public void Run(DataContext context)
         {
+            //var migration = context.BulkImports.Where(x => x.Type == BulkImportType.Migration && x.Parameters == "MyFirstAdhocMigration").FirstOrDefault();
+            //if (migration == null)
+            //{
+            //    context.BulkImports.Add(new BulkImport { Type = BulkImportType.Migration, Parameters = "MyFirstAdhocMigration" });
+            //}
+
             var adminEmail = $"{_env.EnvironmentName.ToLower()}@{new Uri(_config.PublicUrl).Domain()}";
             if (_env.IsProduction())
             {

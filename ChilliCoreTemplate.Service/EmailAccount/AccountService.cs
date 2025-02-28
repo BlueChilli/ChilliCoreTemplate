@@ -224,7 +224,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             user.LastLoginDate = DateTime.UtcNow;
             user.LoginCount += 1;
 
-            Mixpanel.SendAccountToMixpanel(user, "Login");
             Activity_Add(Context, new UserActivity { UserId = user.Id, ActivityType = ActivityType.Create, EntityId = user.Id, EntityType = EntityType.Session });
         }
 
@@ -343,6 +342,15 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return principal;
         }
 
+        public ServiceResult<UserDataPrincipal> ImpersonateCompany(int companyId, Action<UserDataPrincipal> loginAction)
+        {
+            var adminAccount = Context.UserRoles.FirstOrDefault(a => a.CompanyId == companyId && a.User.Status != UserStatus.Deleted && a.Role.HasFlag(Role.CompanyAdmin));
+
+            if (adminAccount == null) return ServiceResult<UserDataPrincipal>.AsError("Company does not have administrator account that can be impersonated");
+
+            return ImpersonateAccount(adminAccount.UserId, loginAction);
+        }
+
         public ServiceResult<UserDataPrincipal> ImpersonateAccount(int accountId, Action<UserDataPrincipal> loginAction)
         {
             var userData = User.UserData();
@@ -409,7 +417,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                                 var db = scope.ServiceProvider.GetRequiredService<DataContext>();
                                 var company = db.Companies.Add(Company.CreateNew(selectedRole.CompanyName)).Entity;
                                 db.SaveChanges();
-                                selectedRole.CompanyId = company.Id;
+                                roleSelections.Where(x => x.Role.IsCompanyRole()).ToList().ForEach(x => x.CompanyId = company.Id);
                             }
                         }
                         else if (selectedRole.CompanyGuid.HasValue)
@@ -487,13 +495,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (!model.IsAnonymous)
                 {
                     if (_config.UserConfirmationMethod == UserConfirmationMethod.Link && sendEmail) SendWelcomeEmail(account);
-
-                    if (model.MixpanelTempId != null)
-                    {
-                        Mixpanel.CreateAlias(account, model.MixpanelTempId.Value);
-                    }
-
-                    Mixpanel.SendAccountToMixpanel(account, "Account created", tempUserId: model.MixpanelTempId);   //Use temp id as mixplanel can take too long to register the alias in previous call.
                 }
 
                 return ServiceResult<UserData>.AsSuccess(MapUserData(account, null));
@@ -688,7 +689,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                         QueueCompanyAdminsMail(masterCompanyId.Value, RazorTemplates.MasterCompany_NewRegistration, new RazorTemplateDataModel<AccountViewModel>(_mapper.Map<User, AccountViewModel>(user)));
                 }
 
-                Mixpanel.SendAccountToMixpanel(user, "Account activated");
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
 
                 if (onBehalfOf || !User.Identity.IsAuthenticated)
@@ -722,6 +722,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 user.FirstName = null;
                 user.LastName = null;
                 user.Email = $"{Guid.NewGuid()}@{new Uri(_config.PublicUrl).Domain()}";
+                user.Phone = null;
+                user.ProfilePhotoPath = null;
 
                 if (user.UserRoles.Any()) Context.UserRoles.RemoveRange(user.UserRoles);
 
@@ -837,7 +839,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             user = _mapper.Map(model, user);
             Context.SaveChanges();
-            Mixpanel.SendAccountToMixpanel(user);
 
             if (!onBehalfOfUser)
             {
@@ -978,7 +979,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             TaskHelper.GetResultSafeSync(() => _session.ReplaceAsync(id, userData));
         }
 
-        internal void Session_Clear(string id)
+        public void Session_Clear(string id)
         {
             _session.ClearSessionCache(id);
         }

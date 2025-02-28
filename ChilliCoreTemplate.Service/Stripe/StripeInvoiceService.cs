@@ -7,6 +7,24 @@ namespace ChilliCoreTemplate.Service
     public partial class StripeService
     {
 
+        public ServiceResult<Invoice> Invoice_Get(string invoiceId)
+        {
+            try
+            {
+                var service = new InvoiceService(_client);
+                var response = service.Get(invoiceId);
+                return ServiceResult<Invoice>.AsSuccess(response);
+            }
+            catch (Exception ex)
+            {
+                if (ex is not StripeException)
+                {
+                    ex.LogException();
+                }
+                return ServiceResult<Invoice>.AsError(ex.Message);
+            }
+        }
+
         public ServiceResult<Invoice> Invoice_Create(InvoiceCreateOptions options)
         {
             try

@@ -41,8 +41,7 @@ namespace ChilliCoreTemplate.Service.Api
 
         internal static void AutoMapperConfigure(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<PhoneRegistrationApiModel, RegistrationViewModel>()
-                .ForMember(dest => dest.MixpanelTempId, opt => opt.MapFrom(src => src.AnonymousUserId));
+            cfg.CreateMap<PhoneRegistrationApiModel, RegistrationViewModel>();
         }
 
         public ServiceResult<UserAccountApiModel> Create(PhoneRegistrationApiModel model)
@@ -125,7 +124,6 @@ namespace ChilliCoreTemplate.Service.Api
             account.LoginCount += 1;
             Context.SaveChanges();
 
-            Mixpanel.SendAccountToMixpanel(account, "Login");
             AccountService.Activity_Add(Context, new UserActivity { UserId = account.Id, ActivityType = ActivityType.Create, EntityId = account.Id, EntityType = EntityType.Session });
 
             var session = _accountService.Session_Create(account, _accountService.CreateUserDeviceId(account, model.DeviceId), TimeSpan.FromDays(365), loginAction);
@@ -178,7 +176,6 @@ namespace ChilliCoreTemplate.Service.Api
             account.LoginCount += 1;
             Context.SaveChanges();
 
-            Mixpanel.SendAccountToMixpanel(account, "Login");
             AccountService.Activity_Add(Context, new UserActivity { UserId = account.Id, ActivityType = ActivityType.Create, EntityId = account.Id, EntityType = EntityType.Session });
 
             var session = _accountService.Session_Create(account, _accountService.CreateUserDeviceId(account, model.DeviceId), TimeSpan.FromDays(365), loginAction);
