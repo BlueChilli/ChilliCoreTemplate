@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Yodel.Models
+namespace ChilliCoreTemplate.Models
 {
     public static class MyFileStorageHelper
     {

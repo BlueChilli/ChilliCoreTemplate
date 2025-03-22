@@ -26,7 +26,7 @@ namespace ChilliCoreTemplate.Data
             //var migration = context.BulkImports.Where(x => x.Type == BulkImportType.Migration && x.Parameters == "MyFirstAdhocMigration").FirstOrDefault();
             //if (migration == null)
             //{
-            //    context.BulkImports.Add(new BulkImport { Type = BulkImportType.Migration, Parameters = "MyFirstAdhocMigration" });
+            //    context.BulkImports.Add(new BulkImport { Type = BulkImportType.Migration, Parameters = "MyFirstAdhocMigration", QueuedOn = DateTime.UtcNow });
             //}
 
             var adminEmail = $"{_env.EnvironmentName.ToLower()}@{new Uri(_config.PublicUrl).Domain()}";

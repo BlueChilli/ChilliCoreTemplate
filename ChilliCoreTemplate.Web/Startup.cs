@@ -291,7 +291,7 @@ namespace ChilliCoreTemplate.Web
                 app.UseForwardedHeaders();
             }
 
-            app.UseWhen(context => !context.Request.IsApiRequest(), builder =>
+            app.UseWhen(context => !context.Request.IsApiRequest() && !context.Request.Path.Value.StartsWith("/version_check"), builder =>
             {
                 //In practice, only 404 will be handled here, because 500 is already handled by another middleware.
                 builder.UseStatusCodePagesWithReExecute("/Error/NotFound");
@@ -341,7 +341,7 @@ namespace ChilliCoreTemplate.Web
             {
                 app.UseCors(policy =>
                 {
-                    policy.WithOrigins(settings.PublicUrl.Replace("www", "*"), settings.PublicUrl.Replace("www.", ""));
+                    policy.WithOrigins(settings.PublicUrl.TrimEnd('/').Replace("www", "*"), settings.PublicUrl.TrimEnd('/').Replace("www.", ""));
                     policy.SetIsOriginAllowedToAllowWildcardSubdomains();
                     policy.AllowCredentials();
                     policy.WithMethods("GET", "POST", "PUT", "DELETE", "PATCH");
@@ -391,19 +391,6 @@ namespace ChilliCoreTemplate.Web
                     RequestPath = new PathString("/node_modules"),
                 });
             }
-            app.UseWhen(context => context.Request.Path.Value.StartsWith("/version_check"), builder =>
-            {
-                //if version check file was not found as a static file, just return 404.
-                builder.Use(async (context, next) =>
-                {
-                    if (!context.Response.HasStarted)
-                    {
-                        context.Response.StatusCode = StatusCodes.Status404NotFound;
-                        await context.Response.Body.FlushAsync();
-                    }
-                    await next();
-                });
-            });
 
             app.UseWhen(context => !streamedPolicy.IsStreamedResponse(context), builder =>
             {

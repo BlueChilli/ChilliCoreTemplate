@@ -39,12 +39,6 @@ namespace ChilliCoreTemplate.Web
         /// </summary>
         public Dictionary<string, LabelType> Status { get; set; } = [];
 
-        /// <summary>
-        /// Name of a partial view to call, which is rendered on the right empty space of the breadcrumb
-        /// Usually used to render global action buttons (buttons not related to the data on the page)
-        /// </summary>
-        public string Partial { get; set; }
-
         public List<string> Tabs { get; set; } = new List<string>();
 
         public int TabActiveId { get; set; }
@@ -76,6 +70,18 @@ namespace ChilliCoreTemplate.Web
                 Url = url
             };
             var index = PathItems.IndexOf(x => x.Url == action.Url(urlHelper));
+            if (index < 0) AddPath(item);
+            else _pathItems.Insert(index + (path == BreadCrumbPath.Before ? 0 : 1), item);
+        }
+
+        public void AddPath(string textMatch, BreadCrumbPath path, string text, string url = null)
+        {
+            var item = new BreadcrumbPathItem()
+            {
+                Text = text,
+                Url = url
+            };
+            var index = PathItems.IndexOf(x => x.Text == textMatch);
             if (index < 0) AddPath(item);
             else _pathItems.Insert(index + (path == BreadCrumbPath.Before ? 0 : 1), item);
         }
