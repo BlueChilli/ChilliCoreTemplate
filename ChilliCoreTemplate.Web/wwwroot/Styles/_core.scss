@@ -20,22 +20,17 @@
 }
 
 //Datatables
-div.dataTables_wrapper .dataTables_info {
-    display: inline-block;
-    padding: 1.25rem !important;
-    font-size: 11px;
-    text-transform: uppercase;
-    background-color: white;
-    width: 70%;
-    border-radius: 0 0 0 .75rem;
+div.dt-container div.dt-info {
+    float: left;
+    margin-left: 1.5rem;
+    margin-top: 1.0rem;
+    font-size: .8125rem;
 }
 
-div.dataTables_wrapper .dataTables_paginate {
-    display: inline-block;
-    padding: .54rem;
-    background-color: white;
-    width: 30%;
-    border-radius: 0 0 .75rem 0;
+div.dt-container div.dt-paging {
+    float: right;
+    margin-right: 1.5rem !important;
+    margin-top: 0.5rem !important;
 }
 
 table.dataTable.bg-white {

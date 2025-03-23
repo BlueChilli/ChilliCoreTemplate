@@ -3,13 +3,13 @@ FROM node:18 AS node-build
 WORKDIR /src
 
 # Clone the repository and navigate to the project directory
-RUN git clone https://github.com/BlueChilli/ChilliCoreTemplate.git .
+RUN git clone --branch net8 https://github.com/BlueChilli/ChilliCoreTemplate.git .
 WORKDIR /src/ChilliCoreTemplate.Web
 
 # Install dependencies and build the front-end assets
 RUN npm install
 RUN npm install -g gulp
-RUN gulp
+RUN gulp #2
 
 # Use the official .NET 8 SDK image to build the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -17,6 +17,9 @@ WORKDIR /src
 
 # Copy the cloned repository from the node-build stage
 COPY --from=node-build /src /src
+
+# Copy the secrets file into the project directory
+COPY ChilliCoreTemplate.Web/appsettings.Debug.json /src/ChilliCoreTemplate.Web/appsettings.Debug.json
 
 WORKDIR /src/ChilliCoreTemplate.Web
 RUN dotnet restore
@@ -27,9 +30,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 COPY --from=node-build /src/ChilliCoreTemplate.Web/wwwroot ./wwwroot
+COPY --from=node-build /src/ChilliCoreTemplate.Web/node_modules ./node_modules
 
 ENV ASPNETCORE_ENVIRONMENT Debug
 
-EXPOSE 80
+EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["dotnet", "ChilliCoreTemplate.Web.dll"]
 
