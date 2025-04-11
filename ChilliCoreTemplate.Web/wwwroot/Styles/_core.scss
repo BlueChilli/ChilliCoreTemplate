@@ -257,7 +257,8 @@ table > caption {
 
     &.caption-card {
         background-color: $gray-100;
-        color: black;
+        color: $headings-color;
+        font-weight: 600;
         padding-left: 1.5rem;
         border-radius: .75rem .75rem 0 0;
     }

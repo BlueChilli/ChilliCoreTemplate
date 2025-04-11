@@ -1,0 +1,3 @@
+password=chillicoretemplate
+
+use for local development

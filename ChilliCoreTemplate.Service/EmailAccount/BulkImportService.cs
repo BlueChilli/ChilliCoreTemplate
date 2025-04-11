@@ -160,10 +160,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             try
             {
-                var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
+                var twoYearsAgo = DateTime.UtcNow.AddYears(-2);
                 var oneHourAgo = DateTime.UtcNow.AddHours(-1);
                 var old = await Context.BulkImports
-                    .Where(x => x.StartedOn < thirtyDaysAgo || (x.FinishedOn == null && x.StartedOn < oneHourAgo))
+                    .Where(x => x.StartedOn < twoYearsAgo || (x.FinishedOn == null && x.StartedOn < oneHourAgo))
                     .Take(200)
                     .ToListAsync();
 

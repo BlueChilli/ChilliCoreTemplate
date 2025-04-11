@@ -51,7 +51,7 @@ namespace ChilliCoreTemplate.Web
                         ),
                         cfg.Create(Mvc.Admin.User_Statistics),
                         cfg.Create(Mvc.Admin.User_Activity),
-                        cfg.Create(Mvc.Admin.User_Emails).SetChildren(cfg.CreateBreadcrumb(Mvc.Admin.User_EmailsPreview, title: "Preview")),
+                        cfg.Create(Mvc.Admin.Email_List, title: "Emails").SetChildren(cfg.CreateBreadcrumb(Mvc.Admin.Email_Preview, title: "Preview")),
                         cfg.Create(Mvc.Admin.User_Sms_List, title: "Sms"),
                         cfg.Create(Mvc.Admin.User_Notification_List, title: "Notifications"),
                         cfg.Create(Mvc.Admin.User_Error_List, title: "Errors").SetChildren(cfg.CreateBreadcrumb(Mvc.Admin.User_Error_Detail))

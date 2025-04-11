@@ -1,0 +1,169 @@
+@model EmailListModel
+@using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions()))
+{
+    <div class="float-right">
+        <a class="btn btn-neutral btn-sm" mvc-action="@Mvc.Admin.Email_Preview"><span class="pe-2"><i class="bi bi-eye"></i> </span><span>Preview</span></a>
+    </div>
+}
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+    <filter>
+        <filter-left>
+            @await Html.FieldDateRangeForAsync(m => m.DateFrom, m => m.DateTo, x => x == null ? null : x.Value.ToTimezone().ToIsoDate())
+        </filter-left>
+    </filter>
+    <filter>
+        <filter-left>
+            @await Html.FieldTemplateInnerForAsync(m => m.Template, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.TemplateList })
+            @await Html.FieldTemplateInnerForAsync(m => m.Opened, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.OpenedList })
+            @await Html.FieldTemplateInnerForAsync(m => m.Clicked, fieldOptions: new SelectFieldTemplateOptions { SelectList = Model.ClickedList })
+        </filter-left>
+        <filter-right>
+            @await Html.FieldTemplateInnerForAsync(m => m.Search, fieldOptions: new InputFieldTemplateOptions { PreAddOn = FieldTemplateOptions.IconAddOn(IconType.Search) })
+        </filter-right>
+    </filter>
+
+    <box>
+        <box-content>
+            <table-default class="js-emails-table">
+                <thead class="table-light">
+                    <tr>
+                        <th data-priority="3">Date</th>
+                        <th data-priority="1">Recipient</th>
+                        <th data-priority="4">Template</th>
+                        <th data-priority="5">Sent</th>
+                        <th data-priority="6">Delivered</th>
+                        <th data-priority="7">Opened</th>
+                        <th data-priority="8">Clicked</th>
+                        <th data-priority="9">Error</th>
+                        <th data-priority="2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table-default>
+        </box-content>
+    </box>
+</page>
+@section Scripts
+{
+    <script>
+        var table, emailId;
+
+        $(function () {
+            $('.input-daterange').datepicker({
+                format: 'yyyy-mm-dd',
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true
+            }).on('changeDate', function (ev) {
+                SearchTable();
+            });
+
+            table = $('.js-emails-table').dataTable({
+                "processing": true,
+                "serverSide": true,
+                responsive: true,
+                "ajax": {
+                    "url": "@Mvc.Admin.Email_ListData.Url(this.Url)",
+                    "type": "POST",
+                    "data": function ( d ) {
+                        d.dateFrom = $('#DateFrom').val();
+                        d.dateTo = $('#DateTo').val();
+                        d.userId = @(Model.UserId == null ? "null" : Model.UserId.Value);
+                    }
+                },
+                "order": [[ 0, "desc" ]],
+                "columns": [
+                    { "data": "dateQueuedDisplay" },
+                    { "data": "recipient" },
+                    {
+                        "data": "templateId",
+                        "orderable": false
+                    },
+                    { "data": "isSent" },
+                    {
+                        "data": "isDelivered",
+                        "orderable": false
+                    },
+                    {
+                        "data": "isOpened",
+                        "orderable": false
+                    },
+                    {
+                        "data": "isClicked",
+                        "orderable": false
+                    },
+                    {
+                        "data": "error",
+                        "orderable": false,
+                        render: function (data) {
+                            return shorten(data, 60, 50);
+                        }
+                    },
+                    {
+                        "orderable": false,
+                        "data": null,
+                        render: function ( data, type, row ) {
+                            if (!data.isDeleted && data.isSent) {
+                                return '<a href="#" data-id="{0}" class="js-email-view btn btn-sm btn-square btn-neutral" data-bs-toggle="tooltip" data-bs-original-title="View"><i class="bi bi-eye"></i></a>'.format(data.id);
+                            }
+                            return '';
+                        }
+                    },
+                ],
+                "iDisplayLength": 50,
+                dom: 'Tgtip',
+                drawCallback: function (settings) {
+                    initTooltips();
+                }
+            });
+
+            $('#Search').on('keyup', function () {
+                SearchTable();
+            });
+
+            $('#Template, #Opened, #Clicked').on('change', function () {
+                SearchTable();
+            });
+
+            $('.js-emails-table').on('click', '.js-email-view', function () {
+                emailId = $(this).data('id');
+                @Html.ModalOpen(Mvc.Admin.Email_Detail, data: "{ id: emailId }");
+            });
+
+        });
+
+        function SearchTable() {
+            var api = table.api();
+
+            api.search($('#Search').val());
+
+            if ($('#Template').val() != '') {
+                api.column(2).search($('#Template').val(), false, false, false);
+            } else {
+                api.column(2).search('');
+            }
+
+            if ($('#Opened').val() != '') {
+                api.column(5).search($('#Opened').val(), false, false, false);
+            } else {
+                api.column(5).search('');
+            }
+
+            if ($('#Clicked').val() != '') {
+                api.column(6).search($('#Clicked').val(), false, false, false);
+            } else {
+                api.column(6).search('');
+            }
+
+            api.draw();
+        }
+
+    </script>
+}
+@section modal    
+{
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.Email_Detail, Title = "Email", Size = ModalSize.Large })
+}

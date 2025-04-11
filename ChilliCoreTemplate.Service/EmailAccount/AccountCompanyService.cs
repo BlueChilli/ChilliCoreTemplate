@@ -66,13 +66,25 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 QueueMail(template, email, model);
         }
 
-        internal User GetCompanyAdmin(int companyId)
+        internal User GetCompanyAdmin(int companyId, int? userId = null)
+        {
+            var query = GetCompanyAdminsQuery(companyId);
+
+            if (userId.HasValue) query = query.Where(x => x.Id == userId.Value);
+
+            return query.FirstOrDefault();
+        }
+
+        internal List<User> GetCompanyAdmins(int companyId)
+        {
+            return GetCompanyAdminsQuery(companyId).ToList();
+        }
+
+        private IQueryable<User> GetCompanyAdminsQuery(int companyId)
         {
             return Context.Users
                 .Include(x => x.UserRoles)
-                .Where(x => x.UserRoles.Any(r => r.CompanyId == companyId && r.Role.HasFlag(Role.CompanyAdmin)) && x.Status != UserStatus.Deleted)
-                .FirstOrDefault();
-
+                .Where(x => x.UserRoles.Any(r => r.CompanyId == companyId && r.Role.HasFlag(Role.CompanyAdmin)) && x.Status != UserStatus.Deleted);
         }
 
     }

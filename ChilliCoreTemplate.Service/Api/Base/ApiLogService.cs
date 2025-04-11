@@ -38,8 +38,7 @@ namespace ChilliCoreTemplate.Service.Api
                     return;
             }
 
-            Context.Database.SetCommandTimeout(TimeSpan.FromSeconds(60));
-            await Context.Database.ExecuteSqlRawAsync($"DELETE FROM[dbo].[ApiLogEntries] WHERE Id IN (SELECT TOP(50) Id FROM [dbo].[ApiLogEntries] ORDER BY Id) AND [RequestTimestamp] < DATEADD(day, -14, SYSUTCDATETIME())");
+            await Context.ApiLogEntries.Where(x => x.RequestTimestamp < DateTime.UtcNow.AddDays(-14)).Take(1000).ExecuteDeleteAsync();
         }
 
         internal async Task SaveAsync(RestClient client, RestResponse response)

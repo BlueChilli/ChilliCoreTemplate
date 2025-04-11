@@ -30,7 +30,7 @@
                             }
                         </heading>
                         <heading title="Status">@(Model.Account.StatusDescription)</heading>
-                        <heading title="Email"><a mvc-action="Mvc.Admin.User_Emails" asp-route-userid="@Model.Account.Id">@Model.Account.Email</a></heading>
+                        <heading title="Email"><a mvc-action="Mvc.Admin.Email_List" asp-route-userid="@Model.Account.Id">@Model.Account.Email</a></heading>
                         @if (config.MailSettings.Quarantine.QuarantineDomain == "mailinator.com" && config.MailSettings.Quarantine.ShouldQuarantine(Model.Account.Email))
                         {
                             <heading title="Inbox"><a href="https://www.mailinator.com/v4/public/inboxes.jsp?to=@WebUtility.UrlEncode(config.MailSettings.Quarantine.Quarantine(Model.Account.Email, noDomain: true))" target="_blank">Mailinator <i class="bi bi-box-arrow-in-up-right"></i></a></heading>

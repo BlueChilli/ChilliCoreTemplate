@@ -99,12 +99,6 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_Import = MvcAction();
         public readonly IMvcActionDefinition User_ImportResult = MvcAction();
         public readonly IMvcActionDefinition User_Export = MvcAction();
-        public readonly IMvcActionDefinition User_Emails = MvcAction();
-        public readonly IMvcActionDefinition User_EmailsQuery = MvcAction();
-        public readonly IMvcActionDefinition User_EmailsDetail = MvcAction();
-        public readonly IMvcActionDefinition User_EmailsResend = MvcAction();
-        public readonly IMvcActionDefinition User_EmailsPreview = MvcAction();
-        public readonly IMvcActionDefinition User_EmailsPreviewShow = MvcAction();
         public readonly IMvcActionDefinition User_Sms_List = MvcAction();
         public readonly IMvcActionDefinition User_Sms_Query = MvcAction();
         public readonly IMvcActionDefinition User_Sms_Detail = MvcAction();
@@ -114,6 +108,13 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_Error_List = MvcAction();
         public readonly IMvcActionDefinition User_Error_Query = MvcAction();
         public readonly IMvcActionDefinition User_Error_Detail = MvcAction();
+
+        public readonly IMvcActionDefinition Email_List = MvcAction();
+        public readonly IMvcActionDefinition Email_ListData = MvcAction();
+        public readonly IMvcActionDefinition Email_Detail = MvcAction();
+        public readonly IMvcActionDefinition Email_Resend = MvcAction();
+        public readonly IMvcActionDefinition Email_Preview = MvcAction();
+        public readonly IMvcActionDefinition Email_PreviewShow = MvcAction();
 
         public readonly IMvcActionDefinition Data = MvcAction();
 

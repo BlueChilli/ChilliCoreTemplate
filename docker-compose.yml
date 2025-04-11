@@ -9,6 +9,7 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
+      - "25:25"
     environment:
       - ASPNETCORE_ENVIRONMENT=Debug
       - ASPNETCORE_URLS=https://+:8081;http://+:8080
