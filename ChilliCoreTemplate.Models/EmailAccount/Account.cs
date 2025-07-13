@@ -420,6 +420,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string Inviter { get; set; }
 
         public InviteRoleViewModel InviteRole { get; set; }
+
+        public bool IsAnonymous { get; set; }
     }
 
     public class InviteRoleViewModel : IValidatableObject

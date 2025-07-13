@@ -110,7 +110,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 ErrorsSent++;
                 NextErrorEmailDate = DateTime.UtcNow.AddMinutes(10 * (ErrorsSent ^ 2));
-                QueueMail(RazorTemplates.ErrorAlert, config.EmailTo, new RazorTemplateDataModel<ErrorLogAlertEmail> { Data = new ErrorLogAlertEmail { Errors = errors } });
+                _email.QueueMail(RazorTemplates.ErrorAlert, config.EmailTo, new RazorTemplateDataModel<ErrorLogAlertEmail> { Data = new ErrorLogAlertEmail { Errors = errors } });
             }
             else if (ErrorsSent > 0)
             {
@@ -136,7 +136,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                    .ToListAsync();
                 if (dailyErrors.Count > 0)
                 {
-                    QueueMail(RazorTemplates.ErrorDaily, config.EmailTo, new RazorTemplateDataModel<List<string>> { Data = dailyErrors });
+                    _email.QueueMail(RazorTemplates.ErrorDaily, config.EmailTo, new RazorTemplateDataModel<List<string>> { Data = dailyErrors });
                 }
             }
             else DailySent = false;

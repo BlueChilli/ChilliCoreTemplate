@@ -156,7 +156,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
                 target = output.Attributes["target"].Value.ToString();
                 output.Attributes.RemoveAll("target");
             }
-            output.Attributes.SetAttribute("onclick", new HtmlString($"$.doPost('{url}', '{target}', {JsonData ?? "null"});"));
+            output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {JsonData ?? "null"});");
         }
     }
 
@@ -226,6 +226,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
         public ButtonSize Size { get; set; } = ButtonSize.Small;
 
+        public bool ShowSpinner { get; set; }
+
         [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
         public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -247,6 +249,11 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             }
 
             output.Attributes.AppendAttribute("class", $"btn btn-{Style.GetDescription().ToLower()} {Size.GetData<string>("css")}");
+
+            if (ShowSpinner)
+            {
+                output.PostContent.SetHtmlContent("<span class=\"spinner-border spinner-border-sm ms-2\"></span>");
+            }
         }
     }
 }

@@ -15,13 +15,13 @@ namespace ChilliCoreTemplate.Service.Sms
     {
         ProjectSettings _config;
         SmsConfigurationSection _smsConfig;
-        AccountService _accountService;
+        EmailQueueService _email;
 
-        public TwilioSmsService(ProjectSettings config, AccountService accountService)
+        public TwilioSmsService(ProjectSettings config, EmailQueueService email)
         {
             _config = config;
             _smsConfig = config.SmsSettings;
-            _accountService = accountService;
+            _email = email;
         }
 
         private TwilioRestClient GetClient()
@@ -46,7 +46,7 @@ namespace ChilliCoreTemplate.Service.Sms
 
             if (_smsConfig.SendViaEmailRegex != null && _smsConfig.SendViaEmailRegex.IsMatch(model.To))
             {
-                _accountService.QueueMail(RazorTemplates.SendSmsViaEmail, $"{_config.ProjectName}@mailinator.com", new RazorTemplateDataModel<string> { Data = model.Message.Replace("\n", "<br/>") });
+                _email.QueueMail(RazorTemplates.SendSmsViaEmail, $"{_config.ProjectName}@mailinator.com", new RazorTemplateDataModel<string> { Data = model.Message.Replace("\n", "<br/>") });
                 return ServiceResult<string>.AsSuccess();
             }
 

@@ -368,8 +368,8 @@ $(function () {
             type: 'GET',
             data: {}
         }, options, {
-                datatype: 'html'
-            });
+            datatype: 'html'
+        });
 
         var $this = $(this);
 
@@ -389,10 +389,25 @@ $(function () {
                 if (xhr.getResponseHeader('X-Ajax-Redirect') != null) {
                     window.history.pushState(null, null, xhr.getResponseHeader('X-Ajax-Redirect'));
                     window.location.reload();
-                } else {
+                } else if (xhr.getResponseHeader('X-Ajax-File') != null) {
+                    var filename = xhr.getResponseHeader('X-Ajax-File');
+                    var fileType = xhr.getResponseHeader('X-Ajax-FileType');
+                    var blob = new Blob([base64ToArrayBuffer(result)], { type: fileType });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.location.reload();
+                }
+                else {
                     if (settings.customAction != 'none') {
-                        var render = $this[settings.customAction](result);
-                        $.validator.unobtrusive.parse(render);
+                        var contentType = xhr.getResponseHeader('content-type') || '';
+                        if (settings.customAction == 'html' && contentType.indexOf('text/html') >= 0) {
+                            var render = $this[settings.customAction](result);
+                            $.validator.unobtrusive.parse(render);
+                        }
                     }
                     if (typeof (_gaq) != "undefined") _gaq.push(['_trackPageview', settings.url]);
                     if (typeof (ga) != "undefined") ga('send', 'pageview', settings.url);
@@ -442,7 +457,7 @@ $(function () {
                         var l = button.ladda();
                         l.ladda('start');
                     } else {
-                        button.prop('disabled', true);
+                        button.prop('disabled', true).addClass('busy');
                     }
                 }
 
@@ -450,9 +465,9 @@ $(function () {
                 $(target).ajaxLoad({ url: form.attr('action'), data: settings.useFormData ? new FormData(form[0]) : form.serialize(), type: 'POST' })
                     .always(function (result) {
                         var targetLoaded = $(target);
-                        if (targetLoaded.find('input[type="submit"],button[type="submit"]').prop('disabled', false).ladda)
+                        if (targetLoaded.find('input[type="submit"],button[type="submit"]').prop('disabled', false).removeClass('busy').ladda)
                             targetLoaded.find('input[type="submit"],button[type="submit"]').prop('disabled', false).ladda().ladda('stop');
-                        if (form.find('input[type="submit"],button[type="submit"]').prop('disabled', false).ladda)
+                        if (form.find('input[type="submit"],button[type="submit"]').prop('disabled', false).removeClass('busy').ladda)
                             form.find('input[type="submit"],button[type="submit"]').prop('disabled', false).ladda().ladda('stop');
                         targetLoaded.find('img#ajax-loader').hide();
 

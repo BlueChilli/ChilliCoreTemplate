@@ -110,6 +110,12 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         {
             var user = _accountService.Get<AccountViewModel>(userId, visibleOnly: true);
             var result = _accountService.Password_SetRequestToken(user.Id);
+
+            if (!result.Success)
+            {
+                result.AddToModelState(this);
+            }
+
             var model = new ResetPasswordViewModel { UserId = userId, Email = user.Email, Token = result.Result.ToShortGuid().ToString() };
             return PartialView(model);
         }

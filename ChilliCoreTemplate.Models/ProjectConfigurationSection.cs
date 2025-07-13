@@ -2,6 +2,7 @@ using ChilliCoreTemplate.Models.Api.OAuth;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Models.Stripe;
 using ChilliSource.Cloud.Core.Email;
+using ChilliSource.Cloud.Web;
 using ChilliSource.Core.Extensions;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -88,30 +89,22 @@ namespace ChilliCoreTemplate.Models
         /// <returns></returns>
         public string ResolveUrl(string url, object parameters = null)
         {
-            url = url.Replace("~", this.BaseUrl);
-            if (parameters != null)
-            {
-                var queryString = HttpUtility.ParseQueryString("");
-
-                Type t = parameters.GetType();
-                foreach (var property in t.GetProperties())
-                {
-                    queryString[property.Name] = property.GetValue(parameters, null) == null ? "" : property.GetValue(parameters, null).ToString();
-                }
-                url = String.Format("{0}?{1}", url, queryString.ToString());
-            }
-
-            return url;
+            return ResolveUrl(this.BaseUrl, url, parameters);
         }
 
         public string ResolveAppUrl(string url, object parameters = null)
         {
-            return ResolveUrl(url.Replace("~", this.AppUrl), parameters);
+            return ResolveUrl(this.AppUrl, url, parameters);
         }
 
         public string ResolveApiUrl(string url, object parameters = null)
         {
-            return ResolveUrl(url.Replace("~", this.ApiUrl), parameters);
+            return ResolveUrl(this.ApiUrl, url, parameters);
+        }
+
+        private static string ResolveUrl(string baseUrl, string url, object parameters = null)
+        {
+            return new Uri(baseUrl).Append(url.TrimStart('~')).AddRouteQuery(parameters).ToString();
         }
 
         /// <summary>

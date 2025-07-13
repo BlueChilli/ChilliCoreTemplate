@@ -33,6 +33,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     {
         public string Title { get; set; }
 
+        public string Description { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = null;
@@ -43,7 +45,8 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             var hasTitle = !String.IsNullOrEmpty(Title);
             if (hasTitle)
             {
-                title = $"<div class=\"card\"><div class=\"card-header {@class}\">{Title}</div>";
+                var description = !String.IsNullOrEmpty(Description) ? $"<p class=\"text-sm text-muted\">{Description}</p>" : "";
+                title = $"<div class=\"card\"><div class=\"card-header {@class}\">{Title}{description}</div>";
                 @class = "";
             }
             output.PreContent.SetHtmlContent($"{title}<div class=\"list-group {@class}\">");

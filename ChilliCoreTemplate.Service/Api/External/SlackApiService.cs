@@ -63,7 +63,7 @@ public class SlackApiService : IService
             if (_config.SlackSettings.Enabled)
             {
                 var message = CreateMessage(channel, text);
-                var client = new HttpClient();
+                using var client = new HttpClient();
                 var response = await client.SendAsync(message);
                 response.EnsureSuccessStatusCode();
             }
@@ -81,7 +81,7 @@ public class SlackApiService : IService
             if (_config.SlackSettings.Enabled)
             {
                 var message = CreateMessage(channel, text);
-                var client = new HttpClient();
+                using var client = new HttpClient();
                 var response = client.Send(message);
                 response.EnsureSuccessStatusCode();
             }

@@ -122,7 +122,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var r = EmailWorkTask.CreateTask(async (executionInfo, provider) =>
             {
                 var sendingWindow = DateTime.UtcNow.AddDays(-2);
-                var sendRate = 5; //Sends maximum of 5 messages per second. This will depend on your acccounts send rate limit.
+                var sendRate = 5; //Sends maximum of X messages per second. This will depend on your acccounts send rate limit.
 
                 List<Email> emailsToSend;
                 using (var scope = provider.CreateScope())

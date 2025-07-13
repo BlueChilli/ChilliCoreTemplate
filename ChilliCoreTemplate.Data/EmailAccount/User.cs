@@ -33,6 +33,8 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         public virtual List<UserOAuth> OAuths { get; set; }
 
+        public Guid Guid { get; set; }
+
         [MaxLength(100)]
         public string ExternalId { get { return _ExternalId; } set { _ExternalId = value; ExternalIdHash = CommonLibrary.CalculateHash(value); } }
         private string _ExternalId;
@@ -45,15 +47,19 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public int? EmailHash { get; set; }
 
         [StringLength(25)]
-        public string FirstName { get { return _FirstName; } set { _FirstName = value?.NullIfBlank(); FullName = String.Concat(_FirstName, " ", _LastName).NullIfBlank(); } }
+        public string FirstName { get { return _FirstName; } set { _FirstName = value?.NullIfBlank(); FirstNameIndex = IndexHelper.IndexForAlphaNumericSorting(value); FullName = String.Concat(_FirstName, " ", _LastName).NullIfBlank(); } }
         private string _FirstName;
+        public decimal FirstNameIndex { get; private set; }
 
         [StringLength(25)]
-        public string LastName { get { return _LastName; } set { _LastName = value?.NullIfBlank(); FullName = String.Concat(_FirstName, " ", _LastName).NullIfBlank(); } }
+        public string LastName { get { return _LastName; } set { _LastName = value?.NullIfBlank(); LastNameIndex = IndexHelper.IndexForAlphaNumericSorting(value); FullName = String.Concat(_FirstName, " ", _LastName).NullIfBlank(); } }
         private string _LastName;
+        public decimal LastNameIndex { get; private set; }
 
-        [StringLength(55)]
-        public string FullName { get; set; }
+        [StringLength(51)]
+        public string FullName { get { return _FullName; } set { _FullName = value; FullNameIndex = IndexHelper.IndexForAlphaNumericSorting(value); } }
+        private string _FullName;
+        public decimal FullNameIndex { get; private set; }
 
         #region Phone
         [StringLength(20)]
@@ -189,6 +195,14 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         {
             builder.HasIndex(x => x.EmailHash);
             builder.HasIndex(x => x.Email).IsUnique();
+            builder.HasIndex(x => x.Guid).IsUnique();
+            builder.HasIndex(x => x.Status);
+            builder.HasIndex(x => x.FirstNameIndex);
+            builder.Property(x => x.FirstNameIndex).HasPrecision(30, 0);
+            builder.HasIndex(x => x.LastNameIndex);
+            builder.Property(x => x.LastNameIndex).HasPrecision(30, 0);
+            builder.HasIndex(x => x.FullNameIndex);
+            builder.Property(x => x.FullNameIndex).HasPrecision(30, 0);
             builder.HasIndex(x => x.PhoneHash);
             builder.HasIndex(x => x.ExternalIdHash);
             builder.HasIndex(x => x.CreatedDate);

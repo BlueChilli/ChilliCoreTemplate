@@ -15,12 +15,12 @@ namespace ChilliCoreTemplate.Service.Sms
     public class EmailSmsService : ISmsService
     {
         ProjectSettings _config;
-        AccountService _accountService;
+        EmailQueueService _email;
 
-        public EmailSmsService(ProjectSettings config, AccountService accountService)
+        public EmailSmsService(ProjectSettings config, EmailQueueService email)
         {
             _config = config;
-            _accountService = accountService;
+            _email = email;
         }
 
         public ServiceResult<string> Send(SmsMessageViewModel model)
@@ -32,7 +32,7 @@ namespace ChilliCoreTemplate.Service.Sms
                 model.To = $"{_config.ProjectName.ToLower()}@mailinator.com";
             }
 
-            _accountService.QueueMail(RazorTemplates.SendSmsViaEmail, model.To, new RazorTemplateDataModel<string> { Data = model.Message.Replace("\n", "<br/>") });
+            _email.QueueMail(RazorTemplates.SendSmsViaEmail, model.To, new RazorTemplateDataModel<string> { Data = model.Message.Replace("\n", "<br/>") });
 
             return ServiceResult<string>.AsSuccess();
         }

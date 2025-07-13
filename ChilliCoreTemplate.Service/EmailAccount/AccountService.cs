@@ -28,7 +28,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         private readonly ProjectSettings _config;
         private readonly IFileStorage _fileStorage;
         private readonly ITemplateViewRenderer _templateViewRenderer;
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly EmailQueueService _email;
         private readonly UserSessionService _session;
         private readonly FileStoragePath _fileStoragePath;
         private readonly IMapper _mapper;
@@ -42,7 +42,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             IFileStorage fileStorage,
             ITemplateViewRenderer templateViewRenderer,
             ProjectSettings config,
-            IBackgroundTaskQueue backgroundTaskQueue,
+            EmailQueueService email,
             FileStoragePath fileStoragePath,
             IMapper mapper)
             : base(user, context)
@@ -53,7 +53,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             _templateViewRenderer = templateViewRenderer;
             _config = config;
             _sms = sms;
-            _backgroundTaskQueue = backgroundTaskQueue;
+            _email = email;
             _fileStoragePath = fileStoragePath;
             _mapper = mapper;
         }
@@ -139,7 +139,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             if (account == null)
             {
-                QueueMail_Distinct(RazorTemplates.AccountNotRegistered, viewModel.Email, new RazorTemplateDataModel<string> { Data = viewModel.Email });
+                _email.QueueMail_Distinct(RazorTemplates.AccountNotRegistered, viewModel.Email, new RazorTemplateDataModel<string> { Data = viewModel.Email });
                 return result;
             }
 
@@ -161,7 +161,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 Context.SaveChanges();
 
                 var inviteModel = _mapper.Map<InviteEditModel>(account);
-                QueueMail(RazorTemplates.InviteUser, inviteModel.Email, new RazorTemplateDataModel<InviteEditModel> { Data = inviteModel });
+                _email.QueueMail(RazorTemplates.InviteUser, inviteModel.Email, new RazorTemplateDataModel<InviteEditModel> { Data = inviteModel });
 
                 return result;
             }
@@ -502,7 +502,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             else
             {
                 if (!model.IsAnonymous && sendEmail && !String.IsNullOrEmpty(model.Email))
-                    QueueMail_Distinct(RazorTemplates.AccountAlreadyRegistered, model.Email, new RazorTemplateDataModel<string> { Data = model.Email }, new TimeSpan(24, 0, 0));
+                    _email.QueueMail_Distinct(RazorTemplates.AccountAlreadyRegistered, model.Email, new RazorTemplateDataModel<string> { Data = model.Email }, new TimeSpan(24, 0, 0));
 
                 return ServiceResult<UserData>.AsError("Already registered");
             }
@@ -600,7 +600,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 if (account == null)
                 {
-                    account = Context.Users.Add(new User() { CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, UserRoles = new List<UserRole>() }).Entity;
+                    account = Context.Users.Add(new User() { Guid = Guid.NewGuid(), CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow, UserRoles = new List<UserRole>() }).Entity;
                 }
 
                 if (!inviteCompanyRole)
@@ -652,7 +652,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             var companyId = account.GetLatestUserRole()?.CompanyId;
 
-            QueueMail(RazorTemplates.WelcomeEmail, account.Email, new RazorTemplateDataModel<RegistrationCompleteViewModel>
+            _email.QueueMail(RazorTemplates.WelcomeEmail, account.Email, new RazorTemplateDataModel<RegistrationCompleteViewModel>
             {
                 Data = new RegistrationCompleteViewModel
                 {
@@ -929,12 +929,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             {
                 var guid = Token_Add(account, UserTokenType.Activate, new TimeSpan(7, 0, 0, 0));
                 emailModel.Data.Token = guid.ToShortGuid();
-                QueueMail(RazorTemplates.VerificationReminder, account.Email, emailModel);
+                _email.QueueMail(RazorTemplates.VerificationReminder, account.Email, emailModel);
             }
             else
             {
                 emailModel.Data.Token = token.Token.ToShortGuid();
-                QueueMail_Distinct(RazorTemplates.VerificationReminder, account.Email, emailModel, new TimeSpan(24, 0, 0));
+                _email.QueueMail_Distinct(RazorTemplates.VerificationReminder, account.Email, emailModel, new TimeSpan(24, 0, 0));
             }
         }
 

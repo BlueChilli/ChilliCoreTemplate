@@ -19,11 +19,13 @@ namespace ChilliCoreTemplate.Service;
 public class StripeHelperService : BaseService
 {
     private readonly EmailAccount.AccountService _accountService;
+    private readonly EmailAccount.EmailQueueService _email;
     private readonly StripeService _stripe;
 
-    public StripeHelperService(EmailAccount.AccountService accountService, StripeService stripe, IPrincipal user, DataContext context, ProjectSettings config, IFileStorage storage, IWebHostEnvironment environment, IMapper mapper) : base(user, context, config, storage, environment, mapper)
+    public StripeHelperService(EmailAccount.AccountService accountService, EmailAccount.EmailQueueService email, StripeService stripe, IPrincipal user, DataContext context, ProjectSettings config, IFileStorage storage, IWebHostEnvironment environment, IMapper mapper) : base(user, context, config, storage, environment, mapper)
     {
         _accountService = accountService;
+        _email = email;
         _stripe = stripe;
     }
 
@@ -150,7 +152,7 @@ public class StripeHelperService : BaseService
             var createRequest = _stripe.Subscription_Create(customer.Id, createOptions);
             if (!createRequest.Success) return ServiceResult<Customer>.CopyFrom(createRequest);
 
-            _accountService.QueueMail(RazorTemplates.Company_SubscriptionCreated, email, new RazorTemplateDataModel<SubscriptionEmailModel> { Data = new SubscriptionEmailModel { FirstName = firstName, Plan = planType } });
+            _email.QueueMail(RazorTemplates.Company_SubscriptionCreated, email, new RazorTemplateDataModel<SubscriptionEmailModel> { Data = new SubscriptionEmailModel { FirstName = firstName, Plan = planType } });
         }
         else
         {
@@ -165,7 +167,7 @@ public class StripeHelperService : BaseService
                 var updateSubscriptionRequest = _stripe.Subscription_Update(subscription.Id, updateOptions);
                 if (!updateSubscriptionRequest.Success) return ServiceResult<Customer>.CopyFrom(updateSubscriptionRequest);
                 if (!subscription.CancelAtPeriodEnd)
-                    _accountService.QueueMail(RazorTemplates.Company_SubscriptionCreated, email, new RazorTemplateDataModel<SubscriptionEmailModel> { Data = new SubscriptionEmailModel { FirstName = firstName, Plan = planType } });
+                    _email.QueueMail(RazorTemplates.Company_SubscriptionCreated, email, new RazorTemplateDataModel<SubscriptionEmailModel> { Data = new SubscriptionEmailModel { FirstName = firstName, Plan = planType } });
             }
         }
         return _stripe.Customer_Get(customer.Id);

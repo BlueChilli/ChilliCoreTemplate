@@ -15,7 +15,6 @@
     <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0015" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0029" />
     <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0009" />
-    <PackageReference Include="ChilliSource.Cloud.Web" Version="2.0.0-alpha0046" />
     <PackageReference Include="DataTables.AspNet.AspNetCore2" Version="3.0.2" />
     <PackageReference Include="FirebaseAdmin" Version="3.1.0" />
     <PackageReference Include="GoogleAuthenticator" Version="3.2.0" />

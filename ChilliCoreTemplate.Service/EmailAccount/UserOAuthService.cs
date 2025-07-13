@@ -126,7 +126,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var existingUser = GetAccountByEmail(oAuthUser.Email);
                 if (existingUser == null)
                 {
-                    if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Login) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is not registered.", key: "ACCOUNT_NOTREGISTERED_ERROR");
+                    if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Login) return ServiceResult<User>.AsError("ACCOUNT_NOTREGISTERED_ERROR", $"Account with email address {oAuthUser.Email} is not registered.");
                     var registerModel = _mapper.Map<RegistrationViewModel>(oAuthUser);
                     registerModel.Roles = role;
                     registerModel.CompanyName = companyName;
@@ -137,9 +137,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 }
                 else
                 {
-                    if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Register) return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is already registered.", key: "ACCOUNT_ALREADYREGISTERED_ERROR");
+                    if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Register) return ServiceResult<User>.AsError("ACCOUNT_ALREADYREGISTERED_ERROR", $"Account with email address {oAuthUser.Email} is already registered.");
                     if (!oAuthConfig.AutoLink && !existingUser.Email.Same(sessionEmail))
-                        return ServicesLibrary.AsError<User>(error: $"To link account with email address {existingUser.Email}, you must be logged in as this account", key: "ACCOUNT_LINK_ERROR");
+                        return ServiceResult<User>.AsError("ACCOUNT_LINK_ERROR", $"To link account with email address {existingUser.Email}, you must be logged in as this account");
                     user = existingUser;
                 }
                 Context.UserOAuths.Add(new UserOAuth
@@ -152,7 +152,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 });
             }
             else if (!oAuthConfig.AutoSignInUp && mode == OAuthMode.Register)
-                return ServicesLibrary.AsError<User>(error: $"Account with email address {oAuthUser.Email} is already registered.", key: "ACCOUNT_ALREADYREGISTERED_ERROR");
+                return ServiceResult<User>.AsError("ACCOUNT_ALREADYREGISTERED_ERROR", $"Account with email address {oAuthUser.Email} is already registered.");
 
             if (String.IsNullOrEmpty(user.FirstName) && !String.IsNullOrEmpty(oAuthUser.FirstName))
                 user.FirstName = oAuthUser.FirstName;
@@ -169,7 +169,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public async Task<ServiceResult<OAuthCodeResultApiModel>> OAuth_Code(OAuthCodeApiModel model)
         {
-            if (!String.IsNullOrEmpty(model.GetError)) return ServicesLibrary.AsError<OAuthCodeResultApiModel>(error: model.GetErrorMessage, key: model.GetError);
+            if (!String.IsNullOrEmpty(model.GetError)) return ServiceResult<OAuthCodeResultApiModel>.AsError(model.GetError, model.GetErrorMessage);
             var state = model.State.Split('|');
             var provider = EnumHelper.Parse<OAuthProvider>(state[0]);
             var mode = EnumHelper.Parse<OAuthMode>(state[1]);

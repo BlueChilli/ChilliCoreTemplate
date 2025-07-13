@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Service.Api.Google;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,12 @@ namespace ChilliCoreTemplate.Web.Library
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var httpContext = context.HttpContext;
+
+            if (httpContext.User?.IsAuthenticated() ?? false)
+            {
+                await next();
+                return;
+            }
 
             var headerExists = httpContext.Request.Headers.TryGetValue("x-grecaptcha", out StringValues requestToken);
             if (!headerExists && httpContext.Request.HasFormContentType)

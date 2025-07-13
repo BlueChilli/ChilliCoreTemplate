@@ -208,6 +208,15 @@ button.close {
     @include button-size($btn-padding-y-xs, $btn-padding-x-xs, $font-size-xs, $border-radius);
 }
 
+//button spinner
+span.spinner-border {
+    display: none;
+}
+
+.busy span.spinner-border {
+    display: inline-block;
+}
+
 //Align icons to center of button
 .btn-square.btn-sm {
     padding: 0.5rem;

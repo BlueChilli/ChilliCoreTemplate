@@ -91,13 +91,13 @@ namespace ChilliCoreTemplate.Service
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.IsAnonymous ? UserStatus.Anonymous : UserStatus.Registered))
                 .AfterMap((src, dest) =>
                     {
-                        dest.UserRoles = new List<RoleSelectionViewModel> { new RoleSelectionViewModel { Role = src.Roles, CompanyName = src.CompanyName, CompanyGuid = src.CompanyGuid } };
+                        dest.UserRoles = [new RoleSelectionViewModel { Role = src.Roles, CompanyName = src.CompanyName, CompanyGuid = src.CompanyGuid }];
                     });
             CreateMap<InviteEditModel, UserCreateModel>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatus.Registered))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.IsAnonymous ? UserStatus.Anonymous : UserStatus.Registered))
                 .AfterMap((src, dest) =>
                 {
-                    dest.UserRoles = new List<RoleSelectionViewModel> { new RoleSelectionViewModel { Role = src.InviteRole.Role.Value, CompanyName = src.InviteRole.CompanyName, CompanyId = src.InviteRole.CompanyId, Status = RoleStatus.Invited } };
+                    dest.UserRoles = [new RoleSelectionViewModel { Role = src.InviteRole.Role.Value, CompanyName = src.InviteRole.CompanyName, CompanyId = src.InviteRole.CompanyId, Status = src.IsAnonymous ? null : RoleStatus.Invited }];
                 });
 
             CreateMap<UserCreateModel, User>()

@@ -329,7 +329,7 @@ namespace ChilliCoreTemplate.Service.Api
             var emailModel = _mapper.Map<AccountViewModel>(admin);
 
             var bcc = _env.IsProduction() ? new EmailData_Address(_config.AdminEmail) : null;
-            _accountService.QueueMail(
+            _email.QueueMail(
                 RazorTemplates.Company_PaymentInvoiceFailed,
                 admin.Email,
                 new RazorTemplateDataModel<AccountViewModel> { Data = emailModel },

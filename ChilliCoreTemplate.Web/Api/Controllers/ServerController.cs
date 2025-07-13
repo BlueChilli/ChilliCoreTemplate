@@ -200,32 +200,32 @@ namespace ChilliCoreTemplate.Web.Api
 
 
 #if DEBUG      
-        [HttpPost("emailconcurrency")]
-        public IActionResult EmailConcurrency()
-        {
-            var service = this.HttpContext.RequestServices.GetRequiredService<AccountService>();
+        //[HttpPost("emailconcurrency")]
+        //public IActionResult EmailConcurrency()
+        //{
+        //    var service = this.HttpContext.RequestServices.GetRequiredService<AccountService>();
 
-            var template = RazorTemplates.WelcomeEmail;
+        //    var template = RazorTemplates.WelcomeEmail;
 
-            for (int i = 0; i < 50; i++)
-            {
-                var model = new RazorTemplateDataModel<RegistrationCompleteViewModel>
-                {
-                    Data = new RegistrationCompleteViewModel
-                    {
-                        FirstName = "Developer",
-                        Email = "developers@bluechilli.com",
-                        Token = Guid.NewGuid().ToString()
-                    },
-                    TemplateId = template.TemplateName.Substring(template.TemplateName.LastIndexOf("/") + 1),
-                    TrackingId = Guid.NewGuid().ToShortGuid()
-                };
+        //    for (int i = 0; i < 50; i++)
+        //    {
+        //        var model = new RazorTemplateDataModel<RegistrationCompleteViewModel>
+        //        {
+        //            Data = new RegistrationCompleteViewModel
+        //            {
+        //                FirstName = "Developer",
+        //                Email = "developers@bluechilli.com",
+        //                Token = Guid.NewGuid().ToString()
+        //            },
+        //            TemplateId = template.TemplateName.Substring(template.TemplateName.LastIndexOf("/") + 1),
+        //            TrackingId = Guid.NewGuid().ToShortGuid()
+        //        };
 
-                service.QueueMail(template, "developers@bluechilli.com", model);
-            }
+        //        service.QueueMail(template, "developers@bluechilli.com", model);
+        //    }
 
-            return new JsonResult(new { message = "Ok" });
-        }
+        //    return new JsonResult(new { message = "Ok" });
+        //}
 
         //[HttpPost("dbexception")]
         //public virtual IActionResult ServerDBException()

@@ -271,8 +271,13 @@ public class EmailService(IPrincipal user, DataContext context, ProjectSettings 
 
 }
 
-public partial class AccountService
+public class EmailQueueService(IPrincipal user, DataContext context, IBackgroundTaskQueue backgroundTaskQueue, ProjectSettings config) : Service<DataContext>(user, context)
 {
+    private readonly IBackgroundTaskQueue _backgroundTaskQueue = backgroundTaskQueue;
+    private readonly ProjectSettings _config = config;
+
+    public bool IsApi { get; set; }
+
     public void QueueUserMail(RazorTemplate template, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, EmailData_Address replyTo = null, EmailData_Address from = null, List<EmailData_Address> bcc = null)
     {
         if (from == null) from = new EmailData_Address(_config.EmailTemplate.Email, $"{User.UserData().Name} via {_config.ProjectDisplayName}");
@@ -343,7 +348,10 @@ public partial class AccountService
             QueueMail(template, email, model);
         };
     }
+}
 
+public partial class AccountService
+{
     public void Email_Open(ShortGuid id)
     {
         var email = Context.Emails.FirstOrDefault(e => e.TrackingId == id.Guid);
@@ -524,7 +532,7 @@ public partial class AccountService
                         Email = notification.Complaint.ComplainedRecipients.First().EmailAddress,
                         Reason = notification.Complaint.ComplaintSubType ?? notification.Complaint.ComplaintFeedbackType
                     };
-                    QueueMail(RazorTemplates.EmailComplaint, _config.AdminEmail, new RazorTemplateDataModel<ComplaintEmailModel>(model));
+                    _email.QueueMail(RazorTemplates.EmailComplaint, _config.AdminEmail, new RazorTemplateDataModel<ComplaintEmailModel>(model));
 
                     if (email.User != null)
                     {

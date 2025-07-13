@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.ResponseCaching;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -216,6 +217,8 @@ namespace ChilliCoreTemplate.Web
             services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
+                //https://github.com/dotnet/aspnetcore/issues/6106#issuecomment-458359368
+                if (!options.ValueProviderFactories.Any(f => f is JQueryQueryStringValueProviderFactory)) options.ValueProviderFactories.Add(new JQueryQueryStringValueProviderFactory());
                 options.AddFlagsEnumModelBinderProvider();
                 options.AddStringModelBinderProvider();
             })

@@ -41,7 +41,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             }
             if (String.IsNullOrEmpty(model.CompanyName)) model.CompanyName = _config.ProjectDisplayName;
             if (String.IsNullOrEmpty(model.PublicUrl)) model.PublicUrl = _config.PublicUrl;
-            QueueMail(template, to, model, attachments, replyTo, from, bcc == null ? null : new List<EmailData_Address> { bcc });
+            _email.QueueMail(template, to, model, attachments, replyTo, from, bcc == null ? null : new List<EmailData_Address> { bcc });
         }
 
         public void QueueCompanyAdminsMail(int companyId, RazorTemplate template, IEmailTemplateDataModel model)
@@ -63,7 +63,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 .ToList();
             if (!to.Any()) to.Add(_config.AdminEmail);
             foreach (var email in to)   //Warning Layout or email can modify data, becareful this works in a loop.
-                QueueMail(template, email, model);
+                _email.QueueMail(template, email, model);
         }
 
         internal User GetCompanyAdmin(int companyId, int? userId = null)

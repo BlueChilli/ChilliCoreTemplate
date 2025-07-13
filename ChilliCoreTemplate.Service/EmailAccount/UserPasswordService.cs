@@ -50,7 +50,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Update, EntityId = user.Id, EntityType = EntityType.Password });
 
-                if (sendEmail && user.Status != UserStatus.Anonymous) QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = _mapper.Map<AccountViewModel>(user) });
+                if (sendEmail && user.Status != UserStatus.Anonymous) _email.QueueMail(RazorTemplates.PasswordChanged, user.Email, new RazorTemplateDataModel<AccountViewModel> { Data = _mapper.Map<AccountViewModel>(user) });
             }
 
             return ServiceResult.AsSuccess();
@@ -71,9 +71,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var emailModel = new ResetPasswordRequestModel { Email = account.Email, Token = request.Result.ToShortGuid().ToString() };
 
             if (wasExpired)
-                QueueMail(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel });
+                _email.QueueMail(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel });
             else
-                QueueMail_Distinct(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel }, new TimeSpan(0, 15, 0));
+                _email.QueueMail_Distinct(RazorTemplates.ResetPassword, account.Email, new RazorTemplateDataModel<ResetPasswordRequestModel>() { Data = emailModel }, new TimeSpan(0, 15, 0));
 
             return ServiceResult.AsSuccess();
         }
@@ -112,7 +112,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             Context.SaveChanges();
 
             if (!String.IsNullOrEmpty(user.Email))
-                QueueMail(RazorTemplates.OneTimePassword, user.Email, new RazorTemplateDataModel<OneTimePasswordModel> { Data = new OneTimePasswordModel(token) });
+                _email.QueueMail(RazorTemplates.OneTimePassword, user.Email, new RazorTemplateDataModel<OneTimePasswordModel> { Data = new OneTimePasswordModel(token) });
             else if (!String.IsNullOrEmpty(user.Phone))
                 _sms.Queue(RazorTemplates.OneTimePassword_Sms, user.Id, user.Phone, new RazorTemplateDataModel<OneTimePasswordModel> { Data = new OneTimePasswordModel(token) });
 

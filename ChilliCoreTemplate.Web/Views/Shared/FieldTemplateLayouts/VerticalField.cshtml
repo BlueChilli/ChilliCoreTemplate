@@ -1,12 +1,8 @@
 @model FieldTemplateModel
-
 <div class="mb-3">
-    <label for="@Model.ModelId" class="form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName</label>
-    <div>
+    <label for="@Model.ModelId" class="form-label @Html.When(Model.IsMandatory, "mandatory")">@Model.DisplayName @if(!String.IsNullOrEmpty(Model.HelpText)) {<br/><span class="text-sm text-muted">@Html.Raw(Model.HelpText)</span>}</label>
+    <div class="@Model.GetFieldSize()">
         @FieldTemplateModel.InnerTemplateMarker
     </div>
-    @if (!String.IsNullOrEmpty(Model.ModelName))
-    {
-        @Html.ValidationMessage(Model.ModelName)
-    }
+    @if (!String.IsNullOrEmpty(Model.ModelName)) { @Html.ValidationMessage(Model.ModelName) }
 </div>

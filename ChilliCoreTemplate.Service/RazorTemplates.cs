@@ -20,7 +20,7 @@ namespace ChilliCoreTemplate.Service
 
     public static class RazorTemplateExtensions
     {
-        public static void QueueMail(this RazorTemplate template, AccountService service, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, EmailData_Address replyTo = null, EmailData_Address from = null, List<EmailData_Address> bcc = null)
+        public static void QueueMail(this RazorTemplate template, EmailQueueService service, string email, IEmailTemplateDataModel model, IEnumerable<IEmailAttachment> attachments = null, EmailData_Address replyTo = null, EmailData_Address from = null, List<EmailData_Address> bcc = null)
         {
             service.QueueMail(template, email, model, attachments, replyTo, from, bcc);
         }

@@ -18,12 +18,12 @@ namespace ChilliCoreTemplate.Service.Sms
     public class SmsServiceFactory
     {
         readonly ProjectSettings _config;
-        readonly AccountService _accountService;
+        readonly EmailQueueService _email;
 
-        public SmsServiceFactory(ProjectSettings config, AccountService accountService)
+        public SmsServiceFactory(ProjectSettings config, EmailQueueService email)
         {
             _config = config;
-            _accountService = accountService;
+            _email = email;
         }
 
 
@@ -35,9 +35,9 @@ namespace ChilliCoreTemplate.Service.Sms
             switch (smsConfig.Provider)
             {
                 case SmsProvider.Email:
-                    return new EmailSmsService(_config, _accountService);
+                    return new EmailSmsService(_config, _email);
                 case SmsProvider.Twilio:
-                    return new TwilioSmsService(_config, _accountService);
+                    return new TwilioSmsService(_config, _email);
                 default:
                     throw new ApplicationException($"Unknown Sms Provider: {smsConfig.Provider}");
             }

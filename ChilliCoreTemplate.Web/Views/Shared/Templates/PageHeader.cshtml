@@ -71,7 +71,7 @@
             @if(Model.Tabs.Any())
             {
                 <tabs>
-                @foreach(var tab in Model.Tabs)
+                @foreach(var tab in Model.Tabs.Where(x => !String.IsNullOrEmpty(x)))
                 {
                     var i = Model.Tabs.IndexOf(tab);
                     <tab id="@(i + 1)" is-active="i == Model.TabActiveId">@tab</tab>

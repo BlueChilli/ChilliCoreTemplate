@@ -17,10 +17,5 @@ namespace ChilliCoreTemplate.Service
             if (!String.IsNullOrEmpty(response.ErrorMessage)) return response.ErrorMessage;
             return response.StatusDescription;
         }
-
-        public static ServiceResult<T> AsError<T>(string error, string key)
-        {
-            return new ServiceResult<T>() { Success = false, Result = default(T), Error = error, Key = key, StatusCode = HttpStatusCode.BadRequest };
-        }
     }
 }

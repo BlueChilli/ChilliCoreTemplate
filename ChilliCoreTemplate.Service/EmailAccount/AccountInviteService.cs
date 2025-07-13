@@ -47,7 +47,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (sendEmail)
                 {
                     if (String.IsNullOrEmpty(account.Email)) return ServiceResult<AccountViewModel>.AsError("Account is missing email address to send invite");
-                    QueueMail(RazorTemplates.InviteUser, account.Email, new RazorTemplateDataModel<InviteEditModel> { Data = model });
+                    _email.QueueMail(RazorTemplates.InviteUser, account.Email, new RazorTemplateDataModel<InviteEditModel> { Data = model });
                 }
 
                 return ServiceResult<AccountViewModel>.AsSuccess(_mapper.Map<AccountViewModel>(account));

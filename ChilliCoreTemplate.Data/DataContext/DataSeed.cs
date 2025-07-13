@@ -50,6 +50,7 @@ namespace ChilliCoreTemplate.Data
                 var adminAccount = context.Users.Add(
                     new User()
                     {
+                        Guid = Guid.NewGuid(),
                         Email = adminEmail,
                         FirstName = "Admin",
                         LastName = _config.ProjectName,
