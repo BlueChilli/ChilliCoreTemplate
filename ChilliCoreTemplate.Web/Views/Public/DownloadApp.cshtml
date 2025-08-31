@@ -1,0 +1,13 @@
+@inject ProjectSettings config
+<h3>Dowload the @config.ProjectDisplayName app</h3>
+
+<p class="mt-4">
+    <a href="@config.MobileSettings.AppStore">
+        <img src="@Url.Content("~/images/icons/badge-ios.png")" alt="App store" />
+    </a>
+</p>
+<p class="mt-4">
+    <a href="@config.MobileSettings.PlayStore">
+        <img src="@Url.Content("~/images/icons/badge-play.png")" alt="Google play" />
+    </a>
+</p>

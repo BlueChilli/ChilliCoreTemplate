@@ -13,7 +13,7 @@ namespace ChilliCoreTemplate.Service.Api
     partial class WebhookService
     {
 
-        private ServiceResult<bool> Twilio_LogFromJson(Webhook_Inbound log, string json)
+        private ServiceResult<bool> Twilio_LogFromJson(WebhookInbound log, string json)
         {
             TwilioSmsBaseModel model = null;
             try
@@ -29,6 +29,7 @@ namespace ChilliCoreTemplate.Service.Api
             {
                 log.Error = "Not able to deserialize json";
                 log.Processed = true;
+                log.ProcessedOn = DateTime.UtcNow;
                 return ServiceResult<bool>.AsError(true, log.Error);
             }
             else
@@ -38,7 +39,7 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult<bool>.AsSuccess(true);
         }
 
-        private ServiceResult Twilio_ProcessWebhook(Webhook_Inbound task)
+        private ServiceResult Twilio_ProcessWebhook(WebhookInbound task)
         {
             var model = task.Raw.FromJson<TwilioSmsBaseModel>();
             if (model.Type == TwilioSmsType.Status)
@@ -77,7 +78,7 @@ namespace ChilliCoreTemplate.Service.Api
         //    return ServiceResult.AsSuccess();
         //}
 
-        private ServiceResult Status(Webhook_Inbound task)
+        private ServiceResult Status(WebhookInbound task)
         {
             var model = task.Raw.FromJson<TwilioSmsStatusModel>();
             var hash = model.SmsSid.GetIndependentHashCode();

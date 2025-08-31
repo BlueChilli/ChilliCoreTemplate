@@ -304,8 +304,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.3.103.56",
-        "contentHash": "7mWqIFwe0epW7Pp4AwuEdppmzfM/XZ52j31BN9w0dF/9Qcjrv9lPKxhT8D0naNzU3Fu2HG+2ii+ifmHxYVL+Cw=="
+        "resolved": "4.0.0.17",
+        "contentHash": "6jUEYOfvhRVfS3vh6mx+tGI+cxMbdvmktDFARjquRkF9WSY3Pa86UceEUAEa7youGNR+yz6Nn18+wzS/GFu77A=="
       },
       "AWSSDK.S3": {
         "type": "Transitive",
@@ -317,10 +317,10 @@
       },
       "AWSSDK.SimpleNotificationService": {
         "type": "Transitive",
-        "resolved": "3.3.101.80",
-        "contentHash": "x7kS4VMQqVDXTlvcy3B7TA1UJtNnBIbb+TIai5CaclRVFYtujpn2oP+QbgewDtYB3OiZEDF1KCBBDsxtPg9r+g==",
+        "resolved": "4.0.0.16",
+        "contentHash": "ZjBuqSZqHzPsGSAfm8Tk9vUv/2pn/1LhvVSyEBE7HoiBiP5VIxW7/DuRi0xq+vmrMJ6uXQ3duXVeDKZtFOaD7g==",
         "dependencies": {
-          "AWSSDK.Core": "[3.3.103.56, 3.4.0)"
+          "AWSSDK.Core": "[4.0.0.17, 5.0.0)"
         }
       },
       "Azure.Core": {
@@ -1970,7 +1970,7 @@
       "chillicoretemplate.service": {
         "type": "Project",
         "dependencies": {
-          "AWSSDK.SimpleNotificationService": "[3.3.101.80, )",
+          "AWSSDK.SimpleNotificationService": "[4.0.0.16, )",
           "AppleAuth.NET": "[1.0.8, )",
           "AsyncEnumerator": "[4.0.2, )",
           "ChilliCoreTemplate.Data": "[1.0.0, )",

@@ -23,5 +23,10 @@ namespace ChilliCoreTemplate.Web.Controllers
         {
             return this.RedirectToRoot(_settings);
         }
+
+        public virtual ActionResult DownloadApp()
+        {
+            return View("DownloadApp");
+        }
     }
 }

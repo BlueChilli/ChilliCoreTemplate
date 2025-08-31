@@ -12,6 +12,10 @@ namespace ChilliCoreTemplate.Models
         {
             public static string Csv = "text/csv";
         }
+        public static class Application
+        {
+            public static string ExcelX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        }
     }
 
 }

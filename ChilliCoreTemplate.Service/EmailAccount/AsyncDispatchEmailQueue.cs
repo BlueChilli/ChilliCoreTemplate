@@ -130,11 +130,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     var context = scope.ServiceProvider.GetService<DataContext>();
 
                     emailsToSend = await context.Emails
-                        .AsNoTracking()
                         .Where(e => e.DateQueued > sendingWindow && e.IsReady && !e.IsSent && !e.IsSending)
                         .Where(e => e.RetryCount == null || e.DateQueued < DateTime.UtcNow.AddSeconds(-120 * (e.RetryCount ?? 0) * (e.RetryCount ?? 0)))
                         .OrderBy(e => e.Error == null ? e.DateQueued : DateTime.MaxValue)
-                        .Take(sendRate * 10) // Runs for 10 seconds max
+                        .Take(sendRate * 40) //At capacity the task will take 40 seconds to run (with 15 second delay between task runs)
                         .ToListAsync();
 
                     executionInfo.SendAliveSignal();
@@ -145,13 +144,16 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     await context.SaveChangesAsync();
                 }
 
-                var throttle = new TaskThrottler(sendRate);
+                if (emailsToSend.Count > 0)
+                {
+                    var throttle = new TaskThrottler(sendRate);
 
-                var tasks = emailsToSend.AsParallel()
-                            .Select(email => throttle.Enqueue(() => SendEmailAsync(executionInfo, provider, email)))
-                            .ToArray();
+                    var tasks = emailsToSend.AsParallel()
+                                .Select(email => throttle.Enqueue(() => SendEmailAsync(executionInfo, provider, email)))
+                                .ToArray();
 
-                await Task.WhenAll(tasks);
+                    await Task.WhenAll(tasks);
+                }
             }, _serviceProvider);
 
             return Task.FromResult(r);

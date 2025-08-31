@@ -19,6 +19,7 @@ using System.Security.Principal;
 using ChilliSource.Cloud.Web;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
+using ChilliCoreTemplate.Service.Api.PushNotifications;
 
 namespace ChilliCoreTemplate.Service.Api
 {
@@ -27,9 +28,9 @@ namespace ChilliCoreTemplate.Service.Api
         AccountService _accountService;
         UserSessionService _session;        
         UserKeyHelper _userKeyHelper;
-        PushNotificationConfiguration _push;
+        PushNotificationServiceFactory _push;
 
-        public UserApiMobileService(IPrincipal user, DataContext context, AccountService accountService, UserSessionService session, UserKeyHelper userKeyHelper, IFileStorage fileStorage, PushNotificationConfiguration push, IMapper mapper, IWebHostEnvironment environment, ProjectSettings config)
+        public UserApiMobileService(IPrincipal user, DataContext context, AccountService accountService, UserSessionService session, UserKeyHelper userKeyHelper, IFileStorage fileStorage, PushNotificationServiceFactory push, IMapper mapper, IWebHostEnvironment environment, ProjectSettings config)
             : base(user, context, config, fileStorage, environment, mapper)
         {
             _accountService = accountService;

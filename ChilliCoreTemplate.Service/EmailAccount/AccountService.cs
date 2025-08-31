@@ -93,13 +93,18 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         internal User GetAccountByEmail(string email, bool includeDeleted = false)
         {
+            return GetAccountByEmail(Context, email, includeDeleted);
+        }
+
+        internal static User GetAccountByEmail(DataContext context, string email, bool includeDeleted = false)
+        {
             var hash = CommonLibrary.CalculateHash(email);
-            var account = Context.Users.Where(a =>
+            var account = context.Users.Where(a =>
                     a.EmailHash == hash &&
                     a.Email == email &&
                     (includeDeleted || a.Status != UserStatus.Deleted))
                 .Include(u => u.Tokens)
-                .Include(u => u.UserRoles).ThenInclude(u => u.Company)
+                .Include(u => u.UserRoles).ThenInclude(u => u.Company).ThenInclude(c => c.MasterCompany)
                 .FirstOrDefault();
 
             return account;
@@ -556,6 +561,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             account.UpdatedDate = DateTime.UtcNow;
             Context.SaveChanges();
 
+            Activity_Add(Context, new UserActivity { UserId = model.Id, ByUserId = UserId.Value, ActivityType = ActivityType.Create, EntityId = role.Id, EntityType = EntityType.Role });
+
             return ServiceResult.AsSuccess();
         }
 
@@ -579,6 +586,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 Context.UserRoles.Remove(userRole);
                 account.UpdatedDate = DateTime.UtcNow;
                 Context.SaveChanges();
+
+                Activity_Add(Context, new UserActivity { UserId = model.Id, ByUserId = UserId.Value, ActivityType = ActivityType.Delete, EntityType = EntityType.Role, JsonData = new { userRole.Role }.ToJson() });
             }
 
             return ServiceResult.AsSuccess();
@@ -644,6 +653,33 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult<User>.AsSuccess(account);
             }
             return ServiceResult<User>.AsError(account, String.IsNullOrEmpty(model.Email) ? "Phone is already registered" : "Email is already registered");
+        }
+
+        internal static async Task<ServiceResult<User>> Create(DataContext context, string email, string firstName, string lastName, Role role)
+        {
+            var user = new User
+            {
+                Guid = Guid.NewGuid(),
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Status = UserStatus.Registered,
+                UserRoles =
+                [
+                    new UserRole
+                    {
+                        Role = role,
+                        CreatedAt = DateTime.UtcNow,
+                        Status = RoleStatus.Invited
+                    }
+                ]
+            };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            return ServiceResult<User>.AsSuccess(user);
         }
 
         private void SendWelcomeEmail(User account, bool isApi = false)
@@ -982,6 +1018,15 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public void Session_Clear(string id)
         {
             _session.ClearSessionCache(id);
+        }
+
+        public void Session_Clear(int userId)
+        {
+            var sessionIds = Context.UserSessions.Where(s => s.UserId == userId).Select(s => s.SessionId).ToList();
+            foreach (var sessionId in sessionIds)
+            {
+                _session.ClearSessionCache(sessionId.ToString());
+            }
         }
 
         public async Task Anonymous_CleanAsync(ITaskExecutionInfo executionInfo)

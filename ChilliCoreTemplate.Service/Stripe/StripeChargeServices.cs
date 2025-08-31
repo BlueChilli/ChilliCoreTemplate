@@ -69,7 +69,7 @@ namespace ChilliCoreTemplate.Service
             try
             {
                 var service = new RefundService(_client);
-                var response = service.Create(new RefundCreateOptions { Charge = chargeId, Amount = amountInCents });
+                var response = service.Create(new RefundCreateOptions { Charge = chargeId, Amount = amountInCents, Metadata = new() { { StripeService.SYSTEM, _config.BaseUrl } } });
                 return ServiceResult<Refund>.AsSuccess(response);
             }
             catch (Exception ex)

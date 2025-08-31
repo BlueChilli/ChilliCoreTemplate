@@ -43,8 +43,6 @@ namespace ChilliCoreTemplate.Data
 
             modelBuilder.Entity<ErrorLog>().HasIndex(c => c.TimeStamp);
 
-            modelBuilder.Entity<Webhook_Inbound>().HasIndex(c => c.WebhookIdHash);
-
             modelBuilder.Entity<Email>().HasIndex(c => c.TrackingId);
             modelBuilder.Entity<Email>().HasIndex(c => c.TemplateIdHash);
             modelBuilder.Entity<Email>().HasIndex(c => c.MessageIdHash);

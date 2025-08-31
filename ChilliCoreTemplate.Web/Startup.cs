@@ -1,5 +1,6 @@
 ﻿using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Service;
+using ChilliCoreTemplate.Service.Api;
 using ChilliCoreTemplate.Web.Api;
 using ChilliCoreTemplate.Web.Library;
 using ChilliSource.Cloud.Core;
@@ -54,6 +55,7 @@ namespace ChilliCoreTemplate.Web
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddBackgroundTaskQueue();
+            services.AddHostedService<WebhookServiceHostedService>();
             services.AddSingleton<CoreHostingEnvironment>();
             services.AddSingleton<StreamedContentPolicySelector>(CreateStreamedContentPolicySelector);
 

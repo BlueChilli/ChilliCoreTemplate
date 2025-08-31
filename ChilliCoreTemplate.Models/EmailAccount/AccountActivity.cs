@@ -18,6 +18,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public string User { get { return Account == null ? null : Account.FullName + "<br/>" + Account.Email; } }
 
+        public string ByUser { get; set; }
+
         public DateTime ActivityOn { get; set; }
 
         public string ActivityOnDisplay { get { return ActivityOn.ToTimezone().ToIsoDateTime(); } }
@@ -80,7 +82,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         Password,
         Email,
         Sms,
-        Company
+        Company,
+        Role
     }
 
 

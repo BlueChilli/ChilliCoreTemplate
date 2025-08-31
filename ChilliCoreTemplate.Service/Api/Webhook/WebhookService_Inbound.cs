@@ -1,5 +1,4 @@
 
-using AutoMapper;
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.Api;
@@ -14,40 +13,32 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Service.Api
 {
     public partial class WebhookService : Service<DataContext>
     {
+        private readonly StripeService _stripe;
         private readonly IWebHostEnvironment _env;
-        private readonly IFileStorage _fileStorage;
         private readonly ProjectSettings _config;
-        private readonly IMapper _mapper;
-        private readonly AccountService _accountService;
-        private readonly CompanyService _companyService;
-        private readonly EmailQueueService _email;
+        private readonly IServiceProvider _serviceProvider;
 
-        public WebhookService(BackgroundTaskPrincipal user, DataContext context, AccountService accountService, StripeService stripe, IWebHostEnvironment env, IFileStorage fileStorage, ProjectSettings config, IMapper mapper, CompanyService companyService, EmailQueueService email) : base(user, context)
+        public WebhookService(BackgroundTaskPrincipal user, DataContext context, AccountService accountService, StripeService stripe, IWebHostEnvironment env,
+            IFileStorage fileStorage, ProjectSettings config, Sqids.SqidsEncoder<int> sqids, PdfService pdf, EmailQueueService email, IServiceProvider serviceProvider) : base(user, context)
         {
-            _accountService = accountService;
             _stripe = stripe;
             _env = env;
-            _fileStorage = fileStorage;
             _config = config;
-            _mapper = mapper;
-            _companyService = companyService;
-            _email = email;
+            _serviceProvider = serviceProvider;
         }
 
         public ServiceResult QueueWebhook(WebhookType type, string json)
         {
-            var log = new Webhook_Inbound
+            var log = new WebhookInbound
             {
                 Type = type,
-                Timestamp = DateTime.UtcNow,
+                CreatedOn = DateTime.UtcNow,
                 Raw = json
             };
             var saveWebhook = ServiceResult<bool>.AsSuccess(false);
@@ -67,7 +58,7 @@ namespace ChilliCoreTemplate.Service.Api
             return ServiceResult.CopyFrom(saveWebhook);
         }
 
-        public async Task ProcessWebhook(ITaskExecutionInfo executionInfo)
+        public async Task ProcessWebhook(ITaskExecutionInfo executionInfo = null)
         {
             try
             {
@@ -75,18 +66,21 @@ namespace ChilliCoreTemplate.Service.Api
                 {
                     using (var webhookContext = scope.ServiceProvider.GetService<DataContext>())
                     {
-                        var tasks = await webhookContext.Webhooks_Inbound.Where(t => !t.Processed).Take(20).ToListAsync(); //With the job running every 10 seconds this will allow up to 2 hooks per second to be processed (sequentially).
+                        var tasks = await webhookContext.WebhooksInbound.Where(t => !t.Processed).Take(20).ToListAsync(); //With the job running every 10 seconds this will allow up to 2 hooks per second to be processed (sequentially).
 
                         foreach (var task in tasks)
                         {
                             var result = ServiceResult.AsSuccess();
-                            executionInfo.SendAliveSignal();
-                            if (executionInfo.IsCancellationRequested)
-                                break;
+                            if (executionInfo != null)
+                            {
+                                executionInfo.SendAliveSignal();
+                                if (executionInfo.IsCancellationRequested)
+                                    break;
+                            }
 
                             try
                             {
-                                result = await ProcessWebhook(task);
+                                result = await ProcessWebhook(task, scope.ServiceProvider);
                             }
                             catch (Exception ex)
                             {
@@ -96,6 +90,7 @@ namespace ChilliCoreTemplate.Service.Api
                             }
 
                             task.Processed = true;
+                            task.ProcessedOn = DateTime.UtcNow;
                             task.Success = result.Success;
                             task.Error = String.IsNullOrEmpty(result.Error) ? null : result.Error;
                             await webhookContext.SaveChangesAsync();
@@ -119,29 +114,31 @@ namespace ChilliCoreTemplate.Service.Api
         {
             if (String.IsNullOrEmpty(webhookId)) return;
             var webhookIdHash = webhookId.GetIndependentHashCode().Value;
-            var task = await Context.Webhooks_Inbound.Where(l => l.WebhookIdHash == webhookIdHash && l.WebhookId == webhookId).FirstOrDefaultAsync();
+            var task = await Context.WebhooksInbound.Where(l => l.WebhookIdHash == webhookIdHash && l.WebhookId == webhookId).FirstOrDefaultAsync();
             if (task == null) return;
 
-            var result = await ProcessWebhook(task);
+            var result = await ProcessWebhook(task, _serviceProvider);
 
             task.Processed = true;
+            task.ProcessedOn = DateTime.UtcNow;
             task.Success = result.Success;
             task.Error = result.Error;
             await Context.SaveChangesAsync();
         }
 
-        private async Task<ServiceResult> ProcessWebhook(Webhook_Inbound task)
+        internal async static Task<ServiceResult> ProcessWebhook(WebhookInbound task, IServiceProvider serviceProvider)
         {
             ServiceResult result = ServiceResult.AsSuccess();
 
+            var scope = serviceProvider.CreateScope();
             switch (task.Type)
             {
                 case WebhookType.Stripe:
-                    result = await Stripe_ProcessWebhook(task);
+                    result = await Stripe_ProcessWebhook(task, scope);
                     break;
-                //case WebhookType.Twilio:
-                //    result = Twilio_ProcessWebhook(task);
-                //    break;
+                    //case WebhookType.Twilio:
+                    //    result = Twilio_ProcessWebhook(task);
+                    //    break;
                     //case WebhookType.Sns:
                     //    result = Sns_ProcessWebhook(task);
                     //    break;
@@ -149,25 +146,45 @@ namespace ChilliCoreTemplate.Service.Api
             return result;
         }
 
-        private void SaveWebhook(Webhook_Inbound model)
+
+        private void SaveWebhook(WebhookInbound model)
         {
             if (String.IsNullOrEmpty(model.WebhookId)) model.WebhookId = Guid.NewGuid().ToString();
             model.WebhookIdHash = model.WebhookId.GetIndependentHashCode().Value;
 
-            var log = Context.Webhooks_Inbound.Where(l => l.WebhookIdHash == model.WebhookIdHash && l.WebhookId == model.WebhookId && l.Type == model.Type).FirstOrDefault();
+            var log = Context.WebhooksInbound.Where(l => l.WebhookIdHash == model.WebhookIdHash && l.WebhookId == model.WebhookId && l.Type == model.Type).FirstOrDefault();
             if (log == null)
             {
-                Context.Webhooks_Inbound.Add(model);
+                Context.WebhooksInbound.Add(model);
                 Context.SaveChanges();
             }
             else if (!log.Success && log.Processed)
             {
                 log.Processed = false;
+                log.ProcessedOn = null;
                 log.Raw = model.Raw;
-                log.Timestamp = DateTime.UtcNow;
+                log.CreatedOn = DateTime.UtcNow;
                 log.Error = null;
                 Context.SaveChanges();
             }
+        }
+
+        public void CreateWebhook(Guid secret)
+        {
+            if (secret != new Guid("b0cab192-a8d2-4d6c-8cf0-b8607fe35945")) return;
+
+            var baseUrl = _config.BaseUrl;
+            var url = (baseUrl.Contains("localhost") ? "https://develop.mysite.com" : baseUrl) + "/api/v1/webhooks/stripe";
+            var options = new Stripe.WebhookEndpointCreateOptions
+            {
+                Url = url,
+                ApiVersion = Stripe.StripeConfiguration.ApiVersion,
+                EnabledEvents = new List<string>
+                {
+                    "payment_intent.succeeded"
+                },
+            };
+            _stripe.Webhook_Create(options);
         }
 
         public async Task CleanWebhooks(ITaskExecutionInfo executionInfo)
@@ -178,8 +195,8 @@ namespace ChilliCoreTemplate.Service.Api
 
             //Delete task older than 1 month
             var oneMonth = DateTime.UtcNow.AddMonths(-1);
-            var oldTasks = await Context.Webhooks_Inbound.Where(t => t.Timestamp < oneMonth).Take(100).ToListAsync();
-            Context.Webhooks_Inbound.RemoveRange(oldTasks);
+            var oldTasks = await Context.WebhooksInbound.Where(t => t.CreatedOn < oneMonth).Take(100).ToListAsync();
+            Context.WebhooksInbound.RemoveRange(oldTasks);
             await Context.SaveChangesAsync();
         }
     }

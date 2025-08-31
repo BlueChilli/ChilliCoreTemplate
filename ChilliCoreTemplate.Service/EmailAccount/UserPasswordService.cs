@@ -22,6 +22,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             var result = Password_Set(user, model.NewPassword, sendEmail);
             if (!result.Success) return ServiceResult<int>.CopyFrom(result);
 
+            model.Role = user.GetLatestUserRole().Role;
+
             return ServiceResult<int>.AsSuccess(user.Id);
         }
 

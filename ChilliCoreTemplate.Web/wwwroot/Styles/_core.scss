@@ -223,7 +223,7 @@ span.spinner-border {
 }
 
 //Links
-a {
+a, .link-default {
     color: $link-color;
 
     &:hover,

@@ -6,47 +6,71 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChilliCoreTemplate.Service
+namespace ChilliCoreTemplate.Service;
+
+public partial class StripeService
 {
-    public partial class StripeService
+    public ServiceResult<List<BalanceTransaction>> BalanceTransaction_List(string payoutId, string accountId = null)
     {
-        public ServiceResult<List<BalanceTransaction>> BalanceTransaction_List(string payoutId, string accountId = null)
+        try
         {
-            try
+            var result = new List<BalanceTransaction>();
+
+            var service = new BalanceTransactionService(_client);
+
+            bool isMore = true;
+            string lastId = null;
+            int limit = 20;
+
+            while (isMore)
             {
-                var result = new List<BalanceTransaction>();
+                var detailsForTransfer = service.List(
+                    new BalanceTransactionListOptions { Payout = payoutId, StartingAfter = lastId, Limit = limit, Expand = new List<string> { "data.source" } },
+                    CreateRequestOptions(accountId));
 
-                var service = new BalanceTransactionService(_client);
-
-                bool isMore = true;
-                string lastId = null;
-                int limit = 20;
-
-                while (isMore)
+                isMore = detailsForTransfer.Count() == limit;
+                if (detailsForTransfer.Count() > 0)
                 {
-                    var detailsForTransfer = service.List(
-                        new BalanceTransactionListOptions { Payout = payoutId, StartingAfter = lastId, Limit = limit, Expand = new List<string> { "data.source" } },
-                        CreateRequestOptions(accountId));
-
-                    isMore = detailsForTransfer.Count() == limit;
-                    if (detailsForTransfer.Count() > 0)
-                    {
-                        result.AddRange(detailsForTransfer.Data);
-                        lastId = detailsForTransfer.Last().Id;
-                    }
+                    result.AddRange(detailsForTransfer.Data);
+                    lastId = detailsForTransfer.Last().Id;
                 }
+            }
 
-                return ServiceResult<List<BalanceTransaction>>.AsSuccess(result);
-            }
-            catch (Exception ex)
-            {
-                if (!(ex is StripeException))
-                {
-                    ex.LogException();
-                }
-                return ServiceResult<List<BalanceTransaction>>.AsError(ex.Message);
-            }
+            return ServiceResult<List<BalanceTransaction>>.AsSuccess(result);
         }
+        catch (Exception ex)
+        {
+            if (!(ex is StripeException))
+            {
+                ex.LogException();
+            }
+            return ServiceResult<List<BalanceTransaction>>.AsError(ex.Message);
+        }
+    }
 
+    public async Task<ServiceResult<List<BalanceTransaction>>> BalanceTransaction_ListAsync(string payoutId, string type = "charge", string accountId = null)
+    {
+        try
+        {
+            var result = new List<BalanceTransaction>();
+            var service = new BalanceTransactionService(_client);
+            int limit = 100;
+
+            await foreach (var item in service.ListAutoPagingAsync(new BalanceTransactionListOptions { Payout = payoutId, Type = type, Limit = limit, Expand = ["data.source"] },
+                    CreateRequestOptions(accountId)))
+            {
+                result.Add(item);
+            }
+
+            return ServiceResult<List<BalanceTransaction>>.AsSuccess(result);
+        }
+        catch (Exception ex)
+        {
+            if (ex is not StripeException)
+            {
+                ex.LogException();
+            }
+            return ServiceResult<List<BalanceTransaction>>.AsError(ex.Message);
+        }
     }
 }

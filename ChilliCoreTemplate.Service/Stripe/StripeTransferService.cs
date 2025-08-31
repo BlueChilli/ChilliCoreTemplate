@@ -46,7 +46,7 @@ namespace ChilliCoreTemplate.Service
             }
         }
 
-        internal ServiceResult<TransferReversal> Transfer_Reverse(string transferId, TransferReversalCreateOptions options)
+        public virtual ServiceResult<TransferReversal> Transfer_Reverse(string transferId, TransferReversalCreateOptions options)
         {
             try
             {

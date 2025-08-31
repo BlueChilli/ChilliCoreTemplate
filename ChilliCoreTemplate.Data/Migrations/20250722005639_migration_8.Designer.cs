@@ -4,6 +4,7 @@ using ChilliCoreTemplate.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChilliCoreTemplate.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250722005639_migration_8")]
+    partial class migration_8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -634,9 +637,6 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.HasIndex("FirstNameIndex");
 
                     b.HasIndex("FullNameIndex");
-
-                    b.HasIndex("Guid")
-                        .IsUnique();
 
                     b.HasIndex("LastNameIndex");
 

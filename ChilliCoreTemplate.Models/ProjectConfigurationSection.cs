@@ -71,6 +71,7 @@ namespace ChilliCoreTemplate.Models
             SmsSettings = new SmsConfigurationSection(configuration.GetSection("SmsSettings"));
             _apiConfigurationSection = new ApiConfigurationSection(configuration.GetSection("ProjectSettings:Api"));
             _hostingSection = new HostingSection(configuration.GetSection("ProjectSettings:Hosting"));
+            MobileSettings = new MobileSection(configuration.GetSection("ProjectSettings:Mobile"));
             MfaSettings = new MfaConfigurationSection(configuration.GetSection("ProjectSettings:Mfa"));
             OAuthsSettings = new OAuthsConfigurationSection(configuration.GetSection("ProjectSettings:OAuth"));
             _googleApisSection = new GoogleApisSection(configuration.GetSection("ProjectSettings:GoogleApis"));
@@ -179,6 +180,8 @@ namespace ChilliCoreTemplate.Models
         /// </summary>
         public UserConfirmationMethod UserConfirmationMethod => _baseSection.GetValue<UserConfirmationMethod?>("UserConfirmationMethod") ?? UserConfirmationMethod.Link;
 
+        public bool DisableTasks => _baseSection.GetValue<bool?>("DisableTasks") ?? false;
+
         public AppConfigurationSection AppSettings;
 
         /// <summary>
@@ -207,6 +210,8 @@ namespace ChilliCoreTemplate.Models
         public EmailTemplateSection EmailTemplate => _emailTemplateSection;
 
         public HostingSection Hosting => _hostingSection;
+
+        public MobileSection MobileSettings { get; }
 
         public MfaConfigurationSection MfaSettings { get; }
 
@@ -609,6 +614,20 @@ namespace ChilliCoreTemplate.Models
         /// Gets the bucket name
         /// </summary>
         public bool Hsts => _section.GetValue<bool>("Hsts");
+    }
+
+    public class MobileSection
+    {
+        private readonly IConfigurationSection _section;
+
+        public MobileSection(IConfigurationSection section)
+        {
+            _section = section;
+        }
+
+        public string AppStore => _section.GetString("AppStore");
+        public string PlayStore => _section.GetString("PlayStore");
+        public string DeepLink => _section.GetString("DeepLink");
     }
 
     public class MfaConfigurationSection

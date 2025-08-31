@@ -77,9 +77,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
-                if (reader.TokenType == JsonToken.StartObject
+                if (reader.Depth < 5 && reader.TokenType == JsonToken.StartObject
                     || reader.TokenType == JsonToken.Null)
                     return base.ReadJson(reader, objectType, existingValue, serializer);
+
+                if (reader.TokenType == JsonToken.StartArray)
+                    return serializer.Deserialize(reader, typeof(List<object>));
 
                 // if the next token is not an object
                 // then fall back on standard deserializer (strings, numbers etc.)

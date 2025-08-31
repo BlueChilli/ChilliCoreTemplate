@@ -207,6 +207,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
             builder.HasIndex(x => x.ExternalIdHash);
             builder.HasIndex(x => x.CreatedDate);
             builder.HasMany(x => x.UserRoles).WithOne(r => r.User).IsRequired();
+            builder.HasMany(x => x.Activities).WithOne(a => a.User).HasForeignKey(a => a.UserId).IsRequired();
         }
     }
 

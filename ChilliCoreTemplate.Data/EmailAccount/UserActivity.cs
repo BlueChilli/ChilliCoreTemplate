@@ -16,8 +16,10 @@ namespace ChilliCoreTemplate.Data.EmailAccount
 
         [Required]
         public int UserId { get; set; }
-
         public virtual User User { get; set; }
+
+        public int? ByUserId { get; set; }
+        public virtual User ByUser { get; set; }
 
         [Required]
         public ActivityType ActivityType { get; set; }

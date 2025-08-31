@@ -23,7 +23,6 @@ namespace ChilliCoreTemplate.Web
         public static Guid SmsTask_Id { get { return new Guid("2d2bbe82-51c9-45d0-8e89-4767cd22166a"); } }
         public static Guid PushTask_Id { get { return new Guid("8fa9d8ef-c72b-4bdd-b2a5-e8659f2208c0"); } }
         public static Guid CleanUpTask_Id { get { return new Guid("781569FE-A731-4995-8F38-44C52C396C14"); } }
-        public static Guid WebhookTask_Id { get { return new Guid("8AE66995-49DD-45E9-B861-777A10D3ACA9"); } }
         public static Guid BulkImportTask_Id { get { return new Guid("766b842e-977d-4baf-a340-2300e04ccfdd"); } }
     }
 
@@ -37,10 +36,15 @@ namespace ChilliCoreTemplate.Web
 
         public void RegisterTasks()
         {
+            #if DEBUG
+            var config = _parentProvider.GetRequiredService<ProjectSettings>();
+            if (config.DisableTasks) return;
+            #endif
+
             var manager = _parentProvider.GetRequiredService<ITaskManager>();
 
             manager.RegisterTaskType(typeof(EmailDeliveryTask), new TaskSettings(TaskDescription.EmailTask_Id));
-            manager.EnqueueRecurrentTask<EmailDeliveryTask>((long)TimeSpan.FromSeconds(10).TotalMilliseconds);
+            manager.EnqueueRecurrentTask<EmailDeliveryTask>((long)TimeSpan.FromSeconds(15).TotalMilliseconds);
 
             //manager.RegisterTaskType(typeof(SmsDeliveryTask), new TaskSettings(TaskDescription.SmsTask_Id));
             //manager.EnqueueRecurrentTask<SmsDeliveryTask>((long)TimeSpan.FromSeconds(20).TotalMilliseconds);
@@ -53,9 +57,6 @@ namespace ChilliCoreTemplate.Web
 
             manager.RegisterTaskType(typeof(ErrorLogTask), new TaskSettings(TaskDescription.ErrorLogTask_Id));
             manager.EnqueueRecurrentTask<ErrorLogTask>((long)TimeSpan.FromSeconds(300).TotalMilliseconds);
-
-            manager.RegisterTaskType(typeof(WebhookTask), new TaskSettings(TaskDescription.WebhookTask_Id));
-            manager.EnqueueRecurrentTask<WebhookTask>((long)TimeSpan.FromSeconds(10).TotalMilliseconds);
 
             manager.RegisterTaskType(typeof(BulkImportTask), new TaskSettings(TaskDescription.BulkImportTask_Id));
             manager.EnqueueRecurrentTask<BulkImportTask>((long)TimeSpan.FromSeconds(120).TotalMilliseconds);

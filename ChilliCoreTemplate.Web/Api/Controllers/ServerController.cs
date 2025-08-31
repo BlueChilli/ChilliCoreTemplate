@@ -3,6 +3,7 @@ using ChilliCoreTemplate.Models.Api;
 using ChilliCoreTemplate.Models.EmailAccount;
 using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.Api;
+using ChilliCoreTemplate.Service.Api.PushNotifications;
 using ChilliCoreTemplate.Service.Api.Slack;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
@@ -33,10 +34,10 @@ namespace ChilliCoreTemplate.Web.Api
         ITemplateViewRenderer _templateViewRenderer;
         IBackgroundTaskQueue _taskQueue;
         FormOptions _formOptions;
-        PushNotificationConfiguration _push;
+        PushNotificationServiceFactory _push;
         SlackApiService _slack;
 
-        public ServerController(ProjectSettings config, UserKeyHelper keyHelper, ITemplateViewRenderer templateViewRenderer, IBackgroundTaskQueue taskQueue, IOptions<FormOptions> formOptions, PushNotificationConfiguration push, SlackApiService slack)
+        public ServerController(ProjectSettings config, UserKeyHelper keyHelper, ITemplateViewRenderer templateViewRenderer, IBackgroundTaskQueue taskQueue, IOptions<FormOptions> formOptions, PushNotificationServiceFactory push, SlackApiService slack)
         {
             _config = config;
             _keyHelper = keyHelper;
@@ -52,6 +53,31 @@ namespace ChilliCoreTemplate.Web.Api
         [HttpGet("tick")]
         public virtual IActionResult ServerTick()
         {
+            return Ok(new { result = "OK" });
+        }
+
+        [HttpGet("task")]
+        public async Task<IActionResult> ScheduledTask(Guid password, string task)
+        {
+            if (password == new Guid("8308e93f-f737-4a51-b584-510971e01887"))
+            {
+                if (task == "bulkimport")
+                {
+                    var service = this.HttpContext.RequestServices.GetRequiredService<BulkImportService>();
+                    await service.Execute(null);
+                }
+                else if (task == "emailsend")
+                {
+                    var service = this.HttpContext.RequestServices.GetRequiredService<IEmailQueue>();
+                    var workItem = await service.Dequeue();
+                    await workItem.Execute(null);
+                }
+                else if (task == "webhook")
+                {
+                    var service = this.HttpContext.RequestServices.GetRequiredService<WebhookService>();
+                    await service.ProcessWebhook();
+                }
+            }
             return Ok(new { result = "OK" });
         }
 

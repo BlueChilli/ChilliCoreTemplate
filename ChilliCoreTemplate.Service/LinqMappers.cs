@@ -132,7 +132,8 @@ namespace ChilliCoreTemplate.Service
 
             LinqMapper.CreateMap<UserActivity, UserActivityViewModel>(x => new UserActivityViewModel
             {
-                Account = x.User.InvokeMap<User, AccountViewModel>()
+                Account = x.User.InvokeMap<User, AccountViewModel>(),
+                ByUser = x.ByUser == null ? "Self" : x.ByUser.FullName + "<br/>" + x.ByUser.Email
             });
 
             LinqMapper.CreateMap<Company, CompanyEditModel>(c => new CompanyEditModel

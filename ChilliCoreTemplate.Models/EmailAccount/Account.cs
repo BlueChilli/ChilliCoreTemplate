@@ -257,6 +257,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string ConfirmPassword { get; set; }
 
         public string Error { get; set; }
+
+        public Role Role { get; set; }
+
+        public bool IsMobile => Role.Equals(Role.User);
     }
 
     public class OneTimePasswordModel

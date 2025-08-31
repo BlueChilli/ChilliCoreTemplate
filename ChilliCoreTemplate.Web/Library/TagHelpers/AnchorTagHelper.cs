@@ -5,163 +5,159 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace ChilliCoreTemplate.Web.TagHelpers
+namespace ChilliCoreTemplate.Web.TagHelpers;
+
+[HtmlTargetElement("a", Attributes = ActionAttribute)]
+public class AnchorTagHelper : TagHelper
 {
-    [HtmlTargetElement("a", Attributes = ActionAttribute)]
-    public class AnchorTagHelper : TagHelper
+    protected const string ActionAttribute = "mvc-action";
+
+    private readonly IUrlHelperFactory _urlHelperFactory;
+    public AnchorTagHelper(IUrlHelperFactory urlHelperFactory)
     {
-        protected const string ActionAttribute = "mvc-action";
-
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        public AnchorTagHelper(IUrlHelperFactory urlHelperFactory)
-        {
-            _urlHelperFactory = urlHelperFactory;
-        }
-
-        [ViewContext, HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
-
-        [HtmlAttributeName(ActionAttribute)]
-        public IMvcActionDefinition Action { get; set; }
-
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        [HtmlAttributeName("asp-fragment")]
-        public string Fragment { get; set; }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            if (Action == null)
-                return;
-
-            output.Attributes.RemoveAll(ActionAttribute);
-            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
-
-            var route = Action.GetRouteValueDictionary();
-            route = route.AddRouteValues(RouteValues);
-
-            var url = urlHelper.RouteUrl(null, route, "https", null, Fragment);
-            output.Attributes.SetAttribute("href", url);
-        }
+        _urlHelperFactory = urlHelperFactory;
     }
 
-    [HtmlTargetElement("a", Attributes = ActionAttribute)]
-    public class AnchorModalTagHelper : TagHelper
+    [ViewContext, HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; }
+
+    [HtmlAttributeName(ActionAttribute)]
+    public IMvcActionDefinition Action { get; set; }
+
+    [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+    public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    [HtmlAttributeName("asp-fragment")]
+    public string Fragment { get; set; }
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        protected const string ActionAttribute = "mvc-modal";
+        if (Action == null)
+            return;
 
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        public AnchorModalTagHelper(IUrlHelperFactory urlHelperFactory)
-        {
-            _urlHelperFactory = urlHelperFactory;
-        }
+        output.Attributes.RemoveAll(ActionAttribute);
+        var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
-        [ViewContext, HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
+        var route = Action.GetRouteValueDictionary();
+        route = route.AddRouteValues(RouteValues);
 
-        [HtmlAttributeName(ActionAttribute)]
-        public IMvcActionDefinition Action { get; set; }
+        var url = urlHelper.RouteUrl(null, route, "https", null, Fragment);
+        output.Attributes.SetAttribute("href", url);
+    }
+}
 
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+[HtmlTargetElement("a", Attributes = ActionAttribute)]
+public class AnchorModalTagHelper : TagHelper
+{
+    protected const string ActionAttribute = "mvc-modal";
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            if (Action == null)
-                return;
-
-            output.Attributes.RemoveAll(ActionAttribute);
-            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
-
-            var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues });
-            output.Attributes.SetAttribute("onclick", url);
-            output.Attributes.SetAttribute("href", "javascript: void(0);");
-        }
+    private readonly IUrlHelperFactory _urlHelperFactory;
+    public AnchorModalTagHelper(IUrlHelperFactory urlHelperFactory)
+    {
+        _urlHelperFactory = urlHelperFactory;
     }
 
-    [HtmlTargetElement("a", Attributes = ActionAttribute)]
-    public class AnchorOffCanvasTagHelper : TagHelper
+    [ViewContext, HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; }
+
+    [HtmlAttributeName(ActionAttribute)]
+    public IMvcActionDefinition Action { get; set; }
+
+    [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+    public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        protected const string ActionAttribute = "mvc-offcanvas";
+        if (Action == null)
+            return;
 
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        public AnchorOffCanvasTagHelper(IUrlHelperFactory urlHelperFactory)
-        {
-            _urlHelperFactory = urlHelperFactory;
-        }
+        output.Attributes.RemoveAll(ActionAttribute);
+        var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
-        [ViewContext, HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
+        var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues });
+        output.Attributes.SetAttribute("onclick", url);
+        output.Attributes.SetAttribute("href", "javascript: void(0);");
+    }
+}
 
-        [HtmlAttributeName(ActionAttribute)]
-        public IMvcActionDefinition Action { get; set; }
+[HtmlTargetElement("a", Attributes = ActionAttribute)]
+public class AnchorOffCanvasTagHelper : TagHelper
+{
+    protected const string ActionAttribute = "mvc-offcanvas";
 
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            if (Action == null)
-                return;
-
-            output.Attributes.RemoveAll(ActionAttribute);
-            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
-
-            var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues }, type: "offcanvas");
-            output.Attributes.SetAttribute("onclick", url);
-            output.Attributes.SetAttribute("href", "javascript: void(0);");
-        }
+    private readonly IUrlHelperFactory _urlHelperFactory;
+    public AnchorOffCanvasTagHelper(IUrlHelperFactory urlHelperFactory)
+    {
+        _urlHelperFactory = urlHelperFactory;
     }
 
-    [HtmlTargetElement("a", Attributes = ActionAttribute)]
-    public class AnchorTagPostHelper : TagHelper
+    [ViewContext, HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; }
+
+    [HtmlAttributeName(ActionAttribute)]
+    public IMvcActionDefinition Action { get; set; }
+
+    [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+    public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        protected const string ActionAttribute = "mvc-post";
+        if (Action == null)
+            return;
 
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        public AnchorTagPostHelper(IUrlHelperFactory urlHelperFactory)
+        output.Attributes.RemoveAll(ActionAttribute);
+        var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
+
+        var url = urlHelper.ModelOpenCommand(Action, new MenuUrlValues { RouteValues = RouteValues }, type: "offcanvas");
+        output.Attributes.SetAttribute("onclick", url);
+        output.Attributes.SetAttribute("href", "javascript: void(0);");
+    }
+}
+
+[HtmlTargetElement("a", Attributes = ActionAttribute)]
+public class AnchorTagPostHelper : TagHelper
+{
+    protected const string ActionAttribute = "mvc-post";
+
+    private readonly IUrlHelperFactory _urlHelperFactory;
+    public AnchorTagPostHelper(IUrlHelperFactory urlHelperFactory)
+    {
+        _urlHelperFactory = urlHelperFactory;
+    }
+
+    [ViewContext, HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; }
+
+    [HtmlAttributeName(ActionAttribute)]
+    public IMvcActionDefinition Action { get; set; }
+
+    [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+    public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    public string JsonData { get; set; }
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        if (Action == null)
+            return;
+
+        output.Attributes.RemoveAll(ActionAttribute);
+        var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
+
+        var route = Action.GetRouteValueDictionary();
+        route = route.AddRouteValues(RouteValues);
+
+        var url = urlHelper.RouteUrl(route);
+        var target = "";
+        if (output.Attributes.ContainsName("target"))
         {
-            _urlHelperFactory = urlHelperFactory;
+            target = output.Attributes["target"].Value.ToString();
+            output.Attributes.RemoveAll("target");
         }
-
-        [ViewContext, HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
-
-        [HtmlAttributeName(ActionAttribute)]
-        public IMvcActionDefinition Action { get; set; }
-
-        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
-        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        public string JsonData { get; set; }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            if (Action == null)
-                return;
-
-            output.Attributes.RemoveAll(ActionAttribute);
-            var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
-
-            var route = Action.GetRouteValueDictionary();
-            route = route.AddRouteValues(RouteValues);
-
-            var url = urlHelper.RouteUrl(route);
-            var target = "";
-            if (output.Attributes.ContainsName("target"))
-            {
-                target = output.Attributes["target"].Value.ToString();
-                output.Attributes.RemoveAll("target");
-            }
-            output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {JsonData ?? "null"});");
-            output.Attributes.SetAttribute("href", "javascript: void(0);");
-        }
+        output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {JsonData ?? "null"});");
+        output.Attributes.SetAttribute("href", "javascript: void(0);");
     }
 }

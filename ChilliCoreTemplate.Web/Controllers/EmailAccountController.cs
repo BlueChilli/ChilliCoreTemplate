@@ -385,7 +385,7 @@ namespace ChilliCoreTemplate.Web.Controllers
                 return View(model);
             }
 
-            return Mvc.Root.EmailAccount_ResetPasswordSuccess.Redirect(this, routeValues: new { Email = model.Email, IsApi = model.IsApi });
+            return Mvc.Root.EmailAccount_ResetPasswordSuccess.Redirect(this, routeValues: new { model.Email, model.Role });
         }
 
         public virtual ActionResult ResetPasswordSuccess(ResetPasswordViewModel model)

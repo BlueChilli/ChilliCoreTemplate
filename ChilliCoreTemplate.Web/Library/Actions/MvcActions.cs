@@ -17,7 +17,7 @@ namespace ChilliCoreTemplate.Web
         public RootActions() : base(area: null) { }
 
         public readonly IMvcActionDefinition Public_Index = MvcAction();
-        public readonly IMvcActionDefinition Public_ConfirmationModal = MvcAction();
+        public readonly IMvcActionDefinition Public_DownloadApp = MvcAction();
 
         public readonly IMvcActionDefinition Error_Index = MvcAction();
         public readonly IMvcActionDefinition Error_Message = MvcAction();

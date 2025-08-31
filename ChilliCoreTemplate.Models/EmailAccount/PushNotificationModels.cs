@@ -21,11 +21,11 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [EmptyItem("Sent?")]
         public bool? Sent { get; set; }
-        public SelectList SentList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Sent"), new KeyValuePair<bool, string>(false, "Unsent") }.ToSelectList(v => v.Key, t => t.Value, true);
+        public SelectList SentList => new KeyValuePair<bool, string>[] { new(true, "Sent"), new KeyValuePair<bool, string>(false, "Unsent") }.ToSelectList(v => v.Key, t => t.Value, true);
 
         [EmptyItem("Opened?")]
         public bool? Opened { get; set; }
-        public SelectList OpenedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Opened"), new KeyValuePair<bool, string>(false, "Unopened") }.ToSelectList(v => v.Key, t => t.Value, true);
+        public SelectList OpenedList => new KeyValuePair<bool, string>[] { new(true, "Opened"), new KeyValuePair<bool, string>(false, "Unopened") }.ToSelectList(v => v.Key, t => t.Value, true);
 
         [Placeholder("Search"), MaxLength(100)]
         public string Search { get; set; }
