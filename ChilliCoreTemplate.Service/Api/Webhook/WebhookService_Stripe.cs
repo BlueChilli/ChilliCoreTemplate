@@ -46,9 +46,27 @@ partial class WebhookService
         return false;
     }
 
-    private ServiceResult<bool> Stripe_LogFromJson(WebhookInbound log, string json)
+    private ServiceResult<bool> Stripe_LogFromJson(WebhookInbound log, string json, string signature)
     {
         var model = Stripe.EventUtility.ParseEvent(json);
+
+        var endpointSecret = model.Account == null ? _config.StripeSettings.WebhookSecretRoot : _config.StripeSettings.WebhookSecretConnect;
+
+        try
+        {
+            if (!String.IsNullOrEmpty(endpointSecret) || !_env.IsDevelopment())
+            {
+                var tolerance = _env.IsDevelopment() ? long.MaxValue : 300;
+                model = EventUtility.ConstructEvent(json, signature, endpointSecret, tolerance, throwOnApiVersionMismatch: false);
+            }
+        }
+        catch (Exception ex)
+        {
+            log.Error = ex.Message;
+            log.Processed = true;
+            log.ProcessedOn = DateTime.UtcNow;
+            return ServiceResult<bool>.AsError(true, log.Error);
+        }
 
         if (model == null)
         {
@@ -70,6 +88,10 @@ partial class WebhookService
 
             log.WebhookId = model.Id;
             log.Subtype = model.Type;
+            if (model.Data?.Object != null && model.Data.Object is IHasId id)
+            {
+                log.SubtypeId = id.Id;
+            }
         }
         return ServiceResult<bool>.AsSuccess(true);
     }
@@ -106,70 +128,51 @@ partial class WebhookService
 
     private static async Task<ServiceResult> Stripe_ProcessWebhook(WebhookInbound task, IServiceScope scope)
     {
-        ServiceResult result = ServiceResult.AsSuccess();
+        var stripeEvent = Stripe.EventUtility.ParseEvent(task.Raw);
         var stripeService = GetStripeService(scope);
-
-        var stripeEvent = EventUtility.ParseEvent(task.Raw);
-
         var userId = stripeEvent.Account;
         var stripeEventResult = await stripeService.Event_GetAsync(stripeEvent);
-        if (!stripeEventResult.Success)
-        {
-            result = ServiceResult.CopyFrom(stripeEventResult);
-        }
-        else
-        {
-            //stripeEvent = stripeEventResult.Result;
-            stripeEvent.Account = userId;
+        if (!stripeEventResult.Success) return ServiceResult.CopyFrom(stripeEventResult);
+        stripeEvent = stripeEventResult.Result;
+        stripeEvent.Account = userId;
 
-            switch (stripeEvent.Type)
-            {
-                case "charge.succeded":
-                    result = await ProcessChargeSucceeded(stripeEvent, scope);
-                    break;
-                case "charge.refunded":
-                    result = await ProcessChargeRefunded(stripeEvent, scope);
-                    break;
-                //case Stripe.Events.ChargeDisputeCreated:
-                //case Stripe.Events.ChargeDisputeClosed:
-                //    result = ProcessChargeDisputed(stripeEvent);
-                //    break;
-                //case Stripe.Events.PayoutPaid:
-                //    result = ProcessPayoutPaid(stripeEvent);
-                //    break;
-                //case Stripe.Events.TransferCreated:
-                //case Stripe.Events.TransferUpdated:
-                //    result = ProcessTransfer(stripeEvent);
-                //    break;
-                //case Stripe.Events.TransferFailed:
-                //    result = ProcessTransferFailed(stripeEvent);
-                //    break;
-                //case Stripe.Events.InvoiceUpcoming:
-                //    result = ProcessInvoiceUpcoming(stripeEvent);
-                //    break;
-                case "invoice.payment_succeeded":
-                    result = await ProcessInvoicePaid(stripeEvent, scope);
-                    break;
-                case "invoice.payment_failed":
-                    result = await ProcessInvoicePaymentFailed(stripeEvent, scope);
-                    break;
-                //case Stripe.Events.AccountUpdated:
-                //    result = Stripe_ProcessAccountUpdated(stripeEvent);
-                //    break;
-                //case Stripe.Events.PaymentIntentSucceeded:
-                //    result = Stripe_ProcessPaymentIntentSucceeded(stripeEvent);
-                //    break;
-                //case Stripe.Events.CustomerSubscriptionDeleted:
-                //    result = ProcessSubscriptionDeleted(stripeEvent);
-                //    break;
-                //case Stripe.Events.CustomerDeleted:
-                //    result = ProcessCustomerDeleted(stripeEvent);
-                //    break;
-                default:
-                    result = ServiceResult.AsError($"Stripe event {stripeEvent.Type} not handled");
-                    break;
-            }
-        }
+        ServiceResult result = stripeEvent.Type switch
+        {
+            EventTypes.ChargeSucceeded => await ProcessChargeSucceeded(stripeEvent, scope),
+            EventTypes.ChargeRefunded => await ProcessChargeRefunded(stripeEvent, scope),
+            //case Stripe.Events.ChargeDisputeCreated:
+            //case Stripe.Events.ChargeDisputeClosed:
+            //    result = ProcessChargeDisputed(stripeEvent);
+            //    break;
+            //case Stripe.Events.PayoutPaid:
+            //    result = ProcessPayoutPaid(stripeEvent);
+            //    break;
+            //case Stripe.Events.TransferCreated:
+            //case Stripe.Events.TransferUpdated:
+            //    result = ProcessTransfer(stripeEvent);
+            //    break;
+            //case Stripe.Events.TransferFailed:
+            //    result = ProcessTransferFailed(stripeEvent);
+            //    break;
+            //case Stripe.Events.InvoiceUpcoming:
+            //    result = ProcessInvoiceUpcoming(stripeEvent);
+            //    break;
+            EventTypes.InvoicePaymentSucceeded => await ProcessInvoicePaid(stripeEvent, scope),
+            EventTypes.InvoicePaymentFailed => await ProcessInvoicePaymentFailed(stripeEvent, scope),
+            //case Stripe.Events.AccountUpdated:
+            //    result = Stripe_ProcessAccountUpdated(stripeEvent);
+            //    break;
+            //case Stripe.Events.PaymentIntentSucceeded:
+            //    result = Stripe_ProcessPaymentIntentSucceeded(stripeEvent);
+            //    break;
+            //case Stripe.Events.CustomerSubscriptionDeleted:
+            //    result = ProcessSubscriptionDeleted(stripeEvent);
+            //    break;
+            //case Stripe.Events.CustomerDeleted:
+            //    result = ProcessCustomerDeleted(stripeEvent);
+            //    break;
+            _ => ServiceResult.AsError($"Stripe event {stripeEvent.Type} not handled"),
+        };
         return result;
     }
 

@@ -22,13 +22,13 @@ namespace ChilliCoreTemplate.Web
             var id = html.IdFor(expression);
             var content = new HtmlContentBuilder();
 
-            content.AppendHtml("<div class=\"d-flex gap-2\">");
+            content.AppendHtml("<div class=\"row g-2\"><div class=\"col-4 form-select-other\">");
 
             content.AppendHtml(await html.FieldTemplateInnerForAsync(expression));
 
             var isOther = EqualityComparer<TValue>.Default.Equals(html.GetModelStateValue(expression), other);
 
-            content.AppendHtml($"<div class=\"js-{id}-other {(isOther ? "" : "hide")}\">");
+            content.AppendHtml($"</div><div class=\"col-8 js-{id}-other {(isOther ? "" : "hide")}\">");
 
             content.AppendHtml(await html.FieldTemplateInnerForAsync(otherExpression));
 

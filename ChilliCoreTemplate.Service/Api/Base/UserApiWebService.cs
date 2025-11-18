@@ -155,6 +155,7 @@ namespace ChilliCoreTemplate.Service.Api
                     return _accountService.Password_ResetRequest(model.Email);
                 case UserTokenType.Activate:
                     user = _accountService.GetAccountByEmail(model.Email);
+                    if (user == null) return ServiceResult.AsError("Account not found");
                     _accountService.SendVerificationReminderEmail(user);
                     return ServiceResult.AsSuccess();
                 case UserTokenType.OneTimePassword:

@@ -9,26 +9,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChilliCoreTemplate.Data.EmailAccount
+namespace ChilliCoreTemplate.Data.EmailAccount;
+
+public class UserToken
 {
-    public class UserToken
-    {
-        [Key]
-        public int Id { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-        [Required]
-        public int UserId { get; set; }
-        public virtual User User { get; set; }
+    [Required]
+    public int UserId { get; set; }
+    public virtual User User { get; set; }
 
-        [Required]
-        public UserTokenType Type { get; set; }
+    public int? UserRoleId { get; set; }
+    public virtual UserRole UserRole { get; set; }
 
-        [Required]
-        public Guid Token { get; set; }
+    [Required]
+    public UserTokenType Type { get; set; }
 
-        [DateTimeKind]
-        public DateTime? Expiry { get; set; }
+    [Required]
+    public Guid Token { get; set; }
 
-    }
-
+    [DateTimeKind]
+    public DateTime? Expiry { get; set; }
 }

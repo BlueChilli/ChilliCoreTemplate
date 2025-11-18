@@ -32,9 +32,9 @@ namespace ChilliCoreTemplate.Web
             }
         }
 
-        public static ActionResult Redirect(this IMvcActionDefinition actionResult, Controller controller, int id)
+        public static ActionResult Redirect(this IMvcActionDefinition actionResult, Controller controller, int id, string fragment = null)
         {
-            return actionResult.Redirect(controller, routeValues: new { Id = id });
+            return actionResult.Redirect(controller, routeValues: new { Id = id }, fragment: fragment);
         }
 
         public static ActionResult RedirectWithError(this IMvcActionDefinition actionResult, Controller controller, string error)
@@ -128,8 +128,15 @@ namespace ChilliCoreTemplate.Web
             return htmlHelper.OffCanvasOpen(actionResult, new MenuUrlValues(id));
         }
 
-        public static IHtmlContent OffCanvasOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, object routeValues = null, string data = "null")
+        public static IHtmlContent OffCanvasOpen<T>(this IMvcActionDefinition actionResult, IHtmlHelper<T> htmlHelper, object routeValues = null, string fragment = null, string data = "null")
         {
+            if (!string.IsNullOrEmpty(fragment))
+            {
+                routeValues ??= new { };
+                var dict = new RouteValueDictionary(routeValues);
+                dict.AddOrSkipIfExists("fragment", fragment);
+                routeValues = dict;
+            }
             return htmlHelper.OffCanvasOpen(actionResult, new MenuUrlValues { RouteValues = routeValues }, data);
         }
 

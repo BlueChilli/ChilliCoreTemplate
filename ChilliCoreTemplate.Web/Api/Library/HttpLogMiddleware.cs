@@ -29,8 +29,22 @@ public class HttpLogMiddleware : DelegatingHandler
         _next = next;
     }
 
-    public async Task Invoke(HttpContext httpContext, StreamedContentPolicySelector streamedPolicy, IBackgroundTaskQueue taskQueue)
+    public async Task Invoke(HttpContext httpContext, IBackgroundTaskQueue taskQueue)
     {
+        var hasStreamedRequestAttribute = StreamedRequestAttribute.IsSet(httpContext);
+        var hasStreamedResponseAttribute = StreamedResponseAttribute.IsSet(httpContext);
+
+        // (Optional: keep endpoint routing check if you later re-enable endpoint routing)
+        if (!hasStreamedRequestAttribute || !hasStreamedResponseAttribute)
+        {
+            var endpoint = httpContext.GetEndpoint();
+            if (endpoint != null)
+            {
+                hasStreamedRequestAttribute |= endpoint.Metadata.GetMetadata<StreamedRequestAttribute>() != null;
+                hasStreamedResponseAttribute |= endpoint.Metadata.GetMetadata<StreamedResponseAttribute>() != null;
+            }
+        }
+
         var request = httpContext.Request;
 
         var extensionsToIgnore = new List<string>() { ".php" };
@@ -43,7 +57,7 @@ public class HttpLogMiddleware : DelegatingHandler
         try
         {
             //skip content for streamed requests
-            if (streamedPolicy.IsStreamedRequest(httpContext))
+            if (hasStreamedRequestAttribute)
             {
                 apiLogEntry.RequestContentBody = "<< streamed content not available >>";
             }
@@ -60,7 +74,7 @@ public class HttpLogMiddleware : DelegatingHandler
                 request.Body.Position = 0;
             }
 
-            if (streamedPolicy.IsStreamedResponse(httpContext))
+            if (hasStreamedResponseAttribute)
             {
                 apiLogEntry.ResponseContentBody = "<< streamed content not available >>";
                 await _next(httpContext);

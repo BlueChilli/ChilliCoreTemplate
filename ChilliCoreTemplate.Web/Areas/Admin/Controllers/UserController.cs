@@ -101,6 +101,8 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         {
             var model = new UserDetailsModel { Account = _accountService.Get<AccountViewModel>(id, visibleOnly: true) };
 
+            if (model.Account == null) return Mvc.Admin.User_Users.Redirect(this);
+
             model.LastActivities = _accountService.Activity_Last(id, 7);
 
             return View(model);

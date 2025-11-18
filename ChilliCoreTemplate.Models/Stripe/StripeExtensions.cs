@@ -1,4 +1,5 @@
-﻿using Stripe;
+﻿using Humanizer;
+using Stripe;
 using System;
 using System.Collections.Generic;
 
@@ -49,9 +50,31 @@ public static class StripeExtensions
 
     public static string Description(this PaymentMethod method)
     {
-        if (method.Card != null) return $"XXXX {method.Card.Last4}";
-        if (method.AuBecsDebit != null) return $"{method.AuBecsDebit.BsbNumber} XXXX{method.AuBecsDebit.Last4}";
+        if (method.Card != null) return CardDescription(method.Card.Brand, method.Card.Last4, method.Card.ExpMonth, method.Card.ExpYear);
+        if (method.AuBecsDebit != null) return BecsDescription(method.AuBecsDebit.BsbNumber, method.AuBecsDebit.Last4);
         return "Unknown";
+    }
+
+    public static string Description(this ChargePaymentMethodDetails method)
+    {
+        if (method.Card != null) return CardDescription(method.Card.Brand, method.Card.Last4, method.Card.ExpMonth, method.Card.ExpYear);
+        if (method.AuBecsDebit != null) return BecsDescription(method.AuBecsDebit.BsbNumber, method.AuBecsDebit.Last4);
+        return "Unknown";
+    }
+
+    private static string CardDescription(string brand, string last4, long expMonth, long expYear) => $"{brand.Humanize()} ending in {last4}, exp. {expMonth}/{expYear}";
+
+    private static string BecsDescription(string bsb, string last4)
+    {
+        if (!String.IsNullOrWhiteSpace(bsb))
+        {
+            var digits = bsb.Replace("-", "").Trim();
+            if (digits.Length == 6 && long.TryParse(digits, out _))
+            {
+                bsb = $"{digits[..3]}-{digits[3..]}";
+            }
+        }
+        return $"BSB {bsb}, account ending in {last4}";
     }
 
     public static bool IsValid(this PaymentMethodCard card)

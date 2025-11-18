@@ -71,10 +71,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
     {
         [RemoveItem(EnumValue = Role.Administrator)]
         public Role Role { get; set; }
+        public RoleStatus? Status { get; set; }
         public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
         public Guid? CompanyGuid { get; set; }
-        public RoleStatus? Status { get; set; }
     }
 
     public class RegistrationViewModel : IValidatableObject

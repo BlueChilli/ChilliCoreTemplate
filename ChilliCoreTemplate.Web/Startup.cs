@@ -57,7 +57,6 @@ namespace ChilliCoreTemplate.Web
             services.AddBackgroundTaskQueue();
             services.AddHostedService<WebhookServiceHostedService>();
             services.AddSingleton<CoreHostingEnvironment>();
-            services.AddSingleton<StreamedContentPolicySelector>(CreateStreamedContentPolicySelector);
 
             services.AddSingleton<MvcRouterAccessor>();
             services.AddSingleton<IMvcRouterAccessor>(provider => provider.GetRequiredService<MvcRouterAccessor>());
@@ -193,25 +192,15 @@ namespace ChilliCoreTemplate.Web
             });
         }
 
-        private StreamedContentPolicySelector CreateStreamedContentPolicySelector(IServiceProvider provider)
-        {
-            return new StreamedContentPolicySelector()
-            {
-                StreamedResquestRelativePaths = new PathString[] { new PathString("/api/server/testupload") }
-            };
-        }
-
         private void ConfigureMvc(IServiceCollection services)
         {
             services.AddOptions<MvcOptions>()
                 .Configure<IServiceProvider>((options, provider) =>
                 {
                     var settings = provider.GetRequiredService<ProjectSettings>();
-                    var streamedPolicy = provider.GetRequiredService<StreamedContentPolicySelector>();
 
                     options.ModelMetadataDetailsProviders.Add(new MetadataAwareProvider());
                     options.Filters.Add(new ApiKeyActionFilter(settings.ApiSettings.ApiKey));
-                    options.Filters.Add(new StreamedContentResourceFilter(streamedPolicy));
 
                     options.EnableEndpointRouting = false;
                 });
@@ -281,7 +270,6 @@ namespace ChilliCoreTemplate.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var streamedPolicy = app.ApplicationServices.GetRequiredService<StreamedContentPolicySelector>();
             var settings = app.ApplicationServices.GetRequiredService<ProjectSettings>();
             var showErrors = !env.IsProduction();
 
@@ -397,7 +385,11 @@ namespace ChilliCoreTemplate.Web
                 });
             }
 
-            app.UseWhen(context => !streamedPolicy.IsStreamedResponse(context), builder =>
+            // Populate streamed flags in HttpContext.Items before deciding on caching/compression
+            app.UseMiddleware<StreamedDetectionMiddleware>();
+
+            // Only enable caching/compression when NOT a streamed response
+            app.UseWhen(context => !IsStreamedResponse(context), builder =>
             {
                 builder.UseResponseCaching();
                 builder.UseResponseCompression();
@@ -470,6 +462,19 @@ namespace ChilliCoreTemplate.Web
 
             AppDomain.CurrentDomain.SetData("ContentRootPath", env.ContentRootPath);
             AppDomain.CurrentDomain.SetData("WebRootPath", env.WebRootPath);
+        }
+
+        private static bool IsStreamedResponse(HttpContext context)
+        {
+            // Prefer detection flags (works with UseMvc legacy routing)
+            if (StreamedResponseAttribute.IsSet(context))
+            {
+                return true;
+            }
+
+            // Fallback to endpoint metadata if endpoint routing is later enabled
+            var endpoint = context.GetEndpoint();
+            return endpoint?.Metadata.GetMetadata<StreamedResponseAttribute>() != null;
         }
 
         private bool SVGRequest(HttpContext context)

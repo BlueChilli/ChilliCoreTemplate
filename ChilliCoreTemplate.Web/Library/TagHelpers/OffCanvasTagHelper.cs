@@ -42,7 +42,7 @@ public class OffCanvasHeaderTagHelper : TagHelper
         output.AddClass("border-bottom", NullHtmlEncoder.Create());
         output.AddClass("offcanvas-header", NullHtmlEncoder.Create());
         output.AddClass("bg-surface-secondary", NullHtmlEncoder.Create());
-        output.PreContent.SetHtmlContent($"<h5 class=\"offcanvas-title\">{Title}</h5>");
+        output.PreContent.SetHtmlContent($"<h5 class=\"offcanvas-title\">{Title}{(String.IsNullOrEmpty(Description) ? "" : $"<br><small class=\"text-muted\">{Description}</small>")}</h5>");
         output.PostContent.SetHtmlContent("<button type=\"button\" class=\"btn-close text-reset\" data-bs-dismiss=\"offcanvas\" aria-label=\"Close\"></button>");
     }
 }

@@ -23,5 +23,15 @@ namespace ChilliCoreTemplate.Models.Stripe
         /// Gets the secret api key value.
         /// </summary>
         public string SecretApiKey => _section.GetString("SecretApiKey");
+
+        /// <summary>
+        /// Gets the webhook secret for the root account webhook.
+        /// </summary>
+        public string WebhookSecretRoot => _section.GetString("WebhookSecret_Root");
+
+        /// <summary>
+        /// Gets the webhook secret for the connect account webhook.
+        /// </summary>
+        public string WebhookSecretConnect => _section.GetString("WebhookSecret_Connect");
     }
 }

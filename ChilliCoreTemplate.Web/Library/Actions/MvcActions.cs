@@ -120,6 +120,8 @@ namespace ChilliCoreTemplate.Web
 
         public readonly IMvcActionDefinition BulkImport_List = MvcAction();
         public readonly IMvcActionDefinition BulkImport_Download = MvcAction();
+
+        public readonly IMvcActionDefinition Migration_Import = MvcAction();
     }
 
     public class CompanyActions : MvcActionContainer

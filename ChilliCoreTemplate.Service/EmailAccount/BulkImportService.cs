@@ -160,10 +160,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         {
             try
             {
-                var twoYearsAgo = DateTime.UtcNow.AddYears(-2);
+                var sixMonthsAgo = DateTime.UtcNow.AddMonths(-6);
                 var oneHourAgo = DateTime.UtcNow.AddHours(-1);
                 var old = await Context.BulkImports
-                    .Where(x => x.StartedOn < twoYearsAgo || (x.FinishedOn == null && x.StartedOn < oneHourAgo))
+                    .Where(x => x.StartedOn < sixMonthsAgo || (x.FinishedOn == null && x.StartedOn < oneHourAgo))
+                    .Where(x => x.Type != BulkImportType.Migration)
                     .Take(200)
                     .ToListAsync();
 

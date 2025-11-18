@@ -96,12 +96,12 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 return ServiceResult<Guid>.AsError("Email address not registered.");
             }
 
-            if (account.UserRoles.Any(x => x.CompanyId.HasValue && x.Company.IsDeleted))
-                return ServiceResult<Guid>.AsError("Company is archived");
+            var role = account.UserRoles.Where(x => x.CompanyId.HasValue && x.Company.IsDeleted).FirstOrDefault();
+            if (role == null) return ServiceResult<Guid>.AsError("Company is archived");
 
             if (expiryTime == null) expiryTime = TimeSpan.FromMinutes(60);
 
-            var result = Token_Add(account, UserTokenType.Password, expiryTime, out wasExpired);
+            var result = Token_Add(account, UserTokenType.Password, expiryTime, role, out wasExpired);
             Context.SaveChanges();
 
             return ServiceResult<Guid>.AsSuccess(result);

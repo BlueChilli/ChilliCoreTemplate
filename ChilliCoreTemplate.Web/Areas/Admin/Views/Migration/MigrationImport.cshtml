@@ -1,0 +1,31 @@
+﻿@model ChilliCoreTemplate.Models.Admin.Migration.MigrationImportModel
+@{
+    var pageButtons = new Template_PageButtons
+    {
+        SaveMenuText = "Import"
+    };
+}
+@await Html.PartialAsync("Layout/_PageHeader", new PageHeaderOptions())
+<page>
+    @await Html.TemplateAsync(TemplateTypes.PageMessage)
+
+    <box>
+        <box-title>Migration file</box-title>
+        <box-content>
+            @using (Html.BeginFormCustom(Mvc.Admin.Migration_Import, htmlAttributes: new { enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummaryHtml("")
+
+                @await Html.FieldTemplateForAsync(m => m.Type)
+
+                @await Html.FieldTemplateForAsync(m => m.CsvFile)
+
+                @await Html.TemplateAsync(TemplateTypes.PageButtons, pageButtons)
+            }
+        </box-content>
+    </box>
+</page>
+@section scripts
+{
+
+}

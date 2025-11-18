@@ -61,18 +61,25 @@ namespace ChilliCoreTemplate.Web
                 }
                 else if (SelectList != null)
                 {
-                    var selectedValue = data.Value?.ToString();
-                    foreach (var item in this.SelectList)
+                    var currentValue = data.Value?.ToString();
+                    var hasCurrentValue = SelectList.Any(x => x.Value == currentValue);
+                    if (hasCurrentValue)
                     {
-                        item.Selected = item.Value == selectedValue;
+                        foreach (var item in this.SelectList)
+                        {
+                            item.Selected = item.Value == currentValue;
+                        }
                     }
                 }
             }
 
-            // When SelectList is populated by the client, only resolves EmptyItemAttribute if the attribute is explicitly declared.
-            this.SelectList = listPopulatedByClient ?
-                                EmptyItemAttribute.Resolve(metadata, this.SelectList, isRequired)
-                                : EmptyItemAttribute.Resolve(metadata, this.SelectList, SingleEmptyItem, isRequired);
+            if (this is not RadioListFieldTemplateOptions)
+            {
+                // When SelectList is populated by the client, only resolves EmptyItemAttribute if the attribute is explicitly declared.
+                this.SelectList = listPopulatedByClient ?
+                                    EmptyItemAttribute.Resolve(metadata, this.SelectList, isRequired)
+                                    : EmptyItemAttribute.Resolve(metadata, this.SelectList, SingleEmptyItem, isRequired);
+            }
 
             this.SelectList = RemoveItemAttribute.Resolve(metadata, this.SelectList);
         }

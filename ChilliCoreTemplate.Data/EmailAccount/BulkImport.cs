@@ -38,6 +38,9 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public string Errors { get; set; }
 
         [DateTimeKind]
+        public DateTime QueuedOn { get; set; }
+
+        [DateTimeKind]
         public DateTime? StartedOn { get; set; }
 
         [DateTimeKind]

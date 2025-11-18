@@ -1,6 +1,10 @@
-﻿using ChilliCoreTemplate.Data.EmailAccount;
+﻿using ChilliCoreTemplate.Data;
+using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.EmailAccount;
+using ChilliSource.Cloud.Core.LinqMapper;
+using ChilliSource.Cloud.Web.MVC;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -66,26 +70,45 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 _email.QueueMail(template, email, model);
         }
 
-        internal User GetCompanyAdmin(int companyId, int? userId = null)
+        public List<UserBasicModel> GetCompanyAdmins(int companyId)
         {
-            var query = GetCompanyAdminsQuery(companyId);
-
-            if (userId.HasValue) query = query.Where(x => x.Id == userId.Value);
-
-            return query.FirstOrDefault();
+            return GetCompanyAdmins(Context, companyId);
         }
 
-        internal List<User> GetCompanyAdmins(int companyId)
+        public static List<UserBasicModel> GetCompanyAdmins(DataContext context, int companyId)
         {
-            return GetCompanyAdminsQuery(companyId).ToList();
+            return GetCompanyAdminsQuery(context, companyId)
+                .Materialize<User, UserBasicModel>()
+                .ToList();
         }
 
-        private IQueryable<User> GetCompanyAdminsQuery(int companyId)
+        internal User GetCompanyAdmin(int companyId)
         {
-            return Context.Users
+            return GetCompanyAdmin(Context, companyId);
+        }
+
+        internal static User GetCompanyAdmin(DataContext context, int companyId)
+        {
+            return GetCompanyAdminsQuery(context, companyId)
+                .Include(x => x.UserRoles).ThenInclude((UserRole r) => r.Company)
+                .FirstOrDefault();
+        }
+
+        private static IQueryable<User> GetCompanyAdminsQuery(DataContext context, int companyId)
+        {
+            return context.Users
                 .Include(x => x.UserRoles)
                 .Where(x => x.UserRoles.Any(r => r.CompanyId == companyId && r.Role.HasFlag(Role.CompanyAdmin)) && x.Status != UserStatus.Deleted);
         }
 
+        internal static SelectList AdminEmailList(DataContext context, int companyId)
+        {
+            return GetCompanyAdminsQuery(context, companyId).OrderBy(x => x.Email).Select(x => new { x.Id, x.Email }).ToSelectList(v => v.Id, t => t.Email);
+        }
+
+        public UserDataPrincipal CreateCompanyPrincipal(int companyId)
+        {
+            return CreatePrincipal(GetCompanyAdmin(companyId), null);
+        }
     }
 }

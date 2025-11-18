@@ -33,7 +33,7 @@ namespace ChilliCoreTemplate.Service.Api
             _serviceProvider = serviceProvider;
         }
 
-        public ServiceResult QueueWebhook(WebhookType type, string json)
+        public async Task<ServiceResult> QueueWebhook(WebhookType type, string json, string signature = null)
         {
             var log = new WebhookInbound
             {
@@ -45,7 +45,7 @@ namespace ChilliCoreTemplate.Service.Api
             switch (type)
             {
                 case WebhookType.Stripe:
-                    saveWebhook = Stripe_LogFromJson(log, json);
+                    saveWebhook = Stripe_LogFromJson(log, json, signature);
                     break;
                 case WebhookType.Twilio:
                     saveWebhook = Twilio_LogFromJson(log, json);
@@ -53,7 +53,7 @@ namespace ChilliCoreTemplate.Service.Api
             }
             if (saveWebhook.Result)
             {
-                SaveWebhook(log);
+                await SaveWebhook(log);
             }
             return ServiceResult.CopyFrom(saveWebhook);
         }
@@ -146,17 +146,16 @@ namespace ChilliCoreTemplate.Service.Api
             return result;
         }
 
-
-        private void SaveWebhook(WebhookInbound model)
+        private async Task SaveWebhook(WebhookInbound model)
         {
             if (String.IsNullOrEmpty(model.WebhookId)) model.WebhookId = Guid.NewGuid().ToString();
             model.WebhookIdHash = model.WebhookId.GetIndependentHashCode().Value;
 
-            var log = Context.WebhooksInbound.Where(l => l.WebhookIdHash == model.WebhookIdHash && l.WebhookId == model.WebhookId && l.Type == model.Type).FirstOrDefault();
+            var log = await Context.WebhooksInbound.Where(l => l.WebhookIdHash == model.WebhookIdHash && l.WebhookId == model.WebhookId && l.Type == model.Type).FirstOrDefaultAsync();
             if (log == null)
             {
                 Context.WebhooksInbound.Add(model);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
             else if (!log.Success && log.Processed)
             {
@@ -165,7 +164,7 @@ namespace ChilliCoreTemplate.Service.Api
                 log.Raw = model.Raw;
                 log.CreatedOn = DateTime.UtcNow;
                 log.Error = null;
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
         }
 

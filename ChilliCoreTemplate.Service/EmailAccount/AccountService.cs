@@ -153,7 +153,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 var request = Password_ResetRequest(account);
                 if (request.Success)
                 {
-                    result.Error = "We sent have you an forgot password email so you can reactivate your account.";
+                    result.Error = "We have sent you a forgot password email so you can reactivate your account.";
                 }
                 return result;
             }
@@ -411,7 +411,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
             foreach (var selectedRole in roleSelections)
             {
-                if (selectedRole.Role.IsCompanyRole())
+                if (selectedRole.Role.IsCompanyRole() || selectedRole.CompanyGuid.HasValue)
                 {
                     if (selectedRole.CompanyId == null)
                     {
@@ -443,8 +443,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                     User = account,
                     CreatedAt = DateTime.UtcNow,
                     Role = selectedRole.Role,
-                    CompanyId = selectedRole.CompanyId,
-                    Status = selectedRole.Status
+                    Status = selectedRole.Status,
+                    CompanyId = selectedRole.CompanyId
                 });
             }
 

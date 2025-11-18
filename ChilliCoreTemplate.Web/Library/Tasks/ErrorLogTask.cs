@@ -3,21 +3,20 @@ using ChilliSource.Cloud.Core.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using ChilliCoreTemplate.Service;
 using ChilliCoreTemplate.Service.EmailAccount;
+using System.Threading.Tasks;
 
-namespace ChilliCoreTemplate.Web.Tasks
+namespace ChilliCoreTemplate.Web.Tasks;
+
+public class ErrorLogTask : IDistributedTaskAsync<object>
 {
-    public class ErrorLogTask : IDistributedTask<object>
+    public async Task RunAsync(object parameter, ITaskExecutionInfoAsync executionInfo)
     {
-        public void Run(object parameter, ITaskExecutionInfo executionInfo)
+        using (var scope = ScopeContextFactory.Instance.CreateScope())
         {
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
-            {
 
-                var svc = scope.ServiceProvider.GetRequiredService<AccountService>();
+            var svc = scope.ServiceProvider.GetRequiredService<AccountService>();
 
-                TaskHelper.WaitSafeSync(() => svc.Error_EmailAsync(executionInfo));
-            }
+            await svc.Error_EmailAsync(executionInfo);
         }
     }
-
 }

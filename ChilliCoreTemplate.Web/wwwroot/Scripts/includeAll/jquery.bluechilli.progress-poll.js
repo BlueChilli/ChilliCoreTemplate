@@ -3,18 +3,18 @@
 
         var settings = $.extend({}, $.fn.progressPoll.defaults, options);
         if (!settings.url) throw new Error("url is required");
+        if (!settings.id) settings.id = $.fn.progressPoll.defaults.id;
 
         function init() {
-            $t = $(this);
-            if (settings.message != null) {
-                settings.message = '<p>' + settings.message + '</p>';
-            }
-            $t.append(settings.containerHtml.format(settings.message));
-            poll();
-            $('.progress-bar').width(settings.startPercentage);
+            var $container = $(this);
+            var messageHtml = settings.message != null ? ('<p>' + settings.message + '</p>') : '';
+            $container.append(settings.containerHtml.format(messageHtml, settings.id));
+            var selector = '.progress-bar#' + settings.id;
+            $container.find(selector).width(settings.startPercentage);
+            poll($container, selector);
         }
 
-        function poll() {
+        function poll($container, selector) {
             $.ajax({
                 url: settings.url,
                 type: "GET",
@@ -24,23 +24,27 @@
                     } else if (data.progress == 100) {
                         setTimeout(function () { location.href = data.url; }, 750);
                     }
-                    $('.progress-bar').width(data.progress + '%');
+                    $container.find(selector).width(data.progress + '%');
                 },
                 dataType: "json",
-                complete: setTimeout(function () { poll() }, 1000),
+                complete: function (data) {
+                    if (data.responseJSON == null || data.responseJSON.progress < 100)
+                        setTimeout(function () { poll($container, selector); }, 1000)
+                },
                 timeout: 2000
             })
         }
 
-        this.each(function () {
+        return this.each(function () {
             init.call(this);
         });
     }
 
     $.fn.progressPoll.defaults = {
         startPercentage: '5%',
-        containerHtml: '<div class="modal-body">{0}<div class="mt-4 progress h-5"><div class="progress-bar bg-success"></div></div></div>',
-        message: ''
+        containerHtml: '<div class="modal-body">{0}<div class="mt-4 progress h-5"><div class="progress-bar bg-success" id="{1}"></div></div></div>',
+        message: '',
+        id: 'default-progress-bar-id'
     };
 
 })(jQuery);

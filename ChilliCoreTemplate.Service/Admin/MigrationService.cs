@@ -2,11 +2,16 @@
 using ChilliCoreTemplate.Data;
 using ChilliCoreTemplate.Data.EmailAccount;
 using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Admin.Migration;
 using ChilliCoreTemplate.Service.EmailAccount;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Distributed;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Globalization;
+using System.IO;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -37,6 +42,36 @@ public class MigrationService : Service<DataContext>
         _accountService = accountService;
         _config = projectSettings;
         _mapper = mapper;
+    }
+
+    public ServiceResult Migration(MigrationImportModel model)
+    {
+        try
+        {
+            var csvConfig = new CsvConfiguration(CultureInfo.GetCultureInfo("en-AU")) { HasHeaderRecord = true, TrimOptions = TrimOptions.Trim };
+
+            using (var reader = new CsvReader(new StreamReader(model.CsvFile.OpenReadStream()), csvConfig))
+            {
+                reader.Context.TypeConverterOptionsCache.GetOptions<string>().NullValues.Add("");
+                reader.Context.TypeConverterOptionsCache.GetOptions<string>().NullValues.Add("NULL");
+                reader.Context.TypeConverterOptionsCache.GetOptions<int?>().NullValues.Add("NULL");
+                reader.Context.TypeConverterOptionsCache.GetOptions<double?>().NullValues.Add("NULL");
+                reader.Context.TypeConverterOptionsCache.GetOptions<DateTime?>().NullValues.Add("NULL");
+                reader.Context.TypeConverterOptionsCache.GetOptions<bool?>().NullValues.Add("NULL");
+
+                if (model.Type == MigrationImportType.Migration1)
+                {
+                    //reader.Context.RegisterClassMap<Migration1ClassMap>();
+                    //return Migration1(reader.GetRecords<Migration1Model>().ToList());
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.LogException();
+            return ServiceResult.AsError(ex.Message);
+        }
+        return ServiceResult.AsSuccess();
     }
 
     internal async Task Run(BulkImport bulkImport, ITaskExecutionInfo executionInfo)

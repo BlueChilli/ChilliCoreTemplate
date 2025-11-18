@@ -20,7 +20,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         public List<AccountViewModel> GetPendingInvites()
         {
             return VisibleUsers()
-                .Where(a => a.UserRoles.Any(r => r.Status == RoleStatus.Invited && r.User.Status != UserStatus.Deleted))
+                .Where(a => a.Status != UserStatus.Deleted && a.UserRoles.Any(r => r.Status == RoleStatus.Invited))
                 .OrderBy(a => a.InvitedDate)
                 .Include(a => a.UserRoles)
                 .Materialize<User, AccountViewModel>()
@@ -83,9 +83,10 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return ServiceResult<UserData>.AsSuccess(MapUserData(user, null));
         }
 
-        private void Invite_Confirm(User user)
+        private void Invite_Confirm(User user, string token = null)
         {
-            var invitedRoles = user.UserRoles.Where(x => x.Status == RoleStatus.Invited).ToList();
+            var tokenKey = token == null ? null : ShortGuid.Decode(token);
+            var invitedRoles = user.UserRoles.Where(x => x.Status == RoleStatus.Invited && (tokenKey == null || (x.Tokens != null && x.Tokens.Any(t => t.Token == tokenKey)))).ToList();
             if (invitedRoles.Any())
             {
                 invitedRoles.ForEach(x => x.Status = null);

@@ -15,23 +15,21 @@ namespace ChilliCoreTemplate.Service.EmailAccount
         /// <summary>
         /// Add token to account collection. Token is NOT saved. Calling code will need to call Context.SaveChanges()
         /// </summary>
-        internal Guid Token_Add(User user, UserTokenType type, TimeSpan? expiry = null)
+        internal Guid Token_Add(User user, UserTokenType type, TimeSpan? expiry = null, UserRole userRole = null)
         {
-            return Token_Add(user, type, expiry, out _);
+            return Token_Add(user, type, expiry, userRole, out _);
         }
 
-        internal Guid Token_Add(User user, UserTokenType type, TimeSpan? expiry, out bool wasExpired)
+        internal Guid Token_Add(User user, UserTokenType type, TimeSpan? expiry, UserRole role, out bool wasExpired)
         {
-            if (user.Tokens == null) user.Tokens = new List<UserToken>();
+            if (user.Tokens == null) user.Tokens = [];
 
-            var token = user.Tokens.FirstOrDefault(t => t.Type == type);
-            if (token == null)
+            var token = user.Tokens.FirstOrDefault(t => t.Type == type && (role == null || t.UserRoleId == role.Id));
+            token ??= new UserToken
             {
-                token = new UserToken
-                {
-                    Type = type
-                };
-            }
+                Type = type,
+                UserRole = role
+            };
 
             wasExpired = false;
             if (token.Expiry == null || token.Expiry < DateTime.UtcNow.AddMinutes(2))

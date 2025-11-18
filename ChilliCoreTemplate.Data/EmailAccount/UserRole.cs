@@ -15,17 +15,19 @@ namespace ChilliCoreTemplate.Data.EmailAccount
     {
         public int Id { get; set; }
         
-        public DateTime CreatedAt { get; set; }
-
         public int UserId { get; set; }
         public User User { get; set; }
+
+        public int? CompanyId { get; set; }
+        public Company Company { get; set; }
+
+        public List<UserToken> Tokens { get; set; }
 
         public Role Role { get; set; }
 
         public RoleStatus? Status { get; set; }
 
-        public int? CompanyId { get; set; }
-        public Company Company { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

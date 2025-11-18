@@ -158,6 +158,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
     {
         public Role Role { get; set; }
 
+        public RoleStatus? Status { get; set; }
+
         public int? CompanyId { get; set; }
 
         public int? MasterCompanyId { get; set; }
@@ -165,8 +167,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string CompanyName { get; set; }
 
         public bool? CompanyIsDeleted { get; set; }
-
-        public RoleStatus? Status { get; set; }
 
         public bool CanImpersonate(UserRoleModel other)
         {
