@@ -74,5 +74,18 @@ namespace ChilliCoreTemplate.Web.Controllers
                 return Mvc.Root.EmailAccount_Login.Redirect(c);
         }
 
+        public static ActionResult RedirectToReferer(this Controller c)
+        {
+            if (!Uri.TryCreate(c.HttpContext.Request.Headers.Referer.FirstOrDefault(), UriKind.Absolute, out var uri))
+                return c.Redirect("~");
+
+            if (c.HttpContext.Request.IsAjaxRequest())
+            {
+                c.HttpContext.Response.Headers["X-Ajax-Redirect"] = uri.ToString();
+                return new EmptyResult();
+            }
+
+            return c.Redirect(uri.ToString());
+        }
     }
 }

@@ -3,6 +3,7 @@ using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -112,11 +113,13 @@ namespace ChilliCoreTemplate.Web
         };
 
         IHtmlHelper HtmlHelper;
+        IUrlHelper UrlHelper;
         DefaultEmailBuilderOptions Options;
 
-        internal DefaultEmailBuilder(IHtmlHelper htmlHelper, DefaultEmailBuilderOptions options)
+        internal DefaultEmailBuilder(IHtmlHelper htmlHelper, IUrlHelper urlHelper, DefaultEmailBuilderOptions options)
         {
             this.HtmlHelper = htmlHelper;
+            this.UrlHelper = urlHelper;
             this.Options = options;
         }
 
@@ -221,8 +224,7 @@ namespace ChilliCoreTemplate.Web
 
         public string UrlTrack(ShortGuid emailId, string templateId, string url)
         {
-            var urlHelper = this.HtmlHelper.GetUrlHelper();
-            return Mvc.Root.EmailAccount_EmailRedirect.Url(urlHelper, routeValues: new { EmailId = emailId, Url = url, utm_medium = "Email", utm_source = templateId }, protocol: "https");
+            return Mvc.Root.EmailAccount_EmailRedirect.Url(UrlHelper, routeValues: new { EmailId = emailId, Url = url }, protocol: "https");
         }
 
         public IHtmlContent ImageRow(string imageUrl, string url, string alt = null)

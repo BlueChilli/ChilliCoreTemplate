@@ -7,23 +7,45 @@
         var deferred = $.Deferred();
 
         function doit() {
-            $t = $(this);
+            var $t = $(this);
             var items = [];
-            const options = $t.find('option:eq(0)');
-            if (options && options.length > 0) {
-                var items = [options[0].outerHTML];
+            var addedCount = 0;
+            var $firstOption = $t.find('option:eq(0)');
+
+            var hasPlaceholder = $firstOption.length > 0 && ($firstOption.val() === "" || $firstOption.data('placeholder') === true);
+            if (hasPlaceholder) {
+                items = [$firstOption[0].outerHTML];
             }
-            items.push();
+
+            var selectedValues = $t.val();
+            if (selectedValues != null && !$.isArray(selectedValues)) {
+                selectedValues = [selectedValues];
+            }
+
             $t.find('option').remove();
+
             $t.append('<option>(loading)</option>');
+
             $.getJSON(settings.url, function (data) {
                 $.each(data.data, function (i, option) {
                     items.push('<option value="' + option.value + '">' + option.text + '</option>');
+                    addedCount++;
                 });
             }).done(function (result, status, xhr) {
                 $t.find('option').remove();
+
                 $t.append(items.join(''));
-                if (items.length == 2) $t.find('option:eq(1)').attr('selected', 'selected'); deferred.resolve(result);
+
+                if (selectedValues != null && selectedValues.length > 0) {
+                    $t.val(selectedValues);
+                }
+
+                if (settings.autoSelectSingleOption && $t.find('option:selected').length === 0 && addedCount === 1) {
+                    var $allOptions = $t.find('option');
+                    var selectIndex = hasPlaceholder ? 1 : $allOptions.length - 1;
+                    $allOptions.eq(selectIndex).prop('selected', true);
+                }
+
                 deferred.resolve(result);
             }).fail(function (xhr, status) {
                 deferred.reject.apply(deferred, arguments);
@@ -38,6 +60,7 @@
     }
 
     $.fn.loadOptions.defaults = {
+        autoSelectSingleOption: true
     };
 
 })(jQuery);

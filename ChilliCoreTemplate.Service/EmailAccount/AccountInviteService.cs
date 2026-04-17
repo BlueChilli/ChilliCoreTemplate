@@ -22,7 +22,6 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return VisibleUsers()
                 .Where(a => a.Status != UserStatus.Deleted && a.UserRoles.Any(r => r.Status == RoleStatus.Invited))
                 .OrderBy(a => a.InvitedDate)
-                .Include(a => a.UserRoles)
                 .Materialize<User, AccountViewModel>()
                 .ToList();
         }
@@ -74,8 +73,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
         public ServiceResult<UserData> Invite_Confirm(ResetPasswordViewModel model)
         {
-            var user = Context.Users.First(a => a.Email == model.Email);
-            if (user.Status == UserStatus.Deleted) return ServiceResult<UserData>.AsError("Your invitation has been cancelled.");
+            var user = Context.Users.FirstOrDefault(a => a.Email == model.Email);
+            if (user == null || user.Status == UserStatus.Deleted) return ServiceResult<UserData>.AsError("Your invitation has been cancelled.");
 
             var result = this.Password_Reset(model); //Reset of password will confirm the account
             if (!result.Success) return ServiceResult<UserData>.AsError("Your invitation has expired. Please request another invitation.");

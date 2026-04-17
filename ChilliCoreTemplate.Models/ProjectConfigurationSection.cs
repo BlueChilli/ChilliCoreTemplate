@@ -4,6 +4,7 @@ using ChilliCoreTemplate.Models.Stripe;
 using ChilliSource.Cloud.Core.Email;
 using ChilliSource.Cloud.Web;
 using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -625,9 +626,38 @@ namespace ChilliCoreTemplate.Models
             _section = section;
         }
 
-        public string AppStore => _section.GetString("AppStore");
-        public string PlayStore => _section.GetString("PlayStore");
+        public AppleAppSettings Apple => _section.GetSection("Apple").Get<AppleAppSettings>();
+
+        public AndroidAppSettings Android => _section.GetSection("Android").Get<AndroidAppSettings>();
+
         public string DeepLink => _section.GetString("DeepLink");
+
+        public string ResolveAppLink(HttpRequest request)
+        {
+            var userAgent = request.Headers.UserAgent.FirstOrDefault() ?? String.Empty;
+            return userAgent.Contains("android", StringComparison.InvariantCultureIgnoreCase) ? Android.Store : Apple.Store;
+        }
+
+        public string ResolveDeepLink(string link)
+        {
+            return link.Replace("~", this.DeepLink);
+        }
+    }
+
+    public class AppleAppSettings
+    {
+        public string Id { get; set; }
+
+        public string Store { get; set; }
+    }
+
+    public class AndroidAppSettings
+    {
+        public string Id { get; set; }
+
+        public string[] CertIds { get; set; }
+
+        public string Store { get; set; }
     }
 
     public class MfaConfigurationSection
@@ -644,6 +674,13 @@ namespace ChilliCoreTemplate.Models
         public string Secret => _section.GetRequiredString("Secret");
 
         public int? TrustDeviceInDays => _section.GetValue<int?>("TrustDeviceInDays");
+
+        public List<string> WhitelistedEmails => _section.GetSection("WhitelistedEmails").Get<List<string>>() ?? [];
+
+        public bool IsWhitelisted(UserData userData)
+        {
+            return userData != null && !String.IsNullOrEmpty(userData.Email) && WhitelistedEmails.Any(x => x.Same(userData.Email));
+        }
     }
 
     public class OAuthsConfigurationSection

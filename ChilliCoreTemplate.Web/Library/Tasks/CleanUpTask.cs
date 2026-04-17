@@ -7,60 +7,49 @@ using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Web.Tasks
 {
-    public class CleanUpTask : IDistributedTask<object>
+    public class CleanUpTask : IDistributedTaskAsync<object>
     {
-        public void Run(object parameter, ITaskExecutionInfo executionInfo)
+        public async Task RunAsync(object parameter, ITaskExecutionInfo executionInfo)
         {
             using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
                 var svc = scope.ServiceProvider.GetRequiredService<UserSessionService>();
 
-                svc.Clean(executionInfo);
+                await svc.Clean(executionInfo);
             }
 
-            TaskHelper.WaitSafeSync(async () =>
+            using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
-                using (var scope = ScopeContextFactory.Instance.CreateScope())
-                {
-                    var svc = scope.ServiceProvider.GetRequiredService<ApiLogService>();
+                var svc = scope.ServiceProvider.GetRequiredService<ApiLogService>();
 
-                    await svc.Clean(executionInfo);
-                }
-            });
+                await svc.Clean(executionInfo);
+            }
 
-            TaskHelper.WaitSafeSync(async () =>
+            using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
-                using (var scope = ScopeContextFactory.Instance.CreateScope())
-                {
-                    var svc = scope.ServiceProvider.GetRequiredService<AccountService>();
+                var svc = scope.ServiceProvider.GetRequiredService<AccountService>();
 
-                    await svc.Error_CleanAsync(executionInfo);
-                    await svc.Anonymous_CleanAsync(executionInfo);
-                }
-            });
+                await svc.Error_CleanAsync(executionInfo);
+                await svc.Anonymous_CleanAsync(executionInfo);
+            }
 
-            TaskHelper.WaitSafeSync(async () =>
+            using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
-                using (var scope = ScopeContextFactory.Instance.CreateScope())
-                {
-                    var svc = scope.ServiceProvider.GetRequiredService<WebhookService>();
+                var svc = scope.ServiceProvider.GetRequiredService<WebhookService>();
 
-                    await svc.CleanWebhooks(executionInfo);
-                }
-            });
+                await svc.CleanWebhooks(executionInfo);
+            }
 
-            TaskHelper.WaitSafeSync(async () =>
+            using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
-                using (var scope = ScopeContextFactory.Instance.CreateScope())
-                {
-                    var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
+                var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
 
-                    await svc.CleanUp(executionInfo);
-                }
-            });
+                await svc.CleanUp(executionInfo);
+            }
 
             using (var scope = ScopeContextFactory.Instance.CreateScope())
             {
@@ -68,6 +57,11 @@ namespace ChilliCoreTemplate.Web.Tasks
 
                 svc.DocumentCache_CleanUp(executionInfo);
             }
+        }
+
+        public Task RunAsync(object parameter, ITaskExecutionInfoAsync executionInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,6 +2,7 @@ using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Core.Phone;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using NodaTime;
@@ -111,6 +112,13 @@ namespace ChilliCoreTemplate.Models
             {
                 action(element);
             }
+        }
+
+        public static string GetHttpHeaderValue(HttpRequest request, string headerName)
+        {
+            var value = request.Headers[headerName].FirstOrDefault();
+            value ??= request.Headers[headerName.ToLower()].FirstOrDefault();
+            return value;
         }
     }
 }

@@ -16,6 +16,8 @@ namespace ChilliCoreTemplate.Web
             var userData = context.HttpContext.User?.UserData();
             if (userData == null) return;
 
+            if (config.MfaSettings.IsWhitelisted(userData)) return;
+
             if (!userData.CompanyIsSetup && userData.CompanyId.HasValue && !userData.IsMasterCompany)
                 return;
 

@@ -38,6 +38,7 @@ namespace ChilliCoreTemplate.Models.Api
         public string ResponseContentBody { get; set; }     // The response content body.
         public int? ResponseStatusCode { get; set; }        // The response status code.
         public string ResponseHeaders { get; set; }         // The response headers.
+        public long? ResponseSize { get; set; }              // The response size.
         public DateTime? ResponseTimestamp { get; set; }    // The response timestamp.
     }
 }

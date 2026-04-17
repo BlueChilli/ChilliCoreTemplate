@@ -2,6 +2,7 @@
 @{
     Model.HtmlAttributes.Merge("class", "form-control");
     Model.HtmlAttributes.Merge("class", "form-control-readonly");
+    var value = Model.Value == null ? "" : Model.Value is DateTime ? ((DateTime)Model.Value).ToString("dd/MM/yyyy") : Model.Value is string ? (string)Model.Value : Model.Value.ToString();
 }
 @if (Model.Options.PreAddOn != null || Model.Options.PostAddOn != null)
 {
@@ -11,7 +12,7 @@
 {
     @Model.Options.PreAddOn
 }
-<input type="text" readonly id="@Model.Id" value="@Model.Value" @Model.HtmlAttributes.ToAttributeHtmlContent()>
+<input type="text" readonly id="@Model.Id" name="@Model.Name" value="@value" @Model.HtmlAttributes.ToAttributeHtmlContent()>
 @if (Model.Options.PostAddOn != null)
 {
     @Model.Options.PostAddOn

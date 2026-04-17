@@ -135,7 +135,7 @@ public class EmailService(IPrincipal user, DataContext context, ProjectSettings 
     internal ServiceResult<EmailViewModel> Email_Preview<T>(EmailPreviewItemModel email) where T : class
     {
         var templateModel = new RazorTemplateDataModel<T>(email.Data as T);
-        templateModel.TemplateId = email.Id;
+        templateModel.TemplateId = email.Template.Id();
         templateModel.TrackingId = FakeTrackingId.ToShortGuid();
         templateModel.CompanyId = email.CompanyId;
         templateModel.CompanyName = email.CompanyName;
@@ -154,7 +154,7 @@ public class EmailService(IPrincipal user, DataContext context, ProjectSettings 
 
         return ServiceResult<EmailViewModel>.AsSuccess(new EmailViewModel
         {
-            TemplateId = email.Id,
+            TemplateId = email.Template.Id(),
             Data = data
         });
     }
@@ -231,7 +231,7 @@ public class EmailService(IPrincipal user, DataContext context, ProjectSettings 
                 },
             }
         };
-        model.EmailList = model.Emails.ToSelectList(v => (int?)model.Emails.IndexOf(v), t => String.IsNullOrEmpty(t.EmailName) ? t.Id.SplitByUppercase() : t.EmailName);
+        model.EmailList = model.Emails.ToSelectList(v => (int?)model.Emails.IndexOf(v), t => String.IsNullOrEmpty(t.EmailName) ? t.Template.Id().SplitByUppercase() : t.EmailName);
 
         return ServiceResult<EmailPreviewModel>.AsSuccess(model);
     }

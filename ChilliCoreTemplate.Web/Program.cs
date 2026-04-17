@@ -51,7 +51,7 @@ namespace ChilliCoreTemplate.Web
                 DatabaseInitialization.Initialize(host.Services);
 
                 taskConfig.RegisterTasks();
-                taskConfig.StartListenner();
+                taskConfig.StartListener();
 
                 await host.RunAsync();
             }

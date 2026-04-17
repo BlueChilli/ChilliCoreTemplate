@@ -1,4 +1,5 @@
-﻿using ChilliCoreTemplate.Models.EmailAccount;
+﻿using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.EmailAccount;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -20,9 +21,8 @@ namespace ChilliCoreTemplate.Web.Api
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var userKey = httpContext.Request.Headers[userKeyHeaderKey].FirstOrDefault();
-            userKey = userKey ?? httpContext.Request.Headers[userKeyHeaderKey.ToLower()].FirstOrDefault();
-            userKey = userKey ?? httpContext.Request.Query[userKeyHeaderKey].FirstOrDefault();
+            var userKey = CommonLibrary.GetHttpHeaderValue(httpContext.Request, userKeyHeaderKey);
+            userKey ??= httpContext.Request.Query[userKeyHeaderKey].FirstOrDefault();
 
             var userKeyHelper = httpContext.RequestServices.GetRequiredService<UserKeyHelper>();
             var sessionId = userKeyHelper.UnprotectGuid(userKey);

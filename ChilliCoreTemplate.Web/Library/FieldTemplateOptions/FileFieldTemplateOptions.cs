@@ -7,6 +7,8 @@ namespace ChilliCoreTemplate.Web
         public FileFieldTemplateOptions() : base() { }
         public FileFieldTemplateOptions(FieldTemplateOptionsBase other) : base(other) { }
 
+        public string Filename { get; set; }
+
         public string ButtonText { get; set; } = "Choose";
 
         public bool HasRemoveButton { get; set; }  //The remove button will set a input hidden field #IDRemove to true

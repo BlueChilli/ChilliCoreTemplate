@@ -6,6 +6,13 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 {
     public class HeadingsCardTagHelper : TagHelper
     {
+        public HeadingSkin Skin { get; set; }
+
+        public override void Init(TagHelperContext context)
+        {
+            context.Items.Add("Skin", Skin);
+        }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
@@ -31,6 +38,16 @@ namespace ChilliCoreTemplate.Web.TagHelpers
     /// </summary>
     public class HeadingsTagHelper : TagHelper
     {
+        public HeadingSkin Skin { get; set; }
+
+        public override void Init(TagHelperContext context)
+        {
+            if (context.Items.ContainsKey("Skin"))
+                Skin = (HeadingSkin)context.Items["Skin"];
+            else
+                context.Items.Add("Skin", Skin);
+        }
+
         public string Title { get; set; }
 
         public string Description { get; set; }
@@ -39,18 +56,37 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         {
             output.TagName = null;
 
-            var @class = context.AllAttributes.Any(x => x.Name == "class") ? context.AllAttributes["class"].Value : "";
-
             var title = "";
             var hasTitle = !String.IsNullOrEmpty(Title);
             if (hasTitle)
             {
-                var description = !String.IsNullOrEmpty(Description) ? $"<p class=\"text-sm text-muted\">{Description}</p>" : "";
-                title = $"<div class=\"card\"><div class=\"card-header {@class}\">{Title}{description}</div>";
-                @class = "";
+                var @class = context.AllAttributes.Any(x => x.Name == "class") ? context.AllAttributes["class"].Value : "";
+
+                title = Skin == HeadingSkin.Standard
+                    ? $"<div class=\"card\"><div class=\"card-header {@class}\">{Title}</div>"
+                    : $"<div class=\"card\"><div class=\"card-header border-bottom {@class}\"><h3 class=\"h3\">{Title}</h3></div>";
             }
-            output.PreContent.SetHtmlContent($"{title}<div class=\"list-group {@class}\">");
+            var wrapperClass = Skin == HeadingSkin.Standard ? "list-group" : "card-body";
+            output.PreContent.SetHtmlContent($"{title}<div class=\"{wrapperClass}\">");
             output.PostContent.SetHtmlContent($"</div>{(hasTitle ? "</div>" : "")}");
+        }
+    }
+
+    public class HeadingSubtitleTagHelper : TagHelper
+    {
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            var skin = (HeadingSkin)context.Items["Skin"];
+
+            if (skin == HeadingSkin.Standard)
+            {
+                output.TagName = null;
+            }
+            else
+            {
+                output.TagName = "h4";
+                output.Attributes.AppendAttribute("class", "h4 mb-2");
+            }
         }
     }
 
@@ -62,18 +98,31 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
         public HeadingFormat Format { get; set; }
 
+        public string Tooltip { get; set; }
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
+            var skin = context.Items.ContainsKey("Skin") ? (HeadingSkin)context.Items["Skin"] : HeadingSkin.Standard;
             output.TagName = null;
+
+            var toolTipHtml = "";
+            if (!String.IsNullOrEmpty(Tooltip))
+            {
+                toolTipHtml = $" <i class=\"bi bi-question-circle-fill\" data-bs-toggle=\"tooltip\" data-bs-original-title=\"{Tooltip}\" data-bs-html=\"true\"></i>";
+            }
 
             if (Format == HeadingFormat.Inline)
             {
-                output.PreContent.SetHtmlContent($"<div class=\"list-group-item d-flex justify-content-between align-items-start\"><div class=\"ms-2\"><div><strong>{Title}</strong></div></div>{(PreWrap ? "<span style=\"white-space: pre-wrap\">" : "")}");
-                output.PostContent.SetHtmlContent($"{(PreWrap ? "</span>" : "")}</div>");
+                var content = skin == HeadingSkin.Standard
+                    ? $"<div class=\"list-group-item d-flex justify-content-between align-items-start\"><div class=\"ms-2\"><div><strong>{Title}</strong>{toolTipHtml}</div></div>{(PreWrap ? "<span style=\"white-space: pre-wrap\">" : "")}"
+                    : $"<div class=\"row mb-2\"><div class=\"col-4 font-semibold\">{Title}</div><div class=\"col-8\">";
+
+                output.PreContent.SetHtmlContent(content);
+                output.PostContent.SetHtmlContent(skin == HeadingSkin.Standard ? $"{(PreWrap ? "</span>" : "")}</div>" : "</div></div>");
             }
             else
             {
-                output.PreContent.SetHtmlContent($"<div class=\"list-group-item\"><div class=\"ms-2\"><div><strong>{Title}</strong></div></div><div class=\"ms-2 mt-4\">");
+                output.PreContent.SetHtmlContent($"<div class=\"list-group-item\"><div class=\"ms-2\"><div><strong>{Title}</strong>{toolTipHtml}</div></div><div class=\"ms-2 mt-4\">");
                 output.PostContent.SetHtmlContent("</div></div>");
             }
         }
@@ -104,6 +153,12 @@ namespace ChilliCoreTemplate.Web.TagHelpers
 
 namespace ChilliCoreTemplate.Web
 {
+    public enum HeadingSkin
+    {
+        Standard,
+        Compact
+    }
+
     public enum HeadingFormat
     {
         Inline,

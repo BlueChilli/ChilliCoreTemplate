@@ -14,7 +14,7 @@
     <input id="@(Model.Id)Remove" name="@(Model.Name)Remove" type="hidden" value="@bool.FalseString">
     <button type="button" class="btn btn-sm btn-neutral js-file-remove-@jsId">@Model.Options.RemoveButtonText</button>
 }
-<span class="ms-2 js-file-@jsId"></span>
+<span class="ms-2 js-file-@jsId">@Model.Options.Filename</span>
 @if (Model.Options.AutoWireUpJavascript)
 {
     @Html.RegisterCustomScripts(

@@ -662,11 +662,11 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [EmptyItem("Opened?")]
         public bool? Opened { get; set; }
-        public SelectList OpenedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Opened"), new KeyValuePair<bool, string>(false, "Unopened") }.ToSelectList(v => v.Key, t => t.Value, true);
+        public SelectList OpenedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Opened"), new KeyValuePair<bool, string>(false, "Unopened") }.ToSelectList(v => v.Key, t => t.Value);
 
         [EmptyItem("Clicked?")]
         public bool? Clicked { get; set; }
-        public SelectList ClickedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Clicked"), new KeyValuePair<bool, string>(false, "Unclicked") }.ToSelectList(v => v.Key, t => t.Value, true);
+        public SelectList ClickedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Clicked"), new KeyValuePair<bool, string>(false, "Unclicked") }.ToSelectList(v => v.Key, t => t.Value);
 
         [Placeholder("Search"), MaxLength(100)]
         public string Search { get; set; }
@@ -752,8 +752,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class EmailPreviewItemModel
     {
-        public string Id { get { return Template.TemplateName.Substring(Template.TemplateName.LastIndexOf("/") + 1); } }
-
         public RazorTemplate Template { get; set; }
 
         public object Data { get; set; }

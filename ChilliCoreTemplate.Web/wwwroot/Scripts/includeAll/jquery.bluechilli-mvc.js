@@ -404,7 +404,7 @@ $(function () {
                 else {
                     if (settings.customAction != 'none') {
                         var contentType = xhr.getResponseHeader('content-type') || '';
-                        if (settings.customAction == 'html' && contentType.indexOf('text/html') >= 0) {
+                        if (contentType.indexOf('text/html') >= 0) {
                             var render = $this[settings.customAction](result);
                             $.validator.unobtrusive.parse(render);
                         }
@@ -462,6 +462,7 @@ $(function () {
                 }
 
                 if (form.attr('enctype') == 'multipart/form-data') settings.useFormData = true;
+                $(target).find('.validation-summary-errors').remove();
                 $(target).ajaxLoad({ url: form.attr('action'), data: settings.useFormData ? new FormData(form[0]) : form.serialize(), type: 'POST' })
                     .always(function (result) {
                         var targetLoaded = $(target);

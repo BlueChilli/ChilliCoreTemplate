@@ -37,5 +37,7 @@ namespace ChilliCoreTemplate.Models
         /// </remarks>
         public string TemplateName { get; }
         public string Subject { get; }
+
+        public string Id() => TemplateName.Substring(TemplateName.LastIndexOf("/") + 1);
     }
 }

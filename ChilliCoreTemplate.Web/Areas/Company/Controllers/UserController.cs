@@ -121,8 +121,7 @@ namespace ChilliCoreTemplate.Web.Areas.Company.Controllers
 
         public virtual ActionResult Update(int id)
         {
-            var user = _accountService.GetForEdit(id).Result;
-            return PartialView(user);
+            return this.ServiceCall(() => _accountService.GetForEdit(id)).Call();
         }
 
         [HttpPost, ActionName("Update")]

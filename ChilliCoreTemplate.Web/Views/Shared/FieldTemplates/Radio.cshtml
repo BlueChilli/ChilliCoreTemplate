@@ -3,11 +3,6 @@
     var options = Model.Options.RadioAttribute;
     var isTrue = Convert.ToBoolean(Model.Value);
     var isFalse = !isTrue && Model.Value != null;
-    var removeValidations = Model.HtmlAttributes.Keys.Where(k => k.StartsWith("data-val")).ToList();
-    foreach (var key in removeValidations)
-    {
-        Model.HtmlAttributes.Remove(key);
-    }
 }
 @if (options.ReverseOrder)
 {

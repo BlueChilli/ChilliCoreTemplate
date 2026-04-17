@@ -249,11 +249,11 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             };
         }
 
-        public void Clean(ITaskExecutionInfo executionInfo)
+        public async Task Clean(ITaskExecutionInfo executionInfo)
         {
             //Delete old sessions & tokens
-            Context.Database.ExecuteSqlRaw("delete from UserSessions where SessionExpiryOn < SYSUTCDATETIME()");
-            Context.Database.ExecuteSqlRaw("delete from UserTokens where Expiry < DATEADD(year, -1, SYSUTCDATETIME())");
+            await Context.Database.ExecuteSqlRawAsync("delete from UserSessions where SessionExpiryOn < SYSUTCDATETIME()");
+            await Context.Database.ExecuteSqlRawAsync("delete from UserTokens where Expiry < DATEADD(year, -1, SYSUTCDATETIME())");
 
             executionInfo.SendAliveSignal();
             if (executionInfo.IsCancellationRequested)

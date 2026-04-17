@@ -79,6 +79,34 @@ namespace ChilliCoreTemplate.Service.Api
                 ResponseContentBody = response.Content,
                 ResponseStatusCode = (int)response.StatusCode,
                 ResponseHeaders = JsonConvert.SerializeObject(headersOut, Formatting.None),
+                ResponseSize = response.ContentLength,
+                ResponseTimestamp = DateTime.UtcNow
+            };
+            await SaveAsync(model);
+        }
+
+        internal async Task SaveSummaryAsync(IRestClient client, RestResponse response)
+        {
+            if (!_config.ApiSettings.LogApiCalls) return;
+
+            var headersIn = response.Request.Parameters.Where(x => x.Type == ParameterType.HttpHeader).ToDictionary(k => k.Name, k => k.Value.ToString());
+
+            var contentType = response.Request.Parameters.Where(x => x.Name == "Content-Type").Select(x => x.Value.ToString()).FirstOrDefault();
+            var body = response.Request.Parameters.Where(x => x.Type == ParameterType.RequestBody).FirstOrDefault();
+            if (contentType == null && body != null) contentType = body.ContentType;
+
+            var model = new ApiLogEntry
+            {
+                User = User?.Identity?.Name,
+                Machine = Environment.MachineName,
+                RequestIpAddress = "127.0.0.1",
+                RequestContentType = contentType,
+                RequestUri = client.BuildUri(response.Request).ToString(),
+                RequestMethod = response.Request.Method.ToString(),
+                RequestTimestamp = DateTime.UtcNow,
+                ResponseContentType = response.ContentType,
+                ResponseStatusCode = (int)response.StatusCode,
+                ResponseSize = response.ContentLength,
                 ResponseTimestamp = DateTime.UtcNow
             };
             await SaveAsync(model);

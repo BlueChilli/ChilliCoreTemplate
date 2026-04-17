@@ -6,7 +6,7 @@
         SaveMenuText = null,
         CancelMenuUrl = Mvc.Admin.Email_List.Url(this.Url)
     };
-    pageButtons.Buttons.Add(await Html.ButtonAsync(new Template_Button { Style = ButtonStyle.Primary, Type = ButtonType.Button, Text = "Preview", IsLaddaButton = false, HtmlAttributes = new { onclick = Html.ModalOpen(Mvc.Admin.Email_PreviewShow, data: "{ id: $('#Id').val(), data: $('#Data').val() }") } }));
+    pageButtons.Buttons.Add(await Html.ButtonAsync(new Template_Button { Style = ButtonStyle.Primary, Type = ButtonType.Button, Text = "Preview", IsLaddaButton = false, HtmlAttributes = new { onclick = Html.ModalOpen(Mvc.Admin.Email_PreviewShow, data: "{ id: $('#Id').val(), groupid: $('#GroupId').val(), data: JSON.stringify(JSON.parse($('#Data').val())) }") } }));
 }
 
 @using (await Html.ContainerTemplateAsync(TemplateTypes.PageHeader, new PageHeaderOptions())) { }

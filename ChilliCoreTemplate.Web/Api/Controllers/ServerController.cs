@@ -113,7 +113,7 @@ namespace ChilliCoreTemplate.Web.Api
                     Email = "developers@bluechilli.com",
                     Token = Guid.NewGuid().ToString()
                 },
-                TemplateId = template.TemplateName.Substring(template.TemplateName.LastIndexOf("/") + 1),
+                TemplateId = template.Id(),
                 TrackingId = Guid.NewGuid().ToShortGuid()
             };
             EmailServiceHelpers.SetConfigProperties(model, _config, "developers@bluechilli.com");
@@ -193,9 +193,7 @@ namespace ChilliCoreTemplate.Web.Api
         [HttpGet("userkey")]
         public virtual IActionResult ServerUserkey(string password)
         {
-            const string userKeyHeaderKey = "UserKey";
-            var userKey = this.HttpContext.Request.Headers[userKeyHeaderKey].FirstOrDefault();
-            userKey = userKey ?? this.HttpContext.Request.Headers[userKeyHeaderKey.ToLower()].FirstOrDefault();
+            var userKey = CommonLibrary.GetHttpHeaderValue(this.HttpContext.Request, "UserKey");
 
             if (password != _config.ProjectId.Value.ToString())
                 return this.Content("password incorrect");

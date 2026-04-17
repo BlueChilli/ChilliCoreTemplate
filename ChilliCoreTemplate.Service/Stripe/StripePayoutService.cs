@@ -35,13 +35,13 @@ public partial class StripeService
         }
     }
 
-    public async Task<ServiceResult<List<Payout>>> Payout_ListAsync()
+    public async Task<ServiceResult<List<Payout>>> Payout_ListAsync(string status = "paid")
     {
         try
         {
             var payouts = new List<Payout>();
             var service = new PayoutService(_client);
-            await foreach (var payout in service.ListAutoPagingAsync(new PayoutListOptions { Limit = 100 }))
+            await foreach (var payout in service.ListAutoPagingAsync(new PayoutListOptions { Limit = 100, Status = status }))
             {
                 payouts.Add(payout);
             }

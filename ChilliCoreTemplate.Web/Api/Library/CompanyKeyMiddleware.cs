@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliCoreTemplate.Models.EmailAccount;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,9 +20,8 @@ namespace ChilliCoreTemplate.Web.Api
 
         public async Task Invoke(HttpContext httpContext)
         {
-            var companyKey = httpContext.Request.Headers[companyKeyHeaderKey].FirstOrDefault();
-            companyKey = companyKey ?? httpContext.Request.Headers[companyKeyHeaderKey.ToLower()].FirstOrDefault();
-            companyKey = companyKey ?? httpContext.Request.Query[companyKeyHeaderKey].FirstOrDefault();
+            var companyKey = CommonLibrary.GetHttpHeaderValue(httpContext.Request, companyKeyHeaderKey);
+            companyKey ??= httpContext.Request.Query[companyKeyHeaderKey].FirstOrDefault();
 
             if (Guid.TryParse(companyKey, out var guid))
             {

@@ -258,7 +258,7 @@ namespace ChilliCoreTemplate.Web.Controllers
         [HttpPost]
         public virtual ActionResult ResendActivationEmail()
         {
-            this._accountService.SendVerificationReminderEmail(UserData.UserId);
+            this._accountService.SendVerificationReminderEmail(UserData.UserId, timeout: new TimeSpan(0, 1, 0));
             return Json(new { result = "ok" });
         }
 

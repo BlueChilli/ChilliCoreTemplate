@@ -29,6 +29,6 @@ public class LabelReverseTagHelper : TagHelper
         output.TagName = "span";
         output.AddClass("badge", NullHtmlEncoder.Create());
         output.AddClass($"bg-soft-{Type.GetDescription()}", NullHtmlEncoder.Create());
-        output.AddClass($"text-{Type.GetDescription()}", NullHtmlEncoder.Create());
+        output.AddClass($"text-dark", NullHtmlEncoder.Create());
     }
 }

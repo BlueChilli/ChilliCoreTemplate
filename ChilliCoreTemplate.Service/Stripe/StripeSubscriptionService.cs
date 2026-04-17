@@ -127,11 +127,12 @@ namespace ChilliCoreTemplate.Service
             }
             catch (Exception ex)
             {
-                if (!(ex is StripeException))
+                var stripeEx = ex as StripeException;
+                if (stripeEx == null)
                 {
                     ex.LogException();
                 }
-                return ServiceResult<Subscription>.AsError(ex.Message);
+                return ServiceResult<Subscription>.AsError(stripeEx?.StripeError?.Code, ex.Message);
             }
         }
 

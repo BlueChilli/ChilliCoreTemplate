@@ -20,7 +20,7 @@ public partial class StripeService
 
             bool isMore = true;
             string lastId = null;
-            int limit = 20;
+            int limit = 100;
 
             while (isMore)
             {
@@ -46,6 +46,24 @@ public partial class StripeService
             }
             return ServiceResult<List<BalanceTransaction>>.AsError(ex.Message);
         }
+    }
+
+    public async Task<ServiceResult<List<BalanceTransaction>>> BalanceTransaction_ListAsync(string payoutId, string[] types, string accountId = null)
+    {
+        var result = new List<BalanceTransaction>();
+        foreach (var type in types)
+        {
+            var res = await BalanceTransaction_ListAsync(payoutId, type, accountId);
+            if (res.Success)
+            {
+                result.AddRange(res.Result);
+            }
+            else
+            {
+                return ServiceResult<List<BalanceTransaction>>.AsError(res.Error);
+            }
+        }
+        return ServiceResult<List<BalanceTransaction>>.AsSuccess(result);
     }
 
     public async Task<ServiceResult<List<BalanceTransaction>>> BalanceTransaction_ListAsync(string payoutId, string type = "charge", string accountId = null)

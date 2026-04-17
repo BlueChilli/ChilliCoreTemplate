@@ -62,7 +62,7 @@ namespace ChilliCoreTemplate.Web
             manager.EnqueueRecurrentTask<BulkImportTask>((long)TimeSpan.FromSeconds(120).TotalMilliseconds);
         }
 
-        public void StartListenner()
+        public void StartListener()
         {
             SetupScopeContextFactory();
 

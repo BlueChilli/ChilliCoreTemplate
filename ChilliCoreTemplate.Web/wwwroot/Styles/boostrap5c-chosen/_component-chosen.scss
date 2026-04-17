@@ -17,7 +17,6 @@
     @include box-shadow($chosen-drop-box-shadow);
     margin-top: -1px;
     position: absolute;
-    top: 100%;
     left: -9000px;
     z-index: $chosen-drop-zindex;
   }

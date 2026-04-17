@@ -708,7 +708,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return Activate(userRequest.Result);
         }
 
-        internal ServiceResult Activate(User user, bool onBehalfOf = false)
+        internal ServiceResult Activate(User user)
         {
             if (user != null && user.Status == UserStatus.Registered)
             {
@@ -727,15 +727,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
 
                 Activity_Add(new UserActivity { UserId = user.Id, ActivityType = ActivityType.Activate, EntityId = user.Id, EntityType = EntityType.User });
 
-                if (onBehalfOf || !User.Identity.IsAuthenticated)
-                {
-                    var sessions = Context.UserSessions.Where(x => x.UserId == user.Id).ToList();
-                    foreach (var session in sessions) _session.ClearSessionCache(session.SessionId.ToString());
-                }
-                else
-                {
-                    _session.ClearSessionCache(User.Session()?.Id);
-                }
+                var sessions = Context.UserSessions.Where(x => x.UserId == user.Id).ToList();
+                foreach (var session in sessions) _session.ClearSessionCache(session.SessionId.ToString());
             }
 
             return ServiceResult.AsSuccess();
@@ -795,6 +788,8 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                 if (user.Activities.Any()) Context.UserActivities.RemoveRange(user.Activities);
                 if (user.Devices.Any()) Context.UserDevices.RemoveRange(user.Devices);
                 if (user.OAuths.Any()) Context.UserOAuths.RemoveRange(user.OAuths);
+
+                Context.PushNotifications.Where(x => x.UserId == userId).ExecuteDelete();
 
                 var logs = Context.ErrorLogs.Where(x => x.UserId == userId).ToList();
                 if (logs.Any()) Context.ErrorLogs.RemoveRange(logs);
@@ -951,13 +946,13 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             return Context.Users.Any(a => a.PhoneHash == hash && a.Id != accountId && a.Phone == phone && a.Status != UserStatus.Deleted);
         }
 
-        public void SendVerificationReminderEmail(int accountId)
+        public void SendVerificationReminderEmail(int accountId, TimeSpan? timeout = null)
         {
             var account = this.GetAccount(accountId);
-            this.SendVerificationReminderEmail(account);
+            this.SendVerificationReminderEmail(account, timeout: timeout);
         }
 
-        internal void SendVerificationReminderEmail(User account, bool isApi = false)
+        internal void SendVerificationReminderEmail(User account, bool isApi = false, TimeSpan? timeout = null)
         {
             var token = account.Tokens.Where(t => t.Type == UserTokenType.Activate && t.Expiry > DateTime.UtcNow).FirstOrDefault();
             var emailModel = new RazorTemplateDataModel<RegistrationCompleteViewModel>(new RegistrationCompleteViewModel { FirstName = account.FirstName, Email = account.Email, IsApi = isApi });
@@ -970,7 +965,7 @@ namespace ChilliCoreTemplate.Service.EmailAccount
             else
             {
                 emailModel.Data.Token = token.Token.ToShortGuid();
-                _email.QueueMail_Distinct(RazorTemplates.VerificationReminder, account.Email, emailModel, new TimeSpan(24, 0, 0));
+                _email.QueueMail_Distinct(RazorTemplates.VerificationReminder, account.Email, emailModel, timeout ?? new TimeSpan(24, 0, 0));
             }
         }
 

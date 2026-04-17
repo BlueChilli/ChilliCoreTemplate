@@ -1,3 +1,4 @@
+using ChilliCoreTemplate.Models;
 using ChilliSource.Cloud.Web.MVC;
 using ChilliSource.Core.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -29,14 +30,25 @@ namespace ChilliCoreTemplate.Web
                 var modelValues = data.Value == null ? new string[0] : data.Value.ToString().Split(',');
                 for (var i = 0; i < modelValues.Count(); i++) modelValues[i] = modelValues[i].Trim();
 
+                var groupsByName = new Dictionary<string, SelectListGroup>(StringComparer.OrdinalIgnoreCase);
+
                 this.SelectList =
                    (from v in values
+                    let member = enumType.GetMember(v.ToString()).FirstOrDefault()
+                    let groupAttr = member?.GetCustomAttribute<GroupAttribute>()
+                    let groupName = groupAttr?.Name
+                    let @group = groupName == null ? null
+                                : groupsByName.TryGetValue(groupName, out var existing)
+                                    ? existing
+                                    : (groupsByName[groupName] = new SelectListGroup { Name = groupName })
                     select new SelectListItem
                     {
                         Text = EnumHelper.GetDescription(v),
                         Value = v.ToString(),
-                        Selected = modelValues.Contains(v.ToString())
+                        Selected = modelValues.Contains(v.ToString()),
+                        Group = @group
                     }).ToList();
+
                 var flags = enumType.GetCustomAttribute<FlagsAttribute>();
                 if (flags != null && !data.HtmlAttributes.ContainsKey("multiple"))
                     data.HtmlAttributes.Add("multiple", "multiple");

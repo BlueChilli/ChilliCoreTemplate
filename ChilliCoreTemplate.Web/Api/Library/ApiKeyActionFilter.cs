@@ -1,4 +1,5 @@
-﻿using ChilliCoreTemplate.Models.Api;
+﻿using ChilliCoreTemplate.Models;
+using ChilliCoreTemplate.Models.Api;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -54,8 +55,7 @@ namespace ChilliCoreTemplate.Web.Api
         {
             if (ShouldCheckApiKey(context.HttpContext))
             {
-                var apiKey = context.HttpContext.Request.Headers[apiKeyHeaderKey].FirstOrDefault();
-                apiKey = apiKey ?? context.HttpContext.Request.Headers[apiKeyHeaderKey.ToLower()].FirstOrDefault();
+                var apiKey = CommonLibrary.GetHttpHeaderValue(context.HttpContext.Request, apiKeyHeaderKey);
 
                 var env = context.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
                 if (env.IsDevelopment())

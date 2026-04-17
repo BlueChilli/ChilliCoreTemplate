@@ -73,7 +73,23 @@ namespace ChilliCoreTemplate.Service.Admin
             Expression<Func<User, bool>> filter = (User x) => true;
             if (!String.IsNullOrEmpty(model.Search.Value))
             {
-                filter = filter.And(x => x.FirstName.Contains(model.Search.Value) || x.LastName.Contains(model.Search.Value) || x.Email.Contains(model.Search.Value) || x.Phone.Contains(model.Search.Value));
+                if (model.Search.Value.Contains("@"))
+                {
+                    if (model.Search.Value.IndexOf("@").IsIn(0, model.Search.Value.Length - 1))
+                    {
+                        filter = filter.And(x => x.Email.Contains(model.Search.Value));
+                    }
+                    else
+                    {
+                        var hash = CommonLibrary.CalculateHash(model.Search.Value);
+                        filter = filter.And(x => x.EmailHash == hash && x.Email == model.Search.Value);
+                    }
+
+                }
+                else
+                {
+                    filter = filter.And(x => x.FirstName.Contains(model.Search.Value) || x.LastName.Contains(model.Search.Value) || x.Email.Contains(model.Search.Value) || x.Phone.Contains(model.Search.Value));
+                }
             }
 
             foreach (var column in model.Columns.Where(c => c.IsSearchable && !String.IsNullOrEmpty(c.Search.Value)))
