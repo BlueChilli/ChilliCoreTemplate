@@ -269,7 +269,7 @@ namespace ChilliCoreTemplate.Service.Api
 
             if (model.SetProperties().Any(x => x.IsIn(nameof(model.FirstName), nameof(model.LastName), nameof(model.Phone))))
             {
-                var editRequest = _accountService.GetForEdit(userId);
+                var editRequest = _accountService.GetForEdit(userId, visibleOnly: false);
                 if (!editRequest.Success) return ServiceResult<UserAccountApiModel>.CopyFrom(editRequest);
 
                 var editModel = editRequest.Result;

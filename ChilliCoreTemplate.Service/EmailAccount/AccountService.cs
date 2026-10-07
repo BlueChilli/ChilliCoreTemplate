@@ -819,11 +819,9 @@ namespace ChilliCoreTemplate.Service.EmailAccount
                         .FirstOrDefault();
         }
 
-        public ServiceResult<AccountDetailsEditModel> GetForEdit(int accountId)
+        public ServiceResult<AccountDetailsEditModel> GetForEdit(int accountId, bool visibleOnly = true)
         {
-            var record = Context.Users.Where(a => a.Id == accountId)
-                .Materialize<User, AccountDetailsEditModel>()
-                .FirstOrDefault();
+            var record = Get<AccountDetailsEditModel>(accountId, visibleOnly);
 
             if (record == null) return ServiceResult<AccountDetailsEditModel>.AsError("Account not found or access denied.");
 
