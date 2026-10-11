@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChilliSource.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -39,5 +40,7 @@ namespace ChilliCoreTemplate.Models
         public string Subject { get; }
 
         public string Id() => TemplateName.Substring(TemplateName.LastIndexOf("/") + 1);
+
+        public int Hash() => TemplateName.GetIndependentHashCode() ?? this.GetHashCode();
     }
 }

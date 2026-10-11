@@ -23,10 +23,10 @@ namespace ChilliCoreTemplate.Service.Api
             _config = config;
         }
 
-        public Task SaveAsync(ApiLogEntry model)
+        public async Task SaveAsync(ApiLogEntry model)
         {
             Context.ApiLogEntries.Add(model);
-            return Context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
         }
 
         public async Task Clean(ITaskExecutionInfo executionInfo)

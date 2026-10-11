@@ -9,59 +9,53 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
-namespace ChilliCoreTemplate.Web.Tasks
+namespace ChilliCoreTemplate.Web.Tasks;
+
+public class CleanUpTask : IDistributedTaskAsync<object>
 {
-    public class CleanUpTask : IDistributedTaskAsync<object>
+    public async Task RunAsync(object parameter, ITaskExecutionInfoAsync executionInfo)
     {
-        public async Task RunAsync(object parameter, ITaskExecutionInfo executionInfo)
+        using (var scope = ScopeContextFactory.Instance.CreateScope())
         {
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
-            {
-                var svc = scope.ServiceProvider.GetRequiredService<UserSessionService>();
+            var svc = scope.ServiceProvider.GetRequiredService<UserSessionService>();
 
-                await svc.Clean(executionInfo);
-            }
-
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
-            {
-                var svc = scope.ServiceProvider.GetRequiredService<ApiLogService>();
-
-                await svc.Clean(executionInfo);
-            }
-
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
-            {
-                var svc = scope.ServiceProvider.GetRequiredService<AccountService>();
-
-                await svc.Error_CleanAsync(executionInfo);
-                await svc.Anonymous_CleanAsync(executionInfo);
-            }
-
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
-            {
-                var svc = scope.ServiceProvider.GetRequiredService<WebhookService>();
-
-                await svc.CleanWebhooks(executionInfo);
-            }
-
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
-            {
-                var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
-
-                await svc.CleanUp(executionInfo);
-            }
-
-            using (var scope = ScopeContextFactory.Instance.CreateScope())
-            {
-                var svc = scope.ServiceProvider.GetRequiredService<SystemService>();
-
-                svc.DocumentCache_CleanUp(executionInfo);
-            }
+            await svc.Clean(executionInfo);
         }
 
-        public Task RunAsync(object parameter, ITaskExecutionInfoAsync executionInfo)
+        using (var scope = ScopeContextFactory.Instance.CreateScope())
         {
-            throw new NotImplementedException();
+            var svc = scope.ServiceProvider.GetRequiredService<ApiLogService>();
+
+            await svc.Clean(executionInfo);
+        }
+
+        using (var scope = ScopeContextFactory.Instance.CreateScope())
+        {
+            var svc = scope.ServiceProvider.GetRequiredService<AccountService>();
+
+            await svc.Error_CleanAsync(executionInfo);
+            await svc.Anonymous_CleanAsync(executionInfo);
+        }
+
+        using (var scope = ScopeContextFactory.Instance.CreateScope())
+        {
+            var svc = scope.ServiceProvider.GetRequiredService<WebhookService>();
+
+            await svc.CleanWebhooks(executionInfo);
+        }
+
+        using (var scope = ScopeContextFactory.Instance.CreateScope())
+        {
+            var svc = scope.ServiceProvider.GetRequiredService<BulkImportService>();
+
+            await svc.CleanUp(executionInfo);
+        }
+
+        using (var scope = ScopeContextFactory.Instance.CreateScope())
+        {
+            var svc = scope.ServiceProvider.GetRequiredService<SystemService>();
+
+            svc.DocumentCache_CleanUp(executionInfo);
         }
     }
 }

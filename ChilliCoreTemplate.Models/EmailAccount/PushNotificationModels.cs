@@ -13,7 +13,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 {
     public class PushNotificationListModel
     {
-        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.ToTimezone().AddDays(-7);
+        public DateTime? DateFrom { get; set; } = DateTime.UtcNow.ToTimezone().AddMonths(-1);
         public DateTime? DateTo { get; set; } = DateTime.UtcNow.ToTimezone();
 
         [EmptyItem("Any type")]
@@ -29,6 +29,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [Placeholder("Search"), MaxLength(100)]
         public string Search { get; set; }
+
+        public int? UserId { get; set; }
     }
 
     public class PushNotificationSummaryModel

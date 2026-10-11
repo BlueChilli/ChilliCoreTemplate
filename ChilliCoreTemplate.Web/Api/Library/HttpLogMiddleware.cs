@@ -52,8 +52,6 @@ public class HttpLogMiddleware : DelegatingHandler
 
         var apiLogEntry = CreateApiLogEntryWithRequestData(httpContext);
 
-        var wasException = false;
-
         try
         {
             //skip content for streamed requests
@@ -84,17 +82,17 @@ public class HttpLogMiddleware : DelegatingHandler
                 apiLogEntry.ResponseContentBody = await ExecutePipelineAndCaptureResponseAsync(httpContext, _next);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            wasException = true;
+            apiLogEntry.ResponseStatusCode = 500;
+            apiLogEntry.ResponseContentBody = ex.Message;
             throw;
         }
         finally
         {
             var response = httpContext.Response;
 
-            // Update the API log entry with response info
-            apiLogEntry.ResponseStatusCode = wasException ? 500 : response.StatusCode;
+            apiLogEntry.ResponseStatusCode ??= response.StatusCode;
 
             using (var scope = ScopeContextFactory.Instance.CreateScope())
             {

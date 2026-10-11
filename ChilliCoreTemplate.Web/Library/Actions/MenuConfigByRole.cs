@@ -53,10 +53,9 @@ namespace ChilliCoreTemplate.Web
                         cfg.Create(Mvc.Admin.User_Activity),
                         cfg.Create(Mvc.Admin.Email_List, title: "Emails").SetChildren(cfg.CreateBreadcrumb(Mvc.Admin.Email_Preview, title: "Preview")),
                         cfg.Create(Mvc.Admin.User_Sms_List, title: "Sms"),
-                        cfg.Create(Mvc.Admin.User_Notification_List, title: "Notifications"),
+                        cfg.Create(Mvc.Admin.Notification_List, title: "Notifications"),
                         cfg.Create(Mvc.Admin.User_Error_List, title: "Errors").SetChildren(cfg.CreateBreadcrumb(Mvc.Admin.User_Error_Detail))
                     );
-
             });
 
             MenuConfigByRole.Config(Role.CompanyAdmin, cfg =>
@@ -286,7 +285,7 @@ namespace ChilliCoreTemplate.Web
                         var routeDict = new RouteValueDictionary(routeValues);
                         foreach (var key in routeDict.Keys)
                         {
-                            var value = (string)routeDict[key];
+                            var value = routeDict[key] is string str ? str : routeDict[key]?.ToString();
                             if (GetControllerDescriptorRoute(key) != value && !IsValidRequestQueryString(key, value))
                                 return false;
                         }

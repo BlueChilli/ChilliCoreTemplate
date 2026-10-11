@@ -64,6 +64,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public AccountViewModel Account { get; set; }
 
         public List<UserActivityViewModel> LastActivities { get; set; }
+
+        public int NotificationCount { get; set; }
     }
 
     public enum ActivityType

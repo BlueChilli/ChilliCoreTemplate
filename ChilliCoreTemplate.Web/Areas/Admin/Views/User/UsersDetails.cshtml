@@ -36,6 +36,7 @@
                             <heading title="Inbox"><a href="https://www.mailinator.com/v4/public/inboxes.jsp?to=@WebUtility.UrlEncode(config.MailSettings.Quarantine.Quarantine(Model.Account.Email, noDomain: true))" target="_blank">Mailinator <i class="bi bi-box-arrow-in-up-right"></i></a></heading>
                         }
                         <heading title="Phone" Condition="!String.IsNullOrEmpty(Model.Account.Phone)">@Model.Account.Phone</heading>
+                        <heading title="Notifications"><a mvc-action="Mvc.Admin.Notification_List" asp-route-userid="@Model.Account.Id">@Model.NotificationCount</a></heading>
                         <heading title="Profile" Condition="!String.IsNullOrEmpty(Model.Account.ProfilePhotoPath)">@Html.Resizer().Image(Model.Account.ProfilePhotoPath, new ImageSharpCommand { Width = 100, Format = ImageSharpFormat.JPG, Quality = 100 })</heading>
                         <heading title="Stripe Id" Condition="!String.IsNullOrEmpty(Model.Account.StripeId)"><a href="https://connect.stripe.com/@Html.When(!env.IsProduction(), "test/")customers/@Model.Account.StripeId" target="_blank">@Model.Account.StripeId</a></heading>
                         <heading title="Last login" Condition="Model.Account.LastLoginDate.HasValue">@Model.Account.LastLoginDate.Value.ToTimezone().ToIsoDateTime()</heading>

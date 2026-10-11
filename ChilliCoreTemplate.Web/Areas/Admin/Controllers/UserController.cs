@@ -28,12 +28,14 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
         private CompanyService _companyService;
         private AccountService _accountService;
         private ProjectSettings _config;
+        private PushNotificationService _notificationService;
 
-        public UserController(AdminService service, AccountService accountService, CompanyService companyService, ProjectSettings config)
+        public UserController(AdminService service, AccountService accountService, CompanyService companyService, ProjectSettings config, PushNotificationService notificationService)
         {
             _service = service;
             _accountService = accountService;
             _companyService = companyService;
+            _notificationService = notificationService;
             _config = config;
         }
 
@@ -104,6 +106,7 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
             if (model.Account == null) return Mvc.Admin.User_Users.Redirect(this);
 
             model.LastActivities = _accountService.Activity_Last(id, 7);
+            model.NotificationCount = _notificationService.Count(id);
 
             return View(model);
         }
@@ -448,32 +451,5 @@ namespace ChilliCoreTemplate.Web.Areas.Admin.Controllers
                 .Call();
         }
         #endregion
-
-        #region Notifications
-        public ViewResult NotificationList()
-        {
-            return View("NotificationList", new PushNotificationListModel());
-        }
-
-        public IActionResult NotificationQuery(IDataTablesRequest model, DateTime dateFrom, DateTime dateTo)
-        {
-            var data = _accountService.PushNotification_Search(model, dateFrom, dateTo);
-            var count = _accountService.PushNotification_Count();
-
-            return model.GetActionResult(count, data.TotalCount, data);
-        }
-
-        public ActionResult NotificationDetail(int id)
-        {
-            return this.ServiceCall(() => _accountService.PushNotification_Get(id))
-                .Always(m =>
-                {
-                    return View(m);
-                })
-                .Call();
-        }
-
-        #endregion
-
     }
 }

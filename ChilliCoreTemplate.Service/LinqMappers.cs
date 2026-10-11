@@ -29,7 +29,7 @@ namespace ChilliCoreTemplate.Service
 
             ConfigureViewModels();
             AdminService.Sms_LinqMapper();
-            AccountService.PushNotification_LinqMapper();
+            PushNotificationService.LinqMapper();
             CompanyService.LinqMapperConfigure(_storagePath);
             EmailServiceHelpers.LinqMapperConfigure();
 

@@ -9,7 +9,14 @@ namespace ChilliCoreTemplate.Web.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
-            output.Attributes.AppendAttribute("class", $"card mb-10");
+
+            output.Attributes.AppendAttribute("class", "card");
+            var existingClass = context.AllAttributes["class"]?.Value?.ToString() ?? string.Empty;
+            var hasMarginBottom = System.Text.RegularExpressions.Regex.IsMatch(existingClass, @"\bmb-\S+");
+            if (!hasMarginBottom)
+            {
+                output.Attributes.AppendAttribute("class", "mb-10");
+            }
         }
     }
 

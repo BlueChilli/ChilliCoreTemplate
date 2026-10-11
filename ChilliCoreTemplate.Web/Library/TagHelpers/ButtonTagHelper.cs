@@ -35,6 +35,12 @@ public class ButtonTagHelper : ButtonBaseTagHelper
         if (Action == null)
             return;
 
+        output.TagName = Type == ButtonType.Button ? "a" : "button";
+        if (Window == ButtonWindow.New)
+        {
+            output.Attributes.SetAttribute("target", "_blank");
+        }
+
         base.Process(context, output);
         output.Attributes.RemoveAll(ActionAttribute);
 
@@ -47,10 +53,7 @@ public class ButtonTagHelper : ButtonBaseTagHelper
 
         if (Type == ButtonType.Button)
         {
-            if (Window == ButtonWindow.Current)
-                output.Attributes.SetAttribute("onclick", new HtmlString($"window.location='{url}';"));
-            else
-                output.Attributes.SetAttribute("onclick", new HtmlString($"window.open('{url}');"));
+            output.Attributes.SetAttribute("href", url);
         }
         else
         {
@@ -164,7 +167,8 @@ public class ButtonPostTagHelper : ButtonBaseTagHelper
             target = output.Attributes["target"].Value.ToString();
             output.Attributes.RemoveAll("target");
         }
-        output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {JsonData ?? "null"});");
+        var jsonDataValue = JsonData != null ? $"{JsonData}()" : "null";
+        output.Attributes.SetAttribute("onclick", $"$.doPost('{url}', '{target}', {jsonDataValue});");
     }
 }
 
@@ -198,7 +202,7 @@ public abstract class ButtonBaseTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        output.Attributes.SetAttribute("type", Type.ToString().ToLower());
+        if (output.TagName == "button") output.Attributes.SetAttribute("type", Type.ToString().ToLower());
 
         var iconStyle = String.Empty;
         if (Icon != IconType.None)

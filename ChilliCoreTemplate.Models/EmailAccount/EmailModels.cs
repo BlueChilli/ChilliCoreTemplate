@@ -690,7 +690,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public EmailData Data { get; set; }
 
-        public Dictionary<string, string> Attachments { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Attachments { get; set; } = [];
 
         public string Error { get; set; }
 

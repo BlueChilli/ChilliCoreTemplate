@@ -39,10 +39,10 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             if (Action == null)
                 return;
 
+            output.TagName = "a";
+
             base.Process(context, output);
             output.Attributes.RemoveAll(ActionAttribute);
-
-            output.TagName = "button";
 
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
@@ -51,7 +51,7 @@ namespace ChilliCoreTemplate.Web.TagHelpers
             route = route.AddRouteValues(RouteValues);
 
             var url = urlHelper.RouteUrl(route);
-            output.Attributes.SetAttribute("onclick", new HtmlString($"window.location='{url}';".Replace("'", @"\'").Replace("$$$", "{0}")));
+            output.Attributes.SetAttribute("href", new HtmlString(url.Replace("'", @"\'").Replace("$$$", "{0}")));
         }
     }
 

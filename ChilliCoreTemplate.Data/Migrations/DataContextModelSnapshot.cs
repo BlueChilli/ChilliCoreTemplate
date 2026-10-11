@@ -53,6 +53,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Property<int>("Processed")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("QueuedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Records")
                         .HasColumnType("int");
 
@@ -661,6 +664,9 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Property<int>("ActivityType")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ByUserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("EntityId")
                         .HasColumnType("int");
 
@@ -677,6 +683,8 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ByUserId");
 
                     b.HasIndex("UserId");
 
@@ -835,11 +843,16 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserRoleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Token");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserRoleId");
 
                     b.ToTable("UserTokens");
                 });
@@ -926,7 +939,7 @@ namespace ChilliCoreTemplate.Data.Migrations
                     b.ToTable("UserSessions");
                 });
 
-            modelBuilder.Entity("ChilliCoreTemplate.Data.Webhook_Inbound", b =>
+            modelBuilder.Entity("ChilliCoreTemplate.Data.WebhookInbound", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -934,11 +947,17 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Error")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Processed")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ProcessedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Raw")
                         .HasColumnType("nvarchar(max)");
@@ -947,11 +966,12 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("SubtypeId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<bool>("Success")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -965,9 +985,11 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Processed");
+
                     b.HasIndex("WebhookIdHash");
 
-                    b.ToTable("Webhooks_Inbound");
+                    b.ToTable("WebhooksInbound");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Models.Api.ApiLogEntry", b =>
@@ -1015,6 +1037,9 @@ namespace ChilliCoreTemplate.Data.Migrations
 
                     b.Property<string>("ResponseHeaders")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ResponseSize")
+                        .HasColumnType("bigint");
 
                     b.Property<int?>("ResponseStatusCode")
                         .HasColumnType("int");
@@ -1241,11 +1266,17 @@ namespace ChilliCoreTemplate.Data.Migrations
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserActivity", b =>
                 {
+                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "ByUser")
+                        .WithMany()
+                        .HasForeignKey("ByUserId");
+
                     b.HasOne("ChilliCoreTemplate.Data.EmailAccount.User", "User")
                         .WithMany("Activities")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("ByUser");
 
                     b.Navigation("User");
                 });
@@ -1297,7 +1328,13 @@ namespace ChilliCoreTemplate.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ChilliCoreTemplate.Data.EmailAccount.UserRole", "UserRole")
+                        .WithMany("Tokens")
+                        .HasForeignKey("UserRoleId");
+
                     b.Navigation("User");
+
+                    b.Navigation("UserRole");
                 });
 
             modelBuilder.Entity("ChilliCoreTemplate.Data.Payment", b =>
@@ -1366,6 +1403,11 @@ namespace ChilliCoreTemplate.Data.Migrations
             modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserDevice", b =>
                 {
                     b.Navigation("UserSessions");
+                });
+
+            modelBuilder.Entity("ChilliCoreTemplate.Data.EmailAccount.UserRole", b =>
+                {
+                    b.Navigation("Tokens");
                 });
 
             modelBuilder.Entity("ChilliSource.Cloud.Core.Distributed.RecurrentTaskDefinition", b =>

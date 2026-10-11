@@ -102,9 +102,6 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition User_Sms_List = MvcAction();
         public readonly IMvcActionDefinition User_Sms_Query = MvcAction();
         public readonly IMvcActionDefinition User_Sms_Detail = MvcAction();
-        public readonly IMvcActionDefinition User_Notification_List = MvcAction();
-        public readonly IMvcActionDefinition User_Notification_Query = MvcAction();
-        public readonly IMvcActionDefinition User_Notification_Detail = MvcAction();
         public readonly IMvcActionDefinition User_Error_List = MvcAction();
         public readonly IMvcActionDefinition User_Error_Query = MvcAction();
         public readonly IMvcActionDefinition User_Error_Detail = MvcAction();
@@ -115,6 +112,10 @@ namespace ChilliCoreTemplate.Web
         public readonly IMvcActionDefinition Email_Resend = MvcAction();
         public readonly IMvcActionDefinition Email_Preview = MvcAction();
         public readonly IMvcActionDefinition Email_PreviewShow = MvcAction();
+
+        public readonly IMvcActionDefinition Notification_List = MvcAction();
+        public readonly IMvcActionDefinition Notification_ListData = MvcAction();
+        public readonly IMvcActionDefinition Notification_Detail = MvcAction();
 
         public readonly IMvcActionDefinition Data = MvcAction();
 

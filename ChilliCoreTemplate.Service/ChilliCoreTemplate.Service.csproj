@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Configurations>Debug;Release;Staging;Develop</Configurations>
+	<BuildInParallel>true</BuildInParallel>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,10 +16,11 @@
 
   <ItemGroup>
     <PackageReference Include="AppleAuth.NET" Version="1.0.8" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="4.0.0.16" />
-    <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0015" />
+    <PackageReference Include="ChilliSource.Cloud.AWS" Version="2.0.0-alpha0017" />
     <PackageReference Include="ChilliSource.Cloud.Azure" Version="2.0.0-alpha0029" />
-    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0009" />
+    <PackageReference Include="ChilliSource.Cloud.ImageSharp" Version="2.0.0-alpha0010" />
     <PackageReference Include="DataTables.AspNet.AspNetCore2" Version="3.0.2" />
     <PackageReference Include="FirebaseAdmin" Version="3.1.0" />
     <PackageReference Include="GoogleAuthenticator" Version="3.2.0" />

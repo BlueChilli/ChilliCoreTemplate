@@ -20,7 +20,7 @@ namespace ChilliCoreTemplate.Data.EmailAccount
         public Email(RazorTemplate template)
         {
             TemplateId = template.TemplateName;
-            TemplateIdHash = TemplateId.GetIndependentHashCode() ?? template.GetHashCode();
+            TemplateIdHash = template.Hash();
         }
 
         public int Id { get; set; }

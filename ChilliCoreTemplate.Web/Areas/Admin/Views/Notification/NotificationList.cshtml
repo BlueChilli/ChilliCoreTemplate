@@ -59,10 +59,11 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "@Mvc.Admin.User_Notification_Query.Url(this.Url)",
+                    "url": "@Mvc.Admin.Notification_ListData.Url(this.Url)",
                     "data": function ( d ) {
                         d.dateFrom = $('#DateFrom').val();
                         d.dateTo = $('#DateTo').val();
+                        d.userId = @(Model.UserId == null ? "null" : Model.UserId.Value);
                     }
                 },
                 "columns": [
@@ -102,7 +103,7 @@
 
             $('.js-notifications-table').on('click', '.js-view', function () {
                 notificationId = $(this).data('id');
-                @Html.ModalOpen(Mvc.Admin.User_Notification_Detail, data: "{ id: notificationId }");
+                @Html.ModalOpen(Mvc.Admin.Notification_Detail, data: "{ id: notificationId }");
             });
 
             $('#Search').on('keyup', function () {
@@ -145,5 +146,5 @@
 }
 @section modal
 {
-    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.User_Notification_Detail, Title = "Notification detail", Size = ModalSize.Large })
+    @await Html.PartialAsync("Layout/_Modal", new ModalViewModel { Menu = Mvc.Admin.Notification_Detail, Title = "Notification detail", Size = ModalSize.Large })
 }
