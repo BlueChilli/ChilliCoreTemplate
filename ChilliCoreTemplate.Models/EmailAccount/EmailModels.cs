@@ -1,26 +1,22 @@
-using ChilliSource.Core.Extensions;
+using ChilliCoreTemplate.Models;
 using ChilliSource.Cloud.Core;
 using ChilliSource.Cloud.Web.MVC;
+using ChilliSource.Core.Extensions;
+using HtmlAgilityPack;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-using System.IO;
+using System.Text.Json.Serialization;
 using System.Threading;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using HtmlAgilityPack;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace ChilliCoreTemplate.Models.EmailAccount
 {
-    [Serializable]
     public class EmailQueueItem<T>
     {
         private EmailQueueItem(
@@ -45,6 +41,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public EmailData_Address ReplyTo { get; private set; }
         public EmailData_Address From { get; private set; }
         public List<EmailData_Address> Bcc { get; private set; }
+        public List<string> Cc { get; private set; }
 
         public string Subject { get; private set; }
 
@@ -59,6 +56,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             private RazorTemplate _template;
             private EmailData_Address _replyTo;
             private List<EmailData_Address> _bcc;
+            private List<string> _cc;
             private EmailData_Address _from;
             private string _subject;
             private List<IEmailAttachment> _attachments;
@@ -104,6 +102,12 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             public Builder ReplyTo(string address, string displayName)
             {
                 _replyTo = new EmailData_Address(address, displayName);
+                return this;
+            }
+
+            public Builder Cc(List<string> emails)
+            {
+                _cc = emails?.Where(x => x != null).ToList();
                 return this;
             }
 
@@ -189,6 +193,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
                 return new EmailQueueItem<T>(_template, _email, _model, _attachments)
                 {
                     ReplyTo = _replyTo,
+                    Cc = _cc,
                     Bcc = _bcc,
                     From = _from,
                     Subject = _subject,
@@ -207,6 +212,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         bool DefaultTagLine { get; set; }
         string YouAreReceivingText { get; set; }
         string FileStoragePath { get; set; }
+        bool IsLarge { get; }
         bool HasSocialMedia { get; }
         string TwitterUrl { get; set; }
         string FacebookUrl { get; set; }
@@ -236,10 +242,11 @@ namespace ChilliCoreTemplate.Models.EmailAccount
     {
         public RazorTemplateDataModel()
         {
-            FooterTextColor = "#FFF";
+            FooterTextColor = "#000";
+            DefaultTagLine = true;
         }
 
-        public RazorTemplateDataModel(T data) : base()
+        public RazorTemplateDataModel(T data) : this()
         {
             Data = data;
         }
@@ -269,6 +276,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public bool DefaultTagLine { get; set; }
         public string YouAreReceivingText { get; set; }
         public string FileStoragePath { get; set; }
+        public bool IsLarge { get; set; }
         public bool HasSocialMedia { get { return !String.IsNullOrEmpty(TwitterUrl) || !String.IsNullOrEmpty(FacebookUrl) || !String.IsNullOrEmpty(GooglePlusUrl) || !String.IsNullOrEmpty(YoutubeUrl) || !String.IsNullOrEmpty(LinkedInUrl) || !String.IsNullOrEmpty(InstagramUrl); } }
         public string TwitterUrl { get; set; }
         public string FacebookUrl { get; set; }
@@ -287,6 +295,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         #endregion
     }
 
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+    [JsonDerivedType(typeof(EmailAttachment), typeDiscriminator: "emailAttachment")]
     public interface IEmailAttachment
     {
         string Path { get; }
@@ -316,9 +326,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             StorageEncryptionKeys encryptionKeys = null);
     }
 
-    [Serializable]
     public class EmailAttachment : IEmailAttachment
     {
+        public EmailAttachment() { }
 
         public EmailAttachment(string filename, string path)
         {
@@ -340,25 +350,28 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             MimeType = mimeType;
         }
 
-        public string Path { get; }
-        public string FileName { get; }
+        [JsonInclude]
+        public string Path { get; private set; }
 
+        [JsonInclude]
+        public string FileName { get; private set; }
 
+        [JsonIgnore]
         public Stream Stream { get { return _stream; } }
-        [NonSerialized]
         private Stream _stream;
 
+        [JsonIgnore]
         public byte[] File { get { return _file; } }
-        [NonSerialized]
         private byte[] _file;
 
-        public string MimeType { get; }
+        [JsonInclude]
+        public string MimeType { get; private set; }
 
         public IEmailAttachment CopyStreamToMemory()
         {
             if (Stream != null)
             {
-                var fileContent = Stream.ToByteArray();
+                var fileContent = Stream.ReadToByteArray();
                 return new EmailAttachment(fileContent, FileName, MimeType);
             }
 
@@ -476,24 +489,29 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         }
     }
 
-    [Serializable]
     public class EmailData
     {
-
-        private EmailData()
-        {
-            _attachments = new List<IEmailAttachment>();
-        }
-
         public string To { get; set; }
+        [JsonInclude]
         public EmailData_Address From { get; private set; }
+        [JsonInclude]
         public string Subject { get; private set; }
+
+        [JsonInclude]
         public string MessageHtml { get; private set; }
+        [JsonIgnore]
         public string MessageText => HtmlToTextConverter.StripHtml(MessageHtml ?? "");
+
+        [JsonInclude]
         public EmailData_Address ReplyTo { get; private set; }
+        [JsonInclude]
+        public List<string> Cc { get; private set; }
+        [JsonInclude]
         public List<EmailData_Address> Bcc { get; private set; }
 
-        private List<IEmailAttachment> _attachments;
+        [JsonInclude]
+        private List<EmailAttachment> _attachments = [];
+        [JsonIgnore]
         public IReadOnlyList<IEmailAttachment> Attachments => _attachments.AsReadOnly();
 
         public override string ToString() => $"to: {To}, from:{From?.Address}, subject:{Subject}, message: {MessageHtml}, replyTo: {ReplyTo?.Address}, bcc: {Bcc?.Count}";
@@ -511,7 +529,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             {
                 if (String.IsNullOrWhiteSpace(address))
                 {
-                    throw new ArgumentNullException("address");
+                    throw new ArgumentNullException(nameof(address));
                 }
 
                 _data.To = address;
@@ -555,6 +573,12 @@ namespace ChilliCoreTemplate.Models.EmailAccount
                 return this;
             }
 
+            public Builder Cc(List<string> emails)
+            {
+                _data.Cc = emails;
+                return this;
+            }
+
             public Builder Bcc(List<EmailData_Address> addresses)
             {
                 _data.Bcc = addresses;
@@ -563,7 +587,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
             public Builder Attachments(IEnumerable<IEmailAttachment> attachments)
             {
-                _data._attachments.AddRange(attachments);
+                _data._attachments.AddRange(attachments.Cast<EmailAttachment>());
                 return this;
             }
 
@@ -589,7 +613,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
             {
                 if (String.IsNullOrWhiteSpace(_data.To))
                 {
-                    throw new ArgumentNullException("To");
+                    throw new ArgumentNullException(nameof(_data.To));
                 }
 
                 return _data;
@@ -598,7 +622,6 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         }
     }
 
-    [Serializable]
     public class EmailData_Address
     {
         public EmailData_Address()
@@ -624,6 +647,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public MailAddress ToMailAddress() => new MailAddress(Address, DisplayName);
 
+        public static EmailData_Address CreateOrNull(string secondaryEmail)
+        {
+            return secondaryEmail == null ? null : new EmailData_Address(secondaryEmail);
+        }
     }
 
     public class EmailSummaryModel
@@ -662,11 +689,15 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         [EmptyItem("Opened?")]
         public bool? Opened { get; set; }
-        public SelectList OpenedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Opened"), new KeyValuePair<bool, string>(false, "Unopened") }.ToSelectList(v => v.Key, t => t.Value);
+        public SelectList OpenedList =>
+            new KeyValuePair<bool?, string>[] { new(true, "Opened"), new(false, "Unopened") }
+            .ToSelectList(v => v.Key, t => t.Value);
 
         [EmptyItem("Clicked?")]
         public bool? Clicked { get; set; }
-        public SelectList ClickedList => new KeyValuePair<bool, string>[] { new KeyValuePair<bool, string>(true, "Clicked"), new KeyValuePair<bool, string>(false, "Unclicked") }.ToSelectList(v => v.Key, t => t.Value);
+        public SelectList ClickedList =>
+            new KeyValuePair<bool?, string>[] { new(true, "Clicked"), new(false, "Unclicked") }
+                .ToSelectList(v => v.Key, t => t.Value);
 
         [Placeholder("Search"), MaxLength(100)]
         public string Search { get; set; }
@@ -676,9 +707,9 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
     public class EmailViewModel
     {
-        public int Id { get; set; }
+        public int TemplateId { get; set; }
 
-        public string TemplateId { get; set; }
+        public string TemplateName { get; set; }
 
         public string Recipient { get; set; }
 
@@ -690,7 +721,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
 
         public EmailData Data { get; set; }
 
-        public Dictionary<string, string> Attachments { get; set; } = [];
+        public Dictionary<string, string> Attachments { get; set; } = new Dictionary<string, string>();
 
         public string Error { get; set; }
 
@@ -719,22 +750,26 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [ReadOnly(true), DisplayName("Email")]
         public string Recipient { get; set; }
 
-        [Required, EmptyItem]
+        [Required, EmptyItem, RemoveItem(EnumValue = EmailUnsubscribeReason.Bounce)]
         public EmailUnsubscribeReason? Reason { get; set; }
 
-        [MaxLength(200), Placeholder("Reason")] //RequiredIf("Reason", EmailUnsubscribeReason.Other, ErrorMessage = "If reason is Other then a description of the reason is required")
+        [MaxLength(200), Placeholder("Reason")]
         public string ReasonOther { get; set; }
     }
 
     public enum EmailUnsubscribeReason
     {
+        [Order(20)]
         [Description("You send too many emails")]
         Frequency = 1,
+        [Order(30)]
         [Description("The email content is not relevant to me")]
         Content,
+        [Order(50)]
         [Description("Other reason")]
         Other,
-        Bounce
+        [Order(99)]
+        Bounce,
     }
 
     public class EmailPreviewModel
@@ -745,9 +780,8 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         [DataType(DataType.MultilineText), MaxLength(5000)]
         public string Data { get; set; }
 
-        public SelectList EmailList { get; set; }
-
         public List<EmailPreviewItemModel> Emails { get; set; }
+        public SelectList EmailList { get; set; }
     }
 
     public class EmailPreviewItemModel
@@ -755,6 +789,10 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public RazorTemplate Template { get; set; }
 
         public object Data { get; set; }
+
+        public EmailData_Address From { get; set; }
+
+        public EmailData_Address ReplyTo { get; set; }
 
         /// <summary>
         /// Email name will default to template name, use this to override.
@@ -766,6 +804,7 @@ namespace ChilliCoreTemplate.Models.EmailAccount
         public string CompanyName { get; set; }
 
         public string CompanyLogo { get; set; }
+
     }
 
     public class ComplaintEmailModel

@@ -61,7 +61,7 @@ public class EmailService(IPrincipal user, DataContext context, ProjectSettings 
     {
         var email = Context.Emails.FirstOrDefault(e => e.Id == id);
         var model = _mapper.Map<EmailViewModel>(email);
-        model.Data = this._fileStorage.GetContent(email.Model).DeserializeTo<EmailData>();
+        model.Data = this._fileStorage.GetContent(email.Model).JsonDecompressToObject<EmailData>();
         model.Data.Attachments.ForEach(x => model.Attachments.Add(x.FileName, _fileStoragePath.GetPreSignedUrl(x.Path)));
 
         return ServiceResult<EmailViewModel>.AsSuccess(model);
@@ -154,7 +154,7 @@ public class EmailService(IPrincipal user, DataContext context, ProjectSettings 
 
         return ServiceResult<EmailViewModel>.AsSuccess(new EmailViewModel
         {
-            TemplateId = email.Template.Id(),
+            TemplateName = email.Template.Id(),
             Data = data
         });
     }
